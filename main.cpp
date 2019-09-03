@@ -18,23 +18,31 @@ int main(int argc, char *argv[])
 
     PrintScheduler* printScheduler = new PrintScheduler();
 
-
     QQmlApplicationEngine engine;
     QQmlContext* ctx = engine.rootContext();
+
+    char buff[1024] = {0};
     ctx->setContextProperty("scheduler",printScheduler);
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
-    printScheduler->addSerialPort(QStringLiteral("\\\\.\\COM17"));
+
+    printScheduler->addSerialPort(QStringLiteral("ttyACM0"));
+//    printScheduler->addSerialPort(QStringLiteral("ttyUSB0"));
 //    printScheduler->addSerialPort(QStringLiteral("\\\\.\\COM4"));
     printScheduler->addPrintingBed('A');
 
-    printScheduler->receiveFromQmlBedSetBedPath('A',"D:/test");
+    printScheduler->receiveFromQmlBedSetBedPath('A',"/");
+//    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/pi");
+
+//    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/hix/Desktop");
 
     printScheduler->start();
 
     return app.exec();
+
 }
+
