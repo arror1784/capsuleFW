@@ -8,7 +8,11 @@ BedSerialport::BedSerialport(QString portPath) :
     m_serialPort->setPortName(portPath);
     m_serialPort->setBaudRate(QSerialPort::Baud115200);
     if(!m_serialPort->open(QIODevice::ReadWrite)){
+        qDebug() << "usb open error";
         logger->write("usb open error");
+    }else{
+        qDebug() << "usb open sucess";
+        logger->write("usb open sucess");
     }
 
     connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
@@ -65,16 +69,6 @@ void BedSerialport::handleReadyRead()
             logger->write(QString("receive Data : long button ok"));
             break;
         }
-//        if(temp.contains("OK")){
-//            emit sendSignalToBedControl(arr[arr.indexOf("OK") - 2]);
-//        }else if(temp.contains("error")){
-//            qDebug() << "transmit error";
-//            temp.clear();
-//            sendByteCommand(lastcommand);
-//        }else if(temp.contains("start")){
-//            temp.clear();
-//            emit sendToPrintScheduler('A',START_FLAG);
-//        }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
     }
 }
@@ -125,7 +119,7 @@ void BedSerialport::sendByteCommand(QByteArray buffer){
 
     return;
 }
-void BedSerialport::sendCommand(char *command){
+void BedSerialport::sendCommand(QString command){
 
     serialMutex.lock();
     QString buff(command);

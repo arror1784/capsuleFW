@@ -10,7 +10,7 @@ PrintScheduler::PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/)
 
 }
 
-void PrintScheduler::addPrintingBed(char name){
+void PrintScheduler::addPrintingBed(char name,QString searchPath){
     BedControl* bedControl = new BedControl(name,bedSerialPort);
 
     allBed.insert(name,bedControl);
@@ -19,12 +19,13 @@ void PrintScheduler::addPrintingBed(char name){
     allBedPrintImageNum.insert(name,0);
     allBedMaxPrintNum.insert(name,0);
     allBedImageLoaded.insert(name,BED_IMAGE_NONE);
+    allBedUSBSearchPath.insert(name,searchPath);
 
     QObject::connect(this,SIGNAL(sendToBedControl(char,int)),bedControl,SLOT(receiveFromPrintScheduler(char,int)));
     QObject::connect(bedControl,SIGNAL(sendToPrintScheduler(char,int)),this,SLOT(receiveFromBedControl(char,int)));
     QObject::connect(bedSerialPort,SIGNAL(sendSignalToBedControl(char)),bedControl,SLOT(receiveFromBedSerialPort(char)));
 //    QObject::connect(bedControl,SIGNAL(sendByteCommand(QByteArray)),bedSerialPort,SLOT(sendByteCommand(QByteArray)));
-    QObject::connect(bedControl,SIGNAL(sendCommand(char*)),bedSerialPort,SLOT(sendCommand(char*)));
+    QObject::connect(bedControl,SIGNAL(sendCommand(QString)),bedSerialPort,SLOT(sendCommand(QString)));
 
     QObject::connect(this,SIGNAL(sendToBedControlCommand(char,QString)),bedControl,SLOT(receiveFromPrintSchedulerSendCommand(char,QString)));
 
@@ -50,7 +51,7 @@ void PrintScheduler::addSerialPort(QString serialPath){
     bedSerialPort->m_serialPort->readAll();
 
     QObject::connect(bedSerialPort,SIGNAL(sendToPrintScheduler(char,int)),this,SLOT(receiveFromSerialPort(char,int)));
-    QObject::connect(this,SIGNAL(sendToSerialPortCommand(char*)),bedSerialPort,SLOT(sendCommand(char*)));
+    QObject::connect(this,SIGNAL(sendToSerialPortCommand(QString)),bedSerialPort,SLOT(sendCommand(QString)));
 
 }
 
@@ -85,7 +86,6 @@ void PrintScheduler::scheduler(){
             DLPWorked = 'A';
             allBedMoveFinished[DLPWorked] = PRINT_MOVE_READY;
             allBedImageLoaded['A'] = BED_IMAGE_NONE;
-            servoSetPosition(DLPWorked);
 
             if(allBedPrintImageNum['A'] > allBedMaxPrintNum['A']){
                 allBedWork['A'] = BED_FINISH;
@@ -108,27 +108,6 @@ void PrintScheduler::scheduler(){
         }
     }
 }
-void PrintScheduler::DLPMove(){
-//    if(isDLPWork == false && workingBedCount > 0){
-//        qDebug()<< "isDLPWork false ";
-//        isDLPWork = tru//    printScheduler->addSerialPort(QStringLiteral("\\\\.\\COM6"));
-//        emit sendToBedControl(DLPWorked,PRINT_MOVE_LAYER);
-
-//        switch(DLPWorked){
-//        case 'A':
-//            if(BBedWork == BED_WORK || BBedMoveFinished == PRINT_MOVE_LAYER_OK){
-//                servoSetPosition('B');
-//                DLPWorked = 'B';
-//            }else if(CBedWork == BED_WORK|| CBedMoveFinished == PRINT_MOVE_LAYER_OK){
-//                servoSetPosition('C');
-//                DLPWorked = 'C';
-//            }else{
-
-//            }
-//            break;
-//        }
-//    }
-}
 int PrintScheduler::imageChange(char bedChar){
     QString fullPath = QStringLiteral("file:/") + allBedPath[bedChar] + "/" + QString::number(allBedPrintImageNum[bedChar]) + ".svg";
 
@@ -148,9 +127,6 @@ int PrintScheduler::imageChange(char bedChar){
 //    }
 //    allBedPrintImageNum[bedChar]++;
     return 0;
-}
-void PrintScheduler::printBed(){
-
 }
 void PrintScheduler::receiveFromBedControl(char bedChar,int receive){
     //allBedMoveFinished[bedChar] = receive;
@@ -192,10 +168,9 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
 //        qDebug() << "all Bed Work" << allBedWork['A'];
         switch (allBedWork['A']) {
         case BED_NOT_WORK:
-            receiveFromQmlBedSetBedPath('A',allBedPath['A']);
+            receiveFromQmlBedSetBedPath('A');
             receiveFromQmlBedPrintStart('A');
             emit sendToSerialPortCommand("H50 A0 B0 C100");
-
             break;
         case BED_PAUSE:
             qDebug() << "print resume";
@@ -203,7 +178,7 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
             emit sendToSerialPortCommand("H50 A0 B0 C100");
             break;
         case BED_WORK:
-            emit sendToSerialPortCommand("H50 A0 B100 C0");
+            emit sendToSerialPortCommand("H51 A0 B0 C100");
             receiveFromQmlBedPrintPause('A');
             allBedWork[bedChar] = BED_PAUSE_WORK;
             qDebug() << "print pause";
@@ -224,92 +199,146 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
         }
     }
 }
-void PrintScheduler::receiveFromQmlBedSetBedPath(QChar bedChar,QString path){
+int PrintScheduler::receiveFromQmlBedSetBedPath(QChar bedChar){
 
     scheduleLock.lock();
 
     QFile file;
-
     QString val;
     QString filePath;
-//    QDir::setCurrent(path);
+    QDir dir(allBedUSBSearchPath[bedChar.cell()]);
+    int dirCount = 0;
 
-    QDir dir(path);
-//    QFile testFile(dir.filePath("/media/pi/USBDIRVER/hello"));
+    emit sendToSerialPortCommand("H51 A0 B100 C0");
 
-    QDirIterator it(path, QDirIterator::Subdirectories|QDirIterator::FollowSymlinks);
+    if(QDir(printFilePath).exists() == true){
+        QDir(printFilePath).removeRecursively();
+    }
+
+    QDir().mkdir(printFilePath);
+
+    QDirIterator it(allBedUSBSearchPath[bedChar.cell()], QDirIterator::Subdirectories|QDirIterator::FollowSymlinks);
     while(it.hasNext())
     {
         it.next();
 //            logger->write(it.fileInfo().absolutePath());
-        if(it.fileInfo().absolutePath().endsWith(QStringLiteral("/capsurePrintFolderTest"))){
+        if(it.fileInfo().absolutePath().endsWith(printUSBFileName)){
             logger->write("fooooound!!!!!");
+            qDebug() << "foooooooooooound";
             qDebug() << it.fileInfo().absolutePath();
             filePath = it.fileInfo().absolutePath();
             logger->write(filePath);
+
+            dirCount = copySVGPath(filePath,printFilePath);
+            if(dirCount == -1){
+                emit sendToSerialPortCommand("H51 A100 B0 C0");
+                return -1;
+            }
             break;
         }
     }
 
-    allBedPath[bedChar.cell()] = filePath;
+    allBedPath[bedChar.cell()] = printFilePath;
     qDebug() << filePath;
+
     file.setFileName(filePath + QStringLiteral("/info.json"));
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "file open error";
         qDebug() << file.fileName();
         logger->write(file.fileName() + " file open error");
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -2;
+    }else{
+        qDebug() << "file open sucess";
+        qDebug() << file.fileName();
+        logger->write(file.fileName() + " file open sucess");
     }
     val = file.readAll();
     file.close();
 
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject setting = d.object();
-    int accel = -1;
-    int decel = -1;
-    int max = -1;
-    int min = -1;
-    int bedCuring = -1;
-    int curing = -1;
-    int zHopHeight = -1;
 
-    if(setting.contains("total_layer")){
-        allBedMaxPrintNum[bedChar.cell()] = setting["total_layer"].toInt();
-    }
-    if(setting.contains("bed_curing_time")){
-        allBed[bedChar.cell()]->setBedCuringTime(setting["bed_curing_time"].toInt());
-        bedCuring = setting["bed_curing_time"].toInt();
-    }
-    if(setting.contains("curing_time")){
-        allBed[bedChar.cell()]->setCuringTime(setting["curing_time"].toInt());
-        curing = setting["curing_time"].toInt();
-    }
-    if(setting.contains("layer_height")){
-        allBed[bedChar.cell()]->setLayerHeightTime((int)(setting["layer_height"].toDouble() * 1000));
-    }
-    if(setting.contains("z_hop_height")){
-        allBed[bedChar.cell()]->setZHopHeightTime((int)(setting["z_hop_height"].toInt() * 1000));
-        zHopHeight = setting["z_hop_height"].toInt();
-    }
-    if(setting.contains("move_up_feedrate")){
-        allBed[bedChar.cell()]->setMaxSpeed(setting["move_up_feedrate"].toInt());
-        max = setting["move_up_feedrate"].toInt();
-    }
-    if(setting.contains("move_down_feedrate")){
-        allBed[bedChar.cell()]->setMinSpeed(setting["move_down_feedrate"].toInt());
-        min = setting["move_down_feedrate"].toInt();
-    }
-    if(setting.contains("accel_speed")){
-        allBed[bedChar.cell()]->setAccleSpeed(setting["accel_speed"].toInt());
-        accel = setting["accel_speed"].toInt();
-    }
-    if(setting.contains("decel_speed")){
-        allBed[bedChar.cell()]->setDecelSpeed(setting["decel_speed"].toInt());
-        decel = setting["decel_speed"].toInt();
+    if(!setting.contains("total_layer")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("bed_curing_time")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("curing_time")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("layer_height")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("z_hop_height")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("move_up_feedrate")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
+    }else if(!setting.contains("move_down_feedrate")){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -3;
     }
 
-    emit sendToQmlSetConfig('A',accel,decel,max,min,bedCuring,curing,zHopHeight);
+    if(setting["total_layer"].toInt() != dirCount){
+        emit sendToSerialPortCommand("H51 A100 B0 C0");
+        return -4;
+    }
+
+    allBedMaxPrintNum[bedChar.cell()] = setting["total_layer"].toInt();
+    allBed[bedChar.cell()]->setBedCuringTime(setting["bed_curing_time"].toInt());
+    allBed[bedChar.cell()]->setCuringTime(setting["curing_time"].toInt());
+    allBed[bedChar.cell()]->setLayerHeightTime((int)(setting["layer_height"].toDouble() * 1000));
+    allBed[bedChar.cell()]->setZHopHeightTime((int)(setting["z_hop_height"].toInt() * 1000));
+
+    allBed[bedChar.cell()]->setMaxSpeed(setting["move_up_feedrate"].toInt());
+    allBed[bedChar.cell()]->setMinSpeed(setting["move_down_feedrate"].toInt());
+
+//    if(setting.contains("accel_speed")){
+//        allBed[bedChar.cell()]->setAccleSpeed(setting["accel_speed"].toInt());
+//    }
+//    if(setting.contains("decel_speed")){
+//        allBed[bedChar.cell()]->setDecelSpeed(setting["decel_speed"].toInt());
+//    }
+
+    if(setting.contains("up_accel_speed")){
+        allBed[bedChar.cell()]->setUpAccleSpeed(setting["up_accel_speed"].toInt());
+    }
+    if(setting.contains("up_decel_speed")){
+        allBed[bedChar.cell()]->setUpDecelSpeed(setting["up_decel_speed"].toInt());
+    }
+    if(setting.contains("down_accel_speed")){
+        allBed[bedChar.cell()]->setDownAccleSpeed(setting["down_accel_speed"].toInt());
+    }
+    if(setting.contains("down_decel_speed")){
+        allBed[bedChar.cell()]->setDownDecelSpeed(setting["down_decel_speed"].toInt());
+    }
+
+    qDebug() << "hello world";
+    emit sendToSerialPortCommand("H50 A0 B100 C0");
 
     scheduleLock.unlock();
+    return 0;
+}
+int PrintScheduler::copySVGPath(QString src, QString dst)
+{
+    QRegularExpression svgRe("\\d{1,4}.svg");
+    QDir dir(src);
+    int count = 0;
+    if (! dir.exists())
+        return -1;
+
+    foreach (QString f, dir.entryList(QDir::Files)) {
+        if(svgRe.match(f).hasMatch() == true){
+            QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
+            count++;
+        }else if(f.contains("info.json")){
+            QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
+        }
+    }
+    return count;
 }
 void PrintScheduler::receiveFromQmlBedPrintStart(QChar bedChar){
     if(allBedWork[bedChar.cell()] == BED_PAUSE){

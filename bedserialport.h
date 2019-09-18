@@ -59,7 +59,7 @@ public slots:
     void handleTimeout();
     void handleError(QSerialPort::SerialPortError error);
 
-    void sendCommand(char* command);
+    void sendCommand(QString command);
     void sendByteCommand(QByteArray buffer);
     QByteArray transData(commandFormat_t );
 

@@ -129,6 +129,12 @@ void BedControl::autoHome(){
 void BedControl::moveUpCommand(){
 
     char buffer[50] = {0};
+
+    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
+    emit sendCommand(buffer);
+    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
+    emit sendCommand(buffer);
+
     sprintf(buffer,"G01 %c%d",bedChar,ZHopHeight);
     emit sendCommand(buffer);
 //    currentPosition += ZHopHeight;
@@ -139,6 +145,10 @@ void BedControl::moveUpCommand(){
 }
 void BedControl::moveDownCommand(){
     char buffer[50] = {0};
+    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
+    emit sendCommand(buffer);
+    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
+    emit sendCommand(buffer);
     sprintf(buffer,"G01 %c%d",bedChar,-(ZHopHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(ZHopHeight - LayerHeight);
@@ -146,12 +156,24 @@ void BedControl::moveDownCommand(){
 }
 void BedControl::moveUpCommandMax(){
 
+    char buffer[50] = {0};
+
+    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
+    emit sendCommand(buffer);
+    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
+    emit sendCommand(buffer);
+
     emit sendCommand("G02 A-15000");
 //    currentPosition = -15;
     current_function = nullptr;
 }
 void BedControl::moveDownCommandMin(){
     char buffer[50] = {0};
+
+    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
+    emit sendCommand(buffer);
+    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
+    emit sendCommand(buffer);
     sprintf(buffer,"G01 %c%d",bedChar,-(maxHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(maxHeight - LayerHeight);
@@ -166,6 +188,18 @@ void BedControl::setDecelSpeed(int val){
     char buffer[50] = {0};
     sprintf(buffer,"H33 %c%d",bedChar,val);
     emit sendCommand(buffer);
+}
+void BedControl::setUpAccleSpeed(int val){
+    upAccelSpeed = val;
+}
+void BedControl::setUpDecelSpeed(int val){
+    upDecelSpeed = val;
+}
+void BedControl::setDownAccleSpeed(int val){
+    downAccelSpeed = val;
+}
+void BedControl::setDownDecelSpeed(int val){
+    downDecelSpeed = val;
 }
 void BedControl::setMaxSpeed(int val){
     char buffer[50] = {0};

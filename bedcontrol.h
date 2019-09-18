@@ -15,13 +15,19 @@ class BedControl : public QThread
 {
     Q_OBJECT
 public:
-    BedControl(char bedChar,BedSerialport* bedSerialPort);
+    BedControl(char bedChar,BedSerialport* bedSerialPor1t);
     virtual void run();
 
     void (BedControl::*current_function)() = nullptr;
 
     void setAccleSpeed(int val);
     void setDecelSpeed(int val);
+
+    void setUpAccleSpeed(int val);
+    void setUpDecelSpeed(int val);
+    void setDownAccleSpeed(int val);
+    void setDownDecelSpeed(int val);
+
     void setMaxSpeed(int val);
     void setMinSpeed(int val);
 
@@ -39,7 +45,7 @@ public:
     void setLayerHeightTime(const int value);
 
 signals:
-    void sendCommand(char* command);
+    void sendCommand(QString command);
     void sendByteCommand(QByteArray buffer);
     void sendToPrintScheduler(char bedChar,int state);
 
@@ -53,17 +59,24 @@ public slots:
 
 public:
     char bedChar;
-    const int maxHeight = 102400; //100//102//97600
+    const int maxHeight = 102700; //100//102//97600
     int LayerHeight = 100;
     int ZHopHeight = 10000;
     int curingTime = 2000;
     int bedCuringTime = 15000;
-    int accelSpeed = 10;
-    int decelSpeed = 20;
     int maxSpeed = 150;
     int minSpeed = 20;
     int bedState = PRINT_MOVE_NULL;
     int printingState = 0;
+
+
+    int accelSpeed = 10;
+    int decelSpeed = 20;
+    int upAccelSpeed = 10;
+    int upDecelSpeed = 10;
+    int downAccelSpeed = 10;
+    int downDecelSpeed = 10;
+
 //    double currentPosition = 0.0;
 //    double pauseMoveMilli = 0.0;
 

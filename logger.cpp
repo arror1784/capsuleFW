@@ -1,6 +1,6 @@
 #include "logger.h"
 
-Logger* logger = new Logger("./log.txt");
+Logger* logger = new Logger("log.txt");
 
 Logger::Logger(QString fileName, QPlainTextEdit *editor) {
     m_editor = editor;

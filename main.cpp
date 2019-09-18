@@ -30,15 +30,18 @@ int main(int argc, char *argv[])
         return -1;
 
 
-    printScheduler->addSerialPort(QStringLiteral("ttyACM0"));
+    printScheduler->addSerialPort(QStringLiteral("/dev/ttyACM0"));
 //    printScheduler->addSerialPort(QStringLiteral("ttyUSB0"));
 //    printScheduler->addSerialPort(QStringLiteral("\\\\.\\COM4"));
-    printScheduler->addPrintingBed('A');
 
-    printScheduler->receiveFromQmlBedSetBedPath('A',"/");
+    printScheduler->addPrintingBed('A',"/home/hix/Desktop");
+
+    printScheduler->printFilePath = "/home/hix/printFilePath";
+
+//    printScheduler->receiveFromQmlBedSetBedPath('A',"/");
 //    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/pi");
+    printScheduler->receiveFromQmlBedSetBedPath('A');
 
-//    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/hix/Desktop");
 
     printScheduler->start();
 

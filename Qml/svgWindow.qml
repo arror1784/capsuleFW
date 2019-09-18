@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Window 2.11
 import QtQml 2.0
+
 Window {
     id: svgWindow
     visible: true
@@ -9,7 +10,7 @@ Window {
     title: qsTr("Hello World")
     color: "#000000"
     screen: Qt.application.screens[1]
-    flags: Qt.WindowStaysOnTopHint
+//    flags: Qt.WindowStaysOnTopHint
 
     property date currentDate: new Date()
 

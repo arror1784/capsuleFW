@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDirIterator>
+#include <QRegularExpression>
 
 #include "bedcontrol.h"
 #include "bedserialport.h"
@@ -34,28 +35,25 @@ public:
 
     void scheduler();
 
-    void DLPMove();
     int imageChange(char bedChar);
     void printBed();
-    void addPrintingBed(char name);
+    void addPrintingBed(char name,QString searchPath);
     void addSerialPort(QString serialPath);
-
+    int copySVGPath(QString src, QString dst);
 
 signals:
     void sendToBedControl(char bedChar,int receive);
-    char servoGetPosition();
-    void servoSetPosition(char bedChar);
     void sendToQmlChangeImage(QString imagePath);
     void sendToQmlSetVisibleImage(bool visible);
     void sendToQmlSetConfig(QChar bedChar,int accel,int decel,int max,int min,int bedCuringTime,int curingTime,int zHopHeight);
 
     void sendToBedControlCommand(char bedChar,QString command);
-    void sendToSerialPortCommand(char*);
+    void sendToSerialPortCommand(QString);
     //void getBedState(char bedChar,int* statePtr);
 
 public slots:
     void receiveFromBedControl(char bedChar,int state);
-    void receiveFromQmlBedSetBedPath(QChar bedChar,QString path);
+    int receiveFromQmlBedSetBedPath(QChar bedChar);
     void receiveFromQmlBedPrintStart(QChar bedChar);
     void receiveFromQmlBedPrintFinish(QChar bedChar);
     void receiveFromQmlBedPrintPause(QChar bedChar);
@@ -67,9 +65,8 @@ public slots:
 public:
     QMap<char,BedControl*> allBed;
     BedSerialport* bedSerialPort = nullptr;
+    QString printFilePath;
 //    QMLUImanager* uiManager = nullptr;
-//    DLPServo* dlpServo;
-    //DLPProjectercontrol dlpControl;
 
     int bedState = 9999;
 
@@ -78,9 +75,13 @@ private:
     unsigned int workingBedCount = 0;
     char DLPWorked = 0x00;
 
+    QString printUSBFileName = "capsurePrintFolderTest";
+
     QMutex scheduleLock;
 
     QMap<char,QString> allBedPath;
+    QMap<char,QString> allBedUSBSearchPath;
+
     QMap<char,int> allBedPrintImageNum;
     QMap<char,int> allBedImageLoaded;
     QMap<char,int> allBedWork;
