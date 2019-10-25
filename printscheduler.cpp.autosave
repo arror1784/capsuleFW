@@ -304,13 +304,6 @@ int PrintScheduler::receiveFromQmlBedSetBedPath(QChar bedChar){
     allBed[bedChar.cell()]->setMaxSpeed(setting["move_up_feedrate"].toInt());
     allBed[bedChar.cell()]->setMinSpeed(setting["move_down_feedrate"].toInt());
 
-//    if(setting.contains("accel_speed")){
-//        allBed[bedChar.cell()]->setAccleSpeed(setting["accel_speed"].toInt());
-//    }
-//    if(setting.contains("decel_speed")){
-//        allBed[bedChar.cell()]->setDecelSpeed(setting["decel_speed"].toInt());
-//    }
-
     if(setting.contains("up_accel_speed")){
         allBed[bedChar.cell()]->setAccleSpeed(setting["up_accel_speed"].toInt(),1);
     }

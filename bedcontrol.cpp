@@ -130,12 +130,12 @@ void BedControl::moveUpCommand(){
 
     char buffer[50] = {0};
 
-    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
-    emit sendCommand(buffer);
+//    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
+//    emit sendCommand(buffer);
+//    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
+//    emit sendCommand(buffer);
 
-    sprintf(buffer,"G01 %c%d",bedChar,ZHopHeight);
+    sprintf(buffer,"G01 %c%d M0",bedChar,ZHopHeight);
     emit sendCommand(buffer);
 //    currentPosition += ZHopHeight;
     emit sendToPrintScheduler(bedChar,PRINT_DLP_WORK_FINISH);
@@ -145,11 +145,11 @@ void BedControl::moveUpCommand(){
 }
 void BedControl::moveDownCommand(){
     char buffer[50] = {0};
-    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"G01 %c%d",bedChar,-(ZHopHeight - LayerHeight));
+//    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
+//    emit sendCommand(buffer);
+//    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
+//    emit sendCommand(buffer);
+    sprintf(buffer,"G01 %c%d M1",bedChar,-(ZHopHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(ZHopHeight - LayerHeight);
     current_function = nullptr;
@@ -158,49 +158,52 @@ void BedControl::moveUpCommandMax(){
 
     char buffer[50] = {0};
 
-    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
-    emit sendCommand(buffer);
+//    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
+//    emit sendCommand(buffer);
+//    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
+//    emit sendCommand(buffer);
 
-    emit sendCommand("G02 A-15000");
+    emit sendCommand("G02 A-15000 M0");
 //    currentPosition = -15;
     current_function = nullptr;
 }
 void BedControl::moveDownCommandMin(){
     char buffer[50] = {0};
 
-    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
-    emit sendCommand(buffer);
-    sprintf(buffer,"G01 %c%d",bedChar,-(maxHeight - LayerHeight));
+//    sprintf(buffer,"H32 %c%d",bedChar,downAccelSpeed);
+//    emit sendCommand(buffer);
+//    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
+//    emit sendCommand(buffer);
+    sprintf(buffer,"G01 %c%d M1",bedChar,-(maxHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(maxHeight - LayerHeight);
     current_function = nullptr;
 }
-void BedControl::setAccleSpeed(int val){
+void BedControl::setAccleSpeed(int val,int mode){
     char buffer[50] = {0};
-    sprintf(buffer,"H32 %c%d",bedChar,val);
+    sprintf(buffer,"H32 %c%d M%d",bedChar,val,mode);
     emit sendCommand(buffer);
 }
-void BedControl::setDecelSpeed(int val){
+void BedControl::setDecelSpeed(int val,int mode){
     char buffer[50] = {0};
-    sprintf(buffer,"H33 %c%d",bedChar,val);
+    sprintf(buffer,"H33 %c%d M%d",bedChar,val,mode);
     emit sendCommand(buffer);
 }
-void BedControl::setUpAccleSpeed(int val){
-    upAccelSpeed = val;
-}
-void BedControl::setUpDecelSpeed(int val){
-    upDecelSpeed = val;
-}
-void BedControl::setDownAccleSpeed(int val){
-    downAccelSpeed = val;
-}
-void BedControl::setDownDecelSpeed(int val){
-    downDecelSpeed = val;
-}
+//void BedControl::setUpAccleSpeed(int val){
+//    char buffer[50] = {0};
+//    sprintf(buffer,"H31 %c%d",bedChar,val);
+//    emit sendCommand(buffer);
+//    upAccelSpeed = val;
+//}
+//void BedControl::setUpDecelSpeed(int val){
+//    upDecelSpeed = val;
+//}
+//void BedControl::setDownAccleSpeed(int val){
+//    downAccelSpeed = val;
+//}
+//void BedControl::setDownDecelSpeed(int val){
+//    downDecelSpeed = val;
+//}
 void BedControl::setMaxSpeed(int val){
     char buffer[50] = {0};
     sprintf(buffer,"H30 %c%d",bedChar,val);

@@ -8,16 +8,17 @@ BedSerialport::BedSerialport(QString portPath) :
     m_serialPort->setPortName(portPath);
     m_serialPort->setBaudRate(QSerialPort::Baud115200);
     if(!m_serialPort->open(QIODevice::ReadWrite)){
-        qDebug() << "usb open error";
-        logger->write("usb open error");
-    }else{
-        qDebug() << "usb open sucess";
-        logger->write("usb open sucess");
-    }
+        qDebug() << portPath << "usb open error";
 
-    connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
-    connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
-    connect(&m_timer, &QTimer::timeout, this, &BedSerialport::handleTimeout);
+        logger->write(portPath + "usb open error");
+    }else{
+        qDebug() << portPath << "usb open sucess";
+        logger->write(portPath + "usb open sucess");
+        m_serialPort->readAll();
+        connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
+        connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
+        connect(&m_timer, &QTimer::timeout, this, &BedSerialport::handleTimeout);
+    }
     //m_timer.start(5000);
 }
 

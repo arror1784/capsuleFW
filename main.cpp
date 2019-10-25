@@ -1,6 +1,8 @@
 ﻿#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QString>
 
 #include <QThread>
 #include <QQmlContext>
@@ -21,7 +23,6 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlContext* ctx = engine.rootContext();
 
-    char buff[1024] = {0};
     ctx->setContextProperty("scheduler",printScheduler);
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
@@ -30,17 +31,20 @@ int main(int argc, char *argv[])
         return -1;
 
 
-    printScheduler->addSerialPort(QStringLiteral("/dev/ttyACM0"));
-//    printScheduler->addSerialPort(QStringLiteral("ttyUSB0"));
+//    printScheduler->addSerialPort(QStringLiteral("/dev/ttyAMA0"));
+    printScheduler->addSerialPort();
 //    printScheduler->addSerialPort(QStringLiteral("\\\\.\\COM4"));
 
-    printScheduler->addPrintingBed('A',"/home/hix/Desktop");
 
-    printScheduler->printFilePath = "/home/hix/printFilePath";
+
+//    printScheduler->addPrintingBed('A',"/home/pi/Desktop");
+    printScheduler->addPrintingBed('A',"/");
+    printScheduler->printFilePath = "/home/pi/printFilePath";
+//    printScheduler->printFilePath = "/home/pi/printFilePath";
 
 //    printScheduler->receiveFromQmlBedSetBedPath('A',"/");
 //    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/pi");
-    printScheduler->receiveFromQmlBedSetBedPath('A');
+//    printScheduler->receiveFromQmlBedSetBedPath('A');
 
 
     printScheduler->start();

@@ -13,6 +13,8 @@
 #include <QJsonObject>
 #include <QDirIterator>
 #include <QRegularExpression>
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 #include "bedcontrol.h"
 #include "bedserialport.h"
@@ -38,7 +40,7 @@ public:
     int imageChange(char bedChar);
     void printBed();
     void addPrintingBed(char name,QString searchPath);
-    void addSerialPort(QString serialPath);
+    void addSerialPort();
     int copySVGPath(QString src, QString dst);
 
 signals:
@@ -73,9 +75,10 @@ public:
 private:
     unsigned int isDLPWork = false;
     unsigned int workingBedCount = 0;
+    int bedCuringLayer = 5;
     char DLPWorked = 0x00;
 
-    QString printUSBFileName = "capsurePrintFolderTest";
+    QString printUSBFileName = "capsulePrintFolderTest";
 
     QMutex scheduleLock;
 

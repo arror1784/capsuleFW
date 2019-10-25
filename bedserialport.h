@@ -14,7 +14,6 @@
 #include <QMutex>
 
 #include "common.h"
-#include <QString>
 #include "logger.h"
 
 

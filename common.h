@@ -55,6 +55,9 @@
 #define SET_LED_BLUE                51
 #define SET_LED_RED                 52
 
+#define TARGET_BOARD_VID            403
+#define TARGET_BOARD_PID            6001
+
 
 
 #endif // COMMON_H

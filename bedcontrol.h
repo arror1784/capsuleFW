@@ -20,8 +20,8 @@ public:
 
     void (BedControl::*current_function)() = nullptr;
 
-    void setAccleSpeed(int val);
-    void setDecelSpeed(int val);
+    void setAccleSpeed(int val,int mode);
+    void setDecelSpeed(int val,int mode);
 
     void setUpAccleSpeed(int val);
     void setUpDecelSpeed(int val);
@@ -59,7 +59,7 @@ public slots:
 
 public:
     char bedChar;
-    const int maxHeight = 102700; //100//102//97600
+    const int maxHeight = 102700; //100//102//97600//102700//102400
     int LayerHeight = 100;
     int ZHopHeight = 10000;
     int curingTime = 2000;
