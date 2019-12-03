@@ -59,16 +59,17 @@ public slots:
 
 public:
     char bedChar;
-    const int maxHeight = 102700; //100//102//97600//102700//102400
+    const int defaultHeight = 102700; //100//102//97600//102700//102400
+    int maxHeight = 0;
     int LayerHeight = 100;
     int ZHopHeight = 10000;
     int curingTime = 2000;
     int bedCuringTime = 15000;
-    int maxSpeed = 150;
-    int minSpeed = 20;
     int bedState = PRINT_MOVE_NULL;
     int printingState = 0;
 
+    int maxSpeed = 150;
+    int minSpeed = 20;
 
     int accelSpeed = 10;
     int decelSpeed = 20;
@@ -76,6 +77,14 @@ public:
     int upDecelSpeed = 10;
     int downAccelSpeed = 10;
     int downDecelSpeed = 10;
+
+    int firstAccelSpeed = 10;
+    int firstDecelSpeed = 20;
+    int firstMaxSpeed = 150;
+    int firstMinSpeed = 20;
+
+
+    int layerDelay = 1000;
 
 //    double currentPosition = 0.0;
 //    double pauseMoveMilli = 0.0;

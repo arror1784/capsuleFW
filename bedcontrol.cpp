@@ -54,10 +54,9 @@ void BedControl::receiveFromBedSerialPort(char bedChar){
              current_function = &BedControl::moveDownCommandMin;
             break;
         case PRINT_MOVE_FINISH:
-             emit sendToPrintScheduler(bedChar,PRINT_MOVE_FINISH_OK );
-             break;
         case PRINT_CANCLE:
              bedState = PRINT_MOVE_NULL;
+             emit sendToPrintScheduler(bedChar,PRINT_MOVE_FINISH_OK );
              break;
         default:
             break;
@@ -109,6 +108,8 @@ void BedControl::receiveFromPrintScheduler(char bedChar,int receive){
 
 void BedControl::printDelay(){
 
+    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
+    msleep(layerDelay);
     qDebug() << "before delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
     emit sendCommand("H11");
     if(bedState == PRINT_MOVE_BEDCURRENT){
@@ -135,7 +136,7 @@ void BedControl::moveUpCommand(){
 //    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
 //    emit sendCommand(buffer);
 
-    sprintf(buffer,"G01 %c%d M0",bedChar,ZHopHeight);
+    sprintf(buffer,"G01 %c%d M1",bedChar,ZHopHeight);
     emit sendCommand(buffer);
 //    currentPosition += ZHopHeight;
     emit sendToPrintScheduler(bedChar,PRINT_DLP_WORK_FINISH);
@@ -149,7 +150,7 @@ void BedControl::moveDownCommand(){
 //    emit sendCommand(buffer);
 //    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
 //    emit sendCommand(buffer);
-    sprintf(buffer,"G01 %c%d M1",bedChar,-(ZHopHeight - LayerHeight));
+    sprintf(buffer,"G01 %c%d M0",bedChar,-(ZHopHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(ZHopHeight - LayerHeight);
     current_function = nullptr;
@@ -163,7 +164,7 @@ void BedControl::moveUpCommandMax(){
 //    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
 //    emit sendCommand(buffer);
 
-    emit sendCommand("G02 A-15000 M0");
+    emit sendCommand("G02 A-15000 M1");
 //    currentPosition = -15;
     current_function = nullptr;
 }
@@ -174,9 +175,20 @@ void BedControl::moveDownCommandMin(){
 //    emit sendCommand(buffer);
 //    sprintf(buffer,"H33 %c%d",bedChar,downDecelSpeed);
 //    emit sendCommand(buffer);
-    sprintf(buffer,"G01 %c%d M1",bedChar,-(maxHeight - LayerHeight));
+    setAccleSpeed(firstAccelSpeed,0);
+    setDecelSpeed(firstDecelSpeed,0);
+    setMaxSpeed(firstMaxSpeed);
+    setMinSpeed(firstMinSpeed);
+
+    sprintf(buffer,"G01 %c%d M0",bedChar,-(maxHeight - LayerHeight));
     emit sendCommand(buffer);
 //    currentPosition += -(maxHeight - LayerHeight);
+
+    setAccleSpeed(downAccelSpeed,0);
+    setDecelSpeed(downDecelSpeed,0);
+    setMaxSpeed(maxSpeed);
+    setMinSpeed(minSpeed);
+
     current_function = nullptr;
 }
 void BedControl::setAccleSpeed(int val,int mode){

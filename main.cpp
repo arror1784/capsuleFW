@@ -6,6 +6,7 @@
 
 #include <QThread>
 #include <QQmlContext>
+#include <QQuickView>
 
 #include "bedserialport.h"
 #include "bedcontrol.h"
@@ -14,9 +15,20 @@
 
 int main(int argc, char *argv[])
 {
+//    qputenv("QT_LOGGING_RULES", "qt.qpa.*=true");
+//    qputenv("QSG_INFO", "1");
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+
+//    QVector<QQuickView *> views;
+//    int i = 0;
+//    for (QScreen *screen : app.screens()) {
+//        QQuickView *view = new QQuickView;
+//        view->setScreen(screen);
+//        qDebug() << i++;
+//    }
 
     PrintScheduler* printScheduler = new PrintScheduler();
 
@@ -37,15 +49,14 @@ int main(int argc, char *argv[])
 
 
 
-//    printScheduler->addPrintingBed('A',"/home/pi/Desktop");
     printScheduler->addPrintingBed('A',"/");
+//    printScheduler->addPrintingBed('A',"/home/hix/Desktop");
     printScheduler->printFilePath = "/home/pi/printFilePath";
-//    printScheduler->printFilePath = "/home/pi/printFilePath";
+//    printScheduler->printFilePath = "/home/hix/printFilePath";
 
 //    printScheduler->receiveFromQmlBedSetBedPath('A',"/");
 //    printScheduler->receiveFromQmlBedSetBedPath('A',"/home/pi");
 //    printScheduler->receiveFromQmlBedSetBedPath('A');
-
 
     printScheduler->start();
 

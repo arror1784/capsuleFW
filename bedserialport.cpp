@@ -11,6 +11,7 @@ BedSerialport::BedSerialport(QString portPath) :
         qDebug() << portPath << "usb open error";
 
         logger->write(portPath + "usb open error");
+        serialEnable = false;
     }else{
         qDebug() << portPath << "usb open sucess";
         logger->write(portPath + "usb open sucess");
@@ -18,8 +19,9 @@ BedSerialport::BedSerialport(QString portPath) :
         connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
         connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
         connect(&m_timer, &QTimer::timeout, this, &BedSerialport::handleTimeout);
+        serialEnable = true;
     }
-    //m_timer.start(5000);
+//    m_timer.start(5000);
 }
 
 void BedSerialport::handleReadyRead()
@@ -36,6 +38,10 @@ void BedSerialport::handleReadyRead()
         }
         if(checkSum != (uint8_t)arr[arr.indexOf(0x03,0) - 1]){
             arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
+            return;
+        }
+
+        if(!serialEnable){
             return;
         }
 
@@ -196,7 +202,11 @@ QByteArray BedSerialport::transData(commandFormat_t command){
     buf[23] = checksum;
     buf[24] = 0x03;
 
-    qDebug() << "BedSerialPort send massage - G: " << command.G << " H: " << command.H << " A: " << command.A.int32 << " B: " << command.B.int32 << " C: " << command.C.int32;
+    qDebug() << "BedSerialPort send massage - G: " << command.G << " H: " << command.H << " A: " << command.A.int32 << " B: " << command.B.int32 << " C: " << command.C.int32 << " M: " << command.M.int32;
     QByteArray data((char*)buf,25);
     return data;
+}
+
+void BedSerialport::setReadEnable(bool enable){
+    serialEnable = enable;
 }

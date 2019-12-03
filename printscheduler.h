@@ -58,9 +58,9 @@ public slots:
     int receiveFromQmlBedSetBedPath(QChar bedChar);
     void receiveFromQmlBedPrintStart(QChar bedChar);
     void receiveFromQmlBedPrintFinish(QChar bedChar);
+    void receiveFromQmlBedPrintFinishError(QChar bedChar);
     void receiveFromQmlBedPrintPause(QChar bedChar);
     void receiveFromQmlBedConfig(QChar bedChar,int accel,int decel,int max,int min,int bedCuringTime,int curingTime,int zHopHeight);
-    void receiveFromQmlImageLoaded(QChar bedChar);
     void receiveFromQmlSendCommand(QChar bedChar,QString command);
     void receiveFromSerialPort(char bedChar,int state);
 
