@@ -3,6 +3,7 @@
 Logger* logger = new Logger("log.txt");
 
 Logger::Logger(QString fileName, QPlainTextEdit *editor) {
+    //logging
     m_editor = editor;
     m_showDate = true;
     if (!fileName.isEmpty()) {
