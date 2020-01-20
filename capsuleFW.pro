@@ -21,7 +21,8 @@ SOURCES += \
         bedserialport.cpp \
         logger.cpp \
         main.cpp \
-        printscheduler.cpp
+        printscheduler.cpp \
+        printsetting.cpp
 
 RESOURCES += qml.qrc
 
@@ -41,4 +42,5 @@ HEADERS += \
     bedserialport.h \
     common.h \
     logger.h \
-    printscheduler.h
+    printscheduler.h \
+    printsetting.h

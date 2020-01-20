@@ -71,7 +71,6 @@ void BedControl::receiveFromPrintScheduler(char bedChar,int receive){
 //    qDebug()  <<"bedControl - receiveFromScheduler bed Char :" << bedChar << " receive : " << receive;
     if(bedChar == this->bedChar){
         switch (receive) {
-
         case PRINT_MOVE_AUTOHOME:
             bedState = PRINT_MOVE_AUTOHOME;
             current_function = &BedControl::autoHome;
@@ -101,7 +100,6 @@ void BedControl::receiveFromPrintScheduler(char bedChar,int receive){
         default:
             break;
         }
-//        start();
     }
     return;
 }
@@ -130,11 +128,6 @@ void BedControl::autoHome(){
 void BedControl::moveUpCommand(){
 
     char buffer[50] = {0};
-
-//    sprintf(buffer,"H32 %c%d",bedChar,upAccelSpeed);
-//    emit sendCommand(buffer);
-//    sprintf(buffer,"H33 %c%d",bedChar,upDecelSpeed);
-//    emit sendCommand(buffer);
 
     sprintf(buffer,"G01 %c%d M1",bedChar,ZHopHeight);
     emit sendCommand(buffer);
@@ -238,14 +231,4 @@ void BedControl::setZHopHeightTime(const int value){
 }
 void BedControl::setLayerHeightTime(const int value){
     this->LayerHeight = value;
-}
-
-void BedControl::receiveFromPrintSchedulerSendCommand(char bedChar,QString command){
-//    bedControlLock.lock();
-    std::string str = command.toStdString();
-    char *cstr = new char[str.length() + 1];
-    strcpy(cstr,str.c_str());
-    emit sendCommand(cstr);
-    delete [] cstr;
-//    bedControlLock.unlock();
 }

@@ -5,11 +5,14 @@ import QtQml 2.0
 Window {
     id: svgWindow
     visible: true
-//    width: 1920
-//    height: 1080
+    visibility: Window.FullScreen
+    width: 1920
+    height: 1080
     title: qsTr("Hello World")
     color: "#000000"
-    screen: Qt.application.screens[0]
+    screen: Qt.application.screens[1]
+    x: screen.virtualX
+    y: screen.virtualY
 //    flags: Qt.WindowStaysOnTopHint
 
 //    Rectangle{
@@ -52,8 +55,5 @@ Window {
         onSendToQmlSetVisibleImage:{
             printImage.visible = visible
         }
-    }
-    Component.onCompleted: {
-        svgWindow.showFullScreen();
     }
 }

@@ -8,25 +8,38 @@
 #include <QTextStream>
 #include <QMutex>
 
-class Logger : public QObject
+class Logger : QObject
 {
     Q_OBJECT
-public:
-    explicit Logger(QString fileName, QPlainTextEdit *editor = 0);
-    ~Logger();
-    void setShowDateTime(bool value);
-
 private:
+    Logger();
+    Logger(QString fileName);
+    Logger(const Logger& other);
+    ~Logger();
+
+    static Logger* _ins;
+
     QFile *file;
-    QPlainTextEdit *m_editor;
     bool m_showDate;
     QMutex log_lock;
 
-signals:
-
-public slots:
+public:
+    static Logger* GetInstance()
+    {
+        if (_ins == nullptr) {
+            _ins = new Logger("log.txt");
+            atexit(release_instance);
+        }
+        return _ins;
+    }
+    static void release_instance() {
+        if(_ins){
+            delete _ins;
+            _ins = nullptr;
+        }
+    }
+    void setShowDateTime(bool value);
     void write(const QString &value);
-
 };
-extern Logger* logger;
+
 #endif // LOGGER_H

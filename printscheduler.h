@@ -40,37 +40,37 @@ public:
     int imageChange(char bedChar);
     void printBed();
     void addPrintingBed(char name,QString searchPath);
-    void addSerialPort();
+    int addSerialPort();
     int copySVGPath(QString src, QString dst);
 
 signals:
     void sendToBedControl(char bedChar,int receive);
     void sendToQmlChangeImage(QString imagePath);
     void sendToQmlSetVisibleImage(bool visible);
-    void sendToQmlSetConfig(QChar bedChar,int accel,int decel,int max,int min,int bedCuringTime,int curingTime,int zHopHeight);
 
-    void sendToBedControlCommand(char bedChar,QString command);
+    void sendToQmlPauseFinish();
+    void sendToQmlPrintFinish();
+    void sendToQmlUpdateProgress(int currentIndex,int maxIndex);
+
     void sendToSerialPortCommand(QString);
-    //void getBedState(char bedChar,int* statePtr);
 
 public slots:
     void receiveFromBedControl(char bedChar,int state);
-    int receiveFromQmlBedSetBedPath(QChar bedChar);
     void receiveFromQmlBedPrintStart(QChar bedChar);
     void receiveFromQmlBedPrintFinish(QChar bedChar);
     void receiveFromQmlBedPrintFinishError(QChar bedChar);
     void receiveFromQmlBedPrintPause(QChar bedChar);
-    void receiveFromQmlBedConfig(QChar bedChar,int accel,int decel,int max,int min,int bedCuringTime,int curingTime,int zHopHeight);
-    void receiveFromQmlSendCommand(QChar bedChar,QString command);
+    void receiveFromQmlBedPrint(QChar bedChar,QString path);
     void receiveFromSerialPort(char bedChar,int state);
+
+public:
+    int searchBedPrintPath(char bedChar); //search bedPath
+    int readyForPrintStart(char bedChar); // info.json
 
 public:
     QMap<char,BedControl*> allBed;
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
-//    QMLUImanager* uiManager = nullptr;
-
-    int bedState = 9999;
 
 private:
     unsigned int isDLPWork = false;

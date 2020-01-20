@@ -1,10 +1,9 @@
 #include "logger.h"
 
-Logger* logger = new Logger("log.txt");
+Logger* Logger::_ins = nullptr;
 
-Logger::Logger(QString fileName, QPlainTextEdit *editor) {
+Logger::Logger(QString fileName) {
     //logging
-    m_editor = editor;
     m_showDate = true;
     if (!fileName.isEmpty()) {
         file = new QFile;
@@ -23,8 +22,7 @@ void Logger::write(const QString &value) {
     if (file != 0) {
         out << text;
     }
-    if (m_editor != 0)
-        m_editor->appendPlainText(text);
+
     log_lock.unlock();
 }
 

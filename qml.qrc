@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>Qml/main.qml</file>
         <file>Qml/svgWindow.qml</file>
+        <file>Qml/FileSelectPopUp.qml</file>
+        <file>Qml/FileListDelegate.qml</file>
+        <file>Qml/CalibrationPopUp.qml</file>
     </qresource>
 </RCC>

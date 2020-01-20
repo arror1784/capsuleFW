@@ -55,8 +55,6 @@ public slots:
     void handleTimeout();
     void getBedState(char bedChar,int* statePtr);
 
-    void receiveFromPrintSchedulerSendCommand(char bedChar,QString command);
-
 public:
     char bedChar;
     const int defaultHeight = 102700; //100//102//97600//102700//102400

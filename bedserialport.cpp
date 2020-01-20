@@ -10,11 +10,11 @@ BedSerialport::BedSerialport(QString portPath) :
     if(!m_serialPort->open(QIODevice::ReadWrite)){
         qDebug() << portPath << "usb open error";
 
-        logger->write(portPath + "usb open error");
+        Logger::GetInstance()->write(portPath + "usb open error");
         serialEnable = false;
     }else{
         qDebug() << portPath << "usb open sucess";
-        logger->write(portPath + "usb open sucess");
+        Logger::GetInstance()->write(portPath + "usb open sucess");
         m_serialPort->readAll();
         connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
         connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
@@ -55,26 +55,26 @@ void BedSerialport::handleReadyRead()
         switch(data.command){
         case 100:
             qDebug() << "transmit error";
-            logger->write(QString("receive Data error"));
+            Logger::GetInstance()->write(QString("receive Data error"));
             temp.clear();
             sendByteCommand(lastcommand);
             break;
         case 101:
             qDebug() << "receive Data : move ok";
             emit sendSignalToBedControl('A');
-            logger->write(QString("receive Data : move ok"));
+            Logger::GetInstance()->write(QString("receive Data : move ok"));
             break;
-        case 102:
-            temp.clear();
-            qDebug() << "receive Data : short button ok";
-            emit sendToPrintScheduler('A',SHORT_BUTTON);
-            logger->write(QString("receive Data : short button ok"));
-            break;
-        case 103:
-            qDebug() << "receive Data : long button ok";
-            emit sendToPrintScheduler('A',LONG_BUTTON);
-            logger->write(QString("receive Data : long button ok"));
-            break;
+//        case 102:
+//            temp.clear();
+//            qDebug() << "receive Data : short button ok";
+//            emit sendToPrintScheduler('A',SHORT_BUTTON);
+//            Logger::GetInstance()->write(QString("receive Data : short button ok"));
+//            break;
+//        case 103:
+//            qDebug() << "receive Data : long button ok";
+//            emit sendToPrintScheduler('A',LONG_BUTTON);
+//            Logger::GetInstance()->write(QString("receive Data : long button ok"));
+//            break;
         }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
     }
@@ -157,7 +157,7 @@ void BedSerialport::sendCommand(QString command){
             break;
         }
     }
-    logger->write("send command : " + buff);
+    Logger::GetInstance()->write("send command : " + buff);
 //    qDebug() << "send command : " + buff;
     sendByteCommand(transData(data));
     serialMutex.unlock();
