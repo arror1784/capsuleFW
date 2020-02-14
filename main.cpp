@@ -27,15 +27,15 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("scheduler",printScheduler);
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
     if(!printScheduler->addSerialPort()){
-//        printScheduler->addPrintingBed('A',"/");
-        printScheduler->addPrintingBed('A',"/home/hix/Desktop");
-//        printScheduler->printFilePath = "/home/pi/printFilePath";
-        printScheduler->printFilePath = "/home/hix/printFilePath";
+        printScheduler->addPrintingBed('A',"/");
+//        printScheduler->addPrintingBed('A',"/home/hix/Desktop");
+        printScheduler->printFilePath = "/home/pi/printFilePath";
+//        printScheduler->printFilePath = "/home/hix/printFilePath";
 
         printScheduler->start();
     }else{
@@ -45,4 +45,3 @@ int main(int argc, char *argv[])
     }
     return app.exec();
 }
-

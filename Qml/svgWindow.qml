@@ -10,7 +10,7 @@ Window {
     height: 1080
     title: qsTr("Hello World")
     color: "#000000"
-    screen: Qt.application.screens[1]
+    screen: Qt.application.screens[0]
     x: screen.virtualX
     y: screen.virtualY
 //    flags: Qt.WindowStaysOnTopHint

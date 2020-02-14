@@ -10,7 +10,7 @@ Window {
     height: 480
     title: qsTr("Hello World")
     color: "#ffffff"
-    screen: Qt.application.screens[0]
+    screen: Qt.application.screens[1]
     x: screen.virtualX + ((screen.width - width) / 2)
     y: screen.virtualY + ((screen.height - height) / 2)
 

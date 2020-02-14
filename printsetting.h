@@ -12,15 +12,18 @@ private:
     PrintSetting();
     PrintSetting(QString settingPath);
     PrintSetting(const PrintSetting& other);
-//    ~PrintSetting();
+    ~PrintSetting();
 
     static PrintSetting* _ins;
+    static const QString filePath;
+
+    QJsonObject setting;
 
 public:
     static PrintSetting* GetInstance()
     {
         if (_ins == nullptr) {
-            _ins = new PrintSetting("log.txt");
+            _ins = new PrintSetting(filePath);
             atexit(release_instance);
         }
         return _ins;
@@ -31,9 +34,16 @@ public:
             _ins = nullptr;
         }
     }
-    void getPrintSetting();
-    void setPrintSetting();
-    QJsonObject getPrintSetting(int reginType);
+
+    void saveFile();
+
+    QString getPrintSetting(QString key);
+    void setPrintSetting(QString key,QString value);
+
+    QJsonObject getResinSetting(QString type);
+    void setResinSetting(QString type, QJsonObject value);
+//    QJsonObject getPrintSetting(int reginType);
+
 };
 
 #endif // PRINTSETTING_H

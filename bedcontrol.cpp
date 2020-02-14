@@ -232,3 +232,13 @@ void BedControl::setZHopHeightTime(const int value){
 void BedControl::setLayerHeightTime(const int value){
     this->LayerHeight = value;
 }
+void BedControl::setLedOffset(int value){
+
+    char buffer[50] = {0};
+    this->ledOffset=value;
+    sprintf(buffer,"H12 %c%d",bedChar,value);
+    emit sendCommand(buffer);
+
+}
+
+

@@ -44,6 +44,8 @@ public:
     void setZHopHeightTime(const int value);
     void setLayerHeightTime(const int value);
 
+    void setLedOffset(int value);
+
 signals:
     void sendCommand(QString command);
     void sendByteCommand(QByteArray buffer);
@@ -81,6 +83,7 @@ public:
     int firstMaxSpeed = 150;
     int firstMinSpeed = 20;
 
+    int ledOffset = 1000;
 
     int layerDelay = 1000;
 

@@ -20,7 +20,7 @@ void PrintScheduler::addPrintingBed(char name,QString searchPath){
     QObject::connect(this,SIGNAL(sendToBedControl(char,int)),bedControl,SLOT(receiveFromPrintScheduler(char,int)));
     QObject::connect(bedControl,SIGNAL(sendToPrintScheduler(char,int)),this,SLOT(receiveFromBedControl(char,int)));
     QObject::connect(bedSerialPort,SIGNAL(sendSignalToBedControl(char)),bedControl,SLOT(receiveFromBedSerialPort(char)));
-//    QObject::connect(bedControl,SIGNAL(sendByteCommand(QByteArray)),bedSerialPort,SLOT(sendByteCommand(QByteArray)));
+//    QObject::connect(bedControl,SIGNAL(sendByteCommand(QByteArray)),bedSerialPort,SLOT(sendByteCommand(QByteArray)));*-
     QObject::connect(bedControl,SIGNAL(sendCommand(QString)),bedSerialPort,SLOT(sendCommand(QString)));
 
 //    QObject::connect(this,SIGNAL(sendToBedControlCommand(char,QString)),bedControl,SLOT(receiveFromPrintSchedulerSendCommand(char,QString)));
@@ -28,7 +28,6 @@ void PrintScheduler::addPrintingBed(char name,QString searchPath){
 
 //    sendToBedControlCommand('A',QStringLiteral("H10"));
     emit sendToSerialPortCommand("H10 A0 B100 C0");
-
 
     bedSerialPort->setReadEnable(true);
 
@@ -192,19 +191,7 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
     }
 
 }
-void PrintScheduler::receiveFromQmlBedPrint(QChar bedChar,QString path){
 
-    char bedName = bedChar.cell();
-
-    allBedPath[bedName] = path;
-
-    if(readyForPrintStart(bedName) != 0){
-
-        qDebug() << "hello world";
-        return;
-    }
-    receiveFromQmlBedPrintStart(bedChar);
-}
 int PrintScheduler::searchBedPrintPath(char bedChar){
 
     scheduleLock.lock();
@@ -378,11 +365,28 @@ int PrintScheduler::readyForPrintStart(char bedChar){
     if(setting.contains("layer_delay")){
         allBed[bedChar]->layerDelay = setting["layer_delay"].toInt();
     }
+    if(setting.contains("led_offset")){
+        allBed[bedChar]->setLedOffset(setting["led_offset"].toDouble() * 10);
+    }
 
     emit sendToSerialPortCommand("H50 A0 B100 C0");
     bedSerialPort->setReadEnable(true);
     scheduleLock.unlock();
     return 0;
+}
+
+void PrintScheduler::receiveFromQmlBedPrint(QChar bedChar,QString path){
+
+    char bedName = bedChar.cell();
+
+    allBedPath[bedName] = path;
+
+    if(readyForPrintStart(bedName) != 0){
+
+        qDebug() << "hello world";
+        return;
+    }
+    receiveFromQmlBedPrintStart(bedChar);
 }
 
 int PrintScheduler::copySVGPath(QString src, QString dst)
