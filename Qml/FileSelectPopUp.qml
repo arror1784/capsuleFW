@@ -24,8 +24,8 @@ Item {
     }
     Popup {
         id: popup
-        width: 700
-        height: 400
+        width: 440
+        height: 300
         anchors.centerIn: Overlay.overlay
 
         background: Rectangle{
@@ -54,8 +54,8 @@ Item {
                 font.pixelSize: 36
                 anchors.left: popupRectangle.left
                 anchors.top: popupRectangle.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 20
+                anchors.topMargin: 5
+                anchors.leftMargin: 5
             }
             Rectangle{
                 id: xButton
@@ -100,12 +100,12 @@ Item {
 
                     ListView{
                         id: fileSelectList
-                        width: parent.width - 20
+                        width: parent.width - 10
                         height: parent.height - 10
                         anchors.left: parent.left
-                        anchors.leftMargin: 10
+                        anchors.leftMargin: 5
                         anchors.top: parent.top
-                        anchors.topMargin: 10
+                        anchors.topMargin: 5
                         z: 0
                         spacing: 2
                         focus: true
@@ -113,8 +113,7 @@ Item {
 
                         highlightFollowsCurrentItem: true
                         highlightMoveDuration: 0
-
-                        highlight: Rectangle { color: "#DE7317"; height: 44;}
+                        highlight: Rectangle { color: "#DE7317"; height: 22;}
 
                         model: folderModel
                         delegate: FileListDelegate{
@@ -126,23 +125,16 @@ Item {
                                 fileSelectList.update()
                             }
                             onFileClicked: {
-//                                currentPath = path
-//                                currentName = name
                                 fileSelectList.currentIndex = index
                                 fileSelectList.update()
                             }
-//                            onFileDoubleClicked: {
-//                                fileSelectList.currentIndex = index
-//                                informationText.text = currentName
-//                                fileSelectPopup.state = "information"
-//                            }
                         }
                     }
                 }
                 Rectangle{
                     id: chooseFileButton
-                    width: 200
-                    height: 64
+                    width: 100
+                    height: 32
                     radius: 32
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
@@ -158,11 +150,14 @@ Item {
                     Text {
                         text: "Choose File"
                         color: "white"
-                        font.pixelSize: 30
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                     }
-                    MouseArea{
+                    function changeFolderPath(path){
+                        folderModel.folder = "file://" + path
+                        console.debug("folderChange")
+                    }               MouseArea{
                         anchors.fill: parent
                         onClicked: {
                             if(fileSelectList.currentIndex !== -1){
@@ -174,12 +169,12 @@ Item {
                 }
                 Rectangle{
                     id: previousButton
-                    width: 200
-                    height: 64
+                    width: 100
+                    height: 32
                     radius: 32
 
                     anchors.right: chooseFileButton.left
-                    anchors.rightMargin: 20
+                    anchors.rightMargin: 10
                     anchors.bottom: chooseFileButton.bottom
                     gradient: Gradient{
                         orientation: Gradient.Horizontal
@@ -192,7 +187,7 @@ Item {
                     Text {
                         text: "previous"
                         color: "white"
-                        font.pixelSize: 30
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -222,18 +217,18 @@ Item {
                 Text {
                     id: informationText
                     text: "information text"
-                    font.pixelSize: 20
+                    font.pixelSize: 10
                     color: "white"
                 }
                 Rectangle{
                     id: startButton
-                    width: 200
-                    height: 64
+                    width: 100
+                    height: 32
                     radius: 32
 
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 10
+                    anchors.bottomMargin: 5
 
                     gradient: Gradient{
                         orientation: Gradient.Horizontal
@@ -243,7 +238,7 @@ Item {
                     Text {
                         text: "Start Printing"
                         color: "white"
-                        font.pixelSize: 30
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -257,12 +252,12 @@ Item {
                 }
                 Rectangle{
                     id: cancleButton
-                    width: 200
-                    height: 64
+                    width: 100
+                    height: 32
                     radius: 32
 
                     anchors.right: startButton.left
-                    anchors.rightMargin: 20
+                    anchors.rightMargin: 10
                     anchors.bottom: startButton.bottom
                     gradient: Gradient{
                         orientation: Gradient.Horizontal
@@ -272,7 +267,7 @@ Item {
                     Text {
                         text: "Cancle"
                         color: "white"
-                        font.pixelSize: 30
+                        font.pixelSize: 15
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -313,14 +308,14 @@ Item {
                         id: text_usbNotRecognized
                         text: "USB device not recognized"
                         color: "white"
-                        font.pixelSize: 36
+                        font.pixelSize: 15
                         font.bold: true
                     }
 
                     Text{
                         id: text_makeSureDeviceConnected
                         text: "Please make sure that the device is connected."
-                        font.pixelSize: 24
+                        font.pixelSize: 12
                         color: "white"
 
                         anchors.top: text_usbNotRecognized.bottom

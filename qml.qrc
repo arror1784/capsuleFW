@@ -5,5 +5,11 @@
         <file>Qml/FileSelectPopUp.qml</file>
         <file>Qml/FileListDelegate.qml</file>
         <file>Qml/CalibrationPopUp.qml</file>
+        <file>Qml/MainMenu.qml</file>
+        <file>Qml/FileSelectList.qml</file>
+        <file>Qml/MaterialSelectList.qml</file>
+        <file>Qml/MaterialListDelegate.qml</file>
+        <file>Qml/PrintingPopup.qml</file>
+        <file>Qml/PrintMenu.qml</file>
     </qresource>
 </RCC>

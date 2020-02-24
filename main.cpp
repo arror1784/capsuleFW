@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("scheduler",printScheduler);
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
 
         printScheduler->start();
     }else{
+        emit printScheduler->sendToQmlInsertMaterialList("hello");
         Logger::GetInstance()->write("port open error");
         qDebug() << "port open error";
         return app.exec();

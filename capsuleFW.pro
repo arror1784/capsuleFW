@@ -24,7 +24,9 @@ SOURCES += \
         printscheduler.cpp \
         printsetting.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    font.qrc \
+    image.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

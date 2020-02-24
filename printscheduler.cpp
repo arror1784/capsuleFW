@@ -160,11 +160,17 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
     if(state == SHORT_BUTTON){
         switch (allBedWork['A']) {
         case BED_NOT_WORK:
+            emit sendToSerialPortCommand("H51 A0 B100 C0");
             if( searchBedPrintPath('A') != 0){
                 emit sendToSerialPortCommand("H51 A100 B0 C0");
                 return;
             }
-            receiveFromQmlBedPrintStart('A');
+            if(readyForPrintStart('A') != 0){
+                qDebug() << "hello world";
+                return;
+            }
+            receiveFromQmlBedPrintStart(bedChar);
+//            receiveFromQmlBedPrint('A');
             emit sendToSerialPortCommand("H50 A0 B0 C100");
             break;
         case BED_PAUSE:
@@ -208,6 +214,7 @@ int PrintScheduler::searchBedPrintPath(char bedChar){
     }
     if(!QDir().mkdir(printFilePath)){
         qDebug()<< " create folder fail";
+        return 1;
     }else{
         qDebug() << " create folder sucess";
     }
@@ -223,6 +230,7 @@ int PrintScheduler::searchBedPrintPath(char bedChar){
         }
     }
     allBedPath[bedChar] = filePath;
+//    receiveFromQmlBedPrint(bedChar,filePath);
 
     scheduleLock.unlock();
     return 0;
@@ -342,6 +350,7 @@ int PrintScheduler::readyForPrintStart(char bedChar){
     }else{
         allBed[bedChar]->maxHeight = allBed[bedChar]->defaultHeight;
     }
+
     if(setting.contains("first_accel_speed")){
         allBed[bedChar]->firstAccelSpeed = setting["first_accel_speed"].toInt();
     }else{
@@ -367,9 +376,10 @@ int PrintScheduler::readyForPrintStart(char bedChar){
     }
     if(setting.contains("led_offset")){
         allBed[bedChar]->setLedOffset(setting["led_offset"].toDouble() * 10);
+    }else{
+        allBed[bedChar]->setLedOffset(100);
     }
 
-    emit sendToSerialPortCommand("H50 A0 B100 C0");
     bedSerialPort->setReadEnable(true);
     scheduleLock.unlock();
     return 0;

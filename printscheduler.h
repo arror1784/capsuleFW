@@ -51,6 +51,7 @@ signals:
     void sendToQmlPauseFinish();
     void sendToQmlPrintFinish();
     void sendToQmlUpdateProgress(int currentIndex,int maxIndex);
+    void sendToQmlInsertMaterialList(QString name);
 
     void sendToSerialPortCommand(QString);
 

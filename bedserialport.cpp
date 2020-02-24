@@ -64,17 +64,17 @@ void BedSerialport::handleReadyRead()
             emit sendSignalToBedControl('A');
             Logger::GetInstance()->write(QString("receive Data : move ok"));
             break;
-        case 102:
-            temp.clear();
-            qDebug() << "receive Data : short button ok";
-            emit sendToPrintScheduler('A',SHORT_BUTTON);
-            Logger::GetInstance()->write(QString("receive Data : short button ok"));
-            break;
-        case 103:
-            qDebug() << "receive Data : long button ok";
-            emit sendToPrintScheduler('A',LONG_BUTTON);
-            Logger::GetInstance()->write(QString("receive Data : long button ok"));
-            break;
+//        case 102:
+//            temp.clear();
+//            qDebug() << "receive Data : short button ok";
+//            Logger::GetInstance()->write(QString("receive Data : short button ok"));
+//            emit sendToPrintScheduler('A',SHORT_BUTTON);
+//            break;
+//        case 103:
+//            qDebug() << "receive Data : long button ok";
+//            Logger::GetInstance()->write(QString("receive Data : long button ok"));
+//            emit sendToPrintScheduler('A',LONG_BUTTON);
+//            break;
         }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
     }

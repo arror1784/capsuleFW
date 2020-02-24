@@ -14,7 +14,7 @@ Rectangle{
     Text {
         id: fileNameText
         text: fileName
-        color: "#ffffff"
+        color: "#474747"
         font.pixelSize: 20
     }
     MouseArea{

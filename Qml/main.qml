@@ -6,15 +6,23 @@ Window {
     id: mainWindow
     visible: true
     visibility: Window.FullScreen
-    width: 800
-    height: 480
+    width: 480
+    height: 320
     title: qsTr("Hello World")
-    color: "#ffffff"
+    color: "#EEF5F9"
     screen: Qt.application.screens[1]
-    x: screen.virtualX + ((screen.width - width) / 2)
-    y: screen.virtualY + ((screen.height - height) / 2)
+//    x: screen.virtualX + ((screen.width - width) / 2)
+//    y: screen.virtualY + ((screen.height - height) / 2)
 
-    Rectangle{
+
+
+//    MainMenu{    }
+
+//    FileSelectList{id: fileSelectList}
+    MaterialSelectList{id: materialSelectList}
+    PrintingPopup{id: printingPopup}
+
+/*    Rectangle{
         Button{
             id: printButton
             width: 152
@@ -75,7 +83,7 @@ Window {
             anchors.top: stopButton.bottom
             anchors.left: stopButton.left
         }
-    }
+    }*/
     Connections{
         id: schedulerConnection
         target: scheduler
@@ -92,6 +100,9 @@ Window {
         onSendToQmlUpdateProgress :{
             progressText.text = currentIndex + "/" + maxIndex
         }
+        onSendToQmlInsertMaterialList :{
+            materialSelectList.inserMaterialList(name)
+        }
     }
     FileSelectPopUp{
         id: fileselect
@@ -106,5 +117,8 @@ Window {
         onCancleChoose: {
             console.debug("file choose cancle")
         }
+    }
+    Component.onCompleted: {
+        printingPopup.open();
     }
 }
