@@ -3,6 +3,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QString>
+#include <QJsonArray>
 
 #include <QThread>
 #include <QQmlContext>
@@ -11,6 +12,7 @@
 #include "bedserialport.h"
 #include "bedcontrol.h"
 #include "printscheduler.h"
+#include "printsetting.h"
 #include "logger.h"
 
 int main(int argc, char *argv[])
@@ -31,15 +33,19 @@ int main(int argc, char *argv[])
     if (engine.rootObjects().isEmpty())
         return -1;
 
+//    qDebug() << "sjighnkjsdfsdf" << PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble();
+//    PrintSetting::GetInstance()->setPrintSetting("led_offset",100.0);
+//    PrintSetting::GetInstance()->saveFile();
+//    qDebug() << PrintSetting::GetInstance()->getPrintSetting("led_offset").toInt();
+
     if(!printScheduler->addSerialPort()){
         printScheduler->addPrintingBed('A',"/");
-//        printScheduler->addPrintingBed('A',"/home/hix/Desktop");
+//        printScheduler->addPrintingBed('A',"/home/jsh/Desktop");
         printScheduler->printFilePath = "/home/pi/printFilePath";
-//        printScheduler->printFilePath = "/home/hix/printFilePath";
+//        printScheduler->printFilePath = "/home/jsh/printFilePath";
 
         printScheduler->start();
     }else{
-        emit printScheduler->sendToQmlInsertMaterialList("hello");
         Logger::GetInstance()->write("port open error");
         qDebug() << "port open error";
         return app.exec();

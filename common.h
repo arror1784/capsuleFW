@@ -46,6 +46,7 @@
 
 #define SHORT_BUTTON                100
 #define LONG_BUTTON                 101
+#define MOVE_OK                     110
 
 #define BED_IMAGE_LOADED            1
 #define BED_IMAGE_NONE              2

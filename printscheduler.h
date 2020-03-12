@@ -21,10 +21,6 @@
 #include "iostream"
 #include "logger.h"
 
-//#include "dlpprojectercontrol.h"
-//#include "qmluimanager.h"
-//#include "dlpservo.h"
-
 class PrintScheduler : public QThread
 {
     Q_OBJECT
@@ -46,27 +42,41 @@ public:
 signals:
     void sendToBedControl(char bedChar,int receive);
     void sendToQmlChangeImage(QString imagePath);
-    void sendToQmlSetVisibleImage(bool visible);
+    void sendToQmlSetImageScale(double value);
 
     void sendToQmlPauseFinish();
     void sendToQmlPrintFinish();
     void sendToQmlUpdateProgress(int currentIndex,int maxIndex);
     void sendToQmlInsertMaterialList(QString name);
-
+    void sendToQmlMoveOk();
     void sendToSerialPortCommand(QString);
+    void sendToQmlPrintError();
 
 public slots:
     void receiveFromBedControl(char bedChar,int state);
+    void receiveFromSerialPort(char bedChar,int state);
+
     void receiveFromQmlBedPrintStart(QChar bedChar);
     void receiveFromQmlBedPrintFinish(QChar bedChar);
     void receiveFromQmlBedPrintFinishError(QChar bedChar);
     void receiveFromQmlBedPrintPause(QChar bedChar);
-    void receiveFromQmlBedPrint(QChar bedChar,QString path);
-    void receiveFromSerialPort(char bedChar,int state);
+    void receiveFromQmlBedPrint(QChar bedChar,QString path,QString materialName);
+    void receiveFromQmlUpdateMaterial();
+    QVariant receiveFromQmlGetPrinterOption(QString key);
+    void receiveFromQmlSetPrinterOption(QString key,double value);
+    void receiveFromQmlSetPrinterOption(QString key,int value);
+    void receiveFromQmlSetPrinterOption(QString key,QString value);
+    QVariant receiveFromQmlGetMaterialOption(QString material,QString key);
+    QVariant receiveFromQmlGetMaterialOptionFromPath(QString path,QString key);
+
+    void receiveFromQmlGoHome(QChar bedChar);
+    void receiveFromQmlAutoHome(QChar bedChar);
+    void receiveFromQmlMoveMicro(QChar bedChar,int micro);
+    void receiveFromQmlMoveMaxHeight(QChar bedChar);
 
 public:
     int searchBedPrintPath(char bedChar); //search bedPath
-    int readyForPrintStart(char bedChar); // info.json
+    int readyForPrintStart(char bedChar,QString materialName); // info.json
 
 public:
     QMap<char,BedControl*> allBed;

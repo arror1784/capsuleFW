@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Qt.labs.folderlistmodel 2.1
+import QtQuick.Controls 2.5
 
 Item {
 
@@ -7,18 +8,23 @@ Item {
     height: 320
 
     property string currentPath
-    property string currentName
+    property string currentParentName
+    property string selectedFileName : ""
 
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+    }
+    FontLoader{
+        id: openSansRegular
+        source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
     FolderListModel {
         id: folderModel
         showDirs: true
         showDirsFirst: true
         sortReversed: true
-//        nameFilters: ["info.json"]
+        nameFilters: ["info.json"]
     }
     Text {
         id: selectText
@@ -71,10 +77,14 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if(folderModel.folder.toString() !== "file:///media"){
+                        currentParentName = basename(folderModel.folder.toString())
+                        currentPath = ""
+                        selectedFileName = ""
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
                         fileSelectList.update()
-                        parentDirText.text = folderModel.folder
+                        parentDirText.text = basename(folderModel.folder.toString())
+//                        parentDirText.text = fileSelectList.indexAt(0).filename
                     }
                 }
             }
@@ -93,7 +103,7 @@ Item {
             color: "#474747"
 
             font.pixelSize: 22
-            font.family: openSansSemibold.name
+            font.family: openSansRegular.name
         }
     }
     Rectangle{
@@ -131,14 +141,16 @@ Item {
             delegate: FileListDelegate{
                 onDirClicked: {
                     changeFolderPath(path)
-                    currentName = name
+                    currentParentName = basename(folderModel.folder.toString())
                     currentPath = path
+                    selectedFileName = ""
                     fileSelectList.currentIndex=-1
                     fileSelectList.update()
-                    parentDirText.text = folderModel.folder
+                    parentDirText.text = basename(folderModel.folder.toString())
                 }
                 onFileClicked: {
                     fileSelectList.currentIndex = index
+                    selectedFileName = name
                     fileSelectList.update()
                 }
             }
@@ -217,6 +229,12 @@ Item {
 
             anchors.centerIn: parent
         }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                stackView.pop(StackView.Immediate)
+            }
+        }
     }
     Rectangle{
         id: selectButton
@@ -241,6 +259,15 @@ Item {
 
             anchors.centerIn: parent
         }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if(selectedFileName === "info.json"){
+                    console.debug(selectedFileName)
+                    stackView.push(Qt.resolvedUrl("qrc:/Qml/MaterialSelectList.qml"),StackView.Immediate)
+                }
+            }
+        }
     }
     function resetPath(){
         folderModel.folder = "file:///media"
@@ -254,6 +281,10 @@ Item {
     function changeFolderPath(path){
         folderModel.folder = "file://" + path
         console.debug("folderChange")
+    }
+    function basename(str)
+    {
+        return (str.slice(str.lastIndexOf("/")+1))
     }
     Component.onCompleted: {
         resetPath()

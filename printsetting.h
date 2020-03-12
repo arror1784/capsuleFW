@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonValue>
 
 class PrintSetting : public QObject
 {
@@ -15,7 +16,7 @@ private:
     ~PrintSetting();
 
     static PrintSetting* _ins;
-    static const QString filePath;
+    QString filePath = "/opt/capsuleFW/capsuleSetting.json";
 
     QJsonObject setting;
 
@@ -23,7 +24,7 @@ public:
     static PrintSetting* GetInstance()
     {
         if (_ins == nullptr) {
-            _ins = new PrintSetting(filePath);
+            _ins = new PrintSetting(/*filePath*/);
             atexit(release_instance);
         }
         return _ins;
@@ -37,12 +38,16 @@ public:
 
     void saveFile();
 
-    QString getPrintSetting(QString key);
+    QJsonValue getPrintSetting(QString key);
+    void setPrintSetting(QString key,double value);
+    void setPrintSetting(QString key,int value);
     void setPrintSetting(QString key,QString value);
 
     QJsonObject getResinSetting(QString type);
     void setResinSetting(QString type, QJsonObject value);
 //    QJsonObject getPrintSetting(int reginType);
+
+    QJsonArray getResinList();
 
 };
 

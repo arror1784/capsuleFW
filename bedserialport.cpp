@@ -62,6 +62,7 @@ void BedSerialport::handleReadyRead()
         case 101:
             qDebug() << "receive Data : move ok";
             emit sendSignalToBedControl('A');
+            emit sendToPrintScheduler('A',MOVE_OK);
             Logger::GetInstance()->write(QString("receive Data : move ok"));
             break;
 //        case 102:

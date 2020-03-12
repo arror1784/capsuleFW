@@ -1,6 +1,6 @@
-import QtQuick 2.9
+import QtQuick 2.12
+import QtQuick.Controls 2.5
 import QtQuick.Window 2.11
-import QtQuick.Controls 1.4
 
 Window {
     id: mainWindow
@@ -11,114 +11,25 @@ Window {
     title: qsTr("Hello World")
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
-//    x: screen.virtualX + ((screen.width - width) / 2)
-//    y: screen.virtualY + ((screen.height - height) / 2)
 
-
-
-//    MainMenu{    }
-
-//    FileSelectList{id: fileSelectList}
-    MaterialSelectList{id: materialSelectList}
-    PrintingPopup{id: printingPopup}
-
-/*    Rectangle{
-        Button{
-            id: printButton
-            width: 152
-            height: 43
-            text: "print"
-            anchors.leftMargin: 8
-            anchors.topMargin: 8
-            anchors.top: parent.top
-            anchors.left: parent.left
-            onClicked: {
-//                scheduler.receiveFromQmlBedPrintStart('A')
-//                scheduler.receiveFromSerialPort(bedChar.charAt(0),100)
-                if(printButton.text === "print"){
-                    fileselect.openPopUp()
-                }else if(printButton.text === "pause"){
-                    scheduler.receiveFromQmlBedPrintPause('A')
-                    enabled = false
-                }else if(printButton.text === "resume"){
-                    scheduler.receiveFromQmlBedPrintStart('A')
-                    text = "pause"
-                    stopButton.enabled = false
-                }
-            }
+    StackView{
+        id: stackView
+        anchors.fill: parent
+        initialItem: MainMenu{
+            id: mainMenu
         }
-        Text {
-            id: printPathName
-            text: ""
-            font.pixelSize: 20
-            anchors.leftMargin: 8
-            anchors.topMargin: 8
-            anchors.top: parent.top
-            anchors.left: printButton.right
+    }
+    ErrorPopup{
+        id: errorPopup
+        onBack: {
+            stackView.pop(mainMenu,StackView.Immediate)
         }
-        Button{
-            id: stopButton
-            width: 152
-            height: 43
-            text: "stop"
-            anchors.leftMargin: 8
-            anchors.topMargin: 8
-            anchors.top: printButton.bottom
-            anchors.left: parent.left
-            enabled: false
-            onClicked: {
-//                scheduler.receiveFromQmlBedPrintStart('A')
-//                scheduler.receiveFromSerialPort(bedChar.charAt(0),100)
-                scheduler.receiveFromQmlBedPrintFinish('A')
-                enabled = false
-            }
-        }
-        Text {
-            id: progressText
-            width: 27
-            height: 0
-            text: 0 + " / " + 0
-            anchors.topMargin: 15
-            font.pixelSize: 20
-            anchors.top: stopButton.bottom
-            anchors.left: stopButton.left
-        }
-    }*/
+    }
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlPauseFinish :{
-            printButton.text = "resume"
-            printButton.enabled = true
-            stopButton.enabled = true
+        onSendToQmlPrintError :{
+            errorPopup.open()
         }
-        onSendToQmlPrintFinish :{
-            printButton.text = "print"
-            printButton.enabled = true
-            progressText.text = 0 + "/" + 0
-        }
-        onSendToQmlUpdateProgress :{
-            progressText.text = currentIndex + "/" + maxIndex
-        }
-        onSendToQmlInsertMaterialList :{
-            materialSelectList.inserMaterialList(name)
-        }
-    }
-    FileSelectPopUp{
-        id: fileselect
-        onChooseFile: {
-            console.debug(filePath)
-            printButton.text = "pause"
-//            printButton.enabled = false
-            stopButton.enabled = false
-            scheduler.receiveFromQmlBedPrint('A',filePath)
-            printPathName.text = "print name : " + fileName
-        }
-        onCancleChoose: {
-            console.debug("file choose cancle")
-        }
-    }
-    Component.onCompleted: {
-        printingPopup.open();
     }
 }

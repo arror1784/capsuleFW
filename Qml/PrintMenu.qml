@@ -1,57 +1,185 @@
-import QtQuick 2.3
-import QtQuick.Controls.Styles 1.2
-import QtGraphicalEffects 1.0
+import QtQuick 2.0
+import QtQuick.Controls 2.5
 
-ProgressBarStyle
-{
-   panel : Rectangle
-   {
-      color: "transparent"
-      implicitWidth: 80
-      implicitHeight: implicitWidth
+Item {
+    id: printMenu
+    width: 480
+    height: 320
 
-      Rectangle
-      {
-         id: outerRing
-         z: 0
-         anchors.fill: parent
-         radius: Math.max(width, height) / 2
-         color: "transparent"
-         border.color: "gray"
-         border.width: 8
-      }
+    property int time: 0
 
-      Rectangle
-      {
-         id: innerRing
-         z: 1
-         anchors.fill: parent
-         anchors.margins: (outerRing.border.width - border.width) / 2
-         radius: outerRing.radius
-         color: "transparent"
-         border.color: "darkgray"
-         border.width: 4
+    FontLoader{
+        id: openSansSemibold
+        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+    }
+    FontLoader{
+        id: openSansRegular
+        source: "qrc:/fonts/OpenSans-Regular.ttf"
+    }
+    Rectangle{
 
-         ConicalGradient
-         {
-            source: innerRing
-            anchors.fill: parent
-            gradient: Gradient
-            {
-               GradientStop { position: 0.00; color: "white" }
-               GradientStop { position: control.value; color: "white" }
-               GradientStop { position: control.value + 0.01; color: "transparent" }
-               GradientStop { position: 1.00; color: "transparent" }
+        width: fileName.width > remainingTime.width ? fileName.width : remainingTime.width
+        height: fileName.height + remainingTime.height + 20
+        anchors.left: parent.left
+        anchors.leftMargin: 30 + 1
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -22
+
+        color: "transparent"
+        Column{
+            id: fileName
+            Text {
+                text: qsTr("File name")
+                font.family: openSansRegular.name
+                font.pixelSize: 15
             }
-         }
-      }
+            Text {
+                id: fileNameText
+                width: 200
+                text: stackView.get(1).currentParentName
+                font.family: openSansSemibold.name
+                font.pixelSize: 27
+                font.bold: true
 
-      Text
-      {
-         id: progressLabel
-         anchors.centerIn: parent
-         color: "black"
-         text: (control.value * 100).toFixed() + "%"
-      }
-   }
+                elide: Text.ElideRight
+            }
+        }
+        Column{
+            id: remainingTime
+            anchors.top: fileName.bottom
+            anchors.topMargin: 20
+            Text {
+                text: qsTr("time")
+                font.family: openSansRegular.name
+                font.pixelSize: 15
+            }
+            Text {
+                text: Math.ceil((time + 1) / 60) - 1 + "min " + time % 60 + "sec"
+                font.family: openSansSemibold.name
+                font.pixelSize: 27
+                font.bold: true
+            }
+        }
+    }
+
+    CircularProgressBar{
+        id: progressBar
+
+        width: 200
+        height: 200
+
+        anchors.top: parent.top
+        anchors.topMargin: 35
+        anchors.right: parent.right
+        anchors.rightMargin: 25
+    }
+    Rectangle{
+        id: printInfoButton
+        width: 215
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        color: "#DCEAF3"
+
+        radius: 8
+
+        Text {
+            text: qsTr("Print info")
+            color: "#666666"
+            font.family: openSansSemibold.name
+            font.pixelSize: 20
+
+            anchors.centerIn: parent
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                fileInfoPopup.open()
+                fileInfoPopup.setText(stackView.get(1).currentParentName,
+                                      "***min",
+                                      stackView.get(2).materialName,
+                                      scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
+            }
+        }
+    }
+    Rectangle{
+        id: quitButton
+
+        width: 215
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
+        color: "#00C6EA"
+
+        radius: 8
+
+        Text {
+            text: qsTr("Quit")
+            color: "#FFFFFF"
+            font.family: openSansSemibold.name
+            font.pixelSize: 20
+
+            anchors.centerIn: parent
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                scheduler.receiveFromQmlBedPrintPause('A')
+                quitPopup.open()
+                quitPopup.setButtonEnabled(false)
+            }
+        }
+    }
+    FileInfoPopup{
+        id: fileInfoPopup
+    }
+    WaitPopup{
+        id: waitPopup
+    }
+    QuitPopup{
+        id: quitPopup
+        onPrintResume: {
+            scheduler.receiveFromQmlBedPrintStart('A')
+            close()
+        }
+        onPrintStop: {
+            scheduler.receiveFromQmlBedPrintFinish('A')
+            close()
+            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
+            waitPopup.open()
+        }
+    }
+
+    Timer{
+        interval: 1000; running: true; repeat: true
+        onTriggered: time++
+    }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
+        onSendToQmlUpdateProgress :{
+            setProgressValue(Math.ceil((currentIndex - 1) /maxIndex * 100))
+        }
+        onSendToQmlPauseFinish :{
+            quitPopup.setButtonEnabled(true)
+        }
+        onSendToQmlPrintFinish :{
+            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
+        }
+    }
+    function setProgressValue(value){
+        progressBar.setCurrentValue(value)
+    }
+    function clear(){
+        progressBar.setCurrentValue(0)
+        time = 0
+    }
 }

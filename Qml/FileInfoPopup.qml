@@ -1,4 +1,4 @@
-import QtQuick 2.10
+import QtQuick 2.0
 import QtQuick.Controls 2.5
 
 Rectangle {
@@ -12,12 +12,12 @@ Rectangle {
     opacity: 0.7
 
     visible: false
-    signal startPrintingButtonClicked()
 
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
     }
+
     Popup{
         id: popup
         width: parent.width - 60
@@ -102,36 +102,6 @@ Rectangle {
                 }
             }
         }
-
-        Rectangle{
-            id: cancleButton
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-
-            color: "#DCEAF3"
-
-            radius: 8
-
-            Text {
-                text: qsTr("Cancel")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    popup.close()
-                }
-            }
-        }
         Rectangle{
             id: startButton
 
@@ -148,7 +118,7 @@ Rectangle {
             radius: 8
 
             Text {
-                text: qsTr("Start printing")
+                text: qsTr("close")
                 color: "#FFFFFF"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -157,13 +127,9 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                onClicked: {
-                    startPrintingButtonClicked()
-                    popup.close()
-                }
+                onClicked: popup.close()
             }
         }
-
         onOpened: {
             popupBack.visible = true
         }

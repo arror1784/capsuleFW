@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import QtQuick.Controls 2.5
 Item {
     id: mainMenu
 
@@ -53,8 +53,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                console.debug("selectfile clicked")
-                console.debug(selectFileText.font.family)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
             }
         }
     }
@@ -98,7 +97,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-               console.debug("calibration clicked")
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/Calibration.qml"),StackView.Immediate)
             }
         }
     }

@@ -6,8 +6,8 @@ Window {
     id: svgWindow
     visible: true
     visibility: Window.FullScreen
-    width: 1920
-    height: 1080
+//    width: 1440
+//    height: 2560
     title: qsTr("Hello World")
     color: "#000000"
     screen: Qt.application.screens[0]
@@ -21,23 +21,17 @@ Window {
 //        color: "#000000"
         Image{
             id: printImage
-//            width: parent.width
-//            height: parent.height
+            width: 2560
+            height: 1440
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
-//            source: "file:///home/hix/0.svg"
             anchors.centerIn: parent
-//            anchors.top: parent.top
-//            anchors.left: parent.left
-//            anchors.leftMargin: 50
+//            anchors.fill: parent
+
             visible: true
-            onStatusChanged: {
-                if (printImage.status === Image.Ready){
-//                    currentDate = new Date()
-//                    console.log("sec : " + currentDate.getSeconds() + " milli : " + currentDate.getMilliseconds())
-//                    scheduler.receiveFromQmlImageLoaded('A')
-                }
-            }
+
+            fillMode: Image.PreserveAspectCrop
+
             rotation: 90
         }
 //    }
@@ -52,8 +46,9 @@ Window {
             console.log(imagePath)
             printImage.source = imagePath
         }
-        onSendToQmlSetVisibleImage:{
-            printImage.visible = visible
+        onSendToQmlSetImageScale:{
+            printImage.scale = value
+            console.debug(value)
         }
     }
 }

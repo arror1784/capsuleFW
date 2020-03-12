@@ -2,14 +2,19 @@
     <qresource prefix="/">
         <file>Qml/main.qml</file>
         <file>Qml/svgWindow.qml</file>
-        <file>Qml/FileSelectPopUp.qml</file>
         <file>Qml/FileListDelegate.qml</file>
-        <file>Qml/CalibrationPopUp.qml</file>
         <file>Qml/MainMenu.qml</file>
         <file>Qml/FileSelectList.qml</file>
         <file>Qml/MaterialSelectList.qml</file>
         <file>Qml/MaterialListDelegate.qml</file>
         <file>Qml/PrintingPopup.qml</file>
+        <file>Qml/CircularProgressBar.qml</file>
         <file>Qml/PrintMenu.qml</file>
+        <file>Qml/FileInfoPopup.qml</file>
+        <file>Qml/QuitPopup.qml</file>
+        <file>Qml/PrintingCompleted.qml</file>
+        <file>Qml/Calibration.qml</file>
+        <file>Qml/WaitPopup.qml</file>
+        <file>Qml/ErrorPopup.qml</file>
     </qresource>
 </RCC>

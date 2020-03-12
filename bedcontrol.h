@@ -59,7 +59,7 @@ public slots:
 
 public:
     char bedChar;
-    const int defaultHeight = 102700; //100//102//97600//102700//102400
+    int defaultHeight = 102500; //100//102//97600//102700//102400
     int maxHeight = 0;
     int LayerHeight = 100;
     int ZHopHeight = 10000;

@@ -1,16 +1,20 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.5
 
 Item {
 
     width: 480
     height: 320
-    function inserMaterialList(name){
-        materialModel.append({"name":name})
-        console.debug(name)
-    }
+
+    property string materialName
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+    }
+    FontLoader{
+        id: openSansRegular
+        source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
 
     ListModel{
@@ -89,6 +93,12 @@ Item {
 
             anchors.centerIn: parent
         }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                stackView.pop(StackView.Immediate)
+            }
+        }
     }
     Rectangle{
         id: selectButton
@@ -113,8 +123,40 @@ Item {
 
             anchors.centerIn: parent
         }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if(materialSelectList.currentIndex !== -1){
+                    materialName = materialSelectList.currentItem.metarialname
+                    printingPopup.open()
+                    printingPopup.setText(stackView.get(1).currentParentName,
+                                          "***min",
+                                          materialName,
+                                          scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
+                }
+            }
+        }
+    }
+    PrintingPopup{
+        id: printingPopup
+        onStartPrintingButtonClicked:{
+            scheduler.receiveFromQmlBedPrint('A',stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
+            console.debug(stackView.get(1).currentPath)
+            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
+        }
+    }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
+        onSendToQmlInsertMaterialList :{
+            inserMaterialList(name)
+        }
     }
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
+        scheduler.receiveFromQmlUpdateMaterial()
+    }
+    function inserMaterialList(name){
+        materialModel.append({"name":name})
     }
 }

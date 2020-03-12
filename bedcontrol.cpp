@@ -44,7 +44,6 @@ void BedControl::receiveFromBedSerialPort(char bedChar){
              bedState = PRINT_MOVE_READY;
             emit sendToPrintScheduler(bedChar, PRINT_MOVE_INIT_OK );
             break;
-
         case PRINT_MOVE_READY:
             break;
         case PRINT_MOVE_LAYER:
