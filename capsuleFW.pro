@@ -2,6 +2,7 @@ QT += quick
 QT += qml
 QT += serialport
 QT += svg
+#QT += websockets
 
 CONFIG += c++11
 
@@ -22,7 +23,8 @@ SOURCES += \
         logger.cpp \
         main.cpp \
         printscheduler.cpp \
-        printsetting.cpp
+        printsetting.cpp \
+#        websocketclient.cpp
 
 RESOURCES += qml.qrc \
     font.qrc \
@@ -45,4 +47,5 @@ HEADERS += \
     common.h \
     logger.h \
     printscheduler.h \
-    printsetting.h
+    printsetting.h \
+ #   websocketclient.h

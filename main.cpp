@@ -4,6 +4,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QString>
 #include <QJsonArray>
+#include <QTextCodec>
 
 #include <QThread>
 #include <QQmlContext>

@@ -27,7 +27,6 @@ class PrintScheduler : public QThread
 
 public:
     PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
-    virtual void run();
 
     void initBed();
 
@@ -82,7 +81,8 @@ public:
     QMap<char,BedControl*> allBed;
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
-
+protected:
+    void run()override;
 private:
     unsigned int isDLPWork = false;
     unsigned int workingBedCount = 0;

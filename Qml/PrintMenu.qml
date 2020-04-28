@@ -7,6 +7,7 @@ Item {
     height: 320
 
     property int time: 0
+    property bool waitPopupOpened: false
 
     FontLoader{
         id: openSansSemibold
@@ -152,9 +153,9 @@ Item {
         }
         onPrintStop: {
             scheduler.receiveFromQmlBedPrintFinish('A')
-            close()
-            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
             waitPopup.open()
+            waitPopupOpened = true
+            close()
         }
     }
 
@@ -172,6 +173,10 @@ Item {
             quitPopup.setButtonEnabled(true)
         }
         onSendToQmlPrintFinish :{
+            if(waitPopupOpened === true){
+                waitPopupOpened = false
+                waitPopup.close()
+            }
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
         }
     }

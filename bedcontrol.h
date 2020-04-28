@@ -16,7 +16,6 @@ class BedControl : public QThread
     Q_OBJECT
 public:
     BedControl(char bedChar,BedSerialport* bedSerialPor1t);
-    virtual void run();
 
     void (BedControl::*current_function)() = nullptr;
 
@@ -56,6 +55,8 @@ public slots:
     void receiveFromPrintScheduler(char bedChar,int receive);
     void handleTimeout();
     void getBedState(char bedChar,int* statePtr);
+protected:
+    void run()override;
 
 public:
     char bedChar;

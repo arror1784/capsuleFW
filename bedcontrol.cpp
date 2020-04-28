@@ -14,10 +14,8 @@ void BedControl::handleTimeout(){
 
 void BedControl::run(){
     while(1){
-        bedControlLock.lock();
         if(current_function != nullptr)
             (this->*(current_function))();
-        bedControlLock.unlock();
     }
 }
 
@@ -119,7 +117,6 @@ void BedControl::printDelay(){
     current_function = &BedControl::moveUpCommand;
 }
 void BedControl::autoHome(){
-
 //    currentPosition = 0;
     emit sendCommand("G28 A225");
     current_function = nullptr;
@@ -232,12 +229,10 @@ void BedControl::setLayerHeightTime(const int value){
     this->LayerHeight = value;
 }
 void BedControl::setLedOffset(int value){
-
     char buffer[50] = {0};
     this->ledOffset=value;
-    sprintf(buffer,"H12 %c%d",bedChar,value);
+    printf(buffer,"H12 %c%d",bedChar,value);
     emit sendCommand(buffer);
-
 }
 
 
