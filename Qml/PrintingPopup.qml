@@ -178,6 +178,6 @@ Rectangle {
         fileNameText.text = fileName
         printingTimeText.text = printingTime
         materialText.text = material
-        layerHeightText.text = layerHeight + "mm/layer"
+        layerHeightText.text = Math.round(layerHeight * 1000) + "mm/layer"
     }
 }
