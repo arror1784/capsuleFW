@@ -181,7 +181,7 @@ void PrintScheduler::receiveFromBedControl(char bedChar,int receive){
 }
 void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
 
-    if(state == SHORT_BUTTON){
+    /*if(state == SHORT_BUTTON){
         switch (allBedWork['A']) {
         case BED_NOT_WORK:
             emit sendToSerialPortCommand("H51 A0 B100 C0");
@@ -218,47 +218,9 @@ void PrintScheduler::receiveFromSerialPort(char bedChar,int state){
             allBedWork['A'] = BED_FINISH;
             break;
         }
-    }else if (state == MOVE_OK) {
+    }else */if (state == MOVE_OK) {
         emit sendToQmlMoveOk();
     }
-}
-
-int PrintScheduler::searchBedPrintPath(char bedChar){
-
-    scheduleLock.lock();
-
-    QFile file;
-    QString val;
-    QString filePath;
-    QDir dir(allBedUSBSearchPath[bedChar]);
-    int dirCount = 0;
-    int error = 0;
-
-    if(QDir(printFilePath).exists() == true){
-        QDir(printFilePath).removeRecursively();
-    }
-    if(!QDir().mkdir(printFilePath)){
-        qDebug()<< " create folder fail";
-        return 1;
-    }else{
-        qDebug() << " create folder sucess";
-    }
-    QDirIterator it(allBedUSBSearchPath[bedChar], QDirIterator::Subdirectories|QDirIterator::FollowSymlinks);
-    while(it.hasNext())
-    {
-        it.next();
-        if(it.fileInfo().absolutePath().endsWith(printUSBFileName)){
-            Logger::GetInstance()->write("fooooound!!!!!");
-            filePath = it.fileInfo().absolutePath();
-            Logger::GetInstance()->write(filePath);
-            break;
-        }
-    }
-    allBedPath[bedChar] = filePath;
-//    receiveFromQmlBedPrint(bedChar,filePath);
-
-    scheduleLock.unlock();
-    return 0;
 }
 
 int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
@@ -318,12 +280,8 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
         materialSetting = PrintSetting::GetInstance()->getResinSetting(materialName);
     }
 
-//    qDebug() << materialName;
-//    qDebug() << "height_offset" << PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
     allBed[bedChar]->maxHeight = allBed[bedChar]->defaultHeight + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
     allBed[bedChar]->setLedOffset(PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() * 10);
-//    qDebug() << "led_offset" << PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble();
-
 
     if(!setting.contains("total_layer")){
         error = -3;
@@ -394,7 +352,6 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
     allBed[bedChar]->upDecelSpeed = materialSetting["up_decel_speed"].toInt();
     allBed[bedChar]->downAccelSpeed = materialSetting["down_accel_speed"].toInt();
     allBed[bedChar]->downDecelSpeed = materialSetting["down_decel_speed"].toInt();
-
     allBed[bedChar]->layerDelay = materialSetting["layer_delay"].toInt();
 
     emit sendToQmlSetImageScale(materialSetting["contraction_ratio"].toDouble());
@@ -446,7 +403,6 @@ void PrintScheduler::receiveFromQmlBedPrint(QChar bedChar,QString path,QString m
     e = readyForPrintStart(bedName,materialName);
     if(e != 0){
         emit sendToQmlPrintError();
-        qDebug() << "error" << e;
         return;
     }
     receiveFromQmlBedPrintStart(bedChar);

@@ -38,6 +38,8 @@ public:
     int addSerialPort();
     int copySVGPath(QString src, QString dst);
 
+    int readyForPrintStart(char bedChar,QString materialName); // info.json
+
 signals:
     void sendToBedControl(char bedChar,int receive);
     void sendToQmlChangeImage(QString imagePath);
@@ -55,11 +57,12 @@ public slots:
     void receiveFromBedControl(char bedChar,int state);
     void receiveFromSerialPort(char bedChar,int state);
 
+    void receiveFromQmlBedPrint(QChar bedChar,QString path,QString materialName);
+
     void receiveFromQmlBedPrintStart(QChar bedChar);
     void receiveFromQmlBedPrintFinish(QChar bedChar);
     void receiveFromQmlBedPrintFinishError(QChar bedChar);
     void receiveFromQmlBedPrintPause(QChar bedChar);
-    void receiveFromQmlBedPrint(QChar bedChar,QString path,QString materialName);
     void receiveFromQmlUpdateMaterial();
     QVariant receiveFromQmlGetPrinterOption(QString key);
     void receiveFromQmlSetPrinterOption(QString key,double value);
@@ -73,9 +76,6 @@ public slots:
     void receiveFromQmlMoveMicro(QChar bedChar,int micro);
     void receiveFromQmlMoveMaxHeight(QChar bedChar);
 
-public:
-    int searchBedPrintPath(char bedChar); //search bedPath
-    int readyForPrintStart(char bedChar,QString materialName); // info.json
 
 public:
     QMap<char,BedControl*> allBed;
