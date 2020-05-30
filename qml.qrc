@@ -13,8 +13,10 @@
         <file>Qml/FileInfoPopup.qml</file>
         <file>Qml/QuitPopup.qml</file>
         <file>Qml/PrintingCompleted.qml</file>
-        <file>Qml/Calibration.qml</file>
+        <file>Qml/HeightCalibration.qml</file>
         <file>Qml/WaitPopup.qml</file>
         <file>Qml/ErrorPopup.qml</file>
+        <file>Qml/SettingMenu.qml</file>
+        <file>Qml/LEDCalibration.qml</file>
     </qresource>
 </RCC>

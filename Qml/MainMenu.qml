@@ -58,7 +58,7 @@ Item {
         }
     }
     Rectangle{
-        id: calibration
+        id: setting
         radius: 5
         color: "#DCEAF3"
 
@@ -70,24 +70,29 @@ Item {
         anchors.rightMargin: 25
 
         Rectangle{
-            width: calibrationText.width
-            height: calibrationImage.height + calibrationText.height
+            width: settingText.width
+            height: settingImage.height + settingText.height
             anchors.centerIn: parent
             color: "#00000000"
             Image {
-                id: calibrationImage
-                source: "qrc:/image/calibration.png"
+                id: settingImage
+                x: 0
+                y: 0
+                sourceSize.height: 60
+                sourceSize.width: 65
+                anchors.horizontalCenterOffset: 0
+                source: "qrc:/image/settings.svg"
 
-                scale: 0.7
-                anchors.horizontalCenter: calibrationText.horizontalCenter
+                scale: 0.85
+                anchors.horizontalCenter: settingText.horizontalCenter
             }
 
             Text {
-                id: calibrationText
-                text: qsTr("Calibration")
+                id: settingText
+                text: qsTr("setting")
                 color: "#666666"
 
-                anchors.top: calibrationImage.bottom
+                anchors.top: settingImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -97,7 +102,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/Calibration.qml"),StackView.Immediate)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/SettingMenu.qml"),StackView.Immediate)
             }
         }
     }

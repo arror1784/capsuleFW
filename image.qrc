@@ -9,5 +9,7 @@
         <file>image/plus.png</file>
         <file>image/update.png</file>
         <file>image/arrow-up.png</file>
+        <file>image/light.png</file>
+        <file>image/settings.svg</file>
     </qresource>
 </RCC>

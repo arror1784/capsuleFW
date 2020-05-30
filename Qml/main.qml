@@ -25,6 +25,14 @@ Window {
             stackView.pop(mainMenu,StackView.Immediate)
         }
     }
+//    Button{
+//        width: 28
+//        height: 36
+//        opacity: 0
+//        onClicked: {
+//            ipPopup.open()
+//        }
+//    }
     Connections{
         id: schedulerConnection
         target: scheduler

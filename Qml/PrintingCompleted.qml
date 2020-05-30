@@ -114,8 +114,6 @@ Item {
             onClicked: {
                 stackView.get(3).clear()
                 scheduler.receiveFromQmlBedPrint('A',stackView.get(1).currentPath,stackView.get(2).materialName)
-                console.debug(stackView.get(1).currentPath)
-                console.debug(stackView.get(2).materialName)
                 stackView.pop(StackView.Immediate)
             }
         }

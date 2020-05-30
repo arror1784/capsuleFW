@@ -55,7 +55,7 @@ Item {
                 font.pixelSize: 15
             }
             Text {
-                text: Math.ceil((time + 1) / 60) - 1 + "min " + time % 60 + "sec"
+                text: Math.ceil((time + 1) / 60)-1 + "min " + time % 60 + "sec"
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true

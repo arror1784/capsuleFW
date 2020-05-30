@@ -2,10 +2,11 @@ QT += quick
 QT += qml
 QT += serialport
 QT += svg
+QT += network
 #QT += websockets
 
 CONFIG += c++11
-
+#CONFIG += c++1z
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Refer to the documentation for the
@@ -22,6 +23,7 @@ SOURCES += \
         bedserialport.cpp \
         logger.cpp \
         main.cpp \
+#    networkcontrol.cpp \
         printscheduler.cpp \
         printsetting.cpp \
 #        websocketclient.cpp
@@ -46,6 +48,7 @@ HEADERS += \
     bedserialport.h \
     common.h \
     logger.h \
+#    networkcontrol.h \
     printscheduler.h \
     printsetting.h \
- #   websocketclient.h
+#    websocketclient.h

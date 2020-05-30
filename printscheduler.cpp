@@ -31,16 +31,16 @@ void PrintScheduler::addPrintingBed(char name,QString searchPath){
 //    qDebug() << "curing_time" << materialSetting["curing_time"].toInt();
     allBed[name]->setZHopHeightTime((int)(PrintSetting::GetInstance()->getPrintSetting("z_hop_height").toInt() * 1000));
 
-    allBed[name]->setMaxSpeed(PrintSetting::GetInstance()->getPrintSetting("move_up_feedrate").toInt());
-    allBed[name]->setMinSpeed(PrintSetting::GetInstance()->getPrintSetting("move_down_feedrate").toInt());
+    allBed[name]->setMaxSpeed(PrintSetting::GetInstance()->getPrintSetting("max_speed").toInt());
+    allBed[name]->setMinSpeed(PrintSetting::GetInstance()->getPrintSetting("init_speed").toInt());
 
     allBed[name]->setAccleSpeed(PrintSetting::GetInstance()->getPrintSetting("up_accel_speed").toInt(),1);
     allBed[name]->setDecelSpeed(PrintSetting::GetInstance()->getPrintSetting("up_decel_speed").toInt(),1);
     allBed[name]->setAccleSpeed(PrintSetting::GetInstance()->getPrintSetting("down_accel_speed").toInt(),0);
     allBed[name]->setDecelSpeed(PrintSetting::GetInstance()->getPrintSetting("down_decel_speed").toInt(),0);
 
-    allBed[name]->maxSpeed = PrintSetting::GetInstance()->getPrintSetting("move_up_feedrate").toInt();
-    allBed[name]->minSpeed = PrintSetting::GetInstance()->getPrintSetting("move_down_feedrate").toInt();
+    allBed[name]->maxSpeed = PrintSetting::GetInstance()->getPrintSetting("max_speed").toInt();
+    allBed[name]->minSpeed = PrintSetting::GetInstance()->getPrintSetting("init_speed").toInt();
 
     allBed[name]->upAccelSpeed = PrintSetting::GetInstance()->getPrintSetting("up_accel_speed").toInt();
     allBed[name]->upDecelSpeed = PrintSetting::GetInstance()->getPrintSetting("up_decel_speed").toInt();
@@ -312,7 +312,7 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
     d = QJsonDocument::fromJson(val.toUtf8());
     setting = d.object();
 
-    if(materialName == "custom"){
+    if(materialName == "Custom"){
         materialSetting = setting;
     }else{
         materialSetting = PrintSetting::GetInstance()->getResinSetting(materialName);
@@ -330,6 +330,7 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
     }else if(!setting.contains("layer_height")){
         error = -3;
     }
+
     if(!materialSetting.contains("bed_curing_layer")){
         error = -3;
     }else if(!materialSetting.contains("bed_curing_time")){
@@ -338,9 +339,9 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
         error = -3;
     }else if(!materialSetting.contains("z_hop_height")){
         error = -3;
-    }else if(!materialSetting.contains("move_up_feedrate")){
+    }else if(!materialSetting.contains("max_speed")){
         error = -3;
-    }else if(!materialSetting.contains("move_down_feedrate")){
+    }else if(!materialSetting.contains("init_speed")){
         error = -3;
     }else if(!materialSetting.contains("up_accel_speed")){
         error = -3;
@@ -350,16 +351,21 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
         error = -3;
     }else if(!materialSetting.contains("down_decel_speed")){
         error = -3;
+    }else if(!materialSetting.contains("contraction_ratio")){
+        error = -3;
+    }else if(!materialSetting.contains("layer_delay")){
+        error = -3;
     }
+
     if(setting["total_layer"].toInt() > (dirCount - 1)){
         Logger::GetInstance()->write(QString::number(setting["total_layer"].toInt()));
         Logger::GetInstance()->write(QString::number(dirCount));
         error = -4;
     }
     if(error != 0){
-        emit sendToQmlPrintError();
         scheduleLock.unlock();
         bedSerialPort->setReadEnable(true);
+        qDebug() << error;
         return error;
     }
 
@@ -373,21 +379,26 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
 //    qDebug() << "curing_time" << materialSetting["curing_time"].toInt();
     allBed[bedChar]->setZHopHeightTime((int)(materialSetting["z_hop_height"].toInt() * 1000));
 
-    allBed[bedChar]->setMaxSpeed(materialSetting["move_up_feedrate"].toInt());
-    allBed[bedChar]->setMinSpeed(materialSetting["move_down_feedrate"].toInt());
+    allBed[bedChar]->setMaxSpeed(materialSetting["max_speed"].toInt());
+    allBed[bedChar]->setMinSpeed(materialSetting["init_speed"].toInt());
 
     allBed[bedChar]->setAccleSpeed(materialSetting["up_accel_speed"].toInt(),1);
     allBed[bedChar]->setDecelSpeed(materialSetting["up_decel_speed"].toInt(),1);
     allBed[bedChar]->setAccleSpeed(materialSetting["down_accel_speed"].toInt(),0);
     allBed[bedChar]->setDecelSpeed(materialSetting["down_decel_speed"].toInt(),0);
 
-    allBed[bedChar]->maxSpeed = materialSetting["move_up_feedrate"].toInt();
-    allBed[bedChar]->minSpeed = materialSetting["move_down_feedrate"].toInt();
+    allBed[bedChar]->maxSpeed = materialSetting["max_speed"].toInt();
+    allBed[bedChar]->minSpeed = materialSetting["init_speed"].toInt();
 
     allBed[bedChar]->upAccelSpeed = materialSetting["up_accel_speed"].toInt();
     allBed[bedChar]->upDecelSpeed = materialSetting["up_decel_speed"].toInt();
     allBed[bedChar]->downAccelSpeed = materialSetting["down_accel_speed"].toInt();
     allBed[bedChar]->downDecelSpeed = materialSetting["down_decel_speed"].toInt();
+
+    allBed[bedChar]->layerDelay = materialSetting["layer_delay"].toInt();
+
+    emit sendToQmlSetImageScale(materialSetting["contraction_ratio"].toDouble());
+
 
     if(setting.contains("first_accel_speed")){
         allBed[bedChar]->firstAccelSpeed = setting["first_accel_speed"].toInt();
@@ -402,16 +413,12 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
     if(setting.contains("first_max_speed")){
         allBed[bedChar]->firstMaxSpeed = setting["first_max_speed"].toInt();
     }else{
-        allBed[bedChar]->firstMaxSpeed = setting["move_up_feedrate"].toInt();
+        allBed[bedChar]->firstMaxSpeed = setting["max_speed"].toInt();
     }
     if(setting.contains("first_min_speed")){
         allBed[bedChar]->firstMinSpeed = setting["first_min_speed"].toInt();
     }else{
-        allBed[bedChar]->firstMinSpeed = setting["move_down_feedrate"].toInt();
-    }
-
-    if(materialSetting.contains("layer_delay")){
-        allBed[bedChar]->layerDelay = materialSetting["layer_delay"].toInt();
+        allBed[bedChar]->firstMinSpeed = setting["init_speed"].toInt();
     }
 
     if(setting.contains("height_offset")){
@@ -422,10 +429,7 @@ int PrintScheduler::readyForPrintStart(char bedChar,QString materialName){
         allBed[bedChar]->setLedOffset(setting["led_offset"].toDouble() * 10);
         qDebug() << "led_offset_custom" << setting["led_offset"].toInt();
     }
-    if(setting.contains("contraction_ratio")){
-        qDebug() << setting["contraction_ratio"].toDouble();
-        emit sendToQmlSetImageScale(setting["contraction_ratio"].toDouble());
-    }
+
 
     bedSerialPort->setReadEnable(true);
     scheduleLock.unlock();
@@ -438,8 +442,11 @@ void PrintScheduler::receiveFromQmlBedPrint(QChar bedChar,QString path,QString m
 
     allBedPath[bedName] = path;
 
-    if(readyForPrintStart(bedName,materialName) != 0){
-        qDebug() << "hello world";
+    int e =0;
+    e = readyForPrintStart(bedName,materialName);
+    if(e != 0){
+        emit sendToQmlPrintError();
+        qDebug() << "error" << e;
         return;
     }
     receiveFromQmlBedPrintStart(bedChar);

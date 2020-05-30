@@ -10,6 +10,7 @@ Item {
     property string currentPath
     property string currentParentName
     property string selectedFileName : ""
+    property string mediaURL: "file:///media/pi"
 
     FontLoader{
         id: openSansSemibold
@@ -76,14 +77,20 @@ Item {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if(folderModel.folder.toString() !== "file:///media"){
+                    if(folderModel.folder.toString() !== mediaURL){
                         currentParentName = basename(folderModel.folder.toString())
                         currentPath = ""
                         selectedFileName = ""
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
                         fileSelectList.update()
-                        parentDirText.text = basename(folderModel.folder.toString())
+
+                        if(folderModel.folder.toString() === mediaURL){
+                            parentDirText.text = " "
+                        }
+                        else{
+                            parentDirText.text = basename(folderModel.folder.toString())
+                        }
 //                        parentDirText.text = fileSelectList.indexAt(0).filename
                     }
                 }
@@ -179,6 +186,9 @@ Item {
             }
             MouseArea{
                 anchors.fill: parent
+                onClicked: {
+                    fileSelectList.flick(0,500)
+                }
             }
         }
         Rectangle{
@@ -204,6 +214,9 @@ Item {
             }
             MouseArea{
                 anchors.fill: parent
+                onClicked: {
+                    fileSelectList.flick(0,-500)
+                }
             }
         }
     }
@@ -270,7 +283,7 @@ Item {
         }
     }
     function resetPath(){
-        folderModel.folder = "file:///media"
+        folderModel.folder = mediaURL
         parentDirText.text = ""
         fileSelectList.update()
         console.debug(folderModel.folder)
