@@ -238,7 +238,7 @@ int PrintScheduler::readyForPrintStart(QString materialName,QString path){
     }
 
     _bedControl->maxHeight = _bedControl->defaultHeight + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
-    _bedControl->setLedOffset(PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() * 10);
+//    _bedControl->setLedOffset(PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() * 10);
 
     if(!setting.contains("total_layer")){
         error = -3;
@@ -270,6 +270,8 @@ int PrintScheduler::readyForPrintStart(QString materialName,QString path){
         error = -3;
     }else if(!materialSetting.contains("layer_delay")){
         error = -3;
+    }else if(!materialSetting.contains("led_offset")){
+        error = -1;
     }
 
     if(setting["total_layer"].toInt() > (dirCount - 1)){
@@ -312,6 +314,14 @@ int PrintScheduler::readyForPrintStart(QString materialName,QString path){
 
     emit sendToQmlSetImageScale(materialSetting["contraction_ratio"].toDouble());
 
+    double led = (PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() / 100) *  materialSetting["led_offset"].toDouble();
+
+    _bedControl->setLedOffset(led * 10);
+    qDebug() << "led" << PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble();
+    qDebug() << "led" << (PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() / 100);
+    qDebug() << "led" << materialSetting["led_offset"].toDouble();
+    qDebug() << "led" << (PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() / 100) *  materialSetting["led_offset"].toDouble();
+    qDebug() << "led" << led;
 
     if(setting.contains("first_accel_speed")){
         _bedControl->firstAccelSpeed = setting["first_accel_speed"].toInt();
@@ -338,11 +348,6 @@ int PrintScheduler::readyForPrintStart(QString materialName,QString path){
         _bedControl->maxHeight = _bedControl->defaultHeight + setting["height_offset"].toInt();
         qDebug() << "height_offset_custom" << setting["height_offset"].toInt();
     }
-    if(setting.contains("led_offset")){
-        _bedControl->setLedOffset(setting["led_offset"].toDouble() * 10);
-        qDebug() << "led_offset_custom" << setting["led_offset"].toInt();
-    }
-
 
     bedSerialPort->setReadEnable(true);
     return 0;

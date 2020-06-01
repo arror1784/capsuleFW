@@ -5,8 +5,8 @@ Item {
     width: 480
     height: 320
 
-    property var maxLEDBrightness: 100.0
-    property var minLEDBrightness: 60.0
+    property var maxLEDBrightness: 120.0
+    property var minLEDBrightness: 80.0
     property var currentLEDBrightness: 0.0
 
     FontLoader{
@@ -252,7 +252,7 @@ Item {
         radius: 8
 
         Text {
-            text: qsTr("Save Height Offset")
+            text: qsTr("Save LED Offset")
             color: "#FFFFFF"
             font.family: openSansSemibold.name
             font.pixelSize: 20
