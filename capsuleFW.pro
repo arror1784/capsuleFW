@@ -3,7 +3,7 @@ QT += qml
 QT += serialport
 QT += svg
 QT += network
-#QT += websockets
+QT += websockets
 
 CONFIG += c++11
 #CONFIG += c++1z
@@ -19,14 +19,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        bedcontrol.cpp \
-        bedserialport.cpp \
-        logger.cpp \
-        main.cpp \
-#    networkcontrol.cpp \
-        printscheduler.cpp \
-        printsetting.cpp \
-#        websocketclient.cpp
+    bedcontrol.cpp \
+    bedserialport.cpp \
+    logger.cpp \
+    main.cpp \
+    networkcontrol.cpp \
+    printscheduler.cpp \
+    printsetting.cpp \
+    websocketclient.cpp
 
 RESOURCES += qml.qrc \
     font.qrc \
@@ -48,7 +48,7 @@ HEADERS += \
     bedserialport.h \
     common.h \
     logger.h \
-#    networkcontrol.h \
+    networkcontrol.h \
     printscheduler.h \
     printsetting.h \
-#    websocketclient.h
+    websocketclient.h

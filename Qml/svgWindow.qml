@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Window 2.11
 import QtQml 2.0
 
@@ -15,26 +15,25 @@ Window {
     y: screen.virtualY
 //    flags: Qt.WindowStaysOnTopHint
 
-//    Rectangle{
-//        width: parent.width
-//        height: parent.height
-//        color: "#000000"
-        Image{
-            id: printImage
-            width: 2560
-            height: 1440
+    Image{
+        id: printImage
+        width: 2560
+        height: 1440
+//        asynchronous: true
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
-            anchors.centerIn: parent
+        anchors.centerIn: parent
 //            anchors.fill: parent
 
-            visible: true
+        visible: true
 
-            fillMode: Image.PreserveAspectCrop
+        fillMode: Image.PreserveAspectCrop
 
-            rotation: 90
+        rotation: 90
+        onStatusChanged: {
+            if (printImage.status === Image.Ready) console.log('Loaded')
         }
-//    }
+    }
     MouseArea{
         anchors.fill: parent
         cursorShape: Qt.BlankCursor
@@ -42,13 +41,12 @@ Window {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlChangeImage:{
+        onSendToQmlChangeImage: function onSendToQmlChangeImage(imagePath){
             console.log(imagePath)
             printImage.source = imagePath
         }
-        onSendToQmlSetImageScale:{
+        onSendToQmlSetImageScale: function onSendToQmlSetImageScale(value){
             printImage.scale = value
-            console.debug(value)
         }
     }
 }

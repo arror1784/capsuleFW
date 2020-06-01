@@ -19,6 +19,7 @@ private slots:
 
 private:
     QWebSocket m_webSocket;
+    QString socket_name;
     QUrl m_url;
     bool m_debug;
 

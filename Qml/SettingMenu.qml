@@ -153,6 +153,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                ipPopup.open()
             }
         }
     }
@@ -230,6 +231,9 @@ Item {
                 stackView.pop(StackView.Immediate)
             }
         }
+    }
+    IpPopup{
+        id: ipPopup
     }
 }
 

@@ -34,11 +34,8 @@
 #define BED_WORK                    1
 #define BED_NOT_WORK                2
 #define BED_PAUSE                   3
-#define BED_INIT                    4
-#define BED_FINISH                  5
 #define BED_FINISH_WORK             6
 #define BED_PAUSE_WORK              7
-#define BED_ERROR                   8
 #define BED_ERROR_WORK              9
 
 #define DLP_STATUS_ON               0x01

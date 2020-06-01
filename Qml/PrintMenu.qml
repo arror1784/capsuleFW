@@ -6,7 +6,10 @@ Item {
     width: 480
     height: 320
 
-    property int time: 0
+    property int timesec: 0
+    property int timemin: 0
+    property double startTime: 0
+    property int ct: 0
     property bool waitPopupOpened: false
 
     FontLoader{
@@ -55,7 +58,8 @@ Item {
                 font.pixelSize: 15
             }
             Text {
-                text: Math.ceil((time + 1) / 60)-1 + "min " + time % 60 + "sec"
+                id: timeText
+                text: timemin + "min " + timesec + "sec"
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true
@@ -133,7 +137,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlBedPrintPause('A')
+                scheduler.receiveFromQmlBedPrintPause()
                 quitPopup.open()
                 quitPopup.setButtonEnabled(false)
             }
@@ -148,26 +152,45 @@ Item {
     QuitPopup{
         id: quitPopup
         onPrintResume: {
-            scheduler.receiveFromQmlBedPrintStart('A')
-            close()
+            quitPopup.close()
+            scheduler.receiveFromQmlBedPrintStart()
         }
         onPrintStop: {
-            scheduler.receiveFromQmlBedPrintFinish('A')
+            quitPopup.close()
+            scheduler.receiveFromQmlBedPrintFinish()
             waitPopup.open()
             waitPopupOpened = true
-            close()
         }
     }
 
     Timer{
-        interval: 1000; running: true; repeat: true
-        onTriggered: time++
+        id: timeTimer
+        interval: 50; running: false; repeat: true
+        onRunningChanged: {
+           if(running){
+               var date = new Date;
+               startTime = date.getTime()
+           }
+        }
+        onTriggered: {
+            var date = new Date();
+            var currentDuration = date.getTime() - startTime
+            var currentDate = new Date(currentDuration)
+            timesec = currentDate.getSeconds()
+            timemin = currentDate.getMinutes()
+        }
     }
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlUpdateProgress :{
-            setProgressValue(Math.ceil((currentIndex - 1) /maxIndex * 100))
+        onSendToQmlUpdateProgress : function onSendToQmlUpdateProgress(currentIndex,maxIndex){
+            setProgressValue(Math.ceil( (currentIndex) / maxIndex * 100))
+        }
+        onSendToQmlInit :{
+            timeTimer.start()
+        }
+        onSendToQmlFinish :{
+            timeTimer.stop()
         }
         onSendToQmlPauseFinish :{
             quitPopup.setButtonEnabled(true)
@@ -185,6 +208,7 @@ Item {
     }
     function clear(){
         progressBar.setCurrentValue(0)
-        time = 0
+        timesec = 0
+        timemin = 0
     }
 }

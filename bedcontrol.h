@@ -9,15 +9,14 @@
 #include <QDateTime>
 
 #include "common.h"
-#include "bedserialport.h"
 
-class BedControl : public QThread
+class BedSerialport;
+class PrintScheduler;
+class BedControl: public QObject
 {
     Q_OBJECT
 public:
-    BedControl(char bedChar,BedSerialport* bedSerialPor1t);
-
-    void (BedControl::*current_function)() = nullptr;
+    BedControl(char bedChar,BedSerialport* bedSerialPort,PrintScheduler* sched);
 
     void setAccleSpeed(int val,int mode);
     void setDecelSpeed(int val,int mode);
@@ -51,21 +50,21 @@ signals:
     void sendToPrintScheduler(char bedChar,int state);
 
 public slots:
-    void receiveFromBedSerialPort(char bedChar);
-    void receiveFromPrintScheduler(char bedChar,int receive);
-    void handleTimeout();
-    void getBedState(char bedChar,int* statePtr);
-protected:
-    void run()override;
+    void receiveFromBedSerialPort();
 
 public:
+    void receiveFromPrintScheduler(int receive);
+
+
     char bedChar;
     int defaultHeight = 102500; //100//102//97600//102700//102400
     int maxHeight = 0;
     int LayerHeight = 100;
     int ZHopHeight = 10000;
-    int curingTime = 2000;
-    int bedCuringTime = 15000;
+    unsigned int curingTime = 2000;
+
+    unsigned int bedCuringTime = 15000;
+
     int bedState = PRINT_MOVE_NULL;
     int printingState = 0;
 
@@ -86,18 +85,20 @@ public:
 
     int ledOffset = 1000;
 
-    int layerDelay = 1000;
+    unsigned int layerDelay = 1000;
 
 //    double currentPosition = 0.0;
 //    double pauseMoveMilli = 0.0;
 
     QTimer m_timer;
-    BedSerialport* bedSerialPort = nullptr;
-    QMutex bedControlLock;
     //int motor_accel;
     //int motor_deccel;
 
 private:
+    PrintScheduler *_sched;
+    BedSerialport *_bedSerialPort = nullptr;
+    QMutex bedControlLock;
+
 };
 
 #endif // BEDCONTROL_H

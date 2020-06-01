@@ -16,7 +16,8 @@
 #include "common.h"
 #include "logger.h"
 
-
+class BedControl;
+class PrintScheduler;
 union Int2char{
 
     int32_t int32;
@@ -46,10 +47,9 @@ class BedSerialport : public QObject
 {
     Q_OBJECT
 public:
-    BedSerialport(QString portPath);
-
+    BedSerialport(QString portPath, PrintScheduler* sched);
+    void setBedControl(BedControl* ctrl);
 signals:
-    void sendSignalToBedControl(char bedChar);
     void sendToPrintScheduler(char bedChar,int state);
     void abc();
 
@@ -74,6 +74,8 @@ private:
     QMutex serialMutex;
 
     bool serialEnable = true;
+    BedControl* _bedControl;
+    PrintScheduler* _sched;
 
 public:
     QSerialPort *m_serialPort = nullptr;

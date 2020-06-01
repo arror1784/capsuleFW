@@ -6,7 +6,8 @@ Item {
     width: 480
     height: 320
 
-    property int time: 1
+    property int timesec: 0
+    property int timemin: 0
 
     FontLoader{
         id: openSansSemibold
@@ -79,7 +80,7 @@ Item {
                 elide: Text.ElideRight
             }
             Text {
-                text: Math.ceil((time + 1) / 60) - 1 + "min " + time % 60 + "sec"
+                text: timemin + "min " + timesec + "sec"
                 font.family: openSansSemibold.name
                 font.pixelSize: 23
                 font.bold: true
@@ -113,7 +114,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 stackView.get(3).clear()
-                scheduler.receiveFromQmlBedPrint('A',stackView.get(1).currentPath,stackView.get(2).materialName)
+                scheduler.receiveFromQmlBedPrint(stackView.get(1).currentPath,stackView.get(2).materialName)
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -149,6 +150,7 @@ Item {
         }
     }
     Component.onCompleted: {
-        time = stackView.get(3).time
+        timesec = stackView.get(3).timesec
+        timemin = stackView.get(3).timemin
     }
 }

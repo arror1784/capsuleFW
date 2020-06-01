@@ -15,7 +15,10 @@ Window {
     StackView{
         id: stackView
         anchors.fill: parent
-        initialItem: MainMenu{
+        initialItem: /*PrintMenu{
+            id:printMenu
+        }*/
+            MainMenu{
             id: mainMenu
         }
     }
@@ -25,14 +28,7 @@ Window {
             stackView.pop(mainMenu,StackView.Immediate)
         }
     }
-//    Button{
-//        width: 28
-//        height: 36
-//        opacity: 0
-//        onClicked: {
-//            ipPopup.open()
-//        }
-//    }
+
     Connections{
         id: schedulerConnection
         target: scheduler

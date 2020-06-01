@@ -18,5 +18,6 @@
         <file>Qml/ErrorPopup.qml</file>
         <file>Qml/SettingMenu.qml</file>
         <file>Qml/LEDCalibration.qml</file>
+        <file>Qml/IpPopup.qml</file>
     </qresource>
 </RCC>

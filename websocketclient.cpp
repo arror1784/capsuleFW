@@ -21,11 +21,22 @@ void WebSocketClient::onConnected()
 
 void WebSocketClient::onTextMessageReceived(QString message)
 {
-    if (m_debug)
-        qDebug() << "Message received:" << message;
-    
-    
-    
+    QJsonObject obj;
+
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
+
+    if(!doc.isNull()){
+        if(doc.isObject()){
+            obj = doc.object();
+        }else{
+            return;
+        }
+    }else{
+        return;
+    }
+    if(obj["type"].toString() == "websocket_name"){
+        this->socket_name = obj["name"].toString();
+    }
     m_webSocket.close();
 }
 

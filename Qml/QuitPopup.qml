@@ -17,6 +17,7 @@ Rectangle {
     signal printResume()
 
     property bool buttonEnbled: false
+    property string closeCode: ""
 
     FontLoader{
         id: openSansSemibold
@@ -79,6 +80,7 @@ Rectangle {
                 anchors.fill: parent
                 enabled: buttonEnbled
                 onClicked: {
+                    buttonEnbled = false
                     printResume()
                 }
             }
@@ -110,6 +112,7 @@ Rectangle {
                 anchors.fill: parent
                 enabled: buttonEnbled
                 onClicked: {
+                    buttonEnbled = false
                     printStop()
                 }
             }

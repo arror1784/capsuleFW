@@ -140,7 +140,7 @@ Item {
     PrintingPopup{
         id: printingPopup
         onStartPrintingButtonClicked:{
-            scheduler.receiveFromQmlBedPrint('A',stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
+            scheduler.receiveFromQmlBedPrint(stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
             console.debug(stackView.get(1).currentPath)
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
@@ -148,7 +148,8 @@ Item {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlInsertMaterialList :{
+        onSendToQmlInsertMaterialList: function onSendToQmlInsertMaterialList(name){
+            console.log(name)
             inserMaterialList(name)
         }
     }

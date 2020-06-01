@@ -1,7 +1,9 @@
 #include "bedserialport.h"
+#include "bedcontrol.h"
+#include "printscheduler.h"
 
-BedSerialport::BedSerialport(QString portPath) :
-    m_standardOutput(stdout)
+BedSerialport::BedSerialport(QString portPath, PrintScheduler *sched):
+m_standardOutput(stdout), _sched(sched)
 {
 
     m_serialPort = new QSerialPort(portPath);
@@ -12,16 +14,23 @@ BedSerialport::BedSerialport(QString portPath) :
 
         Logger::GetInstance()->write(portPath + "usb open error");
         serialEnable = false;
+
     }else{
         qDebug() << portPath << "usb open sucess";
         Logger::GetInstance()->write(portPath + "usb open sucess");
         m_serialPort->readAll();
+
         connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
         connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
-        connect(&m_timer, &QTimer::timeout, this, &BedSerialport::handleTimeout);
+
         serialEnable = true;
     }
-//    m_timer.start(5000);
+    //    m_timer.start(5000);
+}
+
+void BedSerialport::setBedControl(BedControl *ctrl)
+{
+    _bedControl = ctrl;
 }
 
 void BedSerialport::handleReadyRead()
@@ -61,21 +70,10 @@ void BedSerialport::handleReadyRead()
             break;
         case 101:
             qDebug() << "receive Data : move ok";
-            emit sendSignalToBedControl('A');
-            emit sendToPrintScheduler('A',MOVE_OK);
             Logger::GetInstance()->write(QString("receive Data : move ok"));
+            _bedControl->receiveFromBedSerialPort();
+            _sched->receiveFromSerialPort(MOVE_OK);
             break;
-//        case 102:
-//            temp.clear();
-//            qDebug() << "receive Data : short button ok";
-//            Logger::GetInstance()->write(QString("receive Data : short button ok"));
-//            emit sendToPrintScheduler('A',SHORT_BUTTON);
-//            break;
-//        case 103:
-//            qDebug() << "receive Data : long button ok";
-//            Logger::GetInstance()->write(QString("receive Data : long button ok"));
-//            emit sendToPrintScheduler('A',LONG_BUTTON);
-//            break;
         }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
     }
@@ -111,7 +109,7 @@ void BedSerialport::handleError(QSerialPort::SerialPortError serialPortError)
 void BedSerialport::parsingResponse(QByteArray array){
 
     if(array.endsWith("OK")){
-        emit sendSignalToBedControl(array[5]);
+        _bedControl->receiveFromBedSerialPort();
     }
     qDebug() << array;
     return;

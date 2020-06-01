@@ -16,11 +16,11 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
-#include "bedcontrol.h"
-#include "bedserialport.h"
 #include "iostream"
 #include "logger.h"
 
+class BedControl;
+class BedSerialport;
 class PrintScheduler : public QThread
 {
     Q_OBJECT
@@ -29,41 +29,49 @@ public:
     PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
 
     void initBed();
+    void bedFinish();
+    void bedError();
 
-    void scheduler();
 
-    int imageChange(char bedChar);
+    void printLayer();
+
+    int imageChange();
     void printBed();
-    void addPrintingBed(char name,QString searchPath);
+    void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
     int copySVGPath(QString src, QString dst);
 
-    int readyForPrintStart(char bedChar,QString materialName); // info.json
+    int readyForPrintStart(QString materialName,QString path); // info.json
 
 signals:
-    void sendToBedControl(char bedChar,int receive);
     void sendToQmlChangeImage(QString imagePath);
     void sendToQmlSetImageScale(double value);
 
     void sendToQmlPauseFinish();
     void sendToQmlPrintFinish();
     void sendToQmlUpdateProgress(int currentIndex,int maxIndex);
+
+    void sendToQmlInit();
+    void sendToQmlFinish();
+
     void sendToQmlInsertMaterialList(QString name);
     void sendToQmlMoveOk();
     void sendToSerialPortCommand(QString);
     void sendToQmlPrintError();
 
 public slots:
-    void receiveFromBedControl(char bedChar,int state);
-    void receiveFromSerialPort(char bedChar,int state);
+    void receiveFromBedControl(int state);
+    void receiveFromSerialPort(int state);
 
-    void receiveFromQmlBedPrint(QChar bedChar,QString path,QString materialName);
+    void receiveFromQmlBedPrint(QString path,QString materialName);
 
-    void receiveFromQmlBedPrintStart(QChar bedChar);
-    void receiveFromQmlBedPrintFinish(QChar bedChar);
-    void receiveFromQmlBedPrintFinishError(QChar bedChar);
-    void receiveFromQmlBedPrintPause(QChar bedChar);
+    void receiveFromQmlBedPrintStart();
+    void receiveFromQmlBedPrintFinish();
+    void receiveFromQmlBedPrintFinishError();
+    void receiveFromQmlBedPrintPause();
+
     void receiveFromQmlUpdateMaterial();
+
     QVariant receiveFromQmlGetPrinterOption(QString key);
     void receiveFromQmlSetPrinterOption(QString key,double value);
     void receiveFromQmlSetPrinterOption(QString key,int value);
@@ -71,36 +79,32 @@ public slots:
     QVariant receiveFromQmlGetMaterialOption(QString material,QString key);
     QVariant receiveFromQmlGetMaterialOptionFromPath(QString path,QString key);
 
-    void receiveFromQmlGoHome(QChar bedChar);
-    void receiveFromQmlAutoHome(QChar bedChar);
-    void receiveFromQmlMoveMicro(QChar bedChar,int micro);
-    void receiveFromQmlMoveMaxHeight(QChar bedChar);
+    void receiveFromQmlGoHome();
+    void receiveFromQmlAutoHome();
+    void receiveFromQmlMoveMicro(int micro);
+    void receiveFromQmlMoveMaxHeight();
 
 
 public:
-    QMap<char,BedControl*> allBed;
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
+
 protected:
     void run()override;
 private:
-    unsigned int isDLPWork = false;
-    unsigned int workingBedCount = 0;
+    BedControl* _bedControl;
+
     int bedCuringLayer = 5;
-    char DLPWorked = 0x00;
 
     QString printUSBFileName = "capsulePrintFolderTest";
 
-    QMutex scheduleLock;
-
-    QMap<char,QString> allBedPath;
-    QMap<char,QString> allBedUSBSearchPath;
-
-    QMap<char,int> allBedPrintImageNum;
-    QMap<char,int> allBedImageLoaded;
-    QMap<char,int> allBedWork;
-    QMap<char,int> allBedMoveFinished;
-    QMap<char,int> allBedMaxPrintNum;
+    QString _bedPath;
+    QString _fileExtension = ".svg";
+    int _bedPrintImageNum;
+    int _bedImageLoaded;
+    int _bedWork;
+    int _bedMoveFinished;
+    int _bedMaxPrintNum;
 
 };
 
