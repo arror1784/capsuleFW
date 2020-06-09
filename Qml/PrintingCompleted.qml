@@ -114,7 +114,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 stackView.get(3).clear()
-                scheduler.receiveFromQmlBedPrint(stackView.get(1).currentPath,stackView.get(2).materialName)
+                scheduler.receiveFromQmlBedPrintAgain()
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -145,6 +145,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                scheduler.receiveFromQmlBusySet(false)
                 stackView.pop(mainMenu,StackView.Immediate)
             }
         }

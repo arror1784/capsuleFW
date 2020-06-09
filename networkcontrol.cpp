@@ -10,9 +10,7 @@ void NetworkControl::updateIpAddressList(){
 
 //    QList<QNetworkInterface> ipAddressesList = QNetworkInterface::allInterfaces();
 //    ipAddress.clear();
-//    qDebug() << ipAddressesList.length();
 ////        ipAddress.insert(i,ipAddressesList.at(i).name() + " : " +  ipAddressesList.at(i).addressEntries().at(0).ip().toString());
-//        qDebug() << ipAddressesList.at(i);
 //    }
     const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();

@@ -228,6 +228,7 @@ Item {
             anchors.leftMargin: 0
             anchors.fill: parent
             onClicked: {
+                scheduler.receiveFromQmlBusySet(false)
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -235,15 +236,8 @@ Item {
     IpPopup{
         id: ipPopup
     }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
+    }
 }
-
-
-
-
-
-
-
-/*##^## Designer {
-    D{i:3;anchors_y:16}D{i:23;anchors_height:112;anchors_width:215;anchors_x:250;anchors_y:16}
-}
- ##^##*/

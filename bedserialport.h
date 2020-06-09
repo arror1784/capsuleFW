@@ -62,8 +62,6 @@ public slots:
     void sendByteCommand(QByteArray buffer);
     QByteArray transData(commandFormat_t );
 
-    void setReadEnable(bool enable);
-
 private:
     QByteArray m_readData;
     QTextStream m_standardOutput;
@@ -71,9 +69,7 @@ private:
 
     QByteArray arr;
     QByteArray lastcommand;
-    QMutex serialMutex;
 
-    bool serialEnable = true;
     BedControl* _bedControl;
     PrintScheduler* _sched;
 

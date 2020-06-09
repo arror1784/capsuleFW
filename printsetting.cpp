@@ -2,6 +2,8 @@
 
 #include <QFile>
 #include <QJsonArray>
+#include <QObject>
+#include <QDebug>
 
 PrintSetting* PrintSetting::_ins = nullptr;
 //const QString PrintSetting::filePath = QString("/opt/capsuleFW/capsuleSetting.json");
@@ -41,7 +43,7 @@ void PrintSetting::saveFile(){
     QFile saveFile(filePath);
 
     if(!saveFile.open(QIODevice::WriteOnly)){
-//        qDebug() << "save file open error";
+        qDebug() << "save file open error";
     }
     QJsonDocument saveDoc(setting);
 

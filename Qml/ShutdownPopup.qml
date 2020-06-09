@@ -13,11 +13,7 @@ Rectangle {
 
     visible: false
 
-    signal printStop()
-    signal printResume()
-
-    property bool buttonEnbled: false
-    property string closeCode: ""
+    signal back()
 
     FontLoader{
         id: openSansSemibold
@@ -43,19 +39,17 @@ Rectangle {
         modal: true
         focus: true
 
-        closePolicy: Popup.NoAutoClose
-
         Text {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("Are you sure you want to quit printing")
+            text: qsTr("Are you sure you want to exit?")
             font.family: openSansRegular.name
             font.pixelSize: 20
             color: "#474747"
         }
 
         Rectangle{
-            id: resumeButton
+            id: backButton
             width: 185
             height: 40
 
@@ -67,9 +61,9 @@ Rectangle {
             color: "#DCEAF3"
 
             radius:  8
-            opacity: buttonEnbled ? 1 : 0.7
+
             Text {
-                text: qsTr("Resume")
+                text: qsTr("Back")
                 color: "#666666"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -78,14 +72,14 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                enabled: buttonEnbled
                 onClicked: {
-                   popupBack.printResume()
+                    back()
+                    close()
                 }
             }
         }
         Rectangle{
-            id: quitButton
+            id: exitButton
 
             width: 185
             height: 40
@@ -98,9 +92,9 @@ Rectangle {
             color: "#00C6EA"
 
             radius: 8
-            opacity: buttonEnbled ? 1 : 0.5
+
             Text {
-                text: qsTr("Quit")
+                text: qsTr("exit")
                 color: "#FFFFFF"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -109,10 +103,8 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                enabled: buttonEnbled
                 onClicked: {
-                    buttonEnbled = false
-                    printStop()
+                    scheduler.receiveFromQmlShutdown()
                 }
             }
         }
@@ -123,13 +115,14 @@ Rectangle {
             popupBack.visible = false
         }
     }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
+    }
     function open(){
         popup.open()
     }
     function close(){
         popup.close()
-    }
-    function setButtonEnabled(aa){
-        buttonEnbled = aa
     }
 }

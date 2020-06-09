@@ -149,7 +149,6 @@ Item {
         id: schedulerConnection
         target: scheduler
         onSendToQmlInsertMaterialList: function onSendToQmlInsertMaterialList(name){
-            console.log(name)
             inserMaterialList(name)
         }
     }

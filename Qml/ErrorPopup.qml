@@ -15,8 +15,6 @@ Rectangle {
 
     signal back()
 
-    property bool buttonEnbled: false
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -51,7 +49,7 @@ Rectangle {
         }
 
         Rectangle{
-            id: resumeButton
+            id: backButton
             width: 185
             height: 40
 
@@ -63,7 +61,7 @@ Rectangle {
             color: "#DCEAF3"
 
             radius:  8
-            opacity: buttonEnbled ? 1 : 0.7
+
             Text {
                 text: qsTr("Back")
                 color: "#666666"

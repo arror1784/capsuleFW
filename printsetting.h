@@ -16,7 +16,7 @@ private:
     ~PrintSetting();
 
     static PrintSetting* _ins;
-    QString filePath = "/opt/capsuleFW/capsuleSetting.json";
+    const QString filePath = "/opt/capsuleFW/capsuleSetting.json";
 
     QJsonObject setting;
 

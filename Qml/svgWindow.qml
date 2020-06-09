@@ -31,7 +31,7 @@ Window {
 
         rotation: 90
         onStatusChanged: {
-            if (printImage.status === Image.Ready) console.log('Loaded')
+//            if (printImage.status === Image.Ready) console.log('Loaded')
         }
     }
     MouseArea{
@@ -46,6 +46,7 @@ Window {
             printImage.source = imagePath
         }
         onSendToQmlSetImageScale: function onSendToQmlSetImageScale(value){
+            console.log(value)
             printImage.scale = value
         }
     }

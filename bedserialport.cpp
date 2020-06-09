@@ -13,7 +13,6 @@ m_standardOutput(stdout), _sched(sched)
         qDebug() << portPath << "usb open error";
 
         Logger::GetInstance()->write(portPath + "usb open error");
-        serialEnable = false;
 
     }else{
         qDebug() << portPath << "usb open sucess";
@@ -23,7 +22,6 @@ m_standardOutput(stdout), _sched(sched)
         connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
         connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
 
-        serialEnable = true;
     }
     //    m_timer.start(5000);
 }
@@ -50,10 +48,6 @@ void BedSerialport::handleReadyRead()
             return;
         }
 
-        if(!serialEnable){
-            return;
-        }
-
         temp = arr.left(arr.indexOf(0x03,0) + 1);
         temp = temp.right(temp.size() - arr.indexOf(0x02,0));
 
@@ -73,6 +67,10 @@ void BedSerialport::handleReadyRead()
             Logger::GetInstance()->write(QString("receive Data : move ok"));
             _bedControl->receiveFromBedSerialPort();
             _sched->receiveFromSerialPort(MOVE_OK);
+            break;
+        case 200:
+            qDebug() << "receive Data : shutdown";
+            _sched->receiveFromSerialPort(SHUTDOWN);
             break;
         }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);
@@ -127,7 +125,6 @@ void BedSerialport::sendByteCommand(QByteArray buffer){
 }
 void BedSerialport::sendCommand(QString command){
 
-    serialMutex.lock();
     QString buff(command);
     QStringList parts = buff.split(' ');
     commandFormat_t data = {0};
@@ -159,7 +156,6 @@ void BedSerialport::sendCommand(QString command){
     Logger::GetInstance()->write("send command : " + buff);
 //    qDebug() << "send command : " + buff;
     sendByteCommand(transData(data));
-    serialMutex.unlock();
 }
 QByteArray BedSerialport::transData(commandFormat_t command){
     uint8_t buf[50] = {0};
@@ -204,8 +200,4 @@ QByteArray BedSerialport::transData(commandFormat_t command){
     qDebug() << "BedSerialPort send massage - G: " << command.G << " H: " << command.H << " A: " << command.A.int32 << " B: " << command.B.int32 << " C: " << command.C.int32 << " M: " << command.M.int32;
     QByteArray data((char*)buf,25);
     return data;
-}
-
-void BedSerialport::setReadEnable(bool enable){
-    serialEnable = enable;
 }

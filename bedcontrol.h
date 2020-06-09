@@ -27,7 +27,7 @@ public:
     void setDownDecelSpeed(int val);
 
     void setMaxSpeed(int val);
-    void setMinSpeed(int val);
+    void setInitSpeed(int val);
 
     void printDelay();
     void autoHome();
@@ -57,35 +57,32 @@ public:
 
 
     char bedChar;
-    int defaultHeight = 102500; //100//102//97600//102700//102400
     int maxHeight = 0;
     int LayerHeight = 100;
     int ZHopHeight = 10000;
+
+    int printingState = 0;
+
+    int defaultHeight = 68000; //100//102//97600//102700//102400
+
+    unsigned int layerDelay = 1000;
     unsigned int curingTime = 2000;
 
     unsigned int bedCuringTime = 15000;
 
-    int bedState = PRINT_MOVE_NULL;
-    int printingState = 0;
+private:
 
-    int maxSpeed = 150;
-    int minSpeed = 20;
+    int _maxSpeed = 150;
+    int _InitSpeed = 20;
 
-    int accelSpeed = 10;
-    int decelSpeed = 20;
-    int upAccelSpeed = 10;
-    int upDecelSpeed = 10;
-    int downAccelSpeed = 10;
-    int downDecelSpeed = 10;
-
-    int firstAccelSpeed = 10;
-    int firstDecelSpeed = 20;
-    int firstMaxSpeed = 150;
-    int firstMinSpeed = 20;
+    int _upAccelSpeed = 10;
+    int _upDecelSpeed = 10;
+    int _downAccelSpeed = 10;
+    int _downDecelSpeed = 10;
 
     int ledOffset = 1000;
 
-    unsigned int layerDelay = 1000;
+    int bedState = PRINT_MOVE_NULL;
 
 //    double currentPosition = 0.0;
 //    double pauseMoveMilli = 0.0;
@@ -94,7 +91,6 @@ public:
     //int motor_accel;
     //int motor_deccel;
 
-private:
     PrintScheduler *_sched;
     BedSerialport *_bedSerialPort = nullptr;
     QMutex bedControlLock;

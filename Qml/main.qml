@@ -15,18 +15,22 @@ Window {
     StackView{
         id: stackView
         anchors.fill: parent
-        initialItem: /*PrintMenu{
-            id:printMenu
-        }*/
-            MainMenu{
+        initialItem: MainMenu{
             id: mainMenu
         }
     }
     ErrorPopup{
         id: errorPopup
         onBack: {
+            scheduler.receiveFromQmlBusySet(false)
             stackView.pop(mainMenu,StackView.Immediate)
         }
+    }
+    BusyErrorPopup{
+        id: busyErrorPopup
+    }
+    ShutdownPopup{
+        id: shutDownPopup
     }
 
     Connections{
@@ -34,6 +38,12 @@ Window {
         target: scheduler
         onSendToQmlPrintError :{
             errorPopup.open()
+        }
+        onSendToQmlExitError :{
+            busyErrorPopup.open()
+        }
+        onSendToQmlExit:{
+            shutDownPopup.open()
         }
     }
 }

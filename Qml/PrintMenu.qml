@@ -9,8 +9,12 @@ Item {
     property int timesec: 0
     property int timemin: 0
     property double startTime: 0
+    property double pauseStartTime: 0
+    property double pauseDuration: 0
     property int ct: 0
     property bool waitPopupOpened: false
+
+    signal printStart()
 
     FontLoader{
         id: openSansSemibold
@@ -137,7 +141,11 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                var date = new Date();
+                pauseStartTime = date.getTime()
+
                 scheduler.receiveFromQmlBedPrintPause()
+
                 quitPopup.open()
                 quitPopup.setButtonEnabled(false)
             }
@@ -154,6 +162,7 @@ Item {
         onPrintResume: {
             quitPopup.close()
             scheduler.receiveFromQmlBedPrintStart()
+//            printMenu.printStart()
         }
         onPrintStop: {
             quitPopup.close()
@@ -174,7 +183,7 @@ Item {
         }
         onTriggered: {
             var date = new Date();
-            var currentDuration = date.getTime() - startTime
+            var currentDuration = date.getTime() - startTime - pauseDuration
             var currentDate = new Date(currentDuration)
             timesec = currentDate.getSeconds()
             timemin = currentDate.getMinutes()
@@ -184,7 +193,7 @@ Item {
         id: schedulerConnection
         target: scheduler
         onSendToQmlUpdateProgress : function onSendToQmlUpdateProgress(currentIndex,maxIndex){
-            setProgressValue(Math.ceil( (currentIndex) / maxIndex * 100))
+            setProgressValue(Math.round( (currentIndex ) / maxIndex * 100))
         }
         onSendToQmlInit :{
             timeTimer.start()
@@ -200,6 +209,7 @@ Item {
                 waitPopupOpened = false
                 waitPopup.close()
             }
+            quitPopup.close()
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
         }
     }

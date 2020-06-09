@@ -103,7 +103,7 @@ Rectangle {
             }
         }
         Rectangle{
-            id: startButton
+            id: closeButton
 
             width: 185
             height: 40

@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     NetworkControl nc;
 //    WebSocketClient wsc(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
 
+
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
 
@@ -42,6 +43,8 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
+
+    printScheduler->engine = &engine;
 
     printScheduler->start();
 

@@ -53,6 +53,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                scheduler.receiveFromQmlBusySet(true)
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
             }
         }
@@ -102,6 +103,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                scheduler.receiveFromQmlBusySet(true)
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/SettingMenu.qml"),StackView.Immediate)
             }
         }
@@ -148,5 +150,9 @@ Item {
                 console.debug("update clicked")
             }
         }
+    }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
     }
 }

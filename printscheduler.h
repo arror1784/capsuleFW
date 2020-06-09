@@ -16,6 +16,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
+#include <QQmlApplicationEngine>
+
 #include "iostream"
 #include "logger.h"
 
@@ -39,9 +41,15 @@ public:
     void printBed();
     void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
-    int copySVGPath(QString src, QString dst);
 
-    int readyForPrintStart(QString materialName,QString path); // info.json
+    int copyProject(QString path);
+    int copyFilesPath(QString src, QString dst);
+    int setupForPrint(QString materialName);
+
+//    int readyForPrintStart(QString materialName,QString path); // info.json
+
+    void receiveFromBedControl(int state);
+    void receiveFromSerialPort(int state);
 
 signals:
     void sendToQmlChangeImage(QString imagePath);
@@ -59,11 +67,17 @@ signals:
     void sendToSerialPortCommand(QString);
     void sendToQmlPrintError();
 
+    void sendToQmlExitError();
+    void sendToQmlExit();
+
 public slots:
-    void receiveFromBedControl(int state);
-    void receiveFromSerialPort(int state);
+
+    void receiveFromQmlBusySet(bool bs);
+
+    void receiveFromQmlShutdown();
 
     void receiveFromQmlBedPrint(QString path,QString materialName);
+    void receiveFromQmlBedPrintAgain();
 
     void receiveFromQmlBedPrintStart();
     void receiveFromQmlBedPrintFinish();
@@ -89,22 +103,31 @@ public:
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
 
+    QQmlApplicationEngine *engine;
+
 protected:
     void run()override;
+
 private:
     BedControl* _bedControl;
 
     int bedCuringLayer = 5;
 
+    QString _fileExtension = ".png";
+
     QString printUSBFileName = "capsulePrintFolderTest";
 
     QString _bedPath;
-    QString _fileExtension = ".svg";
+
+    QString _printName;
+    QString _materialName;
+
     int _bedPrintImageNum;
-    int _bedImageLoaded;
     int _bedWork;
     int _bedMoveFinished;
     int _bedMaxPrintNum;
+
+    bool _isBusy;
 
 };
 

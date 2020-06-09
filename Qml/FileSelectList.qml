@@ -245,6 +245,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                scheduler.receiveFromQmlBusySet(false)
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -276,7 +277,6 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(selectedFileName === "info.json"){
-//                    console.debug(selectedFileN   ame)
                     stackView.push(Qt.resolvedUrl("qrc:/Qml/MaterialSelectList.qml"),StackView.Immediate)
                 }
             }
@@ -286,14 +286,12 @@ Item {
         folderModel.folder = mediaURL
         parentDirText.text = ""
         fileSelectList.update()
-//        console.debug(folderModel.folder)
     }
     function resetCurrentIndex(){
         fileSelectList.currentIndex = -1
     }
     function changeFolderPath(path){
         folderModel.folder = "file://" + path
-//        console.debug("folderChange")
     }
     function basename(str)
     {
@@ -302,6 +300,5 @@ Item {
     Component.onCompleted: {
         resetPath()
         resetCurrentIndex()
-//        console.debug(folderModel.status)
     }
 }

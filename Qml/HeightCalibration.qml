@@ -101,7 +101,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro('A',-100)
+                scheduler.receiveFromQmlMoveMicro(-100)
                 maxHightOffset += -100
             }
         }
@@ -142,7 +142,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro('A',100)
+                scheduler.receiveFromQmlMoveMicro(100)
                 maxHightOffset += 100
             }
         }
@@ -171,7 +171,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro('A',-10)
+                scheduler.receiveFromQmlMoveMicro(-10)
                 maxHightOffset += -10
             }
         }
@@ -212,7 +212,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro('A',10)
+                scheduler.receiveFromQmlMoveMicro(10)
                 maxHightOffset += 10
             }
         }
@@ -246,7 +246,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromQmlGoHome('A')
+                scheduler.receiveFromQmlGoHome()
             }
         }
     }
@@ -280,7 +280,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromQmlGoHome('A')
+                scheduler.receiveFromQmlGoHome()
                 scheduler.receiveFromQmlSetPrinterOption("height_offset",maxHightOffset)
             }
         }
@@ -306,7 +306,7 @@ Item {
             }else if(goAutoHome){
                 goAutoHome = false
                 goMaxheight = true
-                scheduler.receiveFromQmlMoveMaxHeight('A')
+                scheduler.receiveFromQmlMoveMaxHeight()
             }
         }
     }
@@ -319,8 +319,8 @@ Item {
         goAutoHome = true
 
         waitPopup.open()
-        scheduler.receiveFromQmlAutoHome('A')
-//        scheduler.receiveFromQmlMoveMaxHeight('A')
+        scheduler.receiveFromQmlAutoHome()
+//        scheduler.receiveFromQmlMoveMaxHeight()
         maxHightOffset = scheduler.receiveFromQmlGetPrinterOption("height_offset")
     }
 }
