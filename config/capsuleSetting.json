@@ -51,7 +51,7 @@
     "default_height": 68000,
     "down_accel_speed": 50,
     "down_decel_speed": 50,
-    "height_offset": 1150,
+    "height_offset": 0,
     "init_speed": 100,
     "layer_delay": 500,
     "led_offset": 100,
