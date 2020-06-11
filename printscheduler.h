@@ -21,6 +21,7 @@
 #include "iostream"
 #include "logger.h"
 
+class WebSocketClient;
 class BedControl;
 class BedSerialport;
 class PrintScheduler : public QThread
@@ -104,6 +105,8 @@ public:
     QString printFilePath;
 
     QQmlApplicationEngine *engine;
+
+    WebSocketClient *wsClient;
 
 protected:
     void run()override;
