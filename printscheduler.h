@@ -106,13 +106,13 @@ public:
 
     QQmlApplicationEngine *engine;
 
-    WebSocketClient *wsClient;
 
 protected:
     void run()override;
 
 private:
     BedControl* _bedControl;
+    WebSocketClient *_wsClient;
 
     int bedCuringLayer = 5;
 

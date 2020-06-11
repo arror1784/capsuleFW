@@ -19,7 +19,7 @@
 #include "printsetting.h"
 #include "logger.h"
 #include "networkcontrol.h"
-//#include "websocketclient.h"
+#include "websocketclient.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,8 +33,6 @@ int main(int argc, char *argv[])
     QQmlContext* ctx = engine.rootContext();
 
     NetworkControl nc;
-//    WebSocketClient wsc(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
-
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);

@@ -44,11 +44,6 @@ void PrintScheduler::addPrintingBed(char name){
     bedSerialPort->sendCommand("H50 A0 B100 C0");
 
     bedSerialPort->sendCommand("H10 A0 B100 C0");
-
-//    QQuickView view(QUrl(QStringLiteral("qrc:/Qml/QuitPopup.qml")));
-//    QObject *item = view.rootObject();
-
-//    QObject::connect(item,SIGNAL(printResume()),this,SLOT(receiveFromQmlBedPrintStart()));
 }
 
 int PrintScheduler::addSerialPort(){
@@ -70,8 +65,10 @@ void PrintScheduler::run(){
         return;
     addPrintingBed('A');
 //        printScheduler->addPrintingBed("/home/hix/Desktop");
-//    printFilePath = "/home/pi/printFilePath";
-    printFilePath = "/home/jsh/printFilePath";
+    printFilePath = "/home/pi/printFilePath";
+//    printFilePath = "/home/jsh/printFilePath";
+
+    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://10.42.0.140:8000/ws/printer")));
 
     while(true)
         QThread::exec();
@@ -203,7 +200,8 @@ int PrintScheduler::copyFilesPath(QString src, QString dst)
             QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
             count++;
         }
-    }
+    }//    WebSocketClient wsc(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+
     return count;
 }
 
@@ -355,7 +353,6 @@ void PrintScheduler::receiveFromQmlBedPrint(QString path,QString materialName){
     _printName =  path.split('/').last();
     _materialName = materialName;
 
-    wsClient->sendStart();
     receiveFromQmlBedPrintStart();
 }
 

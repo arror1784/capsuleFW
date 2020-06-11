@@ -88,7 +88,7 @@ Rectangle {
         ipList = nc.getIpAddressList()
         var iptext = ""
         for (var i = 0; i < ipList.length; i++){
-            iptext += ipList[i] + "\n"
+            iptext += ipList[i] + ":3000\n"
         }
         ipText.text = iptext
 

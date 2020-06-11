@@ -3,6 +3,8 @@ import QtQuick.Controls 2.5
 
 Item {
 
+    id: materialSelectList
+
     width: 480
     height: 320
 

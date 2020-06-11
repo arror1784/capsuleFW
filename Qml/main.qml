@@ -5,7 +5,7 @@ import QtQuick.Window 2.11
 Window {
     id: mainWindow
     visible: true
-    visibility: Window.FullScreen
+//    visibility: Window.FullScreen
     width: 480
     height: 320
     title: qsTr("Hello World")

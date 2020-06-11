@@ -17,7 +17,7 @@ enum class WSCommand {
 };
 
 
-class WebSocketClient : public QThread
+class WebSocketClient : public QObject
 {
     Q_OBJECT
 public:
@@ -35,7 +35,8 @@ public:
 
 signals:
 
-private slots:
+public slots:
+
     void open();
     void closed();
 
@@ -49,11 +50,6 @@ private:
     QUrl _url;
     bool _debug = true;
     bool _connected = false;
-
-    moodycamel::BlockingConcurrentQueue<WSCommand> _queue;
-
-protected:
-    void run()override;
 
 };
 
