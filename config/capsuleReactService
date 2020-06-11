@@ -1,0 +1,27 @@
+#!/bin/sh
+#/etc/init.d/capsuleReactService
+
+### BEGIN INIT INFO
+# Provides: capsuleReactService
+# Required-Start:		$remote_fs $syslog $time
+# Required-Stop:		$remote_fs $syslog $time
+# Default-Start:		2 3 4 5
+# Default-Stop:			0 1 6
+# Short-Description:	capsule react server
+### END INIT INFO
+
+export PATH=/home/pi/.yarn/bin/:$PATH
+
+case "$1" in
+start)
+exec serve /home/pi/workspace/capsuleFW_react/frontend/build &
+;;
+stop)
+echo "capsuleReactService stop"
+;;
+*)
+echo "Usage: /etc/init.d/capsuleReactService"
+exit 1
+;;
+esac
+exit 0
