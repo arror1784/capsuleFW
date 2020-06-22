@@ -10,11 +10,11 @@
 # Short-Description:	capsule react server
 ### END INIT INFO
 
-export PATH=/home/pi/.yarn/bin/:$PATH
+export PATH=$(sudo -u pi yarn global bin):$PATH
 
 case "$1" in
 start)
-exec serve /home/pi/workspace/capsuleFW_react/frontend/build &
+exec serve /opt/capsuleFW_react/frontend/build &
 ;;
 stop)
 echo "capsuleReactService stop"

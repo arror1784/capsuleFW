@@ -1,3 +1,4 @@
+capsuleFW=/opt/capsuleFW/capsuleSetting.json
 capsuleSetting.json=/opt/capsuleFW/capsuleSetting.json
 rc.local=/etc/rc.local
 autostart=/etc/xdg/lxsession/LXDE-pi/autostart
@@ -6,3 +7,5 @@ lightdm.conf=/etc/lightdm/lightdm.conf
 black_image.jpg=/usr/share/rpd-wallpaper/black_image.jpg
 capsuleReactService=/etc/init.d/capsuleReactService
 capsuleDjangoService=/etc/init.d/capsuleDjangoService
+config.txt=/boot/config.txt
+cmdline.txt=/boot/cmdline.txt
