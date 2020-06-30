@@ -1,68 +1,18 @@
 {
-    "Graphy": {
-        "bed_curing_layer": 3,
-        "bed_curing_time": 6000,
-        "contraction_ratio": 1,
-        "curing_time": 1900,
-        "down_accel_speed": 50,
-        "down_decel_speed": 50,
-        "init_speed": 120,
-        "layer_delay": 1000,
-        "max_speed": 500,
-        "up_accel_speed": 30,
-        "up_decel_speed": 30,
-    	"led_offset": 80,
-        "z_hop_height": 6000
-    },
-    "ODS": {
-        "bed_curing_layer": 3,
-        "bed_curing_time": 6000,
-        "contraction_ratio": 1,
-        "curing_time": 1950,
-        "down_accel_speed": 50,
-        "down_decel_speed": 50,
-        "init_speed": 80,
-        "layer_delay": 700,
-        "max_speed": 500,
-        "up_accel_speed": 30,
-        "up_decel_speed": 30,
-    	"led_offset": 80,
-        "z_hop_height": 4000
-    },
-    "Vericom": {
-        "bed_curing_layer": 3,
-        "bed_curing_time": 6000,
-        "contraction_ratio": 1,
-        "curing_time": 2150,
-        "down_accel_speed": 50,
-        "down_decel_speed": 50,
-        "init_speed": 100,
-        "layer_delay": 800,
-        "max_speed": 500,
-        "up_accel_speed": 30,
-        "up_decel_speed": 30,
-    	"led_offset": 80,
-        "z_hop_height": 4000
-    },
-    "bed_curing_layer": 3,
-    "bed_curing_time": 5000,
-    "contraction_ratio": 1.0099999904632568,
-    "curing_time": 2600,
     "default_height": 68000,
-    "down_accel_speed": 50,
-    "down_decel_speed": 50,
     "height_offset": 0,
-    "init_speed": 100,
-    "layer_delay": 500,
     "led_offset": 100,
-    "material_list": [
+    "all_material_list": [
         "Custom",
         "Graphy",
         "Vericom",
         "ODS"
     ],
-    "max_speed": 500,
-    "up_accel_speed": 6,
-    "up_decel_speed": 30,
-    "z_hop_height": 3000
+	"enable_material_list": [
+		"Custom",
+		"Graphy",
+		"Vericom",
+		"ODS"
+	],
+	"model_no": "aaaaa"
 }
