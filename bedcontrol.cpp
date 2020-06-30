@@ -2,6 +2,7 @@
 
 #include "bedserialport.h"
 #include "printscheduler.h"
+#include <QtConcurrent/QtConcurrentRun>
 
 BedControl::BedControl(char bedChar,BedSerialport* bedSerialPort,PrintScheduler *sched) :
     bedChar(bedChar),
@@ -82,18 +83,21 @@ void BedControl::receiveFromPrintScheduler(int receive){
 
 void BedControl::printDelay(){
 
-//    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
-    QThread::msleep(layerDelay);
-//    qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
-    _bedSerialPort->sendCommand("H11");
-    if(bedState == PRINT_MOVE_BEDCURRENT){
-        QThread::msleep(bedCuringTime);
-    }else if(bedState == PRINT_DLP_WORKING){
-        QThread::msleep(curingTime);
-    }
-    _bedSerialPort->sendCommand("H10");
-//    qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
-    moveUpCommand();
+//    _sleepFuture = std::async([this](){
+    future = QtConcurrent::run([this](){
+    //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
+        QThread::msleep(layerDelay);
+        qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
+        _bedSerialPort->sendCommand("H11");
+        if(bedState == PRINT_MOVE_BEDCURRENT){
+            QThread::msleep(bedCuringTime);
+        }else if(bedState == PRINT_DLP_WORKING){
+            QThread::msleep(curingTime);
+        }
+        _bedSerialPort->sendCommand("H10");
+        qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
+        moveUpCommand();
+    });
 }
 void BedControl::autoHome(){
 //    currentPosition = 0;
@@ -117,8 +121,7 @@ void BedControl::moveDownCommand(){
 }
 void BedControl::moveUpCommandMax(){
 
-    char buffer[50] = {0};
-
+//    char buffer[50] = {0};
     _bedSerialPort->sendCommand("G02 A-15000 M1");
 }
 void BedControl::moveDownCommandMin(){
@@ -179,5 +182,3 @@ void BedControl::setLedOffset(int value){
     sprintf(buffer,"H12 %c%d",bedChar,value);
     _bedSerialPort->sendCommand(buffer);
 }
-
-

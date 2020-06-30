@@ -46,6 +46,9 @@
 #define MOVE_OK                     110
 #define SHUTDOWN                    120
 
+#define LCD_OFF                     131
+#define LCD_ON                      132
+
 #define BED_IMAGE_LOADED            1
 #define BED_IMAGE_NONE              2
 

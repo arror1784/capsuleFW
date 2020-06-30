@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
 
+    qDebug() << "main :" << QThread::currentThread();
+
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())

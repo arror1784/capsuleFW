@@ -21,5 +21,6 @@
         <file>Qml/IpPopup.qml</file>
         <file>Qml/ShutdownPopup.qml</file>
         <file>Qml/BusyErrorPopup.qml</file>
+        <file>Qml/LcdOff.qml</file>
     </qresource>
 </RCC>

@@ -8,6 +8,9 @@
 #include <QMutex>
 #include <QDateTime>
 
+//#include <future>
+#include <qfuture.h>
+
 #include "common.h"
 
 class BedSerialport;
@@ -94,6 +97,8 @@ private:
     PrintScheduler *_sched;
     BedSerialport *_bedSerialPort = nullptr;
     QMutex bedControlLock;
+//    std::future<void> _sleepFuture;
+    QFuture<void> future;
 
 };
 

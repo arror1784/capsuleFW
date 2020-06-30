@@ -5,7 +5,6 @@
 #include <QQuickView>
 #include <QObject>
 #include <QQuickItem>
-
 #include "printsetting.h"
 #include "QJsonArray"
 #include "QProcess"
@@ -41,8 +40,6 @@ void PrintScheduler::addPrintingBed(char name){
 
     _bedControl->defaultHeight = PrintSetting::GetInstance()->getPrintSetting("default_height").toInt();
 
-    bedSerialPort->sendCommand("H50 A0 B100 C0");
-
     bedSerialPort->sendCommand("H10 A0 B100 C0");
 }
 
@@ -68,8 +65,10 @@ void PrintScheduler::run(){
     printFilePath = "/home/pi/printFilePath";
 //    printFilePath = "/home/jsh/printFilePath";
 
-    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://10.42.0.140:8000/ws/printer")));
+    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
 
+    _wsClient->open();
+    qDebug() << "print scheduler" << QThread::currentThread();
     while(true)
         QThread::exec();
 }
@@ -81,22 +80,38 @@ void PrintScheduler::initBed(){
 }
 
 void PrintScheduler::bedFinish(){
-    _bedWork = BED_FINISH_WORK;
-    _bedMoveFinished = PRINT_MOVE_NULL;
-    _bedPrintImageNum = 0;
 
-    emit sendToQmlFinish();
-    _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
+    std::function<void()> func = [this]() {
+//        _wsClient->sendFinish();
 
-    emit sendToSerialPortCommand("H50 A100 B0 C0");
+        _bedWork = BED_FINISH_WORK;
+        _bedMoveFinished = PRINT_MOVE_NULL;
+        _bedPrintImageNum = 0;
+
+        emit sendToQmlFinish();
+        _wsClient->sendSetTimerOnoff(false);
+        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
+
+    };
+    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+
 }
 void PrintScheduler::bedError(){
-    _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
-    _bedWork = BED_FINISH_WORK;
-    _bedMoveFinished = PRINT_MOVE_NULL;
-    _bedPrintImageNum = 0;
-//        emit sendToQmlPrintFinish();
-    emit sendToSerialPortCommand("H51 A100 B0 C0");
+
+    std::function<void()> func = [this]() {
+//        _wsClient->sendFinish();
+
+        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
+        _bedWork = BED_FINISH_WORK;
+        _bedMoveFinished = PRINT_MOVE_NULL;
+        _bedPrintImageNum = 0;
+    //        emit sendToQmlPrintFinish();
+        emit sendToQmlFinish();
+        _wsClient->sendSetTimerOnoff(false);
+
+    };
+
+    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 
 void PrintScheduler::printLayer(){
@@ -110,7 +125,10 @@ void PrintScheduler::printLayer(){
             receiveFromQmlBedPrintFinishError();
         }else{
             _bedPrintImageNum++;
+
             emit sendToQmlUpdateProgress(_bedPrintImageNum,_bedMaxPrintNum);
+            _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
+
             if(_bedPrintImageNum <= bedCuringLayer){
                 _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
             }else{
@@ -134,6 +152,8 @@ void PrintScheduler::receiveFromBedControl(int receive){
             imageChange();
             break;
         case PRINT_MOVE_INIT_OK:
+            _wsClient->sendSetTimerOnoff(true);
+            _wsClient->sendSetTimerTime();
             emit sendToQmlInit();
         case PRINT_MOVE_LAYER_OK:
             if(_bedWork == BED_PAUSE_WORK){
@@ -148,8 +168,8 @@ void PrintScheduler::receiveFromBedControl(int receive){
         case PRINT_MOVE_FINISH_OK:
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
-            emit sendToSerialPortCommand("H50 A0 B100 C0");
             emit sendToQmlPrintFinish();
+            _wsClient->sendFinish();
             break;
         case PRINT_PAUSE:
             break;
@@ -166,6 +186,10 @@ void PrintScheduler::receiveFromSerialPort(int state){
             emit sendToQmlExitError();
         else
             emit sendToQmlExit();
+    }else if(state == LCD_ON){
+        emit sendToLCDState(1);
+    }else if(state == LCD_OFF){
+        emit sendToLCDState(0);
     }
 }
 
@@ -222,7 +246,6 @@ int PrintScheduler::copyProject(QString path)
     }
     dirCount = copyFilesPath(filePath,printFilePath);
     if(dirCount == -1){
-        emit sendToSerialPortCommand("H51 A100 B0 C0");
         return -1;
     }
     return 0;
@@ -246,7 +269,6 @@ int PrintScheduler::setupForPrint(QString materialName)
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "info file open error";
         Logger::GetInstance()->write(file.fileName() + " file open error");
-        emit sendToSerialPortCommand("H51 A100 B0 C0");
         return -2;
     }else{
         qDebug() << "info file open sucess";
@@ -368,15 +390,27 @@ void PrintScheduler::receiveFromQmlBedPrintAgain()
 }
 
 void PrintScheduler::receiveFromQmlBedPrintStart(){
-    qDebug() << "receiveFromQmlBedPrintStart";
+
+    std::function<void()> func;
+
     if(_bedWork == BED_PAUSE){
-        _bedWork = BED_WORK;
-        printLayer();
+        func = [this]() {
+            _wsClient->sendResume();
+
+            _bedWork = BED_WORK;
+            printLayer();
+        };
     }else{
-        _bedMoveFinished = PRINT_MOVE_NULL;
-        _bedPrintImageNum = 0;
-        initBed();
+        func = [this]() {
+            _wsClient->sendStart();
+
+            _bedMoveFinished = PRINT_MOVE_NULL;
+            _bedPrintImageNum = 0;
+            initBed();
+        };
     }
+
+    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 
 void PrintScheduler::receiveFromQmlBedPrintFinish(){
@@ -386,7 +420,13 @@ void PrintScheduler::receiveFromQmlBedPrintFinishError(){
     bedError();
 }
 void PrintScheduler::receiveFromQmlBedPrintPause(){
-    _bedWork = BED_PAUSE_WORK;
+
+    std::function<void()> func = [this]() {
+        _wsClient->sendPause();
+        _bedWork = BED_PAUSE_WORK;
+    };
+
+    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 void PrintScheduler::receiveFromQmlUpdateMaterial(){
     QJsonArray a = PrintSetting::GetInstance()->getResinList();

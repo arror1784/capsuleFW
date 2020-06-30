@@ -8,6 +8,10 @@ WebSocketClient::WebSocketClient(const QUrl url) :
 {
     if (_debug)
         qDebug() << "WebSocket server:" << url;
+    _webSocket = new QWebSocket();
+    connect(_webSocket, (void(QWebSocket::*)(QAbstractSocket::SocketError)) &QWebSocket::error, this, &WebSocketClient::error);
+    connect(_webSocket, &QWebSocket::connected, this, &WebSocketClient::onConnected);
+    connect(_webSocket, &QWebSocket::disconnected, this, &WebSocketClient::closed);
 }
 
 void WebSocketClient::open()
@@ -64,10 +68,11 @@ void WebSocketClient::error(QAbstractSocket::SocketError error){
 void WebSocketClient::sendStart()
 {
     QJsonObject aaa;
-    qDebug() << "fuckfuck";
 
     if(!_connected)
         return;
+
+    qDebug() << "fuckfuck";
 
     aaa.insert("type","progress");
     aaa.insert("method","start");
@@ -78,7 +83,6 @@ void WebSocketClient::sendStart()
     qDebug() << "sendStart: " << QThread::currentThread();
     _webSocket->sendTextMessage(strJson);
 }
-
 void WebSocketClient::sendPause()
 {
     QJsonObject aaa;
@@ -86,14 +90,13 @@ void WebSocketClient::sendPause()
         return;
 
     aaa.insert("type","progress");
-    aaa.insert("method","setTimerTime");
+    aaa.insert("method","pause");
 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
     _webSocket->sendTextMessage(strJson);
 }
-
 void WebSocketClient::sendResume()
 {
     QJsonObject aaa;
@@ -107,7 +110,6 @@ void WebSocketClient::sendResume()
     QString strJson(doc.toJson(QJsonDocument::Compact));
     _webSocket->sendTextMessage(strJson);
 }
-
 void WebSocketClient::sendFinish()
 {
     QJsonObject aaa;
@@ -122,7 +124,6 @@ void WebSocketClient::sendFinish()
 
     _webSocket->sendTextMessage(strJson);
 }
-
 void WebSocketClient::sendSetTimerOnoff(bool onOff)
 {
     QJsonObject aaa;
@@ -139,8 +140,7 @@ void WebSocketClient::sendSetTimerOnoff(bool onOff)
 
     _webSocket->sendTextMessage(strJson);
 }
-
-void WebSocketClient::sendSetTimerTime(int time)
+void WebSocketClient::sendSetTimerTime()
 {
     QJsonObject aaa;
     if(!_connected)
@@ -149,14 +149,11 @@ void WebSocketClient::sendSetTimerTime(int time)
     aaa.insert("type","progress");
     aaa.insert("method","setTimerTime");
 
-    aaa.insert("startTime",QString::number(time));
-
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
     _webSocket->sendTextMessage(strJson);
 }
-
 void WebSocketClient::sendProgreeUpdate(int progress)
 {
     QJsonObject aaa;
@@ -164,6 +161,8 @@ void WebSocketClient::sendProgreeUpdate(int progress)
         return;
 
     aaa.insert("type","progress");
+    aaa.insert("method","update");
+
     aaa.insert("progress",QString::number(progress));
 
     QJsonDocument doc(aaa);
@@ -171,3 +170,4 @@ void WebSocketClient::sendProgreeUpdate(int progress)
 
     _webSocket->sendTextMessage(strJson);
 }
+

@@ -37,9 +37,9 @@ void BedSerialport::handleReadyRead()
     arr.append(m_serialPort->readAll());
     ResponseData_t data;
     QByteArray temp;
-
-    if(arr.contains(0x02) && arr.contains(0x03)){
-
+    while(arr.contains(0x02) && arr.contains(0x03)){
+        qDebug() << arr;
+//    if(arr.contains(0x02) && arr.contains(0x03)){
         for(int i = arr.indexOf(0x02,0)+1 ; i < arr.indexOf(0x03,0) - 1 ; i++){
             checkSum += arr[i];
         }
@@ -71,6 +71,14 @@ void BedSerialport::handleReadyRead()
         case 200:
             qDebug() << "receive Data : shutdown";
             _sched->receiveFromSerialPort(SHUTDOWN);
+            break;
+        case 91:
+            qDebug() << "receive Data : LCD " << data.response;
+            if(data.response){
+                _sched->receiveFromSerialPort(LCD_ON);
+            }else {
+                _sched->receiveFromSerialPort(LCD_OFF);
+            }
             break;
         }
         arr = arr.right(arr.size() - arr.indexOf(0x03,0) - 1);

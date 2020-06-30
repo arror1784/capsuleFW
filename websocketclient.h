@@ -28,7 +28,7 @@ public:
     void sendResume();
     void sendFinish();
     void sendSetTimerOnoff(bool onOff);
-    void sendSetTimerTime(int time);
+    void sendSetTimerTime();
     void sendProgreeUpdate(int progress);
 
     void enqueTask(WSCommand);

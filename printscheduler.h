@@ -65,11 +65,13 @@ signals:
 
     void sendToQmlInsertMaterialList(QString name);
     void sendToQmlMoveOk();
-    void sendToSerialPortCommand(QString);
+//    void sendToSerialPortCommand(QString);
     void sendToQmlPrintError();
 
     void sendToQmlExitError();
     void sendToQmlExit();
+
+    void sendToLCDState(int state);
 
 public slots:
 

@@ -29,6 +29,10 @@ Window {
     BusyErrorPopup{
         id: busyErrorPopup
     }
+    LcdOff{
+        id: lcdOff
+    }
+
     ShutdownPopup{
         id: shutDownPopup
     }
@@ -44,6 +48,14 @@ Window {
         }
         onSendToQmlExit:{
             shutDownPopup.open()
+        }
+        onSendToLCDState:{
+            console.debug(state)
+            if(state){
+                lcdOff.close()
+            }else{
+                lcdOff.open()
+            }
         }
     }
 }
