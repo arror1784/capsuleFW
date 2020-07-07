@@ -109,7 +109,7 @@ Item {
         }
     }
     Rectangle{
-        id: update
+        id: resinUpdate
         radius: 5
         color: "#DCEAF3"
 
@@ -135,7 +135,7 @@ Item {
             }
             Text {
                 id: updateText
-                text: qsTr("update")
+                text: qsTr("resin update")
                 color: "#666666"
                 anchors.top: updateImage.bottom
 
@@ -147,12 +147,36 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                console.debug("update clicked")
+                resinUpdater.checkUpdate()
+                resinUpdatePopup.open()
             }
         }
     }
+    ResinUpdatePopup{
+        id: resinUpdatePopup
+        onCancel: {
+            resinUpdatePopup.close()
+        }
+        onResinUpdate: {
+            resinUpdater.update()
+        }
+    }
+
     Connections{
         id: schedulerConnection
         target: scheduler
+    }
+    Connections{
+        id: resinUpdaterConnection
+        target: resinUpdater
+        onUpdateAvailable:{
+            resinUpdatePopup.updateAvailable()
+        }
+        onUpdateNotAvailable:{
+            resinUpdatePopup.updateNotAvailable()
+        }
+        onUpdateFinished:{
+            resinUpdatePopup.updateFinished()
+        }
     }
 }

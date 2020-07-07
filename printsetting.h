@@ -17,6 +17,7 @@ private:
 
     static PrintSetting* _ins;
     const QString filePath = "/opt/capsuleFW/capsuleSetting.json";
+//    const QString resinPath = "/opt/capsuleFW/resin";
 
     QJsonObject setting;
 
@@ -42,13 +43,8 @@ public:
     void setPrintSetting(QString key,double value);
     void setPrintSetting(QString key,int value);
     void setPrintSetting(QString key,QString value);
-
-    QJsonObject getResinSetting(QString type);
-    void setResinSetting(QString type, QJsonObject value);
-//    QJsonObject getPrintSetting(int reginType);
-
     QJsonArray getResinList();
-
+    void setResinList(QJsonArray value);
 };
 
 #endif // PRINTSETTING_H

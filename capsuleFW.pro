@@ -27,6 +27,8 @@ SOURCES += \
     networkcontrol.cpp \
     printscheduler.cpp \
     printsetting.cpp \
+    resinsetting.cpp \
+    resinupdater.cpp \
     websocketclient.cpp
 
 RESOURCES += qml.qrc \
@@ -52,4 +54,6 @@ HEADERS += \
     networkcontrol.h \
     printscheduler.h \
     printsetting.h \
+    resinsetting.h \
+    resinupdater.h \
     websocketclient.h

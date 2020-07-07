@@ -54,6 +54,7 @@ public:
 
 signals:
     void sendToQmlChangeImage(QString imagePath);
+//    void sendToQmlChangeDefault();
     void sendToQmlSetImageScale(double value);
 
     void sendToQmlPauseFinish();

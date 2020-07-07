@@ -66,15 +66,13 @@ void PrintSetting::setPrintSetting(QString key, QString value){
     saveFile();
 }
 
-QJsonObject PrintSetting::getResinSetting(QString type){
-    return setting[type].toObject();
-}
-
-void PrintSetting::setResinSetting(QString type, QJsonObject value){
-    setting[type] = value;
-    saveFile();
-}
-
 QJsonArray PrintSetting::getResinList(){
     return setting["material_list"].toArray();
 }
+
+void PrintSetting::setResinList(QJsonArray value)
+{
+    setting["material_list"] = value;
+    saveFile();
+}
+

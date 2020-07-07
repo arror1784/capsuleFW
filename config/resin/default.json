@@ -12,5 +12,6 @@
     "max_speed": 500,
     "up_accel_speed": 6,
     "up_decel_speed": 30,
-    "z_hop_height": 3000
+    "z_hop_height": 3000,
+	"last_update": "0"
 }

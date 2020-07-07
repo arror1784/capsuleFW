@@ -22,5 +22,6 @@
         <file>Qml/ShutdownPopup.qml</file>
         <file>Qml/BusyErrorPopup.qml</file>
         <file>Qml/LcdOff.qml</file>
+        <file>Qml/ResinUpdatePopup.qml</file>
     </qresource>
 </RCC>

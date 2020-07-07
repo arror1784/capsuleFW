@@ -9,6 +9,7 @@
 #include "QJsonArray"
 #include "QProcess"
 #include "websocketclient.h"
+#include "resinsetting.h"
 
 PrintScheduler::PrintScheduler(){
 
@@ -25,22 +26,24 @@ void PrintScheduler::addPrintingBed(char name){
     _bedMaxPrintNum = 0;
     _isBusy = false;
 
-    _bedControl->setBedCuringTime(PrintSetting::GetInstance()->getPrintSetting("bed_curing_time").toInt());
-    _bedControl->setCuringTime(PrintSetting::GetInstance()->getPrintSetting("curing_time").toInt());
+    ResinSetting rs("default");
 
-    _bedControl->setZHopHeightTime(PrintSetting::GetInstance()->getPrintSetting("z_hop_height").toInt());
+    _bedControl->setBedCuringTime(rs.getResinSetting("bed_curing_time").toInt());
+    _bedControl->setCuringTime(rs.getResinSetting("curing_time").toInt());
 
-    _bedControl->setMaxSpeed(PrintSetting::GetInstance()->getPrintSetting("max_speed").toInt());
-    _bedControl->setInitSpeed(PrintSetting::GetInstance()->getPrintSetting("init_speed").toInt());
+    _bedControl->setZHopHeightTime(rs.getResinSetting("z_hop_height").toInt());
 
-    _bedControl->setAccleSpeed(PrintSetting::GetInstance()->getPrintSetting("up_accel_speed").toInt(),1);
-    _bedControl->setDecelSpeed(PrintSetting::GetInstance()->getPrintSetting("up_decel_speed").toInt(),1);
-    _bedControl->setAccleSpeed(PrintSetting::GetInstance()->getPrintSetting("down_accel_speed").toInt(),0);
-    _bedControl->setDecelSpeed(PrintSetting::GetInstance()->getPrintSetting("down_decel_speed").toInt(),0);
+    _bedControl->setMaxSpeed(rs.getResinSetting("max_speed").toInt());
+    _bedControl->setInitSpeed(rs.getResinSetting("init_speed").toInt());
+
+    _bedControl->setAccleSpeed(rs.getResinSetting("up_accel_speed").toInt(),1);
+    _bedControl->setDecelSpeed(rs.getResinSetting("up_decel_speed").toInt(),1);
+    _bedControl->setAccleSpeed(rs.getResinSetting("down_accel_speed").toInt(),0);
+    _bedControl->setDecelSpeed(rs.getResinSetting("down_decel_speed").toInt(),0);
 
     _bedControl->defaultHeight = PrintSetting::GetInstance()->getPrintSetting("default_height").toInt();
 
-    bedSerialPort->sendCommand("H10 A0 B100 C0");
+    bedSerialPort->sendCommand("H10");
 }
 
 int PrintScheduler::addSerialPort(){
@@ -262,6 +265,8 @@ int PrintScheduler::setupForPrint(QString materialName)
     QJsonObject setting;
     QJsonObject materialSetting;
 
+    ResinSetting rs(materialName);
+
     QDir dir(filePath);
     dir.setFilter( QDir::AllEntries | QDir::NoDotAndDotDot );
 
@@ -283,7 +288,7 @@ int PrintScheduler::setupForPrint(QString materialName)
     if(materialName == "Custom"){
         materialSetting = setting;
     }else{
-        materialSetting = PrintSetting::GetInstance()->getResinSetting(materialName);
+        materialSetting = rs.getJsonObject();
     }
 
     _bedControl->maxHeight = _bedControl->defaultHeight + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
@@ -449,7 +454,8 @@ void PrintScheduler::receiveFromQmlSetPrinterOption(QString key,QString value){
 }
 
 QVariant PrintScheduler::receiveFromQmlGetMaterialOption(QString material,QString key){
-    return PrintSetting::GetInstance()->getResinSetting(material)[key].toVariant();
+    ResinSetting rs(material);
+    return rs.getResinSetting(key).toVariant();
 }
 QVariant PrintScheduler::receiveFromQmlGetMaterialOptionFromPath(QString path,QString key){
 

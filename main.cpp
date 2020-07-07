@@ -20,6 +20,7 @@
 #include "logger.h"
 #include "networkcontrol.h"
 #include "websocketclient.h"
+#include "resinupdater.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,8 +35,11 @@ int main(int argc, char *argv[])
 
     NetworkControl nc;
 
+    ResinUpdater ru;
+
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
+    ctx->setContextProperty("resinUpdater",&ru);
 
     qDebug() << "main :" << QThread::currentThread();
 

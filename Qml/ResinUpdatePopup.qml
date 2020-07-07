@@ -13,10 +13,11 @@ Rectangle {
 
     visible: false
 
-    signal printStop()
-    signal printResume()
+    signal cancel()
+    signal resinUpdate()
 
-    property bool buttonEnbled: false
+    property bool cancelButtonEnbled: false
+    property bool updateButtonEnbled: false
 
     FontLoader{
         id: openSansSemibold
@@ -45,16 +46,17 @@ Rectangle {
         closePolicy: Popup.NoAutoClose
 
         Text {
+            id: text
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("Are you sure you want to quit printing")
+            text: qsTr("update check")
             font.family: openSansRegular.name
             font.pixelSize: 20
             color: "#474747"
         }
 
         Rectangle{
-            id: resumeButton
+            id: cancelButton
             width: 185
             height: 40
 
@@ -66,9 +68,9 @@ Rectangle {
             color: "#DCEAF3"
 
             radius:  8
-            opacity: buttonEnbled ? 1 : 0.7
+            opacity: cancelButtonEnbled ? 1 : 0.7
             Text {
-                text: qsTr("Resume")
+                text: qsTr("cancel")
                 color: "#666666"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -77,14 +79,14 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                enabled: buttonEnbled
+                enabled: cancelButtonEnbled
                 onClicked: {
-                   popupBack.printResume()
+                   cancel()
                 }
             }
         }
         Rectangle{
-            id: quitButton
+            id: updateButton
 
             width: 185
             height: 40
@@ -97,9 +99,9 @@ Rectangle {
             color: "#00C6EA"
 
             radius: 8
-            opacity: buttonEnbled ? 1 : 0.5
+            opacity: updateButtonEnbled ? 1 : 0.5
             Text {
-                text: qsTr("Quit")
+                text: qsTr("update")
                 color: "#FFFFFF"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -108,10 +110,12 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                enabled: buttonEnbled
+                enabled: updateButtonEnbled
                 onClicked: {
-                    buttonEnbled = false
-                    printStop()
+                    resinUpdate()
+
+                    cancelButtonEnbled = false
+                    updateButtonEnbled = false
                 }
             }
         }
@@ -128,7 +132,19 @@ Rectangle {
     function close(){
         popup.close()
     }
-    function setButtonEnabled(aa){
-        buttonEnbled = aa
+    function updateNotAvailable(){
+        cancelButtonEnbled = true
+        text.text = "update not available"
+    }
+    function updateAvailable(){
+        cancelButtonEnbled = true
+        updateButtonEnbled = true
+
+        text.text = "update available"
+    }
+    function updateFinished(){
+        cancelButtonEnbled = true
+
+        text.text = "update finished"
     }
 }

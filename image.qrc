@@ -11,5 +11,6 @@
         <file>image/arrow-up.png</file>
         <file>image/light.png</file>
         <file>image/settings.svg</file>
+        <file>image/defaultBlackImage.png</file>
     </qresource>
 </RCC>

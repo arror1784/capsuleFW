@@ -2,7 +2,7 @@
     "default_height": 68000,
     "height_offset": 0,
     "led_offset": 100,
-    "all_material_list": [
+    "material_list": [
         "Custom",
         "Graphy",
         "Vericom",

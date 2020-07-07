@@ -1,9 +1,9 @@
 import QtQuick 2.12
 import QtQuick.Window 2.11
-import QtQml 2.0
+import QtQuick.Controls 2.5
 
 Window {
-    id: svgWindow
+    id: lcdWindow
     visible: true
     visibility: Window.FullScreen
 //    width: 1440
@@ -28,7 +28,7 @@ Window {
         visible: true
 
         fillMode: Image.PreserveAspectCrop
-
+        source: "qrc:/image/defaultBlackImage.png"
         rotation: 90
         onStatusChanged: {
 //            if (printImage.status === Image.Ready) console.log('Loaded')
@@ -48,6 +48,9 @@ Window {
         onSendToQmlSetImageScale: function onSendToQmlSetImageScale(value){
             console.log(value)
             printImage.scale = value
+        }
+        onSendToQmlFinish:{
+            printImage.source = "qrc:/image/defaultBlackImage.png"
         }
     }
 }
