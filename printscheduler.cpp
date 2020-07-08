@@ -203,12 +203,12 @@ void PrintScheduler::receiveFromQmlBusySet(bool bs)
 
 void PrintScheduler::receiveFromQmlShutdown()
 {
-    bedSerialPort->sendCommand("H200");
+//    bedSerialPort->sendCommand("H200");
     qDebug() << "shutdown";
     QStringList arguments;
     arguments.append("-h");
     arguments.append("now");
-    QProcess::execute("shutdown",arguments);
+    QProcess::execute("bash -c \"echo rasp | sudo -S shutdown -h now > /home/pi/out 2>&1\"");
 }
 
 int PrintScheduler::copyFilesPath(QString src, QString dst)
