@@ -29,7 +29,9 @@ SOURCES += \
     printsetting.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
-    websocketclient.cpp
+    updater.cpp \
+    websocketclient.cpp \
+    ymodem.cpp
 
 RESOURCES += qml.qrc \
     font.qrc \
@@ -56,4 +58,6 @@ HEADERS += \
     printsetting.h \
     resinsetting.h \
     resinupdater.h \
-    websocketclient.h
+    updater.h \
+    websocketclient.h \
+    ymodem.h

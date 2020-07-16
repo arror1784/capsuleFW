@@ -35,6 +35,7 @@ public:
     void bedFinish();
     void bedError();
 
+    void initPrint();
 
     void printLayer();
 
@@ -51,6 +52,8 @@ public:
 
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
+
+    void setVersion(const QString &version);
 
 signals:
     void sendToQmlChangeImage(QString imagePath);
@@ -74,10 +77,15 @@ signals:
 
     void sendToLCDState(int state);
 
+    void sendToFirmwareUpdateFinish();
+    void sendToFirmwareUpdateError();
+    void sendToFirmwareUpdateProgrese(int progress);
+
 public slots:
 
     void receiveFromQmlBusySet(bool bs);
 
+    void receiveFromQmlFirmUpdate(QString path);
     void receiveFromQmlShutdown();
 
     void receiveFromQmlBedPrint(QString path,QString materialName);
@@ -102,6 +110,7 @@ public slots:
     void receiveFromQmlMoveMicro(int micro);
     void receiveFromQmlMoveMaxHeight();
 
+    QString receiveFromQmlGetVersion();
 
 public:
     BedSerialport* bedSerialPort = nullptr;
@@ -109,13 +118,14 @@ public:
 
     QQmlApplicationEngine *engine;
 
-
 protected:
     void run()override;
 
 private:
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
+
+    QString _version;
 
     int bedCuringLayer = 5;
 
@@ -127,6 +137,8 @@ private:
 
     QString _printName;
     QString _materialName;
+
+    QString _portPath;
 
     int _bedPrintImageNum;
     int _bedWork;

@@ -11,6 +11,8 @@
 #include "websocketclient.h"
 #include "resinsetting.h"
 
+#include "ymodem.h"
+
 PrintScheduler::PrintScheduler(){
 
 }
@@ -26,24 +28,9 @@ void PrintScheduler::addPrintingBed(char name){
     _bedMaxPrintNum = 0;
     _isBusy = false;
 
-    ResinSetting rs("default");
-
-    _bedControl->setBedCuringTime(rs.getResinSetting("bed_curing_time").toInt());
-    _bedControl->setCuringTime(rs.getResinSetting("curing_time").toInt());
-
-    _bedControl->setZHopHeightTime(rs.getResinSetting("z_hop_height").toInt());
-
-    _bedControl->setMaxSpeed(rs.getResinSetting("max_speed").toInt());
-    _bedControl->setInitSpeed(rs.getResinSetting("init_speed").toInt());
-
-    _bedControl->setAccleSpeed(rs.getResinSetting("up_accel_speed").toInt(),1);
-    _bedControl->setDecelSpeed(rs.getResinSetting("up_decel_speed").toInt(),1);
-    _bedControl->setAccleSpeed(rs.getResinSetting("down_accel_speed").toInt(),0);
-    _bedControl->setDecelSpeed(rs.getResinSetting("down_decel_speed").toInt(),0);
+    initPrint();
 
     _bedControl->defaultHeight = PrintSetting::GetInstance()->getPrintSetting("default_height").toInt();
-
-    bedSerialPort->sendCommand("H10");
 }
 
 int PrintScheduler::addSerialPort(){
@@ -53,6 +40,8 @@ int PrintScheduler::addSerialPort(){
 
         if(info.portName().contains(QStringLiteral("USB0")) /*|| info.portName().contains(QStringLiteral("ACM"))*/){
             bedSerialPort = new BedSerialport(info.portName(),this);
+            bedSerialPort->serialOpen();
+            _portPath = info.portName();
             return 0;
         }
     }
@@ -70,7 +59,7 @@ void PrintScheduler::run(){
 
     _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
 
-    _wsClient->open();
+//    _wsClient->open();
     qDebug() << "print scheduler" << QThread::currentThread();
     while(true)
         QThread::exec();
@@ -115,6 +104,27 @@ void PrintScheduler::bedError(){
     };
 
     QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+}
+
+void PrintScheduler::initPrint()
+{
+    ResinSetting rs("default");
+
+    _bedControl->setBedCuringTime(rs.getResinSetting("bed_curing_time").toInt());
+    _bedControl->setCuringTime(rs.getResinSetting("curing_time").toInt());
+
+    _bedControl->setZHopHeightTime(rs.getResinSetting("z_hop_height").toInt());
+
+    _bedControl->setMaxSpeed(rs.getResinSetting("max_speed").toInt());
+    _bedControl->setInitSpeed(rs.getResinSetting("init_speed").toInt());
+
+    _bedControl->setAccleSpeed(rs.getResinSetting("up_accel_speed").toInt(),1);
+    _bedControl->setDecelSpeed(rs.getResinSetting("up_decel_speed").toInt(),1);
+    _bedControl->setAccleSpeed(rs.getResinSetting("down_accel_speed").toInt(),0);
+    _bedControl->setDecelSpeed(rs.getResinSetting("down_decel_speed").toInt(),0);
+
+    bedSerialPort->sendCommand("H10");
+    bedSerialPort->sendCommand("H91");
 }
 
 void PrintScheduler::printLayer(){
@@ -196,14 +206,68 @@ void PrintScheduler::receiveFromSerialPort(int state){
     }
 }
 
+void PrintScheduler::setVersion(const QString &version)
+{
+    _version = version;
+}
+
 void PrintScheduler::receiveFromQmlBusySet(bool bs)
 {
     _isBusy = bs;
 }
 
+void PrintScheduler::receiveFromQmlFirmUpdate(QString path)
+{
+    std::function<void()> f = [this,path](){
+        QSerialPort *sp = new QSerialPort(_portPath);
+        sp->setPortName(_portPath);
+        sp->setBaudRate(QSerialPort::Baud115200);
+
+        while (1){
+            bedSerialPort->sendCommand("H101");
+            QThread::msleep(1000);
+
+            bedSerialPort->serialClose();
+
+            if(!sp->open(QIODevice::ReadWrite)){
+                qDebug() << _portPath << "usb open error";
+            }
+
+            YMODEM ym(sp);
+            connect(&ym,&YMODEM::progress,[this](int progress){this->sendToFirmwareUpdateProgrese(progress);});
+
+            qDebug() << path;
+            int a = ym.yTransmit(path);
+            qDebug() << "tramsmit return code: " << a;
+
+            if(a){
+                sp->close();
+                bedSerialPort->serialOpen();
+                QThread::msleep(3000);
+                continue;
+            }else{
+                sp->close();
+                bedSerialPort->serialOpen();
+                QThread::msleep(5000);
+                initPrint();
+                emit this->sendToFirmwareUpdateFinish();
+                break;
+            }
+        }
+        bedSerialPort->sendCommand("H201");
+        qDebug() << "shutdown";
+        QStringList arguments;
+        arguments.append("-h");
+        arguments.append("now");
+        QProcess::execute("bash -c \"echo rasp | sudo -S shutdown -h now > /home/pi/out 2>&1\"");
+    };
+
+    QMetaObject::invokeMethod(bedSerialPort,f,Qt::AutoConnection);
+}
+
 void PrintScheduler::receiveFromQmlShutdown()
 {
-//    bedSerialPort->sendCommand("H200");
+    bedSerialPort->sendCommand("H200");
     qDebug() << "shutdown";
     QStringList arguments;
     arguments.append("-h");
@@ -498,4 +562,9 @@ void PrintScheduler::receiveFromQmlMoveMaxHeight(){
 
     sprintf(buffer,"G01 A%d M0",-(PrintSetting::GetInstance()->getPrintSetting("default_height").toInt() + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt()));
     bedSerialPort->sendCommand(buffer);
+}
+
+QString PrintScheduler::receiveFromQmlGetVersion()
+{
+    return _version;
 }

@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QtWebSockets/QtWebSockets>
 
-#include "moodycamel/blockingconcurrentqueue.h"
-
 enum class WSCommand {
     START,
     PAUSE,

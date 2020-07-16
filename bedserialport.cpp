@@ -9,20 +9,6 @@ m_standardOutput(stdout), _sched(sched)
     m_serialPort = new QSerialPort(portPath);
     m_serialPort->setPortName(portPath);
     m_serialPort->setBaudRate(QSerialPort::Baud115200);
-    if(!m_serialPort->open(QIODevice::ReadWrite)){
-        qDebug() << portPath << "usb open error";
-
-        Logger::GetInstance()->write(portPath + "usb open error");
-
-    }else{
-        qDebug() << portPath << "usb open sucess";
-        Logger::GetInstance()->write(portPath + "usb open sucess");
-        m_serialPort->readAll();
-
-        connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
-        connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
-
-    }
     //    m_timer.start(5000);
 }
 
@@ -31,9 +17,32 @@ void BedSerialport::setBedControl(BedControl *ctrl)
     _bedControl = ctrl;
 }
 
+void BedSerialport::serialClose()
+{
+    m_serialPort->close();
+}
+
+void BedSerialport::serialOpen()
+{
+    if(!m_serialPort->open(QIODevice::ReadWrite)){
+        qDebug() << "usb open error";
+        Logger::GetInstance()->write("usb open error");
+    }else{
+        qDebug() << "usb open sucess";
+        Logger::GetInstance()->write("usb open sucess");
+        m_serialPort->readAll();
+
+        connect(m_serialPort, &QSerialPort::readyRead, this, &BedSerialport::handleReadyRead);
+        connect(m_serialPort, &QSerialPort::errorOccurred, this, &BedSerialport::handleError);
+    }
+}
+
 void BedSerialport::handleReadyRead()
 {
     uint8_t checkSum = 0;
+    if(!m_readAvaiable)
+        return;
+
     arr.append(m_serialPort->readAll());
     ResponseData_t data;
     QByteArray temp;
@@ -208,4 +217,14 @@ QByteArray BedSerialport::transData(commandFormat_t command){
     qDebug() << "BedSerialPort send massage - G: " << command.G << " H: " << command.H << " A: " << command.A.int32 << " B: " << command.B.int32 << " C: " << command.C.int32 << " M: " << command.M.int32;
     QByteArray data((char*)buf,25);
     return data;
+}
+
+bool BedSerialport::getReadAvaiable() const
+{
+    return m_readAvaiable;
+}
+
+void BedSerialport::setReadAvaiable(bool value)
+{
+    m_readAvaiable = value;
 }

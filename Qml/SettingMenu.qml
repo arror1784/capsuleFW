@@ -158,7 +158,7 @@ Item {
         }
     }
     Rectangle {
-        id: info
+        id: update
 
         width: 215
         height: 110
@@ -171,24 +171,24 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 15
         Rectangle{
-            width: infoText.width
-            height: infoImage.height + infoText.height
+            width: updateText.width
+            height: updateImage.height + updateText.height
             anchors.centerIn: parent
             color: "#00000000"
             Image {
-                id: infoImage
+                id: updateImage
                 source: "qrc:/image/calibration.png"
 
                 scale: 0.7
-                anchors.horizontalCenter: infoText.horizontalCenter
+                anchors.horizontalCenter: updateText.horizontalCenter
             }
 
             Text {
-                id: infoText
-                text: qsTr("info")
+                id: updateText
+                text: qsTr("update")
                 color: "#666666"
 
-                anchors.top: infoImage.bottom
+                anchors.top: updateImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -198,6 +198,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/updateMenu.qml"),StackView.Immediate)
             }
         }
     }

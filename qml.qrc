@@ -23,5 +23,9 @@
         <file>Qml/BusyErrorPopup.qml</file>
         <file>Qml/LcdOff.qml</file>
         <file>Qml/ResinUpdatePopup.qml</file>
+        <file>Qml/updateMenu.qml</file>
+        <file>Qml/FirmUpdateFileList.qml</file>
+        <file>Qml/FirmwareUpdatePopup.qml</file>
+        <file>Qml/InfoPopup.qml</file>
     </qresource>
 </RCC>

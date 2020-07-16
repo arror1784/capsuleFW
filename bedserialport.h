@@ -48,7 +48,11 @@ class BedSerialport : public QObject
     Q_OBJECT
 public:
     BedSerialport(QString portPath, PrintScheduler* sched);
+
     void setBedControl(BedControl* ctrl);
+    void serialClose();
+    void serialOpen();
+
 signals:
     void sendToPrintScheduler(char bedChar,int state);
     void abc();
@@ -72,9 +76,13 @@ private:
 
     BedControl* _bedControl;
     PrintScheduler* _sched;
+    bool m_readAvaiable = true;
+
+    QSerialPort *m_serialPort = nullptr;
 
 public:
-    QSerialPort *m_serialPort = nullptr;
+    bool getReadAvaiable() const;
+    void setReadAvaiable(bool value);
 
 private:
     void parsingResponse(QByteArray array);

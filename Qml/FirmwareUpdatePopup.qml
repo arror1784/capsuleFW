@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.0
 import QtQuick.Controls 2.5
 
 Rectangle {
@@ -12,14 +12,15 @@ Rectangle {
     opacity: 0.7
 
     visible: false
-    property var ipList: []
+
+    signal back()
+
+    property bool buttonEnbled: false
+    property var exText: "will be auto shutdow \r\n"
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
 
     Popup{
@@ -34,34 +35,43 @@ Rectangle {
             color: "#FAFDFF"
             radius: 8
         }
+        modal: true
         focus: true
 
-        Text {
-            id: ipText
+        Rectangle{
+            width: progressText.width
+            height: progressText.height + 30
             anchors.centerIn: parent
-            text: qsTr("")
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-            color: "#474747"
+            Text {
+                id: progressText
+                anchors.centerIn: parent
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                text: exText + "0%"
+                font.family: openSansSemibold.name
+                font.pixelSize: 20
+                color: "#474747"
+            }
         }
         Rectangle{
-            id: closeButton
-
+            id: backButton
             width: 185
             height: 40
 
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
 
-            color: "#00C6EA"
+            color: "#DCEAF3"
 
-            radius: 8
-
+            radius:  8
+            opacity: buttonEnbled ? 1 : 0.7
             Text {
-                text: qsTr("close")
-                color: "#FFFFFF"
+                text: qsTr("back")
+                color: "#666666"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
 
@@ -69,9 +79,13 @@ Rectangle {
             }
             MouseArea{
                 anchors.fill: parent
-                onClicked: popup.close()
+                enabled: buttonEnbled
+                onClicked: {
+                    back()
+                }
             }
         }
+
         onOpened: {
             popupBack.visible = true
         }
@@ -79,22 +93,19 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    Connections{
-        id: networkConnection
-        target: nc
-    }
     function open(){
-        nc.updateIpAddressList()
-        ipList = nc.getIpAddressList()
-        var iptext = ""
-        for (var i = 0; i < ipList.length; i++){
-            iptext += ipList[i] + ":5000\n"
-        }
-        ipText.text = iptext
-
         popup.open()
     }
     function close(){
         popup.close()
+    }
+    function setProgress(progress){
+        progressText.text = exText + progress +"%"
+    }
+    function setTest(text){
+        progressText.text = text
+    }
+    function setBTNEnabled(enabled){
+        buttonEnbled = enabled
     }
 }

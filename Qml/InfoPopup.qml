@@ -37,7 +37,7 @@ Rectangle {
         focus: true
 
         Text {
-            id: ipText
+            id: infoText
             anchors.centerIn: parent
             text: qsTr("")
             font.family: openSansSemibold.name
@@ -79,19 +79,11 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    Connections{
-        id: networkConnection
-        target: nc
+    function setText(txt){
+        infoText.text = txt
     }
-    function open(){
-        nc.updateIpAddressList()
-        ipList = nc.getIpAddressList()
-        var iptext = ""
-        for (var i = 0; i < ipList.length; i++){
-            iptext += ipList[i] + ":5000\n"
-        }
-        ipText.text = iptext
 
+    function open(){
         popup.open()
     }
     function close(){

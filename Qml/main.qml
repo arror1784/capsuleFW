@@ -19,6 +19,8 @@ Window {
             id: mainMenu
         }
     }
+//    SettingMenu{}
+//    FileSelectList{}
     ErrorPopup{
         id: errorPopup
         onBack: {

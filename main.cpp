@@ -22,6 +22,8 @@
 #include "websocketclient.h"
 #include "resinupdater.h"
 
+#define VERISON "0.1.2"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -36,6 +38,8 @@ int main(int argc, char *argv[])
     NetworkControl nc;
 
     ResinUpdater ru;
+
+    printScheduler->setVersion(VERISON);
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);

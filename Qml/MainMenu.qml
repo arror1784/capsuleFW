@@ -109,7 +109,7 @@ Item {
         }
     }
     Rectangle{
-        id: resinUpdate
+        id: info
         radius: 5
         color: "#DCEAF3"
 
@@ -121,23 +121,23 @@ Item {
 
         anchors.bottom: selectFile.bottom
         Rectangle{
-            width: updateText.width
-            height: updateImage.height + updateText.height
+            width: infoText.width
+            height: infoImage.height + infoText.height
             anchors.centerIn: parent
 
             color: "#00000000"
             Image {
-                id: updateImage
+                id: infoImage
                 source: "qrc:/image/update.png"
 
                 scale: 0.6
-                anchors.horizontalCenter: updateText.horizontalCenter
+                anchors.horizontalCenter: infoText.horizontalCenter
             }
             Text {
-                id: updateText
-                text: qsTr("resin update")
+                id: infoText
+                text: qsTr("Info")
                 color: "#666666"
-                anchors.top: updateImage.bottom
+                anchors.top: infoImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -147,36 +147,17 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                resinUpdater.checkUpdate()
-                resinUpdatePopup.open()
+                infoPopup.open()
+                infoPopup.setText(scheduler.receiveFromQmlGetVersion())
             }
         }
     }
-    ResinUpdatePopup{
-        id: resinUpdatePopup
-        onCancel: {
-            resinUpdatePopup.close()
-        }
-        onResinUpdate: {
-            resinUpdater.update()
-        }
+    InfoPopup{
+        id:infoPopup
     }
 
     Connections{
         id: schedulerConnection
         target: scheduler
-    }
-    Connections{
-        id: resinUpdaterConnection
-        target: resinUpdater
-        onUpdateAvailable:{
-            resinUpdatePopup.updateAvailable()
-        }
-        onUpdateNotAvailable:{
-            resinUpdatePopup.updateNotAvailable()
-        }
-        onUpdateFinished:{
-            resinUpdatePopup.updateFinished()
-        }
     }
 }
