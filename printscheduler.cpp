@@ -65,6 +65,11 @@ void PrintScheduler::run(){
         QThread::exec();
 }
 
+QString PrintScheduler::materialName() const
+{
+    return _materialName;
+}
+
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
@@ -80,6 +85,7 @@ void PrintScheduler::bedFinish(){
         _bedMoveFinished = PRINT_MOVE_NULL;
         _bedPrintImageNum = 0;
 
+//        _bedError = false;
         emit sendToQmlFinish();
         _wsClient->sendSetTimerOnoff(false);
         _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
@@ -93,13 +99,14 @@ void PrintScheduler::bedError(){
     std::function<void()> func = [this]() {
 //        _wsClient->sendFinish();
 
-        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
-        _bedWork = BED_FINISH_WORK;
+        _bedWork = BED_ERROR_WORK;
         _bedMoveFinished = PRINT_MOVE_NULL;
         _bedPrintImageNum = 0;
     //        emit sendToQmlPrintFinish();
+//        _bedError = false;
         emit sendToQmlFinish();
         _wsClient->sendSetTimerOnoff(false);
+        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     };
 
@@ -123,6 +130,8 @@ void PrintScheduler::initPrint()
     _bedControl->setAccleSpeed(rs.getResinSetting("down_accel_speed").toInt(),0);
     _bedControl->setDecelSpeed(rs.getResinSetting("down_decel_speed").toInt(),0);
 
+    _bedControl->setUVtime(0);
+
     bedSerialPort->sendCommand("H10");
     bedSerialPort->sendCommand("H91");
 }
@@ -134,19 +143,22 @@ void PrintScheduler::printLayer(){
 
         if(_bedPrintImageNum == _bedMaxPrintNum){
             receiveFromQmlBedPrintFinish();
+            return;
         }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension) == false){
-            receiveFromQmlBedPrintFinishError();
+//            receiveFromQmlBedPrintFinishError();
+            _bedError = true;
+            emit sendToQmlWaitForMovement();
+            emit sendToQmlPrintWorkError();
+        }
+        _bedPrintImageNum++;
+
+        emit sendToQmlUpdateProgress(_bedPrintImageNum,_bedMaxPrintNum);
+        _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
+
+        if(_bedPrintImageNum <= bedCuringLayer){
+            _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
         }else{
-            _bedPrintImageNum++;
-
-            emit sendToQmlUpdateProgress(_bedPrintImageNum,_bedMaxPrintNum);
-            _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
-
-            if(_bedPrintImageNum <= bedCuringLayer){
-                _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
-            }else{
-                _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
-            }
+            _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
         }
     }
 }
@@ -169,11 +181,21 @@ void PrintScheduler::receiveFromBedControl(int receive){
             _wsClient->sendSetTimerTime();
             emit sendToQmlInit();
         case PRINT_MOVE_LAYER_OK:
+            if(_bedError){
+                receiveFromQmlBedPrintFinishError();
+                break;
+            }
             if(_bedWork == BED_PAUSE_WORK){
                 emit sendToQmlPauseFinish();
                 _bedWork = BED_PAUSE;
             }
             _bedMoveFinished = PRINT_MOVE_LAYER_OK;
+            if(_bedPrintImageNum == bedCuringLayer){
+                emit sendToQmlFirstlayerStart();
+            }else if(_bedPrintImageNum == (bedCuringLayer + 1)){
+                emit sendToQmlFirstlayerFinish();
+            }
+
             printLayer();
             break;
         case PRINT_MOVE_AUTOHOME_OK:
@@ -181,14 +203,34 @@ void PrintScheduler::receiveFromBedControl(int receive){
         case PRINT_MOVE_FINISH_OK:
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
-            emit sendToQmlPrintFinish();
-            _wsClient->sendFinish();
+            if(_bedError){
+                emit sendToqmlPrintWorkErrorFinish();
+                _wsClient->sendFinish();
+                _bedError = false;
+            }else{
+                emit sendToQmlPrintFinish();
+                _wsClient->sendFinish();
+            }
+            setMotorSpendtime();
             break;
         case PRINT_PAUSE:
             break;
         case PRINT_RESUME:
             break;
     }
+}
+void PrintScheduler::setMotorSpendtime(){
+    QJsonObject jo = PrintSetting::GetInstance()->getPrintSetting("motor_time_spend").toObject();
+    int time;
+
+    if(jo[_materialName].isNull()){
+        time = 0;
+        jo.insert(_materialName,0);
+    }else{
+        time = jo[_materialName].toInt();
+    }
+    jo[_materialName] = time + _printTime - (_bedControl->UVtime() + _bedControl->delayTime());
+    PrintSetting::GetInstance()->setPrintSetting("motor_time_spend",jo);
 }
 void PrintScheduler::receiveFromSerialPort(int state){
 
@@ -200,8 +242,16 @@ void PrintScheduler::receiveFromSerialPort(int state){
         else
             emit sendToQmlExit();
     }else if(state == LCD_ON){
+
         emit sendToLCDState(1);
     }else if(state == LCD_OFF){
+        if(_bedWork == BED_FINISH_WORK || _bedWork == BED_NOT_WORK || _bedWork == BED_ERROR_WORK){
+
+        }else{
+            _bedError = true;
+            emit sendToQmlWaitForMovement();
+            emit sendToQmlPrintWorkError();
+        }
         emit sendToLCDState(0);
     }
 }
@@ -290,6 +340,8 @@ int PrintScheduler::copyFilesPath(QString src, QString dst)
         }else if(f.contains("info.json")){
             QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
             count++;
+        }else if(f.contains("resin.json")){
+            QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
         }
     }//    WebSocketClient wsc(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
 
@@ -331,17 +383,20 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     ResinSetting rs(materialName);
 
+    QFile f;
+    QString fval;
+    QJsonDocument fd;
+
     QDir dir(filePath);
     dir.setFilter( QDir::AllEntries | QDir::NoDotAndDotDot );
+
+    qDebug() << "selected material: " << materialName;
 
     file.setFileName(filePath + QStringLiteral("/info.json"));
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "info file open error";
         Logger::GetInstance()->write(file.fileName() + " file open error");
         return -2;
-    }else{
-        qDebug() << "info file open sucess";
-        Logger::GetInstance()->write(file.fileName() + " file open sucess");
     }
     val = file.readAll();
     file.close();
@@ -350,9 +405,21 @@ int PrintScheduler::setupForPrint(QString materialName)
     setting = d.object();
 
     if(materialName == "Custom"){
-        materialSetting = setting;
+        f.setFileName(filePath + QStringLiteral("/resin.json"));
+        if(!f.open(QIODevice::ReadOnly | QIODevice::Text)){
+            qDebug() << "resin file open error";
+            Logger::GetInstance()->write(f.fileName() + " file open error");
+            return -2;
+        }
+        fval = f.readAll();
+        f.close();
+
+        fd = QJsonDocument::fromJson(fval.toUtf8());
+
+        materialSetting = fd.object();
     }else{
-        materialSetting = rs.getJsonObject();
+        if(rs.getOpen())
+            materialSetting = rs.getJsonObject();
     }
 
     _bedControl->maxHeight = _bedControl->defaultHeight + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
@@ -420,6 +487,8 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     _bedControl->layerDelay = materialSetting["layer_delay"].toInt();
 
+    _bedControl->setUVtime(0);
+
     emit sendToQmlSetImageScale(materialSetting["contraction_ratio"].toDouble());
 
     double led = (PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() / 100) *  materialSetting["led_offset"].toDouble();
@@ -433,11 +502,11 @@ void PrintScheduler::receiveFromQmlBedPrint(QString path,QString materialName){
     //int e =0;
     //e = readyForPrintStart(materialName,path);
     if(copyProject(path)){
-        emit sendToQmlPrintError();
+        emit sendToQmlPrintSettingError();
         return;
     }
     if(setupForPrint(materialName)){
-        emit sendToQmlPrintError();
+        emit sendToQmlPrintSettingError();
         return;
     }
 
@@ -450,7 +519,7 @@ void PrintScheduler::receiveFromQmlBedPrint(QString path,QString materialName){
 void PrintScheduler::receiveFromQmlBedPrintAgain()
 {
     if(setupForPrint(_materialName)){
-        emit sendToQmlPrintError();
+        emit sendToQmlPrintSettingError();
         return;
     }
     qDebug() << _printName << _materialName;
@@ -567,4 +636,9 @@ void PrintScheduler::receiveFromQmlMoveMaxHeight(){
 QString PrintScheduler::receiveFromQmlGetVersion()
 {
     return _version;
+}
+
+void PrintScheduler::receiveFromQmlSetPrintTime(int time)
+{
+    _printTime = time;
 }

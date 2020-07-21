@@ -35,9 +35,12 @@ Item {
             color: "#00000000"
             Image {
                 id: resinUpdateImage
-                source: "qrc:/image/calibration.png"
+                source: "qrc:/image/fill.png"
 
-                scale: 0.7
+                height: 67
+                width: 67
+
+                scale: 0.9
                 anchors.horizontalCenter: resinUpdateText.horizontalCenter
             }
 
@@ -85,11 +88,9 @@ Item {
                 width: 67
                 height: 67
 
-                rotation: 180
+                source: "qrc:/image/download.png"
 
-                source: "qrc:/image/light.png"
-
-                scale: 0.95
+                scale: 0.8
                 anchors.horizontalCenter: firmwareUpdateText.horizontalCenter
             }
 

@@ -70,7 +70,11 @@ signals:
     void sendToQmlInsertMaterialList(QString name);
     void sendToQmlMoveOk();
 //    void sendToSerialPortCommand(QString);
-    void sendToQmlPrintError();
+    void sendToQmlPrintSettingError();
+    void sendToQmlPrintWorkError();
+    void sendToqmlPrintWorkErrorFinish();
+
+    void sendToQmlWaitForMovement();
 
     void sendToQmlExitError();
     void sendToQmlExit();
@@ -80,6 +84,9 @@ signals:
     void sendToFirmwareUpdateFinish();
     void sendToFirmwareUpdateError();
     void sendToFirmwareUpdateProgrese(int progress);
+
+    void sendToQmlFirstlayerStart();
+    void sendToQmlFirstlayerFinish();
 
 public slots:
 
@@ -112,12 +119,17 @@ public slots:
 
     QString receiveFromQmlGetVersion();
 
+    void receiveFromQmlSetPrintTime(int time);
+
 public:
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
 
     QQmlApplicationEngine *engine;
 
+    QString materialName() const;
+
+    void setMotorSpendtime();
 protected:
     void run()override;
 
@@ -144,6 +156,10 @@ private:
     int _bedWork;
     int _bedMoveFinished;
     int _bedMaxPrintNum;
+
+    int _printTime = 0;
+
+    bool _bedError = false;
 
     bool _isBusy;
 

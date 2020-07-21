@@ -69,9 +69,15 @@ public:
     int defaultHeight = 68000; //100//102//97600//102700//102400
 
     unsigned int layerDelay = 1000;
-    unsigned int curingTime = 2000;
+    int curingTime = 2000;
 
-    unsigned int bedCuringTime = 15000;
+    int bedCuringTime = 15000;
+
+    int UVtime() const;
+    void setUVtime(int UVtime);
+
+    int delayTime() const;
+    void setDelayTime(int delayTime);
 
 private:
 
@@ -82,6 +88,11 @@ private:
     int _upDecelSpeed = 10;
     int _downAccelSpeed = 10;
     int _downDecelSpeed = 10;
+    
+    int _currentPosition = 0;
+
+    int _UVtime = 0;
+    int _delayTime = 0;
 
     int ledOffset = 1000;
 

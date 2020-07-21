@@ -8,9 +8,14 @@ Item {
 
     property int timesec: 0
     property int timemin: 0
+    property double time: 0
+
+    property double firstLayerTimeStart: 0
+
     property double startTime: 0
     property double pauseStartTime: 0
     property double pauseDuration: 0
+
     property int ct: 0
     property bool waitPopupOpened: false
 
@@ -108,10 +113,6 @@ Item {
             anchors.fill: parent
             onClicked: {
                 fileInfoPopup.open()
-                fileInfoPopup.setText(stackView.get(1).currentParentName,
-                                      "***min",
-                                      stackView.get(2).materialName,
-                                      scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
             }
         }
     }
@@ -141,9 +142,6 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                var date = new Date();
-                pauseStartTime = date.getTime()
-
                 scheduler.receiveFromQmlBedPrintPause()
 
                 quitPopup.open()
@@ -162,6 +160,8 @@ Item {
         onPrintResume: {
             quitPopup.close()
             scheduler.receiveFromQmlBedPrintStart()
+            var date = new Date();
+            pauseDuration = (date.getTime() - pauseStartTime) + pauseDuration
 //            printMenu.printStart()
         }
         onPrintStop: {
@@ -185,6 +185,7 @@ Item {
             var date = new Date();
             var currentDuration = date.getTime() - startTime - pauseDuration
             var currentDate = new Date(currentDuration)
+            time = currentDuration
             timesec = currentDate.getSeconds()
             timemin = currentDate.getMinutes()
         }
@@ -200,8 +201,11 @@ Item {
         }
         onSendToQmlFinish :{
             timeTimer.stop()
+            scheduler.receiveFromQmlSetPrintTime(time)
         }
         onSendToQmlPauseFinish :{
+            var date = new Date();
+            pauseStartTime = date.getTime()
             quitPopup.setButtonEnabled(true)
         }
         onSendToQmlPrintFinish :{
@@ -212,6 +216,46 @@ Item {
             quitPopup.close()
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
         }
+        onSendToQmlPrintWorkError:{
+
+        }
+        onSendToQmlWaitForMovement:{
+            waitPopup.open();
+            waitPopupOpened = true
+        }
+        onSendToqmlPrintWorkErrorFinish:{
+            if(waitPopupOpened === true){
+                waitPopupOpened = false
+                waitPopup.close()
+            }
+//            quitPopup.close()
+            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingError.qml"),StackView.Immediate)
+        }
+        onSendToQmlFirstlayerStart:{
+            var currentDate = new Date()
+            firstLayerTimeStart = currentDate.getTime()
+        }
+        onSendToQmlFirstlayerFinish:{
+            var total_layer = scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"total_layer")
+            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"bed_curing_layer")
+
+            var T = new Date()
+            var Tduration = T.getTime() - firstLayerTimeStart
+            var Tdate = new Date(Tduration)
+            var firstLayerTime = Tdate.getTime()
+
+            var currentDate = new Date(time + (firstLayerTime * (total_layer - bed_curting_layer - 1)))
+            var sec = currentDate.getSeconds()
+            var min = currentDate.getMinutes()
+
+            fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
+        }
+    }
+    Component.onCompleted: {
+        fileInfoPopup.setText(stackView.get(1).currentParentName,
+                              "***min",
+                              stackView.get(2).materialName,
+                              scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
     }
     function setProgressValue(value){
         progressBar.setCurrentValue(value)

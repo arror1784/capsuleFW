@@ -12,5 +12,10 @@
         <file>image/light.png</file>
         <file>image/settings.svg</file>
         <file>image/defaultBlackImage.png</file>
+        <file>image/error.png</file>
+        <file>image/network.png</file>
+        <file>image/fill.png</file>
+        <file>image/download.png</file>
+        <file>image/info.png</file>
     </qresource>
 </RCC>

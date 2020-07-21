@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     bedcontrol.cpp \
     bedserialport.cpp \
+    filevalidator.cpp \
     logger.cpp \
     main.cpp \
     networkcontrol.cpp \
@@ -52,12 +53,14 @@ HEADERS += \
     bedcontrol.h \
     bedserialport.h \
     common.h \
+    filevalidator.h \
     logger.h \
     networkcontrol.h \
     printscheduler.h \
     printsetting.h \
     resinsetting.h \
     resinupdater.h \
+    slate-global.h \
     updater.h \
     websocketclient.h \
     ymodem.h

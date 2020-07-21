@@ -42,7 +42,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("you cat exit on main menu")
+            text: qsTr("you can exit on main menu")
             font.family: openSansRegular.name
             font.pixelSize: 20
             color: "#474747"

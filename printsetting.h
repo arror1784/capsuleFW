@@ -43,6 +43,7 @@ public:
     void setPrintSetting(QString key,double value);
     void setPrintSetting(QString key,int value);
     void setPrintSetting(QString key,QString value);
+    void setPrintSetting(QString key,QJsonObject value);
     QJsonArray getResinList();
     void setResinList(QJsonArray value);
 };

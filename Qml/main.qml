@@ -42,7 +42,7 @@ Window {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlPrintError :{
+        onSendToQmlPrintSettingError :{
             errorPopup.open()
         }
         onSendToQmlExitError :{

@@ -20,10 +20,14 @@ public:
 
     void setResinSetting(QJsonObject value);
 
+    bool getOpen() const;
+
 private:
     const QString resinPath = "/opt/capsuleFW/resin";
     QJsonObject setting;
     QString filePath;
+
+    bool _open = false;
 
 };
 

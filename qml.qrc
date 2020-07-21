@@ -27,5 +27,6 @@
         <file>Qml/FirmUpdateFileList.qml</file>
         <file>Qml/FirmwareUpdatePopup.qml</file>
         <file>Qml/InfoPopup.qml</file>
+        <file>Qml/PrintingError.qml</file>
     </qresource>
 </RCC>

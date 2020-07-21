@@ -47,7 +47,6 @@ void BedSerialport::handleReadyRead()
     ResponseData_t data;
     QByteArray temp;
     while(arr.contains(0x02) && arr.contains(0x03)){
-        qDebug() << arr;
 //    if(arr.contains(0x02) && arr.contains(0x03)){
         for(int i = arr.indexOf(0x02,0)+1 ; i < arr.indexOf(0x03,0) - 1 ; i++){
             checkSum += arr[i];

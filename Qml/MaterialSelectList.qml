@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+import App 1.0
 
 Item {
 
@@ -130,7 +131,6 @@ Item {
                     materialName = materialSelectList.currentItem.metarialname
                     printingPopup.open()
                     printingPopup.setText(stackView.get(1).currentParentName,
-                                          "***min",
                                           materialName,
                                           scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
                 }
@@ -145,6 +145,11 @@ Item {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
+    FileValidator{
+        id: validator
+        treatAsImage: false
+    }
+
     Connections{
         id: schedulerConnection
         target: scheduler
@@ -154,6 +159,10 @@ Item {
     }
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
+        validator.url = "file:" + stackView.get(1).currentPath + "/resin.json"
+        if(validator.fileValid){
+            inserMaterialList("Custom")
+        }
         scheduler.receiveFromQmlUpdateMaterial()
     }
     function inserMaterialList(name){

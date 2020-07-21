@@ -21,6 +21,7 @@
 #include "networkcontrol.h"
 #include "websocketclient.h"
 #include "resinupdater.h"
+#include "filevalidator.h"
 
 #define VERISON "0.1.2"
 
@@ -38,6 +39,8 @@ int main(int argc, char *argv[])
     NetworkControl nc;
 
     ResinUpdater ru;
+
+    qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
 
     printScheduler->setVersion(VERISON);
 

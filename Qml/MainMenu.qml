@@ -128,9 +128,12 @@ Item {
             color: "#00000000"
             Image {
                 id: infoImage
-                source: "qrc:/image/update.png"
+                source: "qrc:/image/info.png"
 
-                scale: 0.6
+                width: 67
+                height: 67
+
+                scale: 0.7
                 anchors.horizontalCenter: infoText.horizontalCenter
             }
             Text {

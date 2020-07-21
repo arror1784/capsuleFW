@@ -2,7 +2,12 @@
 
 #include "bedserialport.h"
 #include "printscheduler.h"
+#include "printsetting.h"
+
 #include <QtConcurrent/QtConcurrentRun>
+
+#include <QJsonArray>
+#include <QJsonObject>
 
 BedControl::BedControl(char bedChar,BedSerialport* bedSerialPort,PrintScheduler *sched) :
     bedChar(bedChar),
@@ -81,21 +86,63 @@ void BedControl::receiveFromPrintScheduler(int receive){
     return;
 }
 
+int BedControl::UVtime() const
+{
+    return _UVtime;
+}
+
+void BedControl::setUVtime(int UVtime)
+{
+    _UVtime = UVtime;
+}
+
+int BedControl::delayTime() const
+{
+    return _delayTime;
+}
+
+void BedControl::setDelayTime(int delayTime)
+{
+    _delayTime = delayTime;
+}
+
 void BedControl::printDelay(){
 
-//    _sleepFuture = std::async([this](){
+    //    _sleepFuture = std::async([this](){
     future = QtConcurrent::run([this](){
-    //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
+        //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
+        QString material = _sched->materialName();
+        QJsonObject jo = PrintSetting::GetInstance()->getPrintSetting("UV_time_spend").toObject();
+        int time;
+
+        if(jo[material].isNull()){
+            time = 0;
+            jo.insert(material,0);
+        }else{
+            time = jo[material].toInt();
+        }
+        _delayTime += layerDelay;
         QThread::msleep(layerDelay);
+
         qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
         _bedSerialPort->sendCommand("H11");
         if(bedState == PRINT_MOVE_BEDCURRENT){
-            QThread::msleep(bedCuringTime);
+            QThread::msleep((unsigned int)bedCuringTime);
         }else if(bedState == PRINT_DLP_WORKING){
-            QThread::msleep(curingTime);
+            QThread::msleep((unsigned int)curingTime);
         }
         _bedSerialPort->sendCommand("H10");
         qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
+
+        if(bedState == PRINT_MOVE_BEDCURRENT){
+            jo[material] = time + bedCuringTime;
+            _UVtime += bedCuringTime;
+        }else if(bedState == PRINT_DLP_WORKING){
+            jo[material] = time + curingTime;
+            _UVtime += curingTime;
+        }
+
+        PrintSetting::GetInstance()->setPrintSetting("UV_time_spend",jo);
         moveUpCommand();
     });
 }
@@ -109,7 +156,7 @@ void BedControl::moveUpCommand(){
 
     sprintf(buffer,"G01 %c%d M1",bedChar,ZHopHeight);
     _bedSerialPort->sendCommand(buffer);
-//    currentPosition += ZHopHeight;
+//    _currentPosition += ZHopHeight;
     _sched->receiveFromBedControl(PRINT_DLP_WORK_FINISH);
     bedState = PRINT_MOVE_UP;
 }
@@ -117,17 +164,21 @@ void BedControl::moveDownCommand(){
     char buffer[50] = {0};
 
     sprintf(buffer,"G01 %c%d M0",bedChar,-(ZHopHeight - LayerHeight));
+//    _currentPosition += -(ZHopHeight - LayerHeight);
     _bedSerialPort->sendCommand(buffer);
 }
 void BedControl::moveUpCommandMax(){
 
 //    char buffer[50] = {0};
     _bedSerialPort->sendCommand("G02 A-15000 M1");
+//    _currentPosition = -15000;
 }
 void BedControl::moveDownCommandMin(){
     char buffer[50] = {0};
 
     sprintf(buffer,"G01 %c%d M0",bedChar,-(maxHeight - LayerHeight));
+//    _currentPosition += -(maxHeight - LayerHeight);
+    
     _bedSerialPort->sendCommand(buffer);
 }
 void BedControl::setAccleSpeed(int val,int mode){

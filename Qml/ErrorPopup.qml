@@ -42,7 +42,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("printing error")
+            text: qsTr("print setting error")
             font.family: openSansRegular.name
             font.pixelSize: 20
             color: "#474747"

@@ -70,11 +70,15 @@ Rectangle {
                 anchors.leftMargin: 15
                 Text {
                     id: fileNameText
+
                     text: qsTr("lower.stl")
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     font.bold: true
                     color: "#474747"
+
+                    width: 200
+                    elide: Text.ElideRight
                 }
                 Text {
                     id: printingTimeText
@@ -83,6 +87,9 @@ Rectangle {
                     font.pixelSize: 23
                     font.bold: true
                     color: "#474747"
+
+                    width: 200
+                    elide: Text.ElideRight
                 }
                 Text {
                     id: materialText
@@ -91,6 +98,9 @@ Rectangle {
                     font.pixelSize: 23
                     font.bold: true
                     color: "#474747"
+
+                    width: 200
+                    elide: Text.ElideRight
                 }
                 Text {
                     id: layerHeightText
@@ -99,6 +109,9 @@ Rectangle {
                     font.pixelSize: 23
                     font.bold: true
                     color: "#474747"
+
+                    width: 200
+                    elide: Text.ElideRight
                 }
             }
         }
@@ -145,5 +158,8 @@ Rectangle {
         printingTimeText.text = printingTime
         materialText.text = material
         layerHeightText.text = Math.round(layerHeight * 1000) / 1000 + "mm/layer"
+    }
+    function setPrintingTime(printingTime){
+        printingTimeText.text = printingTime
     }
 }

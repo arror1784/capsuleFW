@@ -132,9 +132,13 @@ Item {
             color: "#00000000"
             Image {
                 id: networkImage
-                source: "qrc:/image/calibration.png"
+                source: "qrc:/image/network.png"
 
-                scale: 0.7
+                height: 67
+                width: 67
+
+                scale: 0.57
+
                 anchors.horizontalCenter: networkText.horizontalCenter
             }
 
@@ -177,7 +181,8 @@ Item {
             color: "#00000000"
             Image {
                 id: updateImage
-                source: "qrc:/image/calibration.png"
+                source: "qrc:/image/update.png"
+
 
                 scale: 0.7
                 anchors.horizontalCenter: updateText.horizontalCenter
