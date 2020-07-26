@@ -20,6 +20,7 @@
 
 #include "iostream"
 #include "logger.h"
+#include "updater.h"
 
 class WebSocketClient;
 class BedControl;
@@ -88,6 +89,14 @@ signals:
     void sendToQmlFirstlayerStart();
     void sendToQmlFirstlayerFinish();
 
+    void MCUFirmwareUpdateFinished();
+
+    void sendToQmlSWUpdateAvailable();
+    void sendToQmlSWUpdateNotAvailable();
+    void sendToQmlSWUpdateFinished();
+    void sendToQmlSWUpdateError();
+
+
 public slots:
 
     void receiveFromQmlBusySet(bool bs);
@@ -109,8 +118,12 @@ public slots:
     void receiveFromQmlSetPrinterOption(QString key,double value);
     void receiveFromQmlSetPrinterOption(QString key,int value);
     void receiveFromQmlSetPrinterOption(QString key,QString value);
+
     QVariant receiveFromQmlGetMaterialOption(QString material,QString key);
     QVariant receiveFromQmlGetMaterialOptionFromPath(QString path,QString key);
+
+    QVariant receiveFromQmlGetPrintOption(QString key);
+    QVariant receiveFromQmlGetPrintOptionFromPath(QString path,QString key);
 
     void receiveFromQmlGoHome();
     void receiveFromQmlAutoHome();
@@ -121,6 +134,14 @@ public slots:
 
     void receiveFromQmlSetPrintTime(int time);
 
+    void receiveFromUpdaterSWUpdateAvailable(){emit sendToQmlSWUpdateAvailable();}
+    void receiveFromUpdaterSWUpdateNotAvailable(){emit sendToQmlSWUpdateNotAvailable();}
+    void receiveFromUpdaterSWUpdateFinished(){emit sendToQmlSWUpdateFinished();}
+    void receiveFromUpdaterSWUpdateError(){emit sendToQmlSWUpdateError();}
+
+    void update(){_updater->update();}
+    void checkUpdate(){_updater->checkUpdate();}
+
 public:
     BedSerialport* bedSerialPort = nullptr;
     QString printFilePath;
@@ -130,12 +151,16 @@ public:
     QString materialName() const;
 
     void setMotorSpendtime();
+
+    Updater updater() const;
+
 protected:
     void run()override;
 
 private:
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
+    Updater *_updater;
 
     QString _version;
 

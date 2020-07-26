@@ -22,8 +22,10 @@
 #include "websocketclient.h"
 #include "resinupdater.h"
 #include "filevalidator.h"
+#include "updater.h"
+#include "version.h"
 
-#define VERISON "0.1.2"
+#define VERISON "0.1.5"
 
 int main(int argc, char *argv[])
 {
@@ -37,18 +39,19 @@ int main(int argc, char *argv[])
     QQmlContext* ctx = engine.rootContext();
 
     NetworkControl nc;
-
     ResinUpdater ru;
+
+    printScheduler->engine = &engine;
 
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
 
-    printScheduler->setVersion(VERISON);
+    printScheduler->setVersion(Version::GetInstance()->getVersion());
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("resinUpdater",&ru);
 
-    qDebug() << "main :" << QThread::currentThread();
+    qDebug() << "verion " << Version::GetInstance()->getVersion();
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));

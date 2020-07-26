@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Qt.labs.folderlistmodel 2.1
 import QtQuick.Controls 2.5
+import App 1.0
 
 Item {
 
@@ -147,13 +148,24 @@ Item {
             model: folderModel
             delegate: FileListDelegate{
                 onDirClicked: {
-                    changeFolderPath(path)
-                    currentParentName = basename(folderModel.folder.toString())
-                    currentPath = path
-                    selectedFileName = ""
-                    fileSelectList.currentIndex=-1
-                    fileSelectList.update()
-                    parentDirText.text = basename(folderModel.folder.toString())
+                    validator.url = "file:" + path + "/info.json"
+                    if(validator.fileValid){
+                        currentParentName = basename(path.toString())
+                        currentPath = path
+
+                        fileSelectList.currentIndex = index
+                        selectedFileName = name
+                        fileSelectList.update()
+
+                    }else{
+                        changeFolderPath(path)
+                        currentParentName = basename(folderModel.folder.toString())
+                        currentPath = path
+                        selectedFileName = ""
+                        fileSelectList.currentIndex=-1
+                        fileSelectList.update()
+                        parentDirText.text = basename(folderModel.folder.toString())
+                    }
                 }
                 onFileClicked: {
                     fileSelectList.currentIndex = index
@@ -276,12 +288,18 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if(selectedFileName === "info.json"){
+//                if(selectedFileName === "info.json"){
+                if(fileSelectList.currentIndex !== -1){
                     stackView.push(Qt.resolvedUrl("qrc:/Qml/MaterialSelectList.qml"),StackView.Immediate)
                 }
             }
         }
     }
+    FileValidator{
+        id: validator
+        treatAsImage: false
+    }
+
     function resetPath(){
         folderModel.folder = mediaURL
         parentDirText.text = ""

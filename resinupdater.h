@@ -5,7 +5,7 @@
 #include <QNetworkRequest>
 //#include <QNetworkReply>
 
-enum class RequestType
+enum class ResinRequestType
 {
     UPDATE,
     DOWNLOAD,
@@ -31,12 +31,15 @@ signals:
     void updateAvailable();
     void updateNotAvailable();
     void updateFinished();
+    void updateError();
 
 private:
     QNetworkAccessManager *manager;
     QNetworkRequest request;
 
-    RequestType requestType = RequestType::NONE;
+    ResinRequestType _requestType = ResinRequestType::NONE;
+
+    QUrl _url;
 };
 
 #endif // RESINUPDATER_H

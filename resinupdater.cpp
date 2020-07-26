@@ -7,10 +7,13 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QByteArray>
+
 #include "printsetting.h"
 #include "resinsetting.h"
 
 ResinUpdater::ResinUpdater()
+//    : _url("http://10.42.0.1:8000/resin/download/")
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
@@ -18,36 +21,38 @@ ResinUpdater::ResinUpdater()
 
 void ResinUpdater::checkUpdate()
 {
-    requestType = RequestType::UPDATE;
-    request.setUrl(QUrl("http://10.42.0.1:8000/resin/update/"));
+    _requestType = ResinRequestType::UPDATE;
+    request.setUrl(QUrl("https://services.hix.co.kr/resin/update/"));
     manager->get(request);
 }
 
 void ResinUpdater::update()
 {
-    requestType = RequestType::DOWNLOAD_ALL;
-    request.setUrl(QUrl("http://10.42.0.1:8000/resin/download/"));
+    _requestType = ResinRequestType::DOWNLOAD_ALL;
+    request.setUrl(QUrl("https://services.hix.co.kr/resin/download/"));
     manager->get(request);
 }
 
 void ResinUpdater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
+        emit updateError();
         qDebug() << reply->errorString();
         return;
     }
     qDebug() << reply->url();
-    QString answer = reply->readAll();
+    QByteArray answer = reply->readAll();
+//    reply->
 //    qDebug() << answer;
-    switch (requestType) {
-        case RequestType::UPDATE:
+    switch (_requestType) {
+        case ResinRequestType::UPDATE:
             {
-                QJsonDocument jd = QJsonDocument::fromJson(answer.toUtf8());
+                QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
 
                 QJsonArray resinList = PrintSetting::GetInstance()->getResinList();
 
-                if(resinList.size() - 1 != ja.size()){
+                if(resinList.size() != ja.size()){
                     qDebug() << "update available 1";
                     emit updateAvailable();
                     return;
@@ -74,15 +79,14 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
 //                update();
             }
             break;
-        case RequestType::DOWNLOAD:
+        case ResinRequestType::DOWNLOAD:
             break;
-        case RequestType::DOWNLOAD_ALL:
+        case ResinRequestType::DOWNLOAD_ALL:
             {
-                QJsonDocument jd = QJsonDocument::fromJson(answer.toUtf8());
+                QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
 
                 QJsonArray sl;
-                sl.append("custom");
 
                 QJsonArray resinList = PrintSetting::GetInstance()->getResinList();
 
@@ -101,7 +105,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 emit updateFinished();
             }
             break;
-        case RequestType::NONE:
+        case ResinRequestType::NONE:
             break;
     }
 }

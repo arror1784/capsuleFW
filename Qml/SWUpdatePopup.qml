@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Controls 2.5
 
 Rectangle {
@@ -14,11 +14,13 @@ Rectangle {
     visible: false
 
     signal cancel()
-    signal resinUpdate()
+    signal swUpdate()
 
     property bool cancelButtonEnbled: false
     property bool updateButtonEnbled: false
-    property bool updateProgressEnbled: true
+    property bool updateProgressEnbled: false
+
+    property var exText: "전원을 제거하지 말고 프린터 종료된 후\r\n1분 뒤 다시 켜주세요."
 
     FontLoader{
         id: openSansSemibold
@@ -50,7 +52,7 @@ Rectangle {
             id: updateText
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("resin update check")
+            text: qsTr("SW update check")
             font.family: openSansRegular.name
             font.pixelSize: 20
 
@@ -127,13 +129,13 @@ Rectangle {
                 enabled: updateButtonEnbled
                 onClicked: {
 
-                    updateText.text = "Updating Resin\r\n"
+                    updateText.text = "Updating SW\r\n" + exText
 
                     updateProgressEnbled = true
                     cancelButtonEnbled = false
                     updateButtonEnbled = false
 
-                    resinUpdate()
+                    swUpdate()
                 }
             }
         }
@@ -155,24 +157,24 @@ Rectangle {
         updateButtonEnbled = false
         updateProgressEnbled = false
 
-        updateText.text = "resin update not available"
+        updateText.text = "SW update not available"
     }
     function updateAvailable(){
         cancelButtonEnbled = true
         updateButtonEnbled = true
 
-        updateText.text = "resin update available"
+        updateText.text = "SW update available"
     }
     function updateFinished(){
         cancelButtonEnbled = true
         updateProgressEnbled = false
 
-        updateText.text = "resin update finished"
+        updateText.text = "SW update finished"
     }
     function updateError(){
         cancelButtonEnbled = true
         updateProgressEnbled = false
 
-        updateText.text = "resin update error"
+        updateText.text = "SW update error"
     }
 }

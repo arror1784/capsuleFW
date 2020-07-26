@@ -6,8 +6,8 @@ TARGET_IP=""
 TARGET_PASSWD=""
 
 SERVICES=(
-"capsuleReactService"
-"capsuleDjangoService"
+"daphne.service"
+"react.service"
 )
 
 ROOT_UPDATE_TARGET=(
@@ -18,8 +18,9 @@ ROOT_UPDATE_TARGET=(
 "sshd_config"
 "lightdm.conf"
 "black_image.jpg"
-"capsuleReactService"
-"capsuleDjangoService"
+"daphne.service"
+"react.service"
+"version.json"
 )
 ROOT_UPDATE_PATH=(
 "/opt/capsuleFW/bin/capsuleFW"
@@ -29,8 +30,9 @@ ROOT_UPDATE_PATH=(
 "/etc/ssh/sshd_config"
 "/etc/lightdm/lightdm.conf"
 "/usr/share/rpd-wallpaper/black_image.jpg"
-"/etc/init.d/capsuleReactService"
-"/etc/init.d/capsuleDjangoService"
+"/etc/systemd/system/daphne.service"
+"/etc/systemd/system/react.service"
+"/opt/capsuleFW/version.json"
 )
 
 PI_UPDATE_TARGET=(
@@ -71,13 +73,16 @@ for (( i = 0 ; i < ${#PI_UPDATE_TARGET[@]} ; i++ )) ; do
 done
 
 for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
-	${SSHPASS} ssh root@${TARGET_IP} chmod 755 /etc/init.d/${SERVICES[$i]}
-	${SSHPASS} ssh pi@${TARGET_IP} sudo update-rc.d ${SERVICES[$i]} defaults
+	${SSHPASS} ssh root@${TARGET_IP} systemctl enable ${SERVICES[$i]}
+	${SSHPASS} ssh root@${TARGET_IP} systemctl start ${SERVICES[$i]}
 done
 
 #${SSH_COMMAND_ROOT} mkdir /opt/capsuleFW_react/ 2>&1 > /dev/null
 ${SSH_COMMAND_ROOT} "rm -rf /opt/capsuleFW_react"
 ${SSHPASS} scp -r ./capsuleFW_react root@${TARGET_IP}:/opt/
+${SSHPASS} scp -r ./resin root@${TARGET_IP}:/opt/capsuleFW/
+${SSH_COMMAND_ROOT} chmod 777 /opt/capsuleFW/resin
+${SSH_COMMAND_ROOT} chmod 666 /opt/capsuleFW/resin/*
 
 #frontend
 #yarn installed

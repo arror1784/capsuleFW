@@ -133,7 +133,9 @@ Item {
                 width: 67
                 height: 67
 
-                scale: 0.7
+                scale: 0.6
+                antialiasing: true
+                smooth: true
                 anchors.horizontalCenter: infoText.horizontalCenter
             }
             Text {

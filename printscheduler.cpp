@@ -5,6 +5,8 @@
 #include <QQuickView>
 #include <QObject>
 #include <QQuickItem>
+#include <QQmlContext>
+
 #include "printsetting.h"
 #include "QJsonArray"
 #include "QProcess"
@@ -53,6 +55,18 @@ void PrintScheduler::run(){
     if(addSerialPort())
         return;
     addPrintingBed('A');
+
+    _updater = new Updater();
+
+    QObject::connect(_updater,&Updater::updateMCUFirmware,this,&PrintScheduler::receiveFromQmlFirmUpdate);
+    QObject::connect(this,&PrintScheduler::MCUFirmwareUpdateFinished,_updater,&Updater::MCUFirmwareUpdateFinished);
+
+    QObject::connect(_updater,&Updater::updateAvailable,this,&PrintScheduler::receiveFromUpdaterSWUpdateAvailable);
+    QObject::connect(_updater,&Updater::updateNotAvailable,this,&PrintScheduler::receiveFromUpdaterSWUpdateNotAvailable);
+    QObject::connect(_updater,&Updater::updateFinished,this,&PrintScheduler::receiveFromUpdaterSWUpdateFinished);
+    QObject::connect(_updater,&Updater::updateError,this,&PrintScheduler::receiveFromUpdaterSWUpdateError);
+
+
 //        printScheduler->addPrintingBed("/home/hix/Desktop");
     printFilePath = "/home/pi/printFilePath";
 //    printFilePath = "/home/jsh/printFilePath";
@@ -300,16 +314,18 @@ void PrintScheduler::receiveFromQmlFirmUpdate(QString path)
                 bedSerialPort->serialOpen();
                 QThread::msleep(5000);
                 initPrint();
-                emit this->sendToFirmwareUpdateFinish();
+//                emit this->sendToFirmwareUpdateFinish();
                 break;
             }
         }
-        bedSerialPort->sendCommand("H201");
-        qDebug() << "shutdown";
-        QStringList arguments;
-        arguments.append("-h");
-        arguments.append("now");
-        QProcess::execute("bash -c \"echo rasp | sudo -S shutdown -h now > /home/pi/out 2>&1\"");
+
+        emit MCUFirmwareUpdateFinished();
+//        bedSerialPort->sendCommand("H201");
+//        qDebug() << "shutdown";
+//        QStringList arguments;
+//        arguments.append("-h");
+//        arguments.append("now");
+//        QProcess::execute("bash -c \"echo rasp | sudo -S shutdown -h now > /home/pi/out 2>&1\"");
     };
 
     QMetaObject::invokeMethod(bedSerialPort,f,Qt::AutoConnection);
@@ -587,11 +603,81 @@ void PrintScheduler::receiveFromQmlSetPrinterOption(QString key,QString value){
 }
 
 QVariant PrintScheduler::receiveFromQmlGetMaterialOption(QString material,QString key){
-    ResinSetting rs(material);
-    return rs.getResinSetting(key).toVariant();
+    if(material == "Custom"){
+        QFile file;
+        QString val;
+
+        file.setFileName(printFilePath + QStringLiteral("/resin.json"));
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            qDebug() << "info file open error";
+            qDebug() << file.fileName();
+            Logger::GetInstance()->write(file.fileName() + " file open error");
+            return -2;
+        }else{
+            qDebug() << "resin file open sucess";
+            Logger::GetInstance()->write(file.fileName() + " file open sucess");
+        }
+        val = file.readAll();
+        file.close();
+
+        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+        QJsonObject setting = d.object();
+
+        return setting[key].toVariant();
+    }else{
+        ResinSetting rs(material);
+        return rs.getResinSetting(key).toVariant();
+    }
 }
 QVariant PrintScheduler::receiveFromQmlGetMaterialOptionFromPath(QString path,QString key){
 
+    QFile file;
+    QString val;
+
+    file.setFileName(path + QStringLiteral("/resin.json"));
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "resin file open error";
+        qDebug() << file.fileName();
+        Logger::GetInstance()->write(file.fileName() + " file open error");
+        return -2;
+    }else{
+        qDebug() << "info file open sucess";
+        Logger::GetInstance()->write(file.fileName() + " file open sucess");
+    }
+    val = file.readAll();
+    file.close();
+
+    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject setting = d.object();
+
+    return setting[key].toVariant();
+}
+
+QVariant PrintScheduler::receiveFromQmlGetPrintOption(QString key)
+{
+    QFile file;
+    QString val;
+
+    file.setFileName(printFilePath + QStringLiteral("/info.json"));
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << "info file open error";
+        qDebug() << file.fileName();
+        Logger::GetInstance()->write(file.fileName() + " file open error");
+        return -2;
+    }else{
+        qDebug() << "info file open sucess";
+        Logger::GetInstance()->write(file.fileName() + " file open sucess");
+    }
+    val = file.readAll();
+    file.close();
+
+    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject setting = d.object();
+
+    return setting[key].toVariant();
+}
+QVariant PrintScheduler::receiveFromQmlGetPrintOptionFromPath(QString path, QString key)
+{
     QFile file;
     QString val;
 

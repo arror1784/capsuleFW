@@ -21,7 +21,7 @@ private:
 
     QFile *file;
     bool m_showDate;
-    QMutex log_lock;
+    bool _logging = true;
 
 public:
     static Logger* GetInstance()

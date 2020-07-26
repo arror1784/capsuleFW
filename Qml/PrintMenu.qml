@@ -236,18 +236,19 @@ Item {
             firstLayerTimeStart = currentDate.getTime()
         }
         onSendToQmlFirstlayerFinish:{
-            var total_layer = scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"total_layer")
-            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"bed_curing_layer")
+            var total_layer = scheduler.receiveFromQmlGetPrintOption("total_layer")
+            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOption(stackView.get(2).materialName,"bed_curing_layer")
 
             var T = new Date()
             var Tduration = T.getTime() - firstLayerTimeStart
             var Tdate = new Date(Tduration)
             var firstLayerTime = Tdate.getTime()
 
-            var currentDate = new Date(time + (firstLayerTime * (total_layer - bed_curting_layer - 1)))
+
+            var currentDate = new Date(time + (firstLayerTime * ((total_layer - bed_curting_layer) - 1)))
             var sec = currentDate.getSeconds()
             var min = currentDate.getMinutes()
-
+            console.debug("time : "+ time + " firstLayerTime : " + firstLayerTime)
             fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
         }
     }
@@ -255,7 +256,7 @@ Item {
         fileInfoPopup.setText(stackView.get(1).currentParentName,
                               "***min",
                               stackView.get(2).materialName,
-                              scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
+                              scheduler.receiveFromQmlGetPrintOption("layer_height"))
     }
     function setProgressValue(value){
         progressBar.setCurrentValue(value)

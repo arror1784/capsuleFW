@@ -31,6 +31,7 @@ SOURCES += \
     resinsetting.cpp \
     resinupdater.cpp \
     updater.cpp \
+    version.cpp \
     websocketclient.cpp \
     ymodem.cpp
 
@@ -62,5 +63,6 @@ HEADERS += \
     resinupdater.h \
     slate-global.h \
     updater.h \
+    version.h \
     websocketclient.h \
     ymodem.h

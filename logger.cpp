@@ -13,17 +13,16 @@ Logger::Logger(QString fileName) {
 }
 
 void Logger::write(const QString &value) {
-    log_lock.lock();
     QString text = value + "\n";
+    if(_logging)
+        return;
     if (m_showDate)
         text = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss zzz ") + text;
     QTextStream out(file);
-     out.setCodec("UTF-8");
+    out.setCodec("UTF-8");
     if (file != 0) {
         out << text;
     }
-
-    log_lock.unlock();
 }
 
 void Logger::setShowDateTime(bool value) {

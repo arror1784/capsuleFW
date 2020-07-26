@@ -132,7 +132,7 @@ Item {
                     printingPopup.open()
                     printingPopup.setText(stackView.get(1).currentParentName,
                                           materialName,
-                                          scheduler.receiveFromQmlGetMaterialOptionFromPath(stackView.get(1).currentPath,"layer_height"))
+                                          scheduler.receiveFromQmlGetPrintOptionFromPath(stackView.get(1).currentPath,"layer_height"))
                 }
             }
         }

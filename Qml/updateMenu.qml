@@ -96,7 +96,7 @@ Item {
 
             Text {
                 id: firmwareUpdateText
-                text: qsTr("Firmware update")
+                text: qsTr("software update")
                 color: "#666666"
 
                 anchors.top: firmwareUpdateImage.bottom
@@ -109,7 +109,9 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/FirmUpdateFileList.qml"),StackView.Immediate)
+//                stackView.push(Qt.resolvedUrl("qrc:/Qml/FirmUpdateFileList.qml"),StackView.Immediate)
+                swUpdatePopup.open()
+                scheduler.checkUpdate()
             }
         }
     }
@@ -154,12 +156,33 @@ Item {
             resinUpdater.update()
         }
     }
+    SWUpdatePopup{
+        id: swUpdatePopup
+        onCancel: {
+            swUpdatePopup.close()
+        }
+        onSwUpdate: {
+            scheduler.update()
+        }
+    }
 
     Connections{
         id: schedulerConnection
         target: scheduler
+        onSendToQmlSWUpdateAvailable:{
+            swUpdatePopup.updateAvailable()
+        }
+        onSendToQmlSWUpdateNotAvailable:{
+            swUpdatePopup.updateNotAvailable()
+        }
+        onSendToQmlSWUpdateFinished:{
+            swUpdatePopup.updateFinished()
+        }
+        onSendToQmlSWUpdateError:{
+            console.debug("update error")
+            swUpdatePopup.updateError()
+        }
     }
-
     Connections{
         id: resinUpdaterConnection
         target: resinUpdater
@@ -172,5 +195,25 @@ Item {
         onUpdateFinished:{
             resinUpdatePopup.updateFinished()
         }
+        onUpdateError:{
+            resinUpdatePopup.updateError()
+        }
     }
+//    Connections{
+//        id: swUpdaterConnection
+//        target: SWUpdater
+//        onUpdateAvailable:{
+//            swUpdatePopup.updateAvailable()
+//        }
+//        onUpdateNotAvailable:{
+//            swUpdatePopup.updateNotAvailable()
+//        }
+//        onUpdateFinished:{
+//            swUpdatePopup.updateFinished()
+//        }
+//        onUpdateError:{
+//            console.debug("update error")
+//            swUpdatePopup.updateError()
+//        }
+//    }
 }
