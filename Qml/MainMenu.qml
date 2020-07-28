@@ -54,7 +54,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                printSettingSocket.socketOpen()
+//                printSettingSocket.socketOpen()
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
             }
         }
