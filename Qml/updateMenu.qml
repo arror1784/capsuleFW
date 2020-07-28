@@ -142,7 +142,6 @@ Item {
             anchors.leftMargin: 0
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlBusySet(false)
                 stackView.pop(StackView.Immediate)
             }
         }

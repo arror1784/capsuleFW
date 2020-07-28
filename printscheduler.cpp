@@ -12,8 +12,13 @@
 #include "QProcess"
 #include "websocketclient.h"
 #include "resinsetting.h"
+#include "version.h"
+#include "modelno.h"
 
 #include "ymodem.h"
+
+const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
+
 
 PrintScheduler::PrintScheduler(){
 
@@ -39,7 +44,6 @@ int PrintScheduler::addSerialPort(){
 
     const auto infos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &info : infos) {
-
         if(info.portName().contains(QStringLiteral("USB0")) /*|| info.portName().contains(QStringLiteral("ACM"))*/){
             bedSerialPort = new BedSerialport(info.portName(),this);
             bedSerialPort->serialOpen();
@@ -52,8 +56,11 @@ int PrintScheduler::addSerialPort(){
 
 void PrintScheduler::run(){
 
-    if(addSerialPort())
+    if(addSerialPort()){
+        emit sendToQmlPortOpenError();
         return;
+    }
+//        return;
     addPrintingBed('A');
 
     _updater = new Updater();
@@ -68,12 +75,12 @@ void PrintScheduler::run(){
 
 
 //        printScheduler->addPrintingBed("/home/hix/Desktop");
-    printFilePath = "/home/pi/printFilePath";
+//    printFilePath = "/home/pi/printFilePath";
 //    printFilePath = "/home/jsh/printFilePath";
 
     _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+    _wsClient->open();
 
-//    _wsClient->open();
     qDebug() << "print scheduler" << QThread::currentThread();
     while(true)
         QThread::exec();
@@ -92,7 +99,7 @@ void PrintScheduler::initBed(){
 
 void PrintScheduler::bedFinish(){
 
-    std::function<void()> func = [this]() {
+//    std::function<void()> func = [this]() {
 //        _wsClient->sendFinish();
 
         _bedWork = BED_FINISH_WORK;
@@ -104,13 +111,13 @@ void PrintScheduler::bedFinish(){
         _wsClient->sendSetTimerOnoff(false);
         _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
-    };
-    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+//    };
+//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 
 }
 void PrintScheduler::bedError(){
 
-    std::function<void()> func = [this]() {
+//    std::function<void()> func = [this]() {
 //        _wsClient->sendFinish();
 
         _bedWork = BED_ERROR_WORK;
@@ -122,9 +129,9 @@ void PrintScheduler::bedError(){
         _wsClient->sendSetTimerOnoff(false);
         _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
-    };
+//    };
 
-    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 
 void PrintScheduler::initPrint()
@@ -201,6 +208,9 @@ void PrintScheduler::receiveFromBedControl(int receive){
             }
             if(_bedWork == BED_PAUSE_WORK){
                 emit sendToQmlPauseFinish();
+
+                _wsClient->sendPauseFinish();
+
                 _bedWork = BED_PAUSE;
             }
             _bedMoveFinished = PRINT_MOVE_LAYER_OK;
@@ -268,11 +278,6 @@ void PrintScheduler::receiveFromSerialPort(int state){
         }
         emit sendToLCDState(0);
     }
-}
-
-void PrintScheduler::setVersion(const QString &version)
-{
-    _version = version;
 }
 
 void PrintScheduler::receiveFromQmlBusySet(bool bs)
@@ -545,26 +550,26 @@ void PrintScheduler::receiveFromQmlBedPrintAgain()
 
 void PrintScheduler::receiveFromQmlBedPrintStart(){
 
-    std::function<void()> func;
+//    std::function<void()> func;
 
     if(_bedWork == BED_PAUSE){
-        func = [this]() {
+//        func = [this]() {
             _wsClient->sendResume();
 
             _bedWork = BED_WORK;
             printLayer();
-        };
+//        };
     }else{
-        func = [this]() {
+//        func = [this]() {
             _wsClient->sendStart();
 
             _bedMoveFinished = PRINT_MOVE_NULL;
             _bedPrintImageNum = 0;
             initBed();
-        };
+//        };
     }
 
-    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 
 void PrintScheduler::receiveFromQmlBedPrintFinish(){
@@ -575,12 +580,12 @@ void PrintScheduler::receiveFromQmlBedPrintFinishError(){
 }
 void PrintScheduler::receiveFromQmlBedPrintPause(){
 
-    std::function<void()> func = [this]() {
-        _wsClient->sendPause();
+//    std::function<void()> func = [this]() {
+        _wsClient->sendPauseStart();
         _bedWork = BED_PAUSE_WORK;
-    };
+//    };
 
-    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 void PrintScheduler::receiveFromQmlUpdateMaterial(){
     QJsonArray a = PrintSetting::GetInstance()->getResinList();
@@ -721,10 +726,30 @@ void PrintScheduler::receiveFromQmlMoveMaxHeight(){
 
 QString PrintScheduler::receiveFromQmlGetVersion()
 {
-    return _version;
+    return Version::GetInstance()->getVersion();
+}
+
+QString PrintScheduler::receiveFromQmlGetModelNo()
+{
+    return ModelNo::GetInstance()->getModelNo();
 }
 
 void PrintScheduler::receiveFromQmlSetPrintTime(int time)
 {
     _printTime = time;
+}
+
+void PrintScheduler::receiveFromWebStart()
+{
+
+}
+
+void PrintScheduler::receiveFromWebPause()
+{
+
+}
+
+void PrintScheduler::receiveFromWebFinish()
+{
+
 }

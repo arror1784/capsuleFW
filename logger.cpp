@@ -14,7 +14,7 @@ Logger::Logger(QString fileName) {
 
 void Logger::write(const QString &value) {
     QString text = value + "\n";
-    if(_logging)
+    if(!_logging)
         return;
     if (m_showDate)
         text = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss zzz ") + text;

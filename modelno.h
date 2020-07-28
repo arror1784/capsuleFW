@@ -1,29 +1,31 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef MODELNO_H
+#define MODELNO_H
+
+#include <QObject>
 
 #include <QObject>
 #include <QJsonObject>
 
-class Version : public QObject
+class ModelNo : public QObject
 {
     Q_OBJECT
 private:
-    Version();
-    ~Version();
+    ModelNo();
+    ~ModelNo();
 
-    static Version* _ins;
+    static ModelNo* _ins;
 
-    const QString _url = "/opt/capsuleFW/version.json";
+    const QString _url = "/opt/capsuleFW/modelNo.json";
 
     QJsonObject _setting;
 
     bool _opend = false;
 
 public:
-    static Version* GetInstance()
+    static ModelNo* GetInstance()
     {
         if (_ins == nullptr) {
-            _ins = new Version(/*filePath*/);
+            _ins = new ModelNo(/*filePath*/);
             atexit(release_instance);
         }
         return _ins;
@@ -35,8 +37,9 @@ public:
         }
     }
 
-    QString getVersion();
+    QString getModelNo();
 
 };
 
-#endif // VERSION_H
+
+#endif // MODELNO_H

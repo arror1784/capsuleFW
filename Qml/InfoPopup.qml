@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.10
 import QtQuick.Controls 2.5
 
 Rectangle {
@@ -12,7 +12,7 @@ Rectangle {
     opacity: 0.7
 
     visible: false
-    property var ipList: []
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -34,15 +34,57 @@ Rectangle {
             color: "#FAFDFF"
             radius: 8
         }
+        modal: true
         focus: true
 
-        Text {
-            id: infoText
+        Rectangle{
+            width: optionText.width + valueText.width + 15
+            height: optionText.height
             anchors.centerIn: parent
-            text: qsTr("")
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-            color: "#474747"
+            anchors.verticalCenterOffset: -22
+            Column{
+                id: optionText
+                Text {
+                    text: qsTr("Version")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    color: "#474747"
+                }
+                Text {
+                    text: qsTr("Serial")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    color: "#474747"
+                }
+            }
+            Column{
+                id: valueText
+                anchors.left: optionText.right
+                anchors.leftMargin: 15
+                Text {
+                    id: verText
+
+                    text: qsTr("lower.stl")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    font.bold: true
+                    color: "#474747"
+
+                    width: 200
+                    elide: Text.ElideRight
+                }
+                Text {
+                    id: modelNoText
+                    text: qsTr("15min")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    font.bold: true
+                    color: "#474747"
+
+                    width: 230
+                    elide: Text.ElideRight
+                }
+            }
         }
         Rectangle{
             id: closeButton
@@ -79,8 +121,9 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    function setText(txt){
-        infoText.text = txt
+    function setText(version,modelNo){
+        verText.text = version
+        modelNoText.text = modelNo
     }
 
     function open(){

@@ -245,7 +245,6 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlBusySet(false)
                 stackView.pop(StackView.Immediate)
             }
         }

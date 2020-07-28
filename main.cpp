@@ -24,6 +24,7 @@
 #include "filevalidator.h"
 #include "updater.h"
 #include "version.h"
+#include "printsettingsocket.h"
 
 #define VERISON "0.1.5"
 
@@ -44,8 +45,7 @@ int main(int argc, char *argv[])
     printScheduler->engine = &engine;
 
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
-
-    printScheduler->setVersion(Version::GetInstance()->getVersion());
+    qmlRegisterType<PrintSettingSocket>("App", 1, 0, "PrintSettingSocket");
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);

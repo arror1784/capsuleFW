@@ -25,9 +25,11 @@ SOURCES += \
     filevalidator.cpp \
     logger.cpp \
     main.cpp \
+    modelno.cpp \
     networkcontrol.cpp \
     printscheduler.cpp \
     printsetting.cpp \
+    printsettingsocket.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     updater.cpp \
@@ -56,9 +58,11 @@ HEADERS += \
     common.h \
     filevalidator.h \
     logger.h \
+    modelno.h \
     networkcontrol.h \
     printscheduler.h \
     printsetting.h \
+    printsettingsocket.h \
     resinsetting.h \
     resinupdater.h \
     slate-global.h \

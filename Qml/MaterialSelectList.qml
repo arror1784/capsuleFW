@@ -142,6 +142,7 @@ Item {
         onStartPrintingButtonClicked:{
             scheduler.receiveFromQmlBedPrint(stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
             console.debug(stackView.get(1).currentPath)
+            printSettingSocket.socketClose()
             stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
@@ -164,6 +165,7 @@ Item {
             inserMaterialList("Custom")
         }
         scheduler.receiveFromQmlUpdateMaterial()
+
     }
     function inserMaterialList(name){
         materialModel.append({"name":name})

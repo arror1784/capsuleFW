@@ -1,19 +1,19 @@
-#include "version.h"
+#include "modelno.h"
 
 #include <QFile>
 #include <QJsonDocument>
 #include <QDebug>
 
-Version* Version::_ins = nullptr;
+ModelNo* ModelNo::_ins = nullptr;
 
-Version::Version()
+ModelNo::ModelNo()
 {
     QFile loadFile(_url);
 
     if(!loadFile.open(QIODevice::ReadOnly)){
         qWarning("Could not open json file to read");
         _opend = false;
-
+        return;
     }
 
     QByteArray loadData = loadFile.readAll();
@@ -22,13 +22,13 @@ Version::Version()
 
     _opend = true;
 }
-Version::~Version(){
+ModelNo::~ModelNo(){
 //    delete _setting;
 }
-QString Version::getVersion()
+QString ModelNo::getModelNo()
 {
     if(_opend)
-        return _setting["version"].toString();
+        return _setting["modelNo"].toString();
     else
         return "";
 }

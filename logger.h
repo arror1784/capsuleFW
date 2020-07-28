@@ -21,7 +21,7 @@ private:
 
     QFile *file;
     bool m_showDate;
-    bool _logging = true;
+    bool _logging = false;
 
 public:
     static Logger* GetInstance()

@@ -29,5 +29,7 @@
         <file>Qml/InfoPopup.qml</file>
         <file>Qml/PrintingError.qml</file>
         <file>Qml/SWUpdatePopup.qml</file>
+        <file>Qml/SelectFileEnterFail.qml</file>
+        <file>Qml/USBPortOpenError.qml</file>
     </qresource>
 </RCC>

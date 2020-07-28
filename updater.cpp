@@ -12,7 +12,8 @@
 
 Updater::Updater():
     _url("https://services.hix.co.kr/setup")
-  ,_downloadUrl("/home/pi/Downloads")
+//  ,_downloadUrl("/home/pi/Downloads")
+  ,_downloadUrl("/opt/capsuleFW/download")
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
@@ -27,7 +28,7 @@ void Updater::saveAsFile(QString name,QByteArray ba)
         qDebug() << "Could not open json file to ReadWrite " << path;
         qDebug() << f.errorString();
     }else{
-        qDebug() << "save as file open " << name;
+//        qDebug() << "save as file open " << name;
     }
     f.write(ba);
     f.close();
@@ -37,7 +38,6 @@ void Updater::downloadBin()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download :" + _binName;
         _requestType = SWRequestType::DOWNLOAD_BIN;
         request.setUrl(_url + "/get_file/capsule/" + _binName);
         manager->get(request);
@@ -49,7 +49,6 @@ void Updater::downloadSH()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download :" + _shName;
         _requestType = SWRequestType::DOWNLOAD_SH;
         request.setUrl(_url + "/get_file/capsule/" + _shName);
         manager->get(request);
@@ -61,7 +60,6 @@ void Updater::downloadZIP()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download :" + _zipName;
         _requestType = SWRequestType::DOWNLOAD_ZIP;
         request.setUrl(_url + "/get_file/capsule/" + _zipName);
         manager->get(request);
@@ -73,7 +71,6 @@ void Updater::downloadVER()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download List";
         _requestType = SWRequestType::DOWNLOAD_VER;
         request.setUrl(_url + "/get_file/capsule/" + _verName);
         manager->get(request);
@@ -85,7 +82,6 @@ void Updater::downloadLIST()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download List";
         _requestType = SWRequestType::DOWNLOAD_LIST;
         request.setUrl(_url + "/get_update_manifest/capsule");
         manager->get(request);
@@ -108,7 +104,6 @@ void Updater::checkUpdate()
 {
     _requestAvailable = false;
     std::function<void()> func = [this]() {
-        qDebug() << "download :" + _verName;
         _requestType = SWRequestType::UPDATE_CHECK;
         request.setUrl(_url + "/get_file/capsule/" + _verName);
         manager->get(request);
@@ -124,7 +119,6 @@ void Updater::update()
         waitForRequest();
         downloadVER();
         waitForRequest();
-        QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
         if(_MCUFirmwareUpdateAvailable){
             downloadBin();
             waitForRequest();

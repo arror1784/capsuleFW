@@ -26,12 +26,16 @@ for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
 done
 
 
-rm -r /opt/capsuleFW/version.json
+rm -rf /opt/capsuleFW/version.json
 cp -rf $3 /opt/capsuleFW/
 
-rm -r /opt/capsuleFW_react
-cp -rf ${TARGET_FOLDER_NAME}/capsuleFW_react /opt/
+mv /opt/capsuleFW_react/backend/db.sqlite3 /opt/capsuleFW/
+
+rm -rf /opt/capsuleFW_react/*
+cp -rf ${TARGET_FOLDER_NAME}/capsuleFW_react/* /opt/capsuleFW_react/
 echo "${TARGET_FOLDER_NAME}/capsuleFW_react"
+
+mv /opt/capsuleFW/db.sqlite3 /opt/capsuleFW_react/backend/
 
 #frontend
 #yarn installed
@@ -72,5 +76,7 @@ done
 
 chmod +x ${TARGET_FOLDER_NAME}/HGCommandSender
 ${TARGET_FOLDER_NAME}/HGCommandSender "H201"
+
+rm -rf $2/*
 
 shutdown -h now

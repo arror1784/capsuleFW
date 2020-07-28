@@ -2,6 +2,7 @@
 
 #include <QTimer>
 #include <QJsonObject>
+#include <QMetaObject>
 
 WebSocketClient::WebSocketClient(const QUrl url) :
     _url(url)
@@ -72,31 +73,64 @@ void WebSocketClient::sendStart()
     if(!_connected)
         return;
 
-    qDebug() << "fuckfuck";
-
     aaa.insert("type","progress");
     aaa.insert("method","start");
 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    qDebug() << "sendStart: " << QThread::currentThread();
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendStart";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
-void WebSocketClient::sendPause()
+
+void WebSocketClient::sendPauseStart()
 {
     QJsonObject aaa;
     if(!_connected)
         return;
 
     aaa.insert("type","progress");
-    aaa.insert("method","pause");
+    aaa.insert("method","pauseStart");
 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendPauseStart";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
+
+void WebSocketClient::sendPauseFinish()
+{
+    QJsonObject aaa;
+    if(!_connected)
+        return;
+
+    aaa.insert("type","progress");
+    aaa.insert("method","pauseFinish");
+
+    QJsonDocument doc(aaa);
+
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendPauseFinish";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+}
+
 void WebSocketClient::sendResume()
 {
     QJsonObject aaa;
@@ -108,8 +142,16 @@ void WebSocketClient::sendResume()
 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
-    _webSocket->sendTextMessage(strJson);
+
+    std::function<void()> func = [this,strJson](){
+
+        qDebug() << "sendResume";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
+
 void WebSocketClient::sendFinish()
 {
     QJsonObject aaa;
@@ -122,7 +164,13 @@ void WebSocketClient::sendFinish()
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendFinish";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
 void WebSocketClient::sendSetTimerOnoff(bool onOff)
 {
@@ -138,7 +186,13 @@ void WebSocketClient::sendSetTimerOnoff(bool onOff)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendSetTimerOnOff";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
 void WebSocketClient::sendSetTimerTime()
 {
@@ -152,7 +206,13 @@ void WebSocketClient::sendSetTimerTime()
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendSetTimerTime";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
 void WebSocketClient::sendProgreeUpdate(int progress)
 {
@@ -168,6 +228,13 @@ void WebSocketClient::sendProgreeUpdate(int progress)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    _webSocket->sendTextMessage(strJson);
+    std::function<void()> func = [this,strJson]() {
+
+        qDebug() << "sendProgressUpdate";
+        _webSocket->sendTextMessage(strJson);
+    };
+
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+
 }
 

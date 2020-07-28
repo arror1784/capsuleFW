@@ -22,16 +22,16 @@ public:
     WebSocketClient(const QUrl url);
 
     void sendStart();
-    void sendPause();
+    void sendPauseStart();
+    void sendPauseFinish();
     void sendResume();
     void sendFinish();
     void sendSetTimerOnoff(bool onOff);
     void sendSetTimerTime();
     void sendProgreeUpdate(int progress);
 
-    void enqueTask(WSCommand);
-
 signals:
+//    void startByWeb
 
 public slots:
 

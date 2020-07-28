@@ -21,6 +21,9 @@ ROOT_UPDATE_TARGET=(
 "daphne.service"
 "react.service"
 "version.json"
+"LXDE-pi/desktop-items-0.conf"
+"LXDE-pi/desktop-items-1.conf"
+"LXDE-pi/pcmanfm.conf"
 )
 ROOT_UPDATE_PATH=(
 "/opt/capsuleFW/bin/capsuleFW"
@@ -33,6 +36,9 @@ ROOT_UPDATE_PATH=(
 "/etc/systemd/system/daphne.service"
 "/etc/systemd/system/react.service"
 "/opt/capsuleFW/version.json"
+"/etc/xdg/pcmanfm/LXDE-pi/desktop-items-0.conf"
+"/etc/xdg/pcmanfm/LXDE-pi/desktop-items-1.conf"
+"/etc/xdg/pcmanfm/LXDE-pi/pcmanfm.conf"
 )
 
 PI_UPDATE_TARGET=(
@@ -83,6 +89,12 @@ ${SSHPASS} scp -r ./capsuleFW_react root@${TARGET_IP}:/opt/
 ${SSHPASS} scp -r ./resin root@${TARGET_IP}:/opt/capsuleFW/
 ${SSH_COMMAND_ROOT} chmod 777 /opt/capsuleFW/resin
 ${SSH_COMMAND_ROOT} chmod 666 /opt/capsuleFW/resin/*
+
+${SSH_COMMAND_ROOT} "mkdir /opt/capsuleFW/print"
+${SSH_COMMAND_ROOT} "mkdir /opt/capsuleFW/download"
+
+${SSH_COMMAND_ROOT} "chmod 777 /opt/capsuleFW/print"
+${SSH_COMMAND_ROOT} "chmod 777 /opt/capsuleFW/download"
 
 #frontend
 #yarn installed

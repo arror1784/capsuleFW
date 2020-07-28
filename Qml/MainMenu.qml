@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+
 Item {
     id: mainMenu
 
@@ -53,7 +54,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlBusySet(true)
+                printSettingSocket.socketOpen()
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
             }
         }
@@ -103,7 +104,6 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlBusySet(true)
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/SettingMenu.qml"),StackView.Immediate)
             }
         }
@@ -152,8 +152,10 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                var version = scheduler.receiveFromQmlGetVersion()
+                var modelNo = scheduler.receiveFromQmlGetModelNo()
                 infoPopup.open()
-                infoPopup.setText(scheduler.receiveFromQmlGetVersion())
+                infoPopup.setText(version,modelNo)
             }
         }
     }

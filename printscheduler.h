@@ -54,8 +54,6 @@ public:
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
 
-    void setVersion(const QString &version);
-
 signals:
     void sendToQmlChangeImage(QString imagePath);
 //    void sendToQmlChangeDefault();
@@ -77,6 +75,8 @@ signals:
 
     void sendToQmlWaitForMovement();
 
+    void sendToQmlPortOpenError();
+
     void sendToQmlExitError();
     void sendToQmlExit();
 
@@ -96,6 +96,9 @@ signals:
     void sendToQmlSWUpdateFinished();
     void sendToQmlSWUpdateError();
 
+    void sendToQmlPrintByWeb();
+    void sendToQmlFinishByWeb();
+    void sendToQmlPauseByWeb();
 
 public slots:
 
@@ -131,6 +134,7 @@ public slots:
     void receiveFromQmlMoveMaxHeight();
 
     QString receiveFromQmlGetVersion();
+    QString receiveFromQmlGetModelNo();
 
     void receiveFromQmlSetPrintTime(int time);
 
@@ -139,12 +143,15 @@ public slots:
     void receiveFromUpdaterSWUpdateFinished(){emit sendToQmlSWUpdateFinished();}
     void receiveFromUpdaterSWUpdateError(){emit sendToQmlSWUpdateError();}
 
+    void receiveFromWebStart();
+    void receiveFromWebPause();
+    void receiveFromWebFinish();
+
     void update(){_updater->update();}
     void checkUpdate(){_updater->checkUpdate();}
 
 public:
     BedSerialport* bedSerialPort = nullptr;
-    QString printFilePath;
 
     QQmlApplicationEngine *engine;
 
@@ -162,7 +169,7 @@ private:
     WebSocketClient *_wsClient;
     Updater *_updater;
 
-    QString _version;
+//    QString _version;
 
     int bedCuringLayer = 5;
 
