@@ -71,8 +71,9 @@ Item {
             anchors.left: optionText.right
             anchors.leftMargin: 20
             Text {
+                id: fileName
                 width: 200
-                text: stackView.get(1).currentParentName
+                text: ""
                 font.family: openSansSemibold.name
                 font.pixelSize: 23
                 font.bold: true
@@ -149,7 +150,13 @@ Item {
             }
         }
     }
+    Connections{
+        id: schedulerConnection
+        target: scheduler
+    }
+
     Component.onCompleted: {
+        fileName.text = scheduler.receiveFromQmlGetPrintName()
         timesec = stackView.get(3).timesec
         timemin = stackView.get(3).timemin
     }

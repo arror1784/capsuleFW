@@ -44,7 +44,7 @@ int PrintScheduler::addSerialPort(){
 
     const auto infos = QSerialPortInfo::availablePorts();
     for (const QSerialPortInfo &info : infos) {
-        if(info.portName().contains(QStringLiteral("USB0")) /*|| info.portName().contains(QStringLiteral("ACM"))*/){
+        if(info.portName().contains(QStringLiteral("USB")) /*|| info.portName().contains(QStringLiteral("ACM"))*/){
             bedSerialPort = new BedSerialport(info.portName(),this);
             bedSerialPort->serialOpen();
             _portPath = info.portName();

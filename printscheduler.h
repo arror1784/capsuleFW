@@ -128,6 +128,9 @@ public slots:
     QVariant receiveFromQmlGetPrintOption(QString key);
     QVariant receiveFromQmlGetPrintOptionFromPath(QString path,QString key);
 
+    QString receiveFromQmlGetPrintName(){return _printName;}
+    QString receiveFromQmlGetMaterialName(){return _materialName;}
+
     void receiveFromQmlGoHome();
     void receiveFromQmlAutoHome();
     void receiveFromQmlMoveMicro(int micro);

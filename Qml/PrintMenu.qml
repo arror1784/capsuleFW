@@ -49,7 +49,8 @@ Item {
             Text {
                 id: fileNameText
                 width: 200
-                text: stackView.get(1).currentParentName
+//                text: stackView.get(1).currentParentName
+                text: ""
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true
@@ -237,7 +238,8 @@ Item {
         }
         onSendToQmlFirstlayerFinish:{
             var total_layer = scheduler.receiveFromQmlGetPrintOption("total_layer")
-            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOption(stackView.get(2).materialName,"bed_curing_layer")
+//            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOption(stackView.get(2).materialName,"bed_curing_layer")
+            var bed_curting_layer = scheduler.receiveFromQmlGetMaterialOption(scheduler.receiveFromQmlGetMaterialName(),"bed_curing_layer")
 
             var T = new Date()
             var Tduration = T.getTime() - firstLayerTimeStart
@@ -253,9 +255,12 @@ Item {
         }
     }
     Component.onCompleted: {
-        fileInfoPopup.setText(stackView.get(1).currentParentName,
+        fileNameText.text = scheduler.receiveFromQmlGetPrintName()
+        fileInfoPopup.setText(scheduler.receiveFromQmlGetPrintName(),
+//        fileInfoPopup.setText(stackView.get(1).currentParentName,
                               "***min",
-                              stackView.get(2).materialName,
+//                              stackView.get(2).materialName,
+                              scheduler.receiveFromQmlGetMaterialName(),
                               scheduler.receiveFromQmlGetPrintOption("layer_height"))
     }
     function setProgressValue(value){
@@ -265,5 +270,16 @@ Item {
         progressBar.setCurrentValue(0)
         timesec = 0
         timemin = 0
+
+        time = 0
+
+        firstLayerTimeStart = 0
+
+        startTime = 0
+        pauseStartTime = 0
+        pauseDuration = 0
+
+        ct = 0
+        waitPopupOpened = false
     }
 }

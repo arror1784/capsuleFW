@@ -11,7 +11,7 @@ Item {
     property string currentPath
     property string currentParentName
     property string selectedFileName : ""
-    property string mediaURL: "file:///media/pi"
+    property string mediaURL: "file:///media/jsh"
 
     FontLoader{
         id: openSansSemibold
@@ -263,7 +263,7 @@ Item {
         }
     }
     Rectangle{
-        id: selectButton
+        id: selectButtonfileSelectList
 
         width: 215
         height: 40

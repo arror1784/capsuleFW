@@ -23,31 +23,31 @@ Window {
         onCurrentItemChanged: {
             if(currentItem.name === "mainMenu"){
                 scheduler.receiveFromQmlBusySet(false)
-//                printSettingSocket.socketClose()
+                printSettingSocket.socketClose()
                 console.debug("change to mainmenu")
             }else if(currentItem.name === "usbPortOpenError"){
                 scheduler.receiveFromQmlBusySet(false)
-//                printSettingSocket.socketClose()
+                printSettingSocket.socketClose()
             }else{
                 scheduler.receiveFromQmlBusySet(true)
                 console.debug("is not mainmenu")
             }
         }
     }
-//    PrintSettingSocket{
-//        id: printSettingSocket
-//        onSocketDisconnect: {
+    PrintSettingSocket{
+        id: printSettingSocket
+        onSocketDisconnect: {
+            scheduler.receiveFromQmlBusySet(false)
+            stackView.pop(mainMenu,StackView.Immediate)
+            selectFileEnterFail.open()
+        }
+        onSocketError: {
 //            scheduler.receiveFromQmlBusySet(false)
 //            stackView.pop(mainMenu,StackView.Immediate)
+            selectFileEnterFail.setError(true)
 //            selectFileEnterFail.open()
-//        }
-//        onSocketError: {
-////            scheduler.receiveFromQmlBusySet(false)
-////            stackView.pop(mainMenu,StackView.Immediate)
-//            selectFileEnterFail.setError(true)
-////            selectFileEnterFail.open()
-//        }
-//    }
+        }
+    }
     SelectFileEnterFail{
         id: selectFileEnterFail
     }

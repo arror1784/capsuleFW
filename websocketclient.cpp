@@ -54,8 +54,14 @@ void WebSocketClient::onTextMessageReceived(QString message)
         return;
     }
     if(obj["type"].toString() == "websocket_name"){
+
         this->_socket_name = obj["name"].toString();
         qDebug() << "websocket_name" << this->_socket_name;
+
+    }else if(obj["type"].toString() == "stateChangeCommand"){
+        if(obj["command"] == "start"){
+            emit startByWeb(obj["printing_name"].toString(),obj["printing_folder_name"].toString(),obj["material"].toString());
+        }
     }
 //    _webSocket->close();
 }
@@ -73,7 +79,7 @@ void WebSocketClient::sendStart()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","start");
 
     QJsonDocument doc(aaa);
@@ -94,7 +100,7 @@ void WebSocketClient::sendPauseStart()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","pauseStart");
 
     QJsonDocument doc(aaa);
@@ -115,7 +121,7 @@ void WebSocketClient::sendPauseFinish()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","pauseFinish");
 
     QJsonDocument doc(aaa);
@@ -137,7 +143,7 @@ void WebSocketClient::sendResume()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","resume");
 
     QJsonDocument doc(aaa);
@@ -158,7 +164,7 @@ void WebSocketClient::sendFinish()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","finish");
 
     QJsonDocument doc(aaa);
@@ -178,7 +184,7 @@ void WebSocketClient::sendSetTimerOnoff(bool onOff)
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","setTimerOnoff");
 
     aaa.insert("onOff",onOff);
@@ -200,7 +206,7 @@ void WebSocketClient::sendSetTimerTime()
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
+    aaa.insert("type","stateChangeCommand");
     aaa.insert("method","setTimerTime");
 
     QJsonDocument doc(aaa);
@@ -220,8 +226,8 @@ void WebSocketClient::sendProgreeUpdate(int progress)
     if(!_connected)
         return;
 
-    aaa.insert("type","progress");
-    aaa.insert("method","update");
+    aaa.insert("type","progressUpdate");
+//    aaa.insert("method","progress");
 
     aaa.insert("progress",QString::number(progress));
 

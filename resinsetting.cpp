@@ -11,7 +11,7 @@ ResinSetting::ResinSetting(QString path):
     filePath(resinPath + "/" + path + ".json")
 {
     QFile loadFile(filePath);
-    if(!loadFile.open(QIODevice::ReadWrite | QIODevice::ExistingOnly)){
+    if(!loadFile.open(QIODevice::ReadWrite)){
         qDebug() << "Could not open json file to ReadWrite " << filePath;
         qDebug() << loadFile.errorString();
         _open = false;
@@ -36,6 +36,24 @@ void ResinSetting::saveFile(){
     QJsonDocument saveDoc(setting);
 
     saveFile.write(saveDoc.toJson());
+}
+
+bool ResinSetting::removeFile()
+{
+    QFile reFile(filePath);
+    reFile.setFileName(filePath);
+    if(reFile.exists()){
+        if(reFile.remove()){
+            qDebug() << "file remove " << filePath;
+            return true;
+        }else{
+            qDebug() << "cannot remove this file " << filePath;
+            return false;
+        }
+    }else{
+        qDebug() << "cannot remove this file : does not exist " << filePath;
+        return false;
+    }
 }
 
 QJsonValue ResinSetting::getResinSetting(QString key){

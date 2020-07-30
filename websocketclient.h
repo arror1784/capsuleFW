@@ -31,7 +31,7 @@ public:
     void sendProgreeUpdate(int progress);
 
 signals:
-//    void startByWeb
+    void startByWeb(QString printName,QString filePath,QString material);
 
 public slots:
 

@@ -90,15 +90,20 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
 
                 QJsonArray resinList = PrintSetting::GetInstance()->getResinList();
 
+                for (int i = 0; i < resinList.size();i++) {
+                    ResinSetting rs(resinList[i].toString());
+                    rs.removeFile();
+                }
+
                 for(int i = 0;i < ja.size();i++) {
                     QString mID = ja[i].toObject()["fields"].toObject()["M_id"].toString();
                     QString lastUpdate = ja[i].toObject()["fields"].toObject()["last_update"].toString();
                     QJsonObject jo = ja[i].toObject()["fields"].toObject();
+
                     sl.append(mID);
 
                     ResinSetting rs(mID);
                     rs.setResinSetting(jo);
-//                    qDebug() << ja[i];
                 }
 
                 PrintSetting::GetInstance()->setResinList(sl);

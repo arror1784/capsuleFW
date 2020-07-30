@@ -18,7 +18,7 @@ Rectangle {
 
     property bool cancelButtonEnbled: false
     property bool updateButtonEnbled: false
-    property bool updateProgressEnbled: true
+//    property bool updateProgressEnbled: false
 
     FontLoader{
         id: openSansSemibold
@@ -59,15 +59,15 @@ Rectangle {
 
             color: "#474747"
         }
-        ProgressBar {
-            id: progressBar
+//        ProgressBar {
+//            id: progressBar
 
-            anchors.top: updateText.bottom
-            anchors.horizontalCenter: updateText.horizontalCenter
-            indeterminate: true
+//            anchors.top: updateText.bottom
+//            anchors.horizontalCenter: updateText.horizontalCenter
+//            indeterminate: true
 
-            visible: updateProgressEnbled
-        }
+//            visible: updateProgressEnbled
+//        }
 
         Rectangle{
             id: cancelButton
@@ -129,7 +129,7 @@ Rectangle {
 
                     updateText.text = "Updating Resin\r\n"
 
-                    updateProgressEnbled = true
+//                    updateProgressEnbled = true
                     cancelButtonEnbled = false
                     updateButtonEnbled = false
 
@@ -153,7 +153,7 @@ Rectangle {
     function updateNotAvailable(){
         cancelButtonEnbled = true
         updateButtonEnbled = false
-        updateProgressEnbled = false
+//        updateProgressEnbled = false
 
         updateText.text = "resin update not available"
     }
@@ -165,13 +165,13 @@ Rectangle {
     }
     function updateFinished(){
         cancelButtonEnbled = true
-        updateProgressEnbled = false
+//        updateProgressEnbled = false
 
         updateText.text = "resin update finished"
     }
     function updateError(){
         cancelButtonEnbled = true
-        updateProgressEnbled = false
+//        updateProgressEnbled = false
 
         updateText.text = "resin update error"
     }

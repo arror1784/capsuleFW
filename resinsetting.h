@@ -13,6 +13,8 @@ public:
 
     void saveFile();
 
+    bool removeFile();
+
     QJsonValue getResinSetting(QString key);
     void setResinSetting(QString key,double value);
     void setResinSetting(QString key,int value);
