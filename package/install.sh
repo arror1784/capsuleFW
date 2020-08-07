@@ -24,6 +24,7 @@ ROOT_UPDATE_TARGET=(
 "LXDE-pi/desktop-items-0.conf"
 "LXDE-pi/desktop-items-1.conf"
 "LXDE-pi/pcmanfm.conf"
+"C10.service"
 )
 ROOT_UPDATE_PATH=(
 "/opt/capsuleFW/bin/capsuleFW"
@@ -39,6 +40,7 @@ ROOT_UPDATE_PATH=(
 "/etc/xdg/pcmanfm/LXDE-pi/desktop-items-0.conf"
 "/etc/xdg/pcmanfm/LXDE-pi/desktop-items-1.conf"
 "/etc/xdg/pcmanfm/LXDE-pi/pcmanfm.conf"
+"/etc/avahi/services/C10.service"
 )
 
 PI_UPDATE_TARGET=(
@@ -85,6 +87,7 @@ done
 
 #${SSH_COMMAND_ROOT} mkdir /opt/capsuleFW_react/ 2>&1 > /dev/null
 ${SSH_COMMAND_ROOT} "rm -rf /opt/capsuleFW_react"
+${SSH_COMMAND_ROOT} "service avahi-daemon restart"
 ${SSHPASS} scp -r ./capsuleFW_react root@${TARGET_IP}:/opt/
 ${SSHPASS} scp -r ./resin root@${TARGET_IP}:/opt/capsuleFW/
 ${SSH_COMMAND_ROOT} chmod 777 /opt/capsuleFW/resin
