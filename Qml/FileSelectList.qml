@@ -11,7 +11,7 @@ Item {
     property string currentPath
     property string currentParentName
     property string selectedFileName : ""
-    property string mediaURL: "file:///media/jsh"
+    property string mediaURL: "file:///media/pi"
 
     FontLoader{
         id: openSansSemibold
@@ -30,7 +30,7 @@ Item {
     }
     Text {
         id: selectText
-        text: qsTr("Select a file to print")
+        text: qsTr("Select a folder to print")
 
         font.pixelSize: 23
         font.family: openSansSemibold.name
@@ -258,7 +258,6 @@ Item {
             anchors.fill: parent
             onClicked: {
                 stackView.pop(StackView.Immediate)
-//                printSettingSocket.socketClose()
             }
         }
     }

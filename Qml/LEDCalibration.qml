@@ -262,7 +262,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromQmlSetPrinterOption("led_offset",currentLEDBrightness)
+                scheduler.receiveFromUISetPrinterOption("led_offset",currentLEDBrightness)
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -273,6 +273,6 @@ Item {
         target: scheduler
     }
     Component.onCompleted: {
-        currentLEDBrightness = scheduler.receiveFromQmlGetPrinterOption("led_offset")
+        currentLEDBrightness = scheduler.receiveFromUIGetPrinterOption("led_offset")
     }
 }

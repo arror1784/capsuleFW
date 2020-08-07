@@ -25,6 +25,7 @@
 #include "updater.h"
 #include "version.h"
 #include "printsettingsocket.h"
+#include "kinetimecalc.h"
 
 #define VERISON "0.1.5"
 
@@ -51,14 +52,13 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("resinUpdater",&ru);
 
-    qDebug() << "verion " << Version::GetInstance()->getVersion();
+//    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
+//    qDebug() << "verion " << Version::getInstance().getVersion();
 
-//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
-
-    printScheduler->engine = &engine;
 
     printScheduler->start();
 

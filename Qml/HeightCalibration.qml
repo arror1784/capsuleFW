@@ -50,7 +50,7 @@ Item {
 
         Text {
             id: bedHeightText
-            text: qsTr("Bed height offset (mm)")
+            text: qsTr("Bed height offset (micro)")
             color: "#666666"
             font.pixelSize: 20
             font.family: openSansRegular.name
@@ -101,7 +101,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro(-100)
+                scheduler.receiveFromUIMoveMicro(-100)
                 maxHightOffset += -100
             }
         }
@@ -111,7 +111,7 @@ Item {
             anchors.top: onePlusbutton.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: onePlusbutton.horizontalCenter
-            text: qsTr("0.1")
+            text: qsTr("100")
             color: "#9CB5C4"
 
             font.pixelSize: 20
@@ -142,7 +142,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro(100)
+                scheduler.receiveFromUIMoveMicro(100)
                 maxHightOffset += 100
             }
         }
@@ -171,7 +171,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro(-10)
+                scheduler.receiveFromUIMoveMicro(-10)
                 maxHightOffset += -10
             }
         }
@@ -181,7 +181,7 @@ Item {
             anchors.top: twoPlusbutton.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: twoPlusbutton.horizontalCenter
-            text: qsTr("0.01")
+            text: qsTr("10")
             color: "#9CB5C4"
 
             font.pixelSize: 20
@@ -212,7 +212,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromQmlMoveMicro(10)
+                scheduler.receiveFromUIMoveMicro(10)
                 maxHightOffset += 10
             }
         }
@@ -246,7 +246,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromQmlGoHome()
+                scheduler.receiveFromUIGoHome()
             }
         }
     }
@@ -280,8 +280,8 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromQmlGoHome()
-                scheduler.receiveFromQmlSetPrinterOption("height_offset",maxHightOffset)
+                scheduler.receiveFromUIGoHome()
+                scheduler.receiveFromUISetPrinterOption("height_offset",maxHightOffset)
             }
         }
     }
@@ -291,7 +291,7 @@ Item {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlMoveOk:{
+        onSendToUIMoveOk:{
             if(goHome){
                 goHome = false
                 waitPopup.close()
@@ -306,7 +306,7 @@ Item {
             }else if(goAutoHome){
                 goAutoHome = false
                 goMaxheight = true
-                scheduler.receiveFromQmlMoveMaxHeight()
+                scheduler.receiveFromUIMoveMaxHeight()
             }
         }
     }
@@ -319,8 +319,8 @@ Item {
         goAutoHome = true
 
         waitPopup.open()
-        scheduler.receiveFromQmlAutoHome()
-//        scheduler.receiveFromQmlMoveMaxHeight()
-        maxHightOffset = scheduler.receiveFromQmlGetPrinterOption("height_offset")
+        scheduler.receiveFromUIAutoHome()
+//        scheduler.receiveFromUIMoveMaxHeight()
+        maxHightOffset = scheduler.receiveFromUIGetPrinterOption("height_offset")
     }
 }

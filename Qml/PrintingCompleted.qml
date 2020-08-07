@@ -114,9 +114,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.get(3).clear()
-                scheduler.receiveFromQmlBedPrintAgain()
-                stackView.pop(StackView.Immediate)
+                scheduler.receiveFromUIPrintAgain()
             }
         }
     }
@@ -156,8 +154,9 @@ Item {
     }
 
     Component.onCompleted: {
-        fileName.text = scheduler.receiveFromQmlGetPrintName()
-        timesec = stackView.get(3).timesec
-        timemin = stackView.get(3).timemin
+        fileName.text = scheduler.receiveFromUIGetPrintName()
+        var it = stackView.find(function(item,index){return item.isPrinMenu})
+        timesec = it.timesec
+        timemin = it.timemin
     }
 }

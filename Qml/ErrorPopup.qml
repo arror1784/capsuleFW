@@ -40,6 +40,7 @@ Rectangle {
         focus: true
 
         Text {
+            id: errorText
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
             text: qsTr("print setting error")
@@ -85,7 +86,17 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    function open(){
+    function open(code){
+        if(code === 1){
+            errorText.text = "LCD OFF: lcd reconnect and reboot"
+        }else if(code === 2){
+            errorText.text = "File Error: Project crash"
+        }else if(code === 3){
+            errorText.text = "Setting Error: Project crash"
+        }else{
+            errorText.text = "Print Setting Error"
+        }
+
         popup.open()
     }
     function close(){

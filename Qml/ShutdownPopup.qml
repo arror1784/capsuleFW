@@ -104,7 +104,7 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    scheduler.receiveFromQmlShutdown()
+                    scheduler.receiveFromUIShutdown()
                 }
             }
         }

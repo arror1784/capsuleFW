@@ -41,9 +41,7 @@ void PrintSettingSocket::socketClose()
         _webSocket->close();
         _webSocket->deleteLater();
         _webSocket.release();
-
     }
-
 }
 
 void PrintSettingSocket::onWebSocketClosed()

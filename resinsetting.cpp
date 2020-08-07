@@ -7,8 +7,9 @@
 
 #include <QDebug>
 
-ResinSetting::ResinSetting(QString path):
+ResinSetting::ResinSetting(QString path/*,QString layerHeight*/):
     filePath(resinPath + "/" + path + ".json")
+//    ,_layerHeight(layerHeight)
 {
     QFile loadFile(filePath);
     if(!loadFile.open(QIODevice::ReadWrite)){

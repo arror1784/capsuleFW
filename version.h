@@ -4,12 +4,12 @@
 #include <QObject>
 #include <QJsonObject>
 
-class Version : public QObject
+#include "Singleton.h"
+
+class Version : public QObject, public Hix::Common::Singleton<Version>
 {
     Q_OBJECT
 private:
-    Version();
-    ~Version();
 
     static Version* _ins;
 
@@ -19,21 +19,9 @@ private:
 
     bool _opend = false;
 
-public:
-    static Version* GetInstance()
-    {
-        if (_ins == nullptr) {
-            _ins = new Version(/*filePath*/);
-            atexit(release_instance);
-        }
-        return _ins;
-    }
-    static void release_instance() {
-        if(_ins){
-            delete _ins;
-            _ins = nullptr;
-        }
-    }
+public:    
+    Version();
+    ~Version();
 
     QString getVersion();
 

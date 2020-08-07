@@ -7,6 +7,8 @@
 #include <QQuickItem>
 #include <QQmlContext>
 
+#include <QDateTime>
+
 #include "printsetting.h"
 #include "QJsonArray"
 #include "QProcess"
@@ -14,14 +16,16 @@
 #include "resinsetting.h"
 #include "version.h"
 #include "modelno.h"
+#include "kinetimecalc.h"
 
 #include "ymodem.h"
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 
-PrintScheduler::PrintScheduler(){
-
+PrintScheduler::PrintScheduler() :
+    _LCDState(true)
+{
 }
 
 void PrintScheduler::addPrintingBed(char name){
@@ -37,7 +41,7 @@ void PrintScheduler::addPrintingBed(char name){
 
     initPrint();
 
-    _bedControl->defaultHeight = PrintSetting::GetInstance()->getPrintSetting("default_height").toInt();
+    _bedControl->defaultHeight = PrintSetting::getInstance().getPrintSetting("default_height").toInt();
 }
 
 int PrintScheduler::addSerialPort(){
@@ -54,18 +58,65 @@ int PrintScheduler::addSerialPort(){
     return 1;
 }
 
+void PrintScheduler::saveFile(QString path, QByteArray byte){
+
+    QFile saveFile(path);
+
+    if(!saveFile.open(QIODevice::WriteOnly)){
+        qDebug() << "save file open error";
+    }
+
+    saveFile.write(byte);
+    saveFile.close();
+}
+
 void PrintScheduler::run(){
 
+    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+    QObject::connect(_wsClient,&WebSocketClient::startByWeb,this,&PrintScheduler::receiveFromUIPrintStart);
+    QObject::connect(_wsClient,&WebSocketClient::pauseByWeb,this,&PrintScheduler::receiveFromUIPrintPause);
+    QObject::connect(_wsClient,&WebSocketClient::resumeByWeb,this,&PrintScheduler::receiveFromUIPrintResume);
+    QObject::connect(_wsClient,&WebSocketClient::finishByWeb,this,&PrintScheduler::receiveFromUIPrintFinish);
+    QObject::connect(_wsClient,&WebSocketClient::getMaterialListbyWeb,this,&PrintScheduler::receiveFromUIGetMaterialList);
+    QObject::connect(_wsClient,&WebSocketClient::getPrintInfoByWeb,this,&PrintScheduler::receiveFromUIGetPrintInfoToWeb);
+
+
+    QObject::connect(this,&PrintScheduler::sendToUIUpdateProgress,_wsClient,&WebSocketClient::updateProgressToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrint,_wsClient,&WebSocketClient::changeToPrintToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseStart,_wsClient,&WebSocketClient::changeToPauseStartToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseFinish,_wsClient,&WebSocketClient::changeToPauseFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToResume,_wsClient,&WebSocketClient::changeToResumeToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToQuit,_wsClient,&WebSocketClient::changeToQuitToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintFinish,_wsClient,&WebSocketClient::changeToPrintFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkError,_wsClient,&WebSocketClient::changeToPrintWorkErrorToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkErrorFinish,_wsClient,&WebSocketClient::changeToPrintWorkErrorFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIPrintSettingError,_wsClient,&WebSocketClient::changeToPrintSettingErrorToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIMaterialList,_wsClient,&WebSocketClient::materialListToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIEnableTimer,_wsClient,&WebSocketClient::enableTimer);
+
+    QObject::connect(this,&PrintScheduler::sendToUIPrintInfo,_wsClient,&WebSocketClient::getPrintInfoToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUISetTotalTime,_wsClient,&WebSocketClient::setTotalTime);
+
+
+    _wsClient->open();
+
     if(addSerialPort()){
-        emit sendToQmlPortOpenError();
-        return;
+        _USBPortConnection = false;
+        _printState = "USBCONNECTIONERROR";
+        emit sendToUIPortOpenError();
+        while(true)
+            QThread::exec();
+    }else{
+        _USBPortConnection = true;
     }
-//        return;
     addPrintingBed('A');
 
     _updater = new Updater();
 
-    QObject::connect(_updater,&Updater::updateMCUFirmware,this,&PrintScheduler::receiveFromQmlFirmUpdate);
+    QObject::connect(_updater,&Updater::updateMCUFirmware,this,&PrintScheduler::receiveFromUpdaterFirmUpdate);
     QObject::connect(this,&PrintScheduler::MCUFirmwareUpdateFinished,_updater,&Updater::MCUFirmwareUpdateFinished);
 
     QObject::connect(_updater,&Updater::updateAvailable,this,&PrintScheduler::receiveFromUpdaterSWUpdateAvailable);
@@ -73,13 +124,6 @@ void PrintScheduler::run(){
     QObject::connect(_updater,&Updater::updateFinished,this,&PrintScheduler::receiveFromUpdaterSWUpdateFinished);
     QObject::connect(_updater,&Updater::updateError,this,&PrintScheduler::receiveFromUpdaterSWUpdateError);
 
-
-//        printScheduler->addPrintingBed("/home/hix/Desktop");
-//    printFilePath = "/home/pi/printFilePath";
-//    printFilePath = "/home/jsh/printFilePath";
-
-    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
-    _wsClient->open();
 
     qDebug() << "print scheduler" << QThread::currentThread();
     while(true)
@@ -94,44 +138,38 @@ QString PrintScheduler::materialName() const
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
+
     imageChange();
 }
 
 void PrintScheduler::bedFinish(){
 
-//    std::function<void()> func = [this]() {
-//        _wsClient->sendFinish();
 
-        _bedWork = BED_FINISH_WORK;
-        _bedMoveFinished = PRINT_MOVE_NULL;
-        _bedPrintImageNum = 0;
+    _bedWork = BED_FINISH_WORK;
+    _bedMoveFinished = PRINT_MOVE_NULL;
+    _bedPrintImageNum = 0;
 
+    _printState = "ready";
 //        _bedError = false;
-        emit sendToQmlFinish();
-        _wsClient->sendSetTimerOnoff(false);
-        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
+    _enableTimer = false;
+    emit sendToUIEnableTimer(false);
+//    _wsClient->sendEnableTimer(false);
+    _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
-//    };
-//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 
 }
 void PrintScheduler::bedError(){
 
-//    std::function<void()> func = [this]() {
-//        _wsClient->sendFinish();
-
-        _bedWork = BED_ERROR_WORK;
-        _bedMoveFinished = PRINT_MOVE_NULL;
-        _bedPrintImageNum = 0;
-    //        emit sendToQmlPrintFinish();
+    _bedWork = BED_ERROR_WORK;
+    _bedMoveFinished = PRINT_MOVE_NULL;
+    _bedPrintImageNum = 0;
+//        emit sendToUIPrintFinish();
 //        _bedError = false;
-        emit sendToQmlFinish();
-        _wsClient->sendSetTimerOnoff(false);
-        _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
+    _enableTimer = false;
+    emit sendToUIEnableTimer(false);
+//    _wsClient->sendEnableTimer(false);
+    _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
-//    };
-
-//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
 }
 
 void PrintScheduler::initPrint()
@@ -163,18 +201,19 @@ void PrintScheduler::printLayer(){
         _bedMoveFinished = PRINT_MOVE_READY;
 
         if(_bedPrintImageNum == _bedMaxPrintNum){
-            receiveFromQmlBedPrintFinish();
+            receiveFromUIPrintFinish();
             return;
         }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension) == false){
-//            receiveFromQmlBedPrintFinishError();
+//            receiveFromUIPrintFinishError();
             _bedError = true;
-            emit sendToQmlWaitForMovement();
-            emit sendToQmlPrintWorkError();
+            _printState = "error";
+            emit sendToUIChangeToPrintWorkError();
         }
         _bedPrintImageNum++;
 
-        emit sendToQmlUpdateProgress(_bedPrintImageNum,_bedMaxPrintNum);
-        _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
+        _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
+        emit sendToUIUpdateProgress(_progress);
+//        _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
 
         if(_bedPrintImageNum <= bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
@@ -188,7 +227,7 @@ int PrintScheduler::imageChange(){
     QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
     Logger::GetInstance()->write("print image path : " + fullPath);
 
-    emit sendToQmlChangeImage(fullPath);
+    emit sendToLCDChangeImage(fullPath);
 
     return 0;
 }
@@ -198,26 +237,30 @@ void PrintScheduler::receiveFromBedControl(int receive){
             imageChange();
             break;
         case PRINT_MOVE_INIT_OK:
-            _wsClient->sendSetTimerOnoff(true);
-            _wsClient->sendSetTimerTime();
-            emit sendToQmlInit();
+//            _wsClient->sendEnableTimer(true);
+//            _wsClient->sendSetTimerTime();
+            _enableTimer = true;
+            emit sendToUIEnableTimer(true);
         case PRINT_MOVE_LAYER_OK:
             if(_bedError){
-                receiveFromQmlBedPrintFinishError();
+                receiveFromUIPrintFinishError();
                 break;
             }
             if(_bedWork == BED_PAUSE_WORK){
-                emit sendToQmlPauseFinish();
+                _printState = "pause";
+                _elapsedTime = _elapsedTime + (QDateTime::currentDateTime().toMSecsSinceEpoch() - _lastStartTime);
 
-                _wsClient->sendPauseFinish();
-
+                _enableTimer = false;
+                emit sendToUIEnableTimer(false);
+                emit sendToUIChangeToPauseFinish();
+//                _wsClient->sendPauseFinish();
                 _bedWork = BED_PAUSE;
             }
             _bedMoveFinished = PRINT_MOVE_LAYER_OK;
             if(_bedPrintImageNum == bedCuringLayer){
-                emit sendToQmlFirstlayerStart();
+                emit sendToUIFirstlayerStart();
             }else if(_bedPrintImageNum == (bedCuringLayer + 1)){
-                emit sendToQmlFirstlayerFinish();
+                emit sendToUIFirstlayerFinish();
             }
 
             printLayer();
@@ -228,12 +271,14 @@ void PrintScheduler::receiveFromBedControl(int receive){
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
             if(_bedError){
-                emit sendToqmlPrintWorkErrorFinish();
-                _wsClient->sendFinish();
+                emit sendToUIChangeToPrintWorkErrorFinish();
+//                _wsClient->sendFinish();
+                _printState = "ready";
                 _bedError = false;
             }else{
-                emit sendToQmlPrintFinish();
-                _wsClient->sendFinish();
+                emit sendToUIChangeToPrintFinish();
+                _printState = "ready";
+//                _wsClient->sendFinish();
             }
             setMotorSpendtime();
             break;
@@ -244,7 +289,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
     }
 }
 void PrintScheduler::setMotorSpendtime(){
-    QJsonObject jo = PrintSetting::GetInstance()->getPrintSetting("motor_time_spend").toObject();
+    QJsonObject jo = PrintSetting::getInstance().getPrintSetting("motor_time_spend").toObject();
     int time;
 
     if(jo[_materialName].isNull()){
@@ -254,38 +299,60 @@ void PrintScheduler::setMotorSpendtime(){
         time = jo[_materialName].toInt();
     }
     jo[_materialName] = time + _printTime - (_bedControl->UVtime() + _bedControl->delayTime());
-    PrintSetting::GetInstance()->setPrintSetting("motor_time_spend",jo);
+    PrintSetting::getInstance().setPrintSetting("motor_time_spend",jo);
 }
 void PrintScheduler::receiveFromSerialPort(int state){
 
     if (state == MOVE_OK) {
-        emit sendToQmlMoveOk();
+        emit sendToUIMoveOk();
     }else if (state == SHUTDOWN) {
         if(_isBusy)
-            emit sendToQmlExitError();
+            emit sendToUIExitError();
         else
-            emit sendToQmlExit();
+            emit sendToUIExit();
     }else if(state == LCD_ON){
-
-        emit sendToLCDState(1);
+        emit sendToUILCDState(true);
     }else if(state == LCD_OFF){
+
+        _LCDState = false;
+
         if(_bedWork == BED_FINISH_WORK || _bedWork == BED_NOT_WORK || _bedWork == BED_ERROR_WORK){
 
         }else{
             _bedError = true;
-            emit sendToQmlWaitForMovement();
-            emit sendToQmlPrintWorkError();
+            _printState = "error";
+            emit sendToUIChangeToPrintWorkError();
         }
-        emit sendToLCDState(0);
+        emit sendToUILCDState(false);
     }
 }
 
-void PrintScheduler::receiveFromQmlBusySet(bool bs)
+void PrintScheduler::printStart()
+{
+//    _wsClient->sendStart();
+    _printState = "print";
+    _lastStartTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    emit sendToUIChangeToPrint();
+    emit sendToUIPrintInfo(_printState, _materialName, _printName, _layerHeight, 0, _totalPrintTime, _progress,_enableTimer);
+    _bedMoveFinished = PRINT_MOVE_NULL;
+    _bedPrintImageNum = 0;
+    initBed();
+}
+
+void PrintScheduler::printResume()
+{
+//    _wsClient->sendResume();
+    _printState = "print";
+    _bedWork = BED_WORK;
+    printLayer();
+}
+
+void PrintScheduler::receiveFromUIBusySet(bool bs)
 {
     _isBusy = bs;
 }
 
-void PrintScheduler::receiveFromQmlFirmUpdate(QString path)
+void PrintScheduler::receiveFromUpdaterFirmUpdate(QString path)
 {
     std::function<void()> f = [this,path](){
         QSerialPort *sp = new QSerialPort(_portPath);
@@ -303,7 +370,6 @@ void PrintScheduler::receiveFromQmlFirmUpdate(QString path)
             }
 
             YMODEM ym(sp);
-            connect(&ym,&YMODEM::progress,[this](int progress){this->sendToFirmwareUpdateProgrese(progress);});
 
             qDebug() << path;
             int a = ym.yTransmit(path);
@@ -319,24 +385,16 @@ void PrintScheduler::receiveFromQmlFirmUpdate(QString path)
                 bedSerialPort->serialOpen();
                 QThread::msleep(5000);
                 initPrint();
-//                emit this->sendToFirmwareUpdateFinish();
                 break;
             }
         }
 
         emit MCUFirmwareUpdateFinished();
-//        bedSerialPort->sendCommand("H201");
-//        qDebug() << "shutdown";
-//        QStringList arguments;
-//        arguments.append("-h");
-//        arguments.append("now");
-//        QProcess::execute("bash -c \"echo rasp | sudo -S shutdown -h now > /home/pi/out 2>&1\"");
     };
-
     QMetaObject::invokeMethod(bedSerialPort,f,Qt::AutoConnection);
 }
 
-void PrintScheduler::receiveFromQmlShutdown()
+void PrintScheduler::receiveFromUIShutdown()
 {
     bedSerialPort->sendCommand("H200");
     qDebug() << "shutdown";
@@ -364,7 +422,7 @@ int PrintScheduler::copyFilesPath(QString src, QString dst)
         }else if(f.contains("resin.json")){
             QFile::copy(src + QDir::separator() + f, dst + QDir::separator() + f);
         }
-    }//    WebSocketClient wsc(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+    }
 
     return count;
 }
@@ -390,7 +448,24 @@ int PrintScheduler::copyProject(QString path)
     }
     return 0;
 }
+void PrintScheduler::donwloadFiles(QJsonObject byte)
+{
+//    QJsonObject &ja = byte;
+    //file save
 
+    if(QDir(printFilePath).exists() == true){
+        QDir(printFilePath).removeRecursively();
+    }
+    if(!QDir().mkdir(printFilePath)){
+        qDebug()<< " create folder fail" << printFilePath;
+    }else{
+        qDebug() << " create folder sucess";
+    }
+
+    foreach(const QString& key, byte.keys()){
+        saveFile(printFilePath + "/" + key, QByteArray::fromBase64(byte.value(key).toString().split(",")[1].toUtf8()));
+    }
+}
 int PrintScheduler::setupForPrint(QString materialName)
 {
     QFile file;
@@ -413,6 +488,13 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     qDebug() << "selected material: " << materialName;
 
+    _progress = 0;
+    _lastStartTime = 0;
+    _elapsedTime = 0;
+    _layerHeight = 0.0;
+    _printState = "ready";
+    _totalPrintTime = 0;
+
     file.setFileName(filePath + QStringLiteral("/info.json"));
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << "info file open error";
@@ -424,7 +506,9 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     d = QJsonDocument::fromJson(val.toUtf8());
     setting = d.object();
-
+    double layer_height = round(setting["layer_height"].toDouble() * 10000) / 10000;
+    qDebug() << "layerHeight" <<
+                layer_height;
     if(materialName == "Custom"){
         f.setFileName(filePath + QStringLiteral("/resin.json"));
         if(!f.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -440,10 +524,15 @@ int PrintScheduler::setupForPrint(QString materialName)
         materialSetting = fd.object();
     }else{
         if(rs.getOpen())
-            materialSetting = rs.getJsonObject();
+            materialSetting = rs.getJsonObjectLayerHeight(layer_height);
+        else
+            return -5;
+        if(materialSetting.isEmpty()){
+            return -6;
+        }
     }
 
-    _bedControl->maxHeight = _bedControl->defaultHeight + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt();
+    _bedControl->maxHeight = _bedControl->defaultHeight + PrintSetting::getInstance().getPrintSetting("height_offset").toInt();
 
     if(!setting.contains("total_layer")){
         error = -3;
@@ -489,7 +578,9 @@ int PrintScheduler::setupForPrint(QString materialName)
     }
 
     _bedMaxPrintNum = setting["total_layer"].toInt();
-    _bedControl->setLayerHeightTime((int)(setting["layer_height"].toDouble() * 1000));
+    _bedControl->setLayerHeightTime((int)(layer_height * 1000));
+
+    _layerHeight = layer_height;
 
     bedCuringLayer = materialSetting["bed_curing_layer"].toInt();
 
@@ -508,106 +599,161 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     _bedControl->layerDelay = materialSetting["layer_delay"].toInt();
 
+//    KineTimeCalc kinCalc(setting["total_layer"].toInt(), materialSetting["bed_curing_layer"].toInt(), materialSetting["layer_delay"].toInt(), setting["layer_height"].toDouble(),
+//            materialSetting["z_hop_height"].toInt() / 1000,materialSetting["init_speed"].toInt(), materialSetting["max_speed"].toInt(), materialSetting["up_accel_speed"].toInt(),
+//            materialSetting["up_decel_speed"].toInt(), materialSetting["down_accel_speed"].toInt(), materialSetting["down_decel_speed"].toInt(),
+//                 materialSetting["bed_curing_time"].toInt(), materialSetting["curing_time"].toInt());
+
+//    _totalPrintTime = kinCalc.layerPrintTime();
+
     _bedControl->setUVtime(0);
 
-    emit sendToQmlSetImageScale(materialSetting["contraction_ratio"].toDouble());
+    emit sendToLCDSetImageScale(materialSetting["contraction_ratio"].toDouble());
 
-    double led = (PrintSetting::GetInstance()->getPrintSetting("led_offset").toDouble() / 100) *  materialSetting["led_offset"].toDouble();
+    double led = (PrintSetting::getInstance().getPrintSetting("led_offset").toDouble() / 100) *  materialSetting["led_offset"].toDouble();
     _bedControl->setLedOffset(led * 10);
 
     return 0;
 }
 
-void PrintScheduler::receiveFromQmlBedPrint(QString path,QString materialName){
+void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName){
 
     //int e =0;
     //e = readyForPrintStart(materialName,path);
-    if(copyProject(path)){
-        emit sendToQmlPrintSettingError();
+    if(!_LCDState){
+        emit sendToUIPrintSettingError(1);
+        return;
+    }
+    if(!_USBPortConnection){
+        emit sendToUIPrintSettingError(5);
+        return;
+    }
+    if(_printState != "ready"){
+        emit sendToUIPrintSettingError(4);
+        return;
+    }
+    if(copyProject(fileName)){
+        emit sendToUIPrintSettingError(2);
         return;
     }
     if(setupForPrint(materialName)){
-        emit sendToQmlPrintSettingError();
+        emit sendToUIPrintSettingError(3);
+        return;
+    }
+    _printName =  fileName.split('/').last();
+    _materialName = materialName;
+
+    printStart();
+}
+
+void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialName, QJsonObject byte)
+{
+    if(!_LCDState){
+        emit sendToUIPrintSettingError(1);
+        return;
+    }
+    if(!_USBPortConnection){
+        emit sendToUIPrintSettingError(5);
+        return;
+    }
+    if(_printState != "ready"){
+        emit sendToUIPrintSettingError(4);
         return;
     }
 
-    _printName =  path.split('/').last();
+    donwloadFiles(byte);
+
+    if(setupForPrint(materialName)){
+        emit sendToUIPrintSettingError(3);
+        return;
+    }
+    _printName =  fileName.split('/').last();
     _materialName = materialName;
 
-    receiveFromQmlBedPrintStart();
+    printStart();
 }
 
-void PrintScheduler::receiveFromQmlBedPrintAgain()
+void PrintScheduler::receiveFromUIPrintAgain()
 {
+    if(!_LCDState){
+        emit sendToUIPrintSettingError(1);
+        return;
+    }
     if(setupForPrint(_materialName)){
-        emit sendToQmlPrintSettingError();
+        emit sendToUIPrintSettingError(3);
         return;
     }
     qDebug() << _printName << _materialName;
 
-    receiveFromQmlBedPrintStart();
+    printStart();
 }
 
-void PrintScheduler::receiveFromQmlBedPrintStart(){
-
-//    std::function<void()> func;
+void PrintScheduler::receiveFromUIPrintResume(){
 
     if(_bedWork == BED_PAUSE){
-//        func = [this]() {
-            _wsClient->sendResume();
-
-            _bedWork = BED_WORK;
-            printLayer();
-//        };
-    }else{
-//        func = [this]() {
-            _wsClient->sendStart();
-
-            _bedMoveFinished = PRINT_MOVE_NULL;
-            _bedPrintImageNum = 0;
-            initBed();
-//        };
-    }
-
-//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+        printResume();
+        _lastStartTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        _enableTimer = true;
+        _printState = "print";
+        emit sendToUIEnableTimer(true);
+        emit sendToUIChangeToResume();
+    }/*else{
+        printStart();
+    }*/
 }
 
-void PrintScheduler::receiveFromQmlBedPrintFinish(){
+void PrintScheduler::receiveFromUIPrintFinish(){
     bedFinish();
+    _printState = "quit";
+    emit sendToUIChangeToQuit();
 }
-void PrintScheduler::receiveFromQmlBedPrintFinishError(){
+void PrintScheduler::receiveFromUIPrintFinishError(){
     bedError();
 }
-void PrintScheduler::receiveFromQmlBedPrintPause(){
+void PrintScheduler::receiveFromUIPrintPause(){
 
-//    std::function<void()> func = [this]() {
-        _wsClient->sendPauseStart();
-        _bedWork = BED_PAUSE_WORK;
-//    };
-
-//    QMetaObject::invokeMethod(_wsClient,func,Qt::AutoConnection);
+//    _wsClient->sendPauseStart();
+    _bedWork = BED_PAUSE_WORK;
+    _printState = "pauseStart";
+    emit sendToUIChangeToPauseStart();
 }
-void PrintScheduler::receiveFromQmlUpdateMaterial(){
-    QJsonArray a = PrintSetting::GetInstance()->getResinList();
-    for (int i = 0;i < a.count();i++) {
-        emit sendToQmlInsertMaterialList(a[i].toString());
+void PrintScheduler::receiveFromUIGetMaterialList(){
+    QJsonArray a = PrintSetting::getInstance().getResinList();
+    emit sendToUIMaterialList(a.toVariantList());
+}
+
+void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
+{
+    int eT;
+    if(_printState == "print"){
+        eT = _elapsedTime + (QDateTime::currentDateTime().toMSecsSinceEpoch() - _lastStartTime);
+    }else{
+        eT = _elapsedTime;
     }
-}
-QVariant PrintScheduler::receiveFromQmlGetPrinterOption(QString key){
-    return PrintSetting::GetInstance()->getPrintSetting(key).toVariant();
+
+    emit sendToUIPrintInfo(_printState, _materialName, _printName, _layerHeight, eT, _totalPrintTime, _progress,_enableTimer);
 }
 
-void PrintScheduler::receiveFromQmlSetPrinterOption(QString key,double value){
-    PrintSetting::GetInstance()->setPrintSetting(key,value);
+void PrintScheduler::receiveFromUIConnected()
+{
+    emit sendToUIPortOpenError();
+//    emit sendToUI
 }
-void PrintScheduler::receiveFromQmlSetPrinterOption(QString key,int value){
-    PrintSetting::GetInstance()->setPrintSetting(key,value);
-}
-void PrintScheduler::receiveFromQmlSetPrinterOption(QString key,QString value){
-    PrintSetting::GetInstance()->setPrintSetting(key,value);
+QVariant PrintScheduler::receiveFromUIGetPrinterOption(QString key){
+    return PrintSetting::getInstance().getPrintSetting(key).toVariant();
 }
 
-QVariant PrintScheduler::receiveFromQmlGetMaterialOption(QString material,QString key){
+void PrintScheduler::receiveFromUISetPrinterOption(QString key,double value){
+    PrintSetting::getInstance().setPrintSetting(key,value);
+}
+void PrintScheduler::receiveFromUISetPrinterOption(QString key,int value){
+    PrintSetting::getInstance().setPrintSetting(key,value);
+}
+void PrintScheduler::receiveFromUISetPrinterOption(QString key,QString value){
+    PrintSetting::getInstance().setPrintSetting(key,value);
+}
+
+QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString key){
     if(material == "Custom"){
         QFile file;
         QString val;
@@ -634,7 +780,7 @@ QVariant PrintScheduler::receiveFromQmlGetMaterialOption(QString material,QStrin
         return rs.getResinSetting(key).toVariant();
     }
 }
-QVariant PrintScheduler::receiveFromQmlGetMaterialOptionFromPath(QString path,QString key){
+QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
 
     QFile file;
     QString val;
@@ -658,7 +804,7 @@ QVariant PrintScheduler::receiveFromQmlGetMaterialOptionFromPath(QString path,QS
     return setting[key].toVariant();
 }
 
-QVariant PrintScheduler::receiveFromQmlGetPrintOption(QString key)
+QVariant PrintScheduler::receiveFromUIGetPrintOption(QString key)
 {
     QFile file;
     QString val;
@@ -681,7 +827,7 @@ QVariant PrintScheduler::receiveFromQmlGetPrintOption(QString key)
 
     return setting[key].toVariant();
 }
-QVariant PrintScheduler::receiveFromQmlGetPrintOptionFromPath(QString path, QString key)
+QVariant PrintScheduler::receiveFromUIGetPrintOptionFromPath(QString key, QString path)
 {
     QFile file;
     QString val;
@@ -705,51 +851,42 @@ QVariant PrintScheduler::receiveFromQmlGetPrintOptionFromPath(QString path, QStr
     return setting[key].toVariant();
 }
 
-void PrintScheduler::receiveFromQmlGoHome(){
+void PrintScheduler::receiveFromUISetTotalPrintTime(int time)
+{
+    _totalPrintTime = time;
+    emit sendToUISetTotalTime(time);
+}
+
+void PrintScheduler::receiveFromUIGoHome(){
     bedSerialPort->sendCommand("G02 A-15000 M1");
 }
-void PrintScheduler::receiveFromQmlAutoHome(){
+void PrintScheduler::receiveFromUIAutoHome(){
     bedSerialPort->sendCommand("G28 A225");
 }
-void PrintScheduler::receiveFromQmlMoveMicro(int micro){
+void PrintScheduler::receiveFromUIMoveMicro(int micro){
     char buffer[50] = {0};
 
     sprintf(buffer,"G01 A%d M0",-micro);
     bedSerialPort->sendCommand(buffer);
 }
-void PrintScheduler::receiveFromQmlMoveMaxHeight(){
+void PrintScheduler::receiveFromUIMoveMaxHeight(){
     char buffer[50] = {0};
 
-    sprintf(buffer,"G01 A%d M0",-(PrintSetting::GetInstance()->getPrintSetting("default_height").toInt() + PrintSetting::GetInstance()->getPrintSetting("height_offset").toInt()));
+    sprintf(buffer,"G01 A%d M0",-(PrintSetting::getInstance().getPrintSetting("default_height").toInt() + PrintSetting::getInstance().getPrintSetting("height_offset").toInt()));
     bedSerialPort->sendCommand(buffer);
 }
 
-QString PrintScheduler::receiveFromQmlGetVersion()
+QString PrintScheduler::receiveFromUIGetVersion()
 {
-    return Version::GetInstance()->getVersion();
+    return Version::getInstance().getVersion();
 }
 
-QString PrintScheduler::receiveFromQmlGetModelNo()
+QString PrintScheduler::receiveFromUIGetModelNo()
 {
-    return ModelNo::GetInstance()->getModelNo();
+    return ModelNo::getInstance().getModelNo();
 }
 
-void PrintScheduler::receiveFromQmlSetPrintTime(int time)
+void PrintScheduler::receiveFromUISetPrintTime(int time)
 {
     _printTime = time;
-}
-
-void PrintScheduler::receiveFromWebStart()
-{
-
-}
-
-void PrintScheduler::receiveFromWebPause()
-{
-
-}
-
-void PrintScheduler::receiveFromWebFinish()
-{
-
 }

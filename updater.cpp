@@ -39,7 +39,7 @@ void Updater::downloadBin()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_BIN;
-        request.setUrl(_url + "/get_file/capsule/" + _binName);
+        request.setUrl(_url + "/get_file/C10/" + _binName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -50,7 +50,7 @@ void Updater::downloadSH()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_SH;
-        request.setUrl(_url + "/get_file/capsule/" + _shName);
+        request.setUrl(_url + "/get_file/C10/" + _shName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -61,7 +61,7 @@ void Updater::downloadZIP()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_ZIP;
-        request.setUrl(_url + "/get_file/capsule/" + _zipName);
+        request.setUrl(_url + "/get_file/C10/" + _zipName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -72,7 +72,7 @@ void Updater::downloadVER()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_VER;
-        request.setUrl(_url + "/get_file/capsule/" + _verName);
+        request.setUrl(_url + "/get_file/C10/" + _verName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -83,7 +83,7 @@ void Updater::downloadLIST()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_LIST;
-        request.setUrl(_url + "/get_update_manifest/capsule");
+        request.setUrl(_url + "/get_update_manifest/C10");
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -105,7 +105,7 @@ void Updater::checkUpdate()
     _requestAvailable = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::UPDATE_CHECK;
-        request.setUrl(_url + "/get_file/capsule/" + _verName);
+        request.setUrl(_url + "/get_file/C10/" + _verName);
         manager->get(request);
 
     };
@@ -162,9 +162,9 @@ void Updater::requestFinished(QNetworkReply* reply)
         case SWRequestType::UPDATE_CHECK:
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
-            qDebug() << "current Version : " << Version::GetInstance()->getVersion();
+            qDebug() << "current Version : " << Version::getInstance().getVersion();
             qDebug() << "update Version : " << jo["version"].toString();
-            if(jo["version"].toString() != Version::GetInstance()->getVersion()){
+            if(jo["version"].toString() != Version::getInstance().getVersion()){
                 emit updateAvailable();
             }else{
                 emit updateNotAvailable();

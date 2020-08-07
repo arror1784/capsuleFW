@@ -22,14 +22,14 @@ ResinUpdater::ResinUpdater()
 void ResinUpdater::checkUpdate()
 {
     _requestType = ResinRequestType::UPDATE;
-    request.setUrl(QUrl("https://services.hix.co.kr/resin/update/"));
+    request.setUrl(QUrl("https://services.hix.co.kr/resin/update/C10"));
     manager->get(request);
 }
 
 void ResinUpdater::update()
 {
     _requestType = ResinRequestType::DOWNLOAD_ALL;
-    request.setUrl(QUrl("https://services.hix.co.kr/resin/download/"));
+    request.setUrl(QUrl("https://services.hix.co.kr/resin/download/C10"));
     manager->get(request);
 }
 
@@ -49,8 +49,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
             {
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
-
-                QJsonArray resinList = PrintSetting::GetInstance()->getResinList();
+                QJsonArray resinList = PrintSetting::getInstance().getResinList();
 
                 if(resinList.size() != ja.size()){
                     qDebug() << "update available 1";
@@ -59,13 +58,16 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 }
 
                 for(int i = 0;i < ja.size();i++) {
-                    QString mID = ja[i].toObject()["fields"].toObject()["M_id"].toString();
-                    QString lastUpdate = ja[i].toObject()["fields"].toObject()["last_update"].toString();
+                    QJsonObject jo = ja[i].toObject();
+                    QString mID = jo.keys()[0];
+                    QString lastUpdate = jo.value(mID).toString();;
+
                     if(!resinList.contains(mID)){
                         qDebug() << "update available 2";
                         emit updateAvailable();
                         return;
                     }
+
                     ResinSetting rs(mID);
                     if(rs.getResinSetting("last_update").toString() != lastUpdate){
                         qDebug() << "update available 3";
@@ -84,29 +86,27 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
         case ResinRequestType::DOWNLOAD_ALL:
             {
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
-                QJsonArray ja = jd.array();
+                QJsonObject ja = jd.object();
 
                 QJsonArray sl;
 
-                QJsonArray resinList = PrintSetting::GetInstance()->getResinList();
+                QJsonArray resinList = PrintSetting::getInstance().getResinList();
 
                 for (int i = 0; i < resinList.size();i++) {
                     ResinSetting rs(resinList[i].toString());
                     rs.removeFile();
                 }
 
-                for(int i = 0;i < ja.size();i++) {
-                    QString mID = ja[i].toObject()["fields"].toObject()["M_id"].toString();
-                    QString lastUpdate = ja[i].toObject()["fields"].toObject()["last_update"].toString();
-                    QJsonObject jo = ja[i].toObject()["fields"].toObject();
-
+                foreach(const QString& key, ja.keys()){
+                    QString mID = key;
                     sl.append(mID);
 
                     ResinSetting rs(mID);
-                    rs.setResinSetting(jo);
+                    rs.setResinSetting(ja.value(key).toObject());
                 }
 
-                PrintSetting::GetInstance()->setResinList(sl);
+
+                PrintSetting::getInstance().setResinList(sl);
                 emit updateFinished();
             }
             break;

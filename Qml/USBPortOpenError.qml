@@ -8,6 +8,8 @@ Item {
     height: 320
 //    property alias rectangleWidth: rectangle.width
 
+    property var name: "USBPortOpenError"
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"

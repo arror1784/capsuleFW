@@ -45,110 +45,139 @@ public:
     void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
 
+    void saveFile(QString path,QByteArray byte);
+
     int copyProject(QString path);
     int copyFilesPath(QString src, QString dst);
     int setupForPrint(QString materialName);
+
+    void donwloadFiles(QJsonObject byte);
 
 //    int readyForPrintStart(QString materialName,QString path); // info.json
 
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
 
+    void printStart();
+    void printResume();
+
 signals:
-    void sendToQmlChangeImage(QString imagePath);
-//    void sendToQmlChangeDefault();
-    void sendToQmlSetImageScale(double value);
+    void sendToLCDChangeImage(QString imagePath);   //only QML
+    void sendToLCDSetImageScale(double value);      //only QML
 
-    void sendToQmlPauseFinish();
-    void sendToQmlPrintFinish();
-    void sendToQmlUpdateProgress(int currentIndex,int maxIndex);
+    void sendToUIUpdateProgress(int progress); //update Progress
 
-    void sendToQmlInit();
-    void sendToQmlFinish();
+    void sendToUIFirstlayerStart();         //For CAL PrintTime
+    void sendToUIFirstlayerFinish();        //For CAL PrintTime
 
-    void sendToQmlInsertMaterialList(QString name);
-    void sendToQmlMoveOk();
-//    void sendToSerialPortCommand(QString);
-    void sendToQmlPrintSettingError();
-    void sendToQmlPrintWorkError();
-    void sendToqmlPrintWorkErrorFinish();
+    void sendToUIChangeToPrint();       //change ui Ready to Print
 
-    void sendToQmlWaitForMovement();
+    void sendToUIChangeToPauseStart();      //chage ui print to Pause Start
+    void sendToUIChangeToPauseFinish();     //change ui Pause Start to Pause Finish
+    void sendToUIChangeToResume();          //change ui Pause Finish to Print
+    void sendToUIChangeToQuit();            //change ui all state to Quit
 
-    void sendToQmlPortOpenError();
+    void sendToUIChangeToPrintFinish();             //chagne UI state Print To Ready
+    void sendToUIChangeToPrintWorkError();          //Error when Printing
+    void sendToUIChangeToPrintWorkErrorFinish();    //change UI State Print To Ready By Error
 
-    void sendToQmlExitError();
-    void sendToQmlExit();
+    void sendToUIPrintSettingError(int code);       //print setting Error when received print start from UI
 
-    void sendToLCDState(int state);
+    void sendToUIEnableTimer(bool enable);      //for enabel Timer
 
-    void sendToFirmwareUpdateFinish();
-    void sendToFirmwareUpdateError();
-    void sendToFirmwareUpdateProgrese(int progress);
+    void sendToUIMaterialList(QVariantList name);   //Material List UI must insert Custm resin when resin.json exist
 
-    void sendToQmlFirstlayerStart();
-    void sendToQmlFirstlayerFinish();
+    void sendToUIPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer);
 
-    void MCUFirmwareUpdateFinished();
+    void sendToUISetTotalTime(int time);
 
-    void sendToQmlSWUpdateAvailable();
-    void sendToQmlSWUpdateNotAvailable();
-    void sendToQmlSWUpdateFinished();
-    void sendToQmlSWUpdateError();
+    void sendToUIPortOpenError();
 
-    void sendToQmlPrintByWeb();
-    void sendToQmlFinishByWeb();
-    void sendToQmlPauseByWeb();
+    void sendToUILCDState(bool state);
+
+    void sendToUIPrinterOption(QString key,QString value);
+    void sendToUIPrinterOption(QString key,double value);
+    void sendToUIPrinterOption(QString key,int value);
+
+    void sendToUIPrintOption(QString key,QString value);
+    void sendToUIPrintOption(QString key,double value);
+    void sendToUIPrintOption(QString key,int value);
+
+    void sendToUIPrintOption(QString key,QString path,QString value);
+    void sendToUIPrintOption(QString key,QString path,double value);
+    void sendToUIPrintOption(QString key,QString path,int value);
+
+    void sendToUIExitError();               //only QML
+    void sendToUIExit();                    //only QML
+
+    void sendToUIMoveOk();                  //only QML
+
+    void MCUFirmwareUpdateFinished();       //only QML
+
+    void sendToUISWUpdateAvailable();       //only QML
+    void sendToUISWUpdateNotAvailable();    //only QML
+    void sendToUISWUpdateFinished();        //only QML
+    void sendToUISWUpdateError();           //only QML
 
 public slots:
+    void receiveFromUIConnected();
 
-    void receiveFromQmlBusySet(bool bs);
+    void receiveFromQMLPrintStart(QString path,QString materialName);
+    void receiveFromUIPrintStart(QString fileName,QString materialName,QJsonObject byte);
+    void receiveFromUIPrintAgain();
 
-    void receiveFromQmlFirmUpdate(QString path);
-    void receiveFromQmlShutdown();
+    void receiveFromUIPrintResume();
+    void receiveFromUIPrintPause();
+    void receiveFromUIPrintFinish();
 
-    void receiveFromQmlBedPrint(QString path,QString materialName);
-    void receiveFromQmlBedPrintAgain();
+    void receiveFromUIGetMaterialList();
 
-    void receiveFromQmlBedPrintStart();
-    void receiveFromQmlBedPrintFinish();
-    void receiveFromQmlBedPrintFinishError();
-    void receiveFromQmlBedPrintPause();
+    void receiveFromUIGetPrintInfoToWeb();
 
-    void receiveFromQmlUpdateMaterial();
+    QString receiveFromUIGetPrintName(){return _printName;}
+    QString receiveFromUIGetMaterialName(){return _materialName;}
 
-    QVariant receiveFromQmlGetPrinterOption(QString key);
-    void receiveFromQmlSetPrinterOption(QString key,double value);
-    void receiveFromQmlSetPrinterOption(QString key,int value);
-    void receiveFromQmlSetPrinterOption(QString key,QString value);
+//    void receiveFromUIGetTotalPrintTime(){emit sendToUITotalPrintTime(_totalPrintTime);}  //guess
+//    void receiveFromUIGetStartTimeStamp(){emit sendToUIStartTimeStamp(_startTimeStamp);}  //start time stamp
 
-    QVariant receiveFromQmlGetMaterialOption(QString material,QString key);
-    QVariant receiveFromQmlGetMaterialOptionFromPath(QString path,QString key);
+    QVariant receiveFromUIGetPrinterOption(QString key);
 
-    QVariant receiveFromQmlGetPrintOption(QString key);
-    QVariant receiveFromQmlGetPrintOptionFromPath(QString path,QString key);
+    QVariant receiveFromUIGetPrintOption(QString key);
+    QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
 
-    QString receiveFromQmlGetPrintName(){return _printName;}
-    QString receiveFromQmlGetMaterialName(){return _materialName;}
+    void receiveFromUISetTotalPrintTime(int time);
+    //use only qml or scheduler
 
-    void receiveFromQmlGoHome();
-    void receiveFromQmlAutoHome();
-    void receiveFromQmlMoveMicro(int micro);
-    void receiveFromQmlMoveMaxHeight();
 
-    QString receiveFromQmlGetVersion();
-    QString receiveFromQmlGetModelNo();
+    void receiveFromUIPrintFinishError();
 
-    void receiveFromQmlSetPrintTime(int time);
 
-    void receiveFromUpdaterSWUpdateAvailable(){emit sendToQmlSWUpdateAvailable();}
-    void receiveFromUpdaterSWUpdateNotAvailable(){emit sendToQmlSWUpdateNotAvailable();}
-    void receiveFromUpdaterSWUpdateFinished(){emit sendToQmlSWUpdateFinished();}
-    void receiveFromUpdaterSWUpdateError(){emit sendToQmlSWUpdateError();}
+    void receiveFromUISetPrinterOption(QString key,double value);   //only QML
+    void receiveFromUISetPrinterOption(QString key,int value);      //only QML
+    void receiveFromUISetPrinterOption(QString key,QString value);  //only QML
 
-    void receiveFromWebStart();
-    void receiveFromWebPause();
-    void receiveFromWebFinish();
+    QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
+    QVariant receiveFromUIGetMaterialOption(QString material,QString key);
+
+    void receiveFromUIBusySet(bool bs);
+    void receiveFromUIShutdown();
+
+    void receiveFromUIGoHome();
+    void receiveFromUIAutoHome();
+    void receiveFromUIMoveMicro(int micro);
+    void receiveFromUIMoveMaxHeight();
+
+    QString receiveFromUIGetVersion();
+    QString receiveFromUIGetModelNo();
+
+    void receiveFromUISetPrintTime(int time);       //for real time
+
+    void receiveFromUpdaterSWUpdateAvailable(){emit sendToUISWUpdateAvailable();}
+    void receiveFromUpdaterSWUpdateNotAvailable(){emit sendToUISWUpdateNotAvailable();}
+    void receiveFromUpdaterSWUpdateFinished(){emit sendToUISWUpdateFinished();}
+    void receiveFromUpdaterSWUpdateError(){emit sendToUISWUpdateError();}
+
+    void receiveFromUpdaterFirmUpdate(QString path);
 
     void update(){_updater->update();}
     void checkUpdate(){_updater->checkUpdate();}
@@ -176,9 +205,9 @@ private:
 
     int bedCuringLayer = 5;
 
-    QString _fileExtension = ".png";
+    const QString _fileExtension = ".png";
 
-    QString printUSBFileName = "capsulePrintFolderTest";
+    const QString printUSBFileName = "capsulePrintFolderTest";
 
     QString _bedPath;
 
@@ -192,11 +221,23 @@ private:
     int _bedMoveFinished;
     int _bedMaxPrintNum;
 
+    int _progress = 0;
+    long long _lastStartTime = 0;
+    long long _elapsedTime = 0;
+    bool _enableTimer = false;
+    double _layerHeight = 0.0;
+    QString _printState = "ready";
+    long long _totalPrintTime = 0;
+
     int _printTime = 0;
+
 
     bool _bedError = false;
 
     bool _isBusy;
+
+    bool _LCDState = true;
+    bool _USBPortConnection = true;
 
 };
 

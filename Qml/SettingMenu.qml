@@ -43,7 +43,7 @@ Item {
 
             Text {
                 id: heightCalibrationText
-                text: qsTr("height")
+                text: qsTr("Height")
                 color: "#666666"
 
                 anchors.top: heightCalibrationImage.bottom
@@ -144,7 +144,7 @@ Item {
 
             Text {
                 id: networkText
-                text: qsTr("network")
+                text: qsTr("Network")
                 color: "#666666"
 
                 anchors.top: networkImage.bottom
@@ -190,7 +190,7 @@ Item {
 
             Text {
                 id: updateText
-                text: qsTr("update")
+                text: qsTr("Update")
                 color: "#666666"
 
                 anchors.top: updateImage.bottom
@@ -203,7 +203,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/updateMenu.qml"),StackView.Immediate)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateMenu.qml"),StackView.Immediate)
             }
         }
     }

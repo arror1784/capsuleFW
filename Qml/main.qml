@@ -21,31 +21,14 @@ Window {
             id: mainMenu
         }
         onCurrentItemChanged: {
+            console.debug("stackView depth : ", depth)
             if(currentItem.name === "mainMenu"){
-                scheduler.receiveFromQmlBusySet(false)
-                printSettingSocket.socketClose()
-                console.debug("change to mainmenu")
+                scheduler.receiveFromUIBusySet(false)
             }else if(currentItem.name === "usbPortOpenError"){
-                scheduler.receiveFromQmlBusySet(false)
-                printSettingSocket.socketClose()
+                scheduler.receiveFromUIBusySet(true)
             }else{
-                scheduler.receiveFromQmlBusySet(true)
-                console.debug("is not mainmenu")
+                scheduler.receiveFromUIBusySet(true)
             }
-        }
-    }
-    PrintSettingSocket{
-        id: printSettingSocket
-        onSocketDisconnect: {
-            scheduler.receiveFromQmlBusySet(false)
-            stackView.pop(mainMenu,StackView.Immediate)
-            selectFileEnterFail.open()
-        }
-        onSocketError: {
-//            scheduler.receiveFromQmlBusySet(false)
-//            stackView.pop(mainMenu,StackView.Immediate)
-            selectFileEnterFail.setError(true)
-//            selectFileEnterFail.open()
         }
     }
     SelectFileEnterFail{
@@ -54,8 +37,7 @@ Window {
     ErrorPopup{
         id: errorPopup
         onBack: {
-            scheduler.receiveFromQmlBusySet(false)
-            stackView.pop(mainMenu,StackView.Immediate)
+//            stackView.pop(mainMenu,StackView.Immediate)
         }
     }
     BusyErrorPopup{
@@ -71,16 +53,17 @@ Window {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlPrintSettingError :{
-            errorPopup.open()
+        onSendToUIPrintSettingError :{
+//            stackView.pop(mainMenu,StackView.Immediate)
+            errorPopup.open(code)
         }
-        onSendToQmlExitError :{
+        onSendToUIExitError :{
             busyErrorPopup.open()
         }
-        onSendToQmlExit:{
+        onSendToUIExit:{
             shutDownPopup.open()
         }
-        onSendToLCDState:{
+        onSendToUILCDState:{
             console.debug(state)
             if(state){
                 lcdOff.close()
@@ -88,8 +71,25 @@ Window {
                 lcdOff.open()
             }
         }
-        onSendToQmlPortOpenError:{
-            stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+        onSendToUIPortOpenError:{
+            if(stackView.currentItem.name !== "USBPortOpenError")
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
         }
+        onSendToUIChangeToPrint: {
+            var it = stackView.find(function(item,index){return item.isPrinMenu})
+            if(stackView.currentItem.isPrinMenu){
+                console.debug("isPrintMenu")
+            }else{
+                if(it === null){
+                    stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
+                }else{
+                    it.clear()
+                    stackView.pop(it,StackView.Immediate)
+                }
+            }
+        }
+    }
+    Component.onCompleted: {
+        console.log(new Date().getTime())
     }
 }

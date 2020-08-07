@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.11
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.10
 
 Window {
     id: lcdWindow
@@ -41,15 +41,18 @@ Window {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlChangeImage: function onSendToQmlChangeImage(imagePath){
+        onSendToLCDChangeImage: {
             console.log(imagePath)
             printImage.source = imagePath
         }
-        onSendToQmlSetImageScale: function onSendToQmlSetImageScale(value){
+        onSendToLCDSetImageScale: {
             console.log(value)
             printImage.scale = value
         }
-        onSendToQmlFinish:{
+        onSendToUIChangeToPrintWorkErrorFinish:{
+            printImage.source = "qrc:/image/defaultBlackImage.png"
+        }
+        onSendToUIChangeToPrintFinish:{
             printImage.source = "qrc:/image/defaultBlackImage.png"
         }
     }

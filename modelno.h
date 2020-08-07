@@ -6,13 +6,12 @@
 #include <QObject>
 #include <QJsonObject>
 
-class ModelNo : public QObject
+#include "Singleton.h"
+
+class ModelNo : public QObject, public Hix::Common::Singleton<ModelNo>
 {
     Q_OBJECT
 private:
-    ModelNo();
-    ~ModelNo();
-
     static ModelNo* _ins;
 
     const QString _url = "/opt/capsuleFW/modelNo.json";
@@ -22,20 +21,8 @@ private:
     bool _opend = false;
 
 public:
-    static ModelNo* GetInstance()
-    {
-        if (_ins == nullptr) {
-            _ins = new ModelNo(/*filePath*/);
-            atexit(release_instance);
-        }
-        return _ins;
-    }
-    static void release_instance() {
-        if(_ins){
-            delete _ins;
-            _ins = nullptr;
-        }
-    }
+    ModelNo();
+    ~ModelNo();
 
     QString getModelNo();
 

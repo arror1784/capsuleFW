@@ -130,9 +130,11 @@ Item {
                 if(materialSelectList.currentIndex !== -1){
                     materialName = materialSelectList.currentItem.metarialname
                     printingPopup.open()
+                    console.log(stackView.get(1).currentPath)
+                    console.log(scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).currentPath))
                     printingPopup.setText(stackView.get(1).currentParentName,
                                           materialName,
-                                          scheduler.receiveFromQmlGetPrintOptionFromPath(stackView.get(1).currentPath,"layer_height"))
+                                          scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).currentPath))
                 }
             }
         }
@@ -140,10 +142,8 @@ Item {
     PrintingPopup{
         id: printingPopup
         onStartPrintingButtonClicked:{
-            scheduler.receiveFromQmlBedPrint(stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
-            console.debug(stackView.get(1).currentPath)
-            printSettingSocket.socketClose()
-            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
+            scheduler.receiveFromQMLPrintStart(stackView.get(1).currentPath,materialSelectList.currentItem.metarialname)
+//            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
     FileValidator{
@@ -154,8 +154,9 @@ Item {
     Connections{
         id: schedulerConnection
         target: scheduler
-        onSendToQmlInsertMaterialList: function onSendToQmlInsertMaterialList(name){
-            inserMaterialList(name)
+        onSendToUIMaterialList: {
+            for(var i = 0; i < name.length; i++)
+                inserMaterialList(name[i])
         }
     }
     Component.onCompleted: {
@@ -164,8 +165,7 @@ Item {
         if(validator.fileValid){
             inserMaterialList("Custom")
         }
-        scheduler.receiveFromQmlUpdateMaterial()
-
+        scheduler.receiveFromUIGetMaterialList()
     }
     function inserMaterialList(name){
         materialModel.append({"name":name})

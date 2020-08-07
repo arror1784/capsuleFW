@@ -6,14 +6,13 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-class PrintSetting : public QObject
+#include "Singleton.h"
+
+class PrintSetting : public QObject , public Hix::Common::Singleton<PrintSetting>
 {
     Q_OBJECT
 private:
-    PrintSetting();
-    PrintSetting(QString settingPath);
-    PrintSetting(const PrintSetting& other);
-    ~PrintSetting();
+
 
     static PrintSetting* _ins;
     const QString filePath = "/opt/capsuleFW/capsuleSetting.json";
@@ -22,20 +21,8 @@ private:
     QJsonObject setting;
 
 public:
-    static PrintSetting* GetInstance()
-    {
-        if (_ins == nullptr) {
-            _ins = new PrintSetting(/*filePath*/);
-            atexit(release_instance);
-        }
-        return _ins;
-    }
-    static void release_instance() {
-        if(_ins){
-            delete _ins;
-            _ins = nullptr;
-        }
-    }
+    PrintSetting();
+    ~PrintSetting();
 
     void saveFile();
 

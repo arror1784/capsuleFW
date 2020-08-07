@@ -23,6 +23,7 @@ SOURCES += \
     bedcontrol.cpp \
     bedserialport.cpp \
     filevalidator.cpp \
+    kinetimecalc.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
@@ -53,10 +54,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    Singleton.h \
     bedcontrol.h \
     bedserialport.h \
     common.h \
     filevalidator.h \
+    kinetimecalc.h \
     logger.h \
     modelno.h \
     networkcontrol.h \

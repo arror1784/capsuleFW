@@ -7,7 +7,7 @@ Group=root
 WorkingDirectory=/opt/capsuleFW_react/frontend
 
 #Environment="DJANGO_SETTINGS_MODULE=djangoreactapi.settings"
-ExecStart=/usr/local/bin/serve build 
+ExecStart=/usr/local/bin/serve -s build 
 
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

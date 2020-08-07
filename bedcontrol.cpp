@@ -112,7 +112,7 @@ void BedControl::printDelay(){
     future = QtConcurrent::run([this](){
         //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
         QString material = _sched->materialName();
-        QJsonObject jo = PrintSetting::GetInstance()->getPrintSetting("UV_time_spend").toObject();
+        QJsonObject jo = PrintSetting::getInstance().getPrintSetting("UV_time_spend").toObject();
         int time;
 
         if(jo[material].isNull()){
@@ -124,7 +124,7 @@ void BedControl::printDelay(){
         _delayTime += layerDelay;
         QThread::msleep(layerDelay);
 
-        qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
+//        qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
         _bedSerialPort->sendCommand("H11");
         if(bedState == PRINT_MOVE_BEDCURRENT){
             QThread::msleep((unsigned int)bedCuringTime);
@@ -132,7 +132,7 @@ void BedControl::printDelay(){
             QThread::msleep((unsigned int)curingTime);
         }
         _bedSerialPort->sendCommand("H10");
-        qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
+//        qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
 
         if(bedState == PRINT_MOVE_BEDCURRENT){
             jo[material] = time + bedCuringTime;
@@ -142,7 +142,7 @@ void BedControl::printDelay(){
             _UVtime += curingTime;
         }
 
-        PrintSetting::GetInstance()->setPrintSetting("UV_time_spend",jo);
+        PrintSetting::getInstance().setPrintSetting("UV_time_spend",jo);
         moveUpCommand();
     });
 }

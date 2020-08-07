@@ -21,18 +21,6 @@ PrintSetting::PrintSetting()
     setting = loadDoc.object();
 }
 
-PrintSetting::PrintSetting(QString settingPath)
-{
-    QFile loadFile(settingPath);
-
-    if(!loadFile.open(QIODevice::ReadOnly)){
-        qWarning("Could not open json file to read");
-    }
-
-    QByteArray loadData = loadFile.readAll();
-    QJsonDocument loadDoc(QJsonDocument::fromJson(loadData));
-    setting = loadDoc.object();
-}
 
 PrintSetting::~PrintSetting(){
 //    delete setting;

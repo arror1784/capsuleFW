@@ -54,7 +54,6 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-//                printSettingSocket.socketOpen()
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
             }
         }
@@ -91,7 +90,7 @@ Item {
 
             Text {
                 id: settingText
-                text: qsTr("setting")
+                text: qsTr("Setting")
                 color: "#666666"
 
                 anchors.top: settingImage.bottom
@@ -152,8 +151,8 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                var version = scheduler.receiveFromQmlGetVersion()
-                var modelNo = scheduler.receiveFromQmlGetModelNo()
+                var version = scheduler.receiveFromUIGetVersion()
+                var modelNo = scheduler.receiveFromUIGetModelNo()
                 infoPopup.open()
                 infoPopup.setText(version,modelNo)
             }

@@ -3,13 +3,21 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QDebug>
 
 class ResinSetting
 {
 public:
-    ResinSetting(QString path);
+    ResinSetting(QString path/*,QString layerHeight*/);
 
     QJsonObject getJsonObject(){return setting;}
+    QJsonObject getJsonObjectLayerHeight(double layerHeight){
+        QString s;
+        s.setNum(layerHeight);
+        qDebug() << s << "hello my friend";
+        return setting[s].toObject();
+    }
+
 
     void saveFile();
 
@@ -30,6 +38,7 @@ private:
     QString filePath;
 
     bool _open = false;
+    QString _layerHeight;
 
 };
 
