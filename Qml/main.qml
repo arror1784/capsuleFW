@@ -21,7 +21,7 @@ Window {
             id: mainMenu
         }
         onCurrentItemChanged: {
-            console.debug("stackView depth : ", depth)
+
             if(currentItem.name === "mainMenu"){
                 scheduler.receiveFromUIBusySet(false)
             }else if(currentItem.name === "usbPortOpenError"){
@@ -64,7 +64,7 @@ Window {
             shutDownPopup.open()
         }
         onSendToUILCDState:{
-            console.debug(state)
+
             if(state){
                 lcdOff.close()
             }else{
@@ -88,8 +88,5 @@ Window {
                 }
             }
         }
-    }
-    Component.onCompleted: {
-        console.log(new Date().getTime())
     }
 }

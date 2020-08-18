@@ -2,8 +2,6 @@
 #define MODELNO_H
 
 #include <QObject>
-
-#include <QObject>
 #include <QJsonObject>
 
 #include "Singleton.h"
@@ -27,6 +25,5 @@ public:
     QString getModelNo();
 
 };
-
 
 #endif // MODELNO_H

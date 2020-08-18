@@ -56,25 +56,16 @@ void WebSocketClient::onTextMessageReceived(QString message)
     }
 
     if(obj["method"].toString() == "listMaterialName"){
-
-        qDebug() << obj;
         emit getMaterialListbyWeb();
 
     }else if(obj["method"].toString() == "print"){
-
         args = obj["arg"].toObject();
-        qDebug() << "printFiles" << args["printFiles"].toString();
         emit startByWeb(args["selectedFilename"].toString(),args["selectedMaterial"].toString(),args["printFiles"].toObject());
 
     }else if(obj["method"].toString() == "printInfo"){
-
-        qDebug() << obj;
         emit getPrintInfoByWeb();
 
     }else if(obj["method"].toString() == "changeState"){
-
-        qDebug() << obj;
-
         QString state = obj["arg"].toString();
         if(state == "pause"){
             emit pauseByWeb();
@@ -95,7 +86,6 @@ void WebSocketClient::onTextMessageReceived(QString message)
 }
 
 void WebSocketClient::error(QAbstractSocket::SocketError error){
-    qDebug() << "socket connect error" << error;
     _connected = false;
     QTimer::singleShot(1000, this, &WebSocketClient::open);
 }

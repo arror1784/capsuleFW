@@ -13,7 +13,7 @@ Version::Version()
     if(!loadFile.open(QIODevice::ReadOnly)){
         qWarning("Could not open json file to read");
         _opend = false;
-
+        return;
     }
 
     QByteArray loadData = loadFile.readAll();

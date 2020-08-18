@@ -259,7 +259,7 @@ Item {
             var currentDate = new Date(time + (firstLayerTime * ((total_layer - bed_curting_layer) - 1)))
             var sec = currentDate.getSeconds()
             var min = currentDate.getMinutes()
-            console.debug("time : "+ time + " firstLayerTime : " + firstLayerTime)
+
             scheduler.receiveFromUISetTotalPrintTime(currentDate)
             fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
         }

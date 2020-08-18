@@ -14,10 +14,8 @@ public:
     QJsonObject getJsonObjectLayerHeight(double layerHeight){
         QString s;
         s.setNum(layerHeight);
-        qDebug() << s << "hello my friend";
         return setting[s].toObject();
     }
-
 
     void saveFile();
 

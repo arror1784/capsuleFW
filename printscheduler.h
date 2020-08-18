@@ -45,15 +45,14 @@ public:
     void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
 
-    void saveFile(QString path,QByteArray byte);
+    int saveFile(QString path,QByteArray byte);
 
     int copyProject(QString path);
     int copyFilesPath(QString src, QString dst);
     int setupForPrint(QString materialName);
+    int unZipFiles(QString path);
 
-    void donwloadFiles(QJsonObject byte);
-
-//    int readyForPrintStart(QString materialName,QString path); // info.json
+    int donwloadFiles(QJsonObject byte);
 
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
@@ -95,18 +94,6 @@ signals:
 
     void sendToUILCDState(bool state);
 
-    void sendToUIPrinterOption(QString key,QString value);
-    void sendToUIPrinterOption(QString key,double value);
-    void sendToUIPrinterOption(QString key,int value);
-
-    void sendToUIPrintOption(QString key,QString value);
-    void sendToUIPrintOption(QString key,double value);
-    void sendToUIPrintOption(QString key,int value);
-
-    void sendToUIPrintOption(QString key,QString path,QString value);
-    void sendToUIPrintOption(QString key,QString path,double value);
-    void sendToUIPrintOption(QString key,QString path,int value);
-
     void sendToUIExitError();               //only QML
     void sendToUIExit();                    //only QML
 
@@ -137,9 +124,6 @@ public slots:
     QString receiveFromUIGetPrintName(){return _printName;}
     QString receiveFromUIGetMaterialName(){return _materialName;}
 
-//    void receiveFromUIGetTotalPrintTime(){emit sendToUITotalPrintTime(_totalPrintTime);}  //guess
-//    void receiveFromUIGetStartTimeStamp(){emit sendToUIStartTimeStamp(_startTimeStamp);}  //start time stamp
-
     QVariant receiveFromUIGetPrinterOption(QString key);
 
     QVariant receiveFromUIGetPrintOption(QString key);
@@ -148,9 +132,7 @@ public slots:
     void receiveFromUISetTotalPrintTime(int time);
     //use only qml or scheduler
 
-
     void receiveFromUIPrintFinishError();
-
 
     void receiveFromUISetPrinterOption(QString key,double value);   //only QML
     void receiveFromUISetPrinterOption(QString key,int value);      //only QML
@@ -158,6 +140,8 @@ public slots:
 
     QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
     QVariant receiveFromUIGetMaterialOption(QString material,QString key);
+
+    bool isCustom(QString path);
 
     void receiveFromUIBusySet(bool bs);
     void receiveFromUIShutdown();
@@ -172,26 +156,14 @@ public slots:
 
     void receiveFromUISetPrintTime(int time);       //for real time
 
-    void receiveFromUpdaterSWUpdateAvailable(){emit sendToUISWUpdateAvailable();}
-    void receiveFromUpdaterSWUpdateNotAvailable(){emit sendToUISWUpdateNotAvailable();}
-    void receiveFromUpdaterSWUpdateFinished(){emit sendToUISWUpdateFinished();}
-    void receiveFromUpdaterSWUpdateError(){emit sendToUISWUpdateError();}
-
     void receiveFromUpdaterFirmUpdate(QString path);
-
-    void update(){_updater->update();}
-    void checkUpdate(){_updater->checkUpdate();}
 
 public:
     BedSerialport* bedSerialPort = nullptr;
 
-    QQmlApplicationEngine *engine;
-
     QString materialName() const;
 
     void setMotorSpendtime();
-
-    Updater updater() const;
 
 protected:
     void run()override;
@@ -199,15 +171,10 @@ protected:
 private:
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
-    Updater *_updater;
-
-//    QString _version;
 
     int bedCuringLayer = 5;
 
     const QString _fileExtension = ".png";
-
-    const QString printUSBFileName = "capsulePrintFolderTest";
 
     QString _bedPath;
 
@@ -231,16 +198,12 @@ private:
 
     int _printTime = 0;
 
-
     bool _bedError = false;
 
     bool _isBusy;
 
     bool _LCDState = true;
     bool _USBPortConnection = true;
-
 };
-
-//extern PrintScheduler* printScheduler;
 
 #endif // PRINTSCHEDULER_H

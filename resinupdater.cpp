@@ -52,7 +52,6 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 QJsonArray resinList = PrintSetting::getInstance().getResinList();
 
                 if(resinList.size() != ja.size()){
-                    qDebug() << "update available 1";
                     emit updateAvailable();
                     return;
                 }
@@ -63,20 +62,17 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     QString lastUpdate = jo.value(mID).toString();;
 
                     if(!resinList.contains(mID)){
-                        qDebug() << "update available 2";
                         emit updateAvailable();
                         return;
                     }
 
                     ResinSetting rs(mID);
                     if(rs.getResinSetting("last_update").toString() != lastUpdate){
-                        qDebug() << "update available 3";
                         emit updateAvailable();
                         return;
                     }
 //                    qDebug() << ja[i];
                 }
-                qDebug() << "update not available";
                 emit updateNotAvailable();
 //                update();
             }

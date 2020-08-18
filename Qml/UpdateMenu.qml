@@ -109,8 +109,8 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                SWUpdater.checkUpdate()
                 swUpdatePopup.open()
-                scheduler.checkUpdate()
             }
         }
     }
@@ -160,23 +160,23 @@ Item {
             swUpdatePopup.close()
         }
         onSwUpdate: {
-            scheduler.update()
+            SWUpdater.update()
         }
     }
 
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUISWUpdateAvailable:{
+        id: swUpdaterConnection
+        target: SWUpdater
+        onUpdateAvailable:{
             swUpdatePopup.updateAvailable()
         }
-        onSendToUISWUpdateNotAvailable:{
+        onUpdateNotAvailable:{
             swUpdatePopup.updateNotAvailable()
         }
-        onSendToUISWUpdateFinished:{
+        onUpdateFinished:{
             swUpdatePopup.updateFinished()
         }
-        onSendToUISWUpdateError:{
+        onUpdateError:{
             swUpdatePopup.updateError()
         }
     }

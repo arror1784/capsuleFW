@@ -18,6 +18,8 @@
 #include "modelno.h"
 #include "kinetimecalc.h"
 
+#include "zip/zip.h"
+
 #include "ymodem.h"
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
@@ -58,16 +60,18 @@ int PrintScheduler::addSerialPort(){
     return 1;
 }
 
-void PrintScheduler::saveFile(QString path, QByteArray byte){
+int PrintScheduler::saveFile(QString path, QByteArray byte){
 
     QFile saveFile(path);
 
     if(!saveFile.open(QIODevice::WriteOnly)){
         qDebug() << "save file open error";
+        return -1;
     }
 
     saveFile.write(byte);
     saveFile.close();
+    return 0;
 }
 
 void PrintScheduler::run(){
@@ -113,17 +117,6 @@ void PrintScheduler::run(){
         _USBPortConnection = true;
     }
     addPrintingBed('A');
-
-    _updater = new Updater();
-
-    QObject::connect(_updater,&Updater::updateMCUFirmware,this,&PrintScheduler::receiveFromUpdaterFirmUpdate);
-    QObject::connect(this,&PrintScheduler::MCUFirmwareUpdateFinished,_updater,&Updater::MCUFirmwareUpdateFinished);
-
-    QObject::connect(_updater,&Updater::updateAvailable,this,&PrintScheduler::receiveFromUpdaterSWUpdateAvailable);
-    QObject::connect(_updater,&Updater::updateNotAvailable,this,&PrintScheduler::receiveFromUpdaterSWUpdateNotAvailable);
-    QObject::connect(_updater,&Updater::updateFinished,this,&PrintScheduler::receiveFromUpdaterSWUpdateFinished);
-    QObject::connect(_updater,&Updater::updateError,this,&PrintScheduler::receiveFromUpdaterSWUpdateError);
-
 
     qDebug() << "print scheduler" << QThread::currentThread();
     while(true)
@@ -371,9 +364,7 @@ void PrintScheduler::receiveFromUpdaterFirmUpdate(QString path)
 
             YMODEM ym(sp);
 
-            qDebug() << path;
             int a = ym.yTransmit(path);
-            qDebug() << "tramsmit return code: " << a;
 
             if(a){
                 sp->close();
@@ -448,7 +439,7 @@ int PrintScheduler::copyProject(QString path)
     }
     return 0;
 }
-void PrintScheduler::donwloadFiles(QJsonObject byte)
+int PrintScheduler::donwloadFiles(QJsonObject byte)
 {
 //    QJsonObject &ja = byte;
     //file save
@@ -463,7 +454,24 @@ void PrintScheduler::donwloadFiles(QJsonObject byte)
     }
 
     foreach(const QString& key, byte.keys()){
-        saveFile(printFilePath + "/" + key, QByteArray::fromBase64(byte.value(key).toString().split(",")[1].toUtf8()));
+        if(saveFile(printFilePath + "/" + key, QByteArray::fromBase64(byte.value(key).toString().split(",")[1].toUtf8()))){
+            return -1;
+        }
+    }
+    return 0;
+}
+
+bool PrintScheduler::isCustom(QString path)
+{
+    QString val;
+
+    qDebug() << path;
+
+    miniz_cpp::zip_file file(path.toStdString());
+    if(file.has_file("resin.json")){
+        return true;
+    }else{
+        return false;
     }
 }
 int PrintScheduler::setupForPrint(QString materialName)
@@ -506,9 +514,9 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     d = QJsonDocument::fromJson(val.toUtf8());
     setting = d.object();
+
     double layer_height = round(setting["layer_height"].toDouble() * 10000) / 10000;
-    qDebug() << "layerHeight" <<
-                layer_height;
+
     if(materialName == "Custom"){
         f.setFileName(filePath + QStringLiteral("/resin.json"));
         if(!f.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -616,31 +624,43 @@ int PrintScheduler::setupForPrint(QString materialName)
     return 0;
 }
 
-void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName){
+int PrintScheduler::unZipFiles(QString path)
+{
+    miniz_cpp::zip_file file(path.toStdString());
 
-    //int e =0;
-    //e = readyForPrintStart(materialName,path);
+    file.extractall(printFilePath.toStdString());
+    return 0;
+}
+
+void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName)
+{
+    qDebug() << fileName;
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
-        return;
-    }
-    if(!_USBPortConnection){
-        emit sendToUIPrintSettingError(5);
         return;
     }
     if(_printState != "ready"){
         emit sendToUIPrintSettingError(4);
         return;
     }
-    if(copyProject(fileName)){
-        emit sendToUIPrintSettingError(2);
+    if(!_USBPortConnection){
+        emit sendToUIPrintSettingError(5);
         return;
     }
+
+    unZipFiles(fileName);
+
+//    if(copyProject(fileName)){
+//        emit sendToUIPrintSettingError(2);
+//        return;
+//    }
+
     if(setupForPrint(materialName)){
         emit sendToUIPrintSettingError(3);
         return;
     }
-    _printName =  fileName.split('/').last();
+
+    _printName =  fileName.split('/').last().split('.').first();
     _materialName = materialName;
 
     printStart();
@@ -648,6 +668,8 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
 
 void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialName, QJsonObject byte)
 {
+
+    qDebug() << fileName << materialName;
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
         return;
@@ -661,13 +683,18 @@ void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialN
         return;
     }
 
-    donwloadFiles(byte);
+    if(donwloadFiles(byte)){
+        emit sendToUIPrintSettingError(2);
+        return;
+    }
+
+    unZipFiles(printFilePath + "/" + fileName);
 
     if(setupForPrint(materialName)){
         emit sendToUIPrintSettingError(3);
         return;
     }
-    _printName =  fileName.split('/').last();
+    _printName =  fileName.split('/').last().split('.').first();
     _materialName = materialName;
 
     printStart();
@@ -782,21 +809,10 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
 }
 QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
 
-    QFile file;
     QString val;
 
-    file.setFileName(path + QStringLiteral("/resin.json"));
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "resin file open error";
-        qDebug() << file.fileName();
-        Logger::GetInstance()->write(file.fileName() + " file open error");
-        return -2;
-    }else{
-        qDebug() << "info file open sucess";
-        Logger::GetInstance()->write(file.fileName() + " file open sucess");
-    }
-    val = file.readAll();
-    file.close();
+    miniz_cpp::zip_file file(path.toStdString());
+    val = QString::fromStdString(file.read("resin.json"));
 
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject setting = d.object();
@@ -829,21 +845,12 @@ QVariant PrintScheduler::receiveFromUIGetPrintOption(QString key)
 }
 QVariant PrintScheduler::receiveFromUIGetPrintOptionFromPath(QString key, QString path)
 {
-    QFile file;
     QString val;
 
-    file.setFileName(path + QStringLiteral("/info.json"));
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "info file open error";
-        qDebug() << file.fileName();
-        Logger::GetInstance()->write(file.fileName() + " file open error");
-        return -2;
-    }else{
-        qDebug() << "info file open sucess";
-        Logger::GetInstance()->write(file.fileName() + " file open sucess");
-    }
-    val = file.readAll();
-    file.close();
+    qDebug() << path;
+
+    miniz_cpp::zip_file file(path.toStdString());
+    val = QString::fromStdString(file.read("info.json"));
 
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject setting = d.object();

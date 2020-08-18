@@ -10,7 +10,6 @@ class Version : public QObject, public Hix::Common::Singleton<Version>
 {
     Q_OBJECT
 private:
-
     static Version* _ins;
 
     const QString _url = "/opt/capsuleFW/version.json";

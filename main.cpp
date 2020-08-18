@@ -24,10 +24,10 @@
 #include "filevalidator.h"
 #include "updater.h"
 #include "version.h"
-#include "printsettingsocket.h"
-#include "kinetimecalc.h"
 
-#define VERISON "0.1.5"
+#include "zip/zip.h"
+
+#include "kinetimecalc.h"
 
 int main(int argc, char *argv[])
 {
@@ -42,20 +42,22 @@ int main(int argc, char *argv[])
 
     NetworkControl nc;
     ResinUpdater ru;
+    Updater up;
 
-    printScheduler->engine = &engine;
+    QObject::connect(&up,&Updater::updateMCUFirmware,printScheduler,&PrintScheduler::receiveFromUpdaterFirmUpdate);
+    QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
 
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
-    qmlRegisterType<PrintSettingSocket>("App", 1, 0, "PrintSettingSocket");
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("resinUpdater",&ru);
+    ctx->setContextProperty("SWUpdater",&up);
 
 //    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
 //    qDebug() << "verion " << Version::getInstance().getVersion();
 
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

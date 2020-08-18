@@ -30,13 +30,13 @@ SOURCES += \
     networkcontrol.cpp \
     printscheduler.cpp \
     printsetting.cpp \
-    printsettingsocket.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
-    ymodem.cpp
+    ymodem.cpp \
+    zip/zip.cpp
 
 RESOURCES += qml.qrc \
     font.qrc \
@@ -65,11 +65,12 @@ HEADERS += \
     networkcontrol.h \
     printscheduler.h \
     printsetting.h \
-    printsettingsocket.h \
     resinsetting.h \
     resinupdater.h \
     slate-global.h \
     updater.h \
     version.h \
     websocketclient.h \
-    ymodem.h
+    ymodem.h \
+    zip/zip.h
+#    zip/zip_file.hpp

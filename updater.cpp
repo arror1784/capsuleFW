@@ -6,6 +6,9 @@
 #include <QJsonArray>
 #include <QtConcurrent/QtConcurrentRun>
 
+#include <chrono>
+#include <thread>
+
 #include "printsetting.h"
 #include "resinsetting.h"
 #include "version.h"
@@ -37,6 +40,7 @@ void Updater::saveAsFile(QString name,QByteArray ba)
 void Updater::downloadBin()
 {
     _requestAvailable = false;
+    _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_BIN;
         request.setUrl(_url + "/get_file/C10/" + _binName);
@@ -48,6 +52,7 @@ void Updater::downloadBin()
 void Updater::downloadSH()
 {
     _requestAvailable = false;
+    _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_SH;
         request.setUrl(_url + "/get_file/C10/" + _shName);
@@ -59,6 +64,7 @@ void Updater::downloadSH()
 void Updater::downloadZIP()
 {
     _requestAvailable = false;
+    _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_ZIP;
         request.setUrl(_url + "/get_file/C10/" + _zipName);
@@ -70,6 +76,7 @@ void Updater::downloadZIP()
 void Updater::downloadVER()
 {
     _requestAvailable = false;
+    _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_VER;
         request.setUrl(_url + "/get_file/C10/" + _verName);
@@ -81,6 +88,7 @@ void Updater::downloadVER()
 void Updater::downloadLIST()
 {
     _requestAvailable = false;
+    _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_LIST;
         request.setUrl(_url + "/get_update_manifest/C10");
@@ -89,9 +97,27 @@ void Updater::downloadLIST()
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
 
-void Updater::waitForRequest()
+void Updater::checkUpdate()
 {
-    while(!_requestAvailable);
+    _requestAvailable = false;
+    _networkError = false;
+    std::function<void()> func = [this]() {
+        _requestType = SWRequestType::UPDATE_CHECK;
+        request.setUrl(_url + "/get_file/C10/" + _verName);
+        manager->get(request);
+    };
+    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+}
+
+int Updater::waitForRequest()
+{
+    std::unique_lock<std::mutex> lk(_cv_m);
+    _cv.wait(lk,[this]{return this->_requestAvailable;});
+    if(_networkError){
+        return -1;
+    }else{
+        return 0;
+    }
 }
 
 void Updater::waitForMCUFirmwareUpdate()
@@ -100,43 +126,45 @@ void Updater::waitForMCUFirmwareUpdate()
     _MCUFirmwareUpdateFinished = false;
 }
 
-void Updater::checkUpdate()
-{
-    _requestAvailable = false;
-    std::function<void()> func = [this]() {
-        _requestType = SWRequestType::UPDATE_CHECK;
-        request.setUrl(_url + "/get_file/C10/" + _verName);
-        manager->get(request);
-
-    };
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-
 void Updater::update()
 {
-    _future = QtConcurrent::run([this]() {
+    _future = std::async([this]() {
         downloadLIST();
-        waitForRequest();
+        if(waitForRequest()){
+            emit updateError();
+            return;
+        }
         downloadVER();
-        waitForRequest();
+        if(waitForRequest()){
+            emit updateError();
+            return;
+        }
         if(_MCUFirmwareUpdateAvailable){
             downloadBin();
-            waitForRequest();
+            if(waitForRequest()){
+                emit updateError();
+                return;
+            }
             _MCUFirmwareUpdateFinished = false;
             emit updateMCUFirmware(_downloadUrl + "/" + _binName);
             waitForMCUFirmwareUpdate();
         }
         //download new update.sh
         downloadSH();
-        waitForRequest();
+        if(waitForRequest()){
+            emit updateError();
+            return;
+        }
         //download new update file - *.zip
         downloadZIP();
-        waitForRequest();
+        if(waitForRequest()){
+            emit updateError();
+            return;
+        }
         //run update.sh with root
         QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
-        qDebug() << "command " << command;
         QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
-        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
+//        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
     });
 
     return;
@@ -146,12 +174,13 @@ void Updater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
         emit updateError();
+        _networkError = true;
+        _requestAvailable = true;
+        _cv.notify_all();
         qDebug() << reply->errorString();
         return;
     }
     QByteArray answer = reply->readAll();
-    qDebug() << reply->url();
-//    qDebug() << "answer" << answer;
 
     QJsonDocument jd;
     QJsonObject jo;
@@ -162,8 +191,6 @@ void Updater::requestFinished(QNetworkReply* reply)
         case SWRequestType::UPDATE_CHECK:
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
-            qDebug() << "current Version : " << Version::getInstance().getVersion();
-            qDebug() << "update Version : " << jo["version"].toString();
             if(jo["version"].toString() != Version::getInstance().getVersion()){
                 emit updateAvailable();
             }else{
@@ -173,7 +200,6 @@ void Updater::requestFinished(QNetworkReply* reply)
         case SWRequestType::DOWNLOAD_LIST:
             jd = QJsonDocument::fromJson(answer);
             ja = jd.array();
-            qDebug() << ja;
             if(ja.contains(_binName)){
                 qDebug() << "MCU Firmware update Available";
                 _MCUFirmwareUpdateAvailable = true;
@@ -201,6 +227,8 @@ void Updater::requestFinished(QNetworkReply* reply)
     }
     _requestType = SWRequestType::NONE;
     _requestAvailable = true;
+    _networkError = false;
+    _cv.notify_all();
 }
 
 void Updater::MCUFirmwareUpdateFinished()

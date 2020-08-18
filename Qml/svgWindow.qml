@@ -46,7 +46,6 @@ Window {
             printImage.source = imagePath
         }
         onSendToLCDSetImageScale: {
-            console.log(value)
             printImage.scale = value
         }
         onSendToUIChangeToPrintWorkErrorFinish:{

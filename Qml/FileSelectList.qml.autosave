@@ -285,11 +285,6 @@ Item {
             }
         }
     }
-    FileValidator{
-        id: validator
-        treatAsImage: false
-    }
-
     function resetPath(){
         folderModel.folder = mediaURL
         parentDirText.text = ""

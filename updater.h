@@ -6,7 +6,9 @@
 #include <QString>
 #include <QNetworkRequest>
 #include <QByteArray>
-#include <QFuture>
+#include <future>
+#include <condition_variable>
+#include <thread>
 
 enum class SWRequestType
 {
@@ -35,7 +37,7 @@ public:
     void downloadVER();
     void downloadLIST();
 
-    void waitForRequest();
+    int waitForRequest();
     void waitForMCUFirmwareUpdate();
 
 public slots:
@@ -64,11 +66,17 @@ private:
 
     SWRequestType _requestType = SWRequestType::NONE;
 
+    std::condition_variable _cv;
+    std::mutex _cv_m;
+
     bool _requestAvailable = true;
     bool _MCUFirmwareUpdateAvailable = false;
+
     bool _MCUFirmwareUpdateFinished = false;
 
-    QFuture<void> _future;
+    bool _networkError = false;
+
+    std::future<void> _future;
 
     QNetworkAccessManager *manager;
     QNetworkRequest request;
