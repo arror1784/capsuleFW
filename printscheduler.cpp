@@ -425,14 +425,7 @@ int PrintScheduler::copyProject(QString path)
     QString filePath = path;
     int dirCount = 0;
 
-    if(QDir(printFilePath).exists() == true){
-        QDir(printFilePath).removeRecursively();
-    }
-    if(!QDir().mkdir(printFilePath)){
-        qDebug()<< " create folder fail" << printFilePath;
-    }else{
-        qDebug() << " create folder sucess";
-    }
+
     dirCount = copyFilesPath(filePath,printFilePath);
     if(dirCount == -1){
         return -1;
@@ -443,15 +436,6 @@ int PrintScheduler::donwloadFiles(QJsonObject byte)
 {
 //    QJsonObject &ja = byte;
     //file save
-
-    if(QDir(printFilePath).exists() == true){
-        QDir(printFilePath).removeRecursively();
-    }
-    if(!QDir().mkdir(printFilePath)){
-        qDebug()<< " create folder fail" << printFilePath;
-    }else{
-        qDebug() << " create folder sucess";
-    }
 
     foreach(const QString& key, byte.keys()){
         if(saveFile(printFilePath + "/" + key, QByteArray::fromBase64(byte.value(key).toString().split(",")[1].toUtf8()))){
@@ -466,11 +450,16 @@ bool PrintScheduler::isCustom(QString path)
     QString val;
 
     qDebug() << path;
+    try {
 
-    miniz_cpp::zip_file file(path.toStdString());
-    if(file.has_file("resin.json")){
-        return true;
-    }else{
+        miniz_cpp::zip_file file(path.toStdString());
+        if(file.has_file("resin.json")){
+            return true;
+        }else{
+            return false;
+        }
+
+    } catch (exception e) {
         return false;
     }
 }
@@ -626,15 +615,32 @@ int PrintScheduler::setupForPrint(QString materialName)
 
 int PrintScheduler::unZipFiles(QString path)
 {
-    miniz_cpp::zip_file file(path.toStdString());
+    try {
+        miniz_cpp::zip_file file(path.toStdString());
 
-    file.extractall(printFilePath.toStdString());
+        file.extractall(printFilePath.toStdString());
+    } catch (exception e) {
+        return -1;
+    }
     return 0;
+}
+
+int PrintScheduler::deletePrintFolder()
+{
+    if(QDir(printFilePath).exists() == true){
+        QDir(printFilePath).removeRecursively();
+    }
+    if(!QDir().mkdir(printFilePath)){
+        qDebug()<< " create folder fail" << printFilePath;
+    }else{
+        qDebug() << " create folder sucess";
+    }
 }
 
 void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName)
 {
     qDebug() << fileName;
+    std::lock_guard<std::mutex> ml(_mPrint);
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
         return;
@@ -648,13 +654,12 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
         return;
     }
 
-    unZipFiles(fileName);
+    deletePrintFolder();
 
-//    if(copyProject(fileName)){
-//        emit sendToUIPrintSettingError(2);
-//        return;
-//    }
-
+    if(unZipFiles(fileName)){
+        emit sendToUIPrintSettingError(6);
+        return;
+    }
     if(setupForPrint(materialName)){
         emit sendToUIPrintSettingError(3);
         return;
@@ -668,8 +673,8 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
 
 void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialName, QJsonObject byte)
 {
-
     qDebug() << fileName << materialName;
+    std::lock_guard<std::mutex> ml(_mPrint);
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
         return;
@@ -683,12 +688,16 @@ void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialN
         return;
     }
 
+    deletePrintFolder();
+
     if(donwloadFiles(byte)){
         emit sendToUIPrintSettingError(2);
         return;
     }
-
-    unZipFiles(printFilePath + "/" + fileName);
+    if(unZipFiles(printFilePath + "/" + fileName)){
+        emit sendToUIPrintSettingError(6);
+        return;
+    }
 
     if(setupForPrint(materialName)){
         emit sendToUIPrintSettingError(3);
@@ -809,15 +818,19 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
 }
 QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
 
-    QString val;
+    try {
+        QString val;
+        miniz_cpp::zip_file file(path.toStdString());
+        val = QString::fromStdString(file.read("resin.json"));
 
-    miniz_cpp::zip_file file(path.toStdString());
-    val = QString::fromStdString(file.read("resin.json"));
+        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+        QJsonObject setting = d.object();
 
-    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-    QJsonObject setting = d.object();
+        return setting[key].toVariant();
 
-    return setting[key].toVariant();
+    } catch (exception e) {
+        return 0;
+    }
 }
 
 QVariant PrintScheduler::receiveFromUIGetPrintOption(QString key)
@@ -845,17 +858,20 @@ QVariant PrintScheduler::receiveFromUIGetPrintOption(QString key)
 }
 QVariant PrintScheduler::receiveFromUIGetPrintOptionFromPath(QString key, QString path)
 {
-    QString val;
+    try {
+        QString val;
+        miniz_cpp::zip_file file(path.toStdString());
+        val = QString::fromStdString(file.read("info.json"));
 
-    qDebug() << path;
+        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+        QJsonObject setting = d.object();
 
-    miniz_cpp::zip_file file(path.toStdString());
-    val = QString::fromStdString(file.read("info.json"));
+        return setting[key].toVariant();
 
-    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-    QJsonObject setting = d.object();
+    } catch (exception e) {
+        return 0;
+    }
 
-    return setting[key].toVariant();
 }
 
 void PrintScheduler::receiveFromUISetTotalPrintTime(int time)

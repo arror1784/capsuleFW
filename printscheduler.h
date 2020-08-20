@@ -18,6 +18,8 @@
 
 #include <QQmlApplicationEngine>
 
+#include <mutex>
+
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
@@ -51,6 +53,7 @@ public:
     int copyFilesPath(QString src, QString dst);
     int setupForPrint(QString materialName);
     int unZipFiles(QString path);
+    int deletePrintFolder();
 
     int donwloadFiles(QJsonObject byte);
 
@@ -171,6 +174,8 @@ protected:
 private:
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
+
+    std::mutex _mPrint;
 
     int bedCuringLayer = 5;
 

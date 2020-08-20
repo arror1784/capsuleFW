@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 //    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
 //    qDebug() << "verion " << Version::getInstance().getVersion();
 
-//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

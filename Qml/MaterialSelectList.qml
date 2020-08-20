@@ -130,7 +130,7 @@ Item {
                 if(materialSelectList.currentIndex !== -1){
                     materialName = materialSelectList.currentItem.metarialname
                     printingPopup.open()
-                    printingPopup.setText(stackView.get(1).currentParentName,
+                    printingPopup.setText(stackView.get(1).selectedFileName,
                                           materialName,
                                           scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).selectedFilePath))
                 }
@@ -144,11 +144,6 @@ Item {
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
-    FileValidator{
-        id: validator
-        treatAsImage: false
-    }
-
     Connections{
         id: schedulerConnection
         target: scheduler
@@ -159,10 +154,6 @@ Item {
     }
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
-//        validator.url = "file:" + stackView.get(1).currentPath + "/resin.json"
-//        if(validator.fileValid){
-//            inserMaterialList("Custom")
-//        }
         if(scheduler.isCustom(stackView.get(1).selectedFilePath)){
             inserMaterialList("Custom")
         }

@@ -12,7 +12,7 @@ Item {
     property string currentParentName
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "file:///media/jsh"
+    property string mediaURL: "file:///media/pi"
 
     FontLoader{
         id: openSansSemibold
@@ -31,7 +31,7 @@ Item {
     }
     Text {
         id: selectText
-        text: qsTr("Select a folder to print")
+        text: qsTr("Select a file to print (*.zip)")
 
         font.pixelSize: 23
         font.family: openSansSemibold.name
@@ -285,11 +285,6 @@ Item {
             }
         }
     }
-    FileValidator{
-        id: validator
-        treatAsImage: false
-    }
-
     function resetPath(){
         folderModel.folder = mediaURL
         parentDirText.text = ""

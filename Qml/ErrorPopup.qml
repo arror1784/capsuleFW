@@ -93,6 +93,12 @@ Rectangle {
             errorText.text = "File Error: Project crash"
         }else if(code === 3){
             errorText.text = "Setting Error: Project crash"
+        }else if(code === 4){
+            errorText.text = "print already print"
+        }else if(code === 5){
+            errorText.text = "USB Connection error"
+        }else if(code === 6){
+            errorText.text = "File Extract Error"
         }else{
             errorText.text = "Print Setting Error"
         }
