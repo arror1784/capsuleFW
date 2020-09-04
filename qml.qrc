@@ -29,5 +29,10 @@
         <file>Qml/SWUpdatePopup.qml</file>
         <file>Qml/SelectFileEnterFail.qml</file>
         <file>Qml/USBPortOpenError.qml</file>
+        <file>Qml/NetworkMenu.qml</file>
+        <file>Qml/WIFISelectList.qml</file>
+        <file>Qml/WIFIListDelegate.qml</file>
+        <file>Qml/WIFIConnectPopup.qml</file>
+        <file>Qml/WIFIDisconnectPopup.qml</file>
     </qresource>
 </RCC>

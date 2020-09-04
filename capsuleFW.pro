@@ -35,6 +35,11 @@ SOURCES += \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
+    wpa.cpp \
+    wpa_ctrl/common.c \
+    wpa_ctrl/os_unix.c \
+    wpa_ctrl/wpa_ctrl.c \
+    wpa_ctrl/wpa_debug.c \
     ymodem.cpp \
     zip/zip.cpp
 
@@ -71,6 +76,16 @@ HEADERS += \
     updater.h \
     version.h \
     websocketclient.h \
+    wpa.h \
+    wpa_ctrl/build_config.h \
+    wpa_ctrl/common.h \
+    wpa_ctrl/ieee802_11_defs.h \
+    wpa_ctrl/includes.h \
+    wpa_ctrl/os.h \
+    wpa_ctrl/os.h \
+    wpa_ctrl/wpa_ctrl.h \
+    wpa_ctrl/wpa_debug.h \
+    wpa_ctrl/wpabuf.h \
     ymodem.h \
     zip/zip.h
 #    zip/zip_file.hpp

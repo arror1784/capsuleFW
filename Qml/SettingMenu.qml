@@ -157,7 +157,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                ipPopup.open()
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/NetworkMenu.qml"),StackView.Immediate)
             }
         }
     }
