@@ -12,6 +12,8 @@ Rectangle{
 
     property string wifiname: ""
 
+    //name, current, saved, networkID
+
     FontLoader{
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"

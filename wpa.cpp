@@ -10,6 +10,9 @@
 #include <unistd.h>
 
 #include <error.h>
+#include <cstdlib>
+
+#include <QVector>
 
 using namespace std;
 
@@ -43,6 +46,18 @@ QStringList WPA::networkList()
     int ret;
     char resBuff[4096] = {0};
 
+    memset(resBuff,0x00,4096);
+    ret = wpa_ctrl_cmd(_ctrl, "LIST_NETWORKS", resBuff);
+
+    return parse_to_network_list(resBuff);
+}
+
+QStringList WPA::apList()
+{
+    int ret;
+    char resBuff[4096] = {0};
+
+    memset(resBuff,0x00,4096);
     ret = wpa_ctrl_cmd(_ctrl, "SCAN_RESULTS", resBuff);
 
     return parse_to_wifi_name(resBuff);
@@ -52,17 +67,27 @@ bool WPA::networkConnect(QString ssid, QString passwd)
 {
     char buf[4096] = {0};
     char resBuff[4096] = {0};
+    int id = -1;
 
-    qDebug() << "networkConnect" << ssid << passwd;
-
-    sprintf(buf,"SET_NETWORK 0 ssid \"%s\"",ssid.toStdString().data());
+    memset(resBuff,0x00,4096);
+    sprintf(buf,"ADD_NETWORK");
     wpa_ctrl_cmd(_ctrl,buf,resBuff);
 
-    sprintf(buf,"SET_NETWORK 0 psk \"%s\"",passwd.toStdString().data());
+    id = atoi(resBuff);
+
+    memset(resBuff,0x00,4096);
+    sprintf(buf,"SET_NETWORK %d ssid \"%s\"",id,ssid.toStdString().data());
     wpa_ctrl_cmd(_ctrl,buf,resBuff);
 
-    wpa_ctrl_cmd(_ctrl,"ENABLE_NETWORK 0",resBuff);
+    memset(resBuff,0x00,4096);
+    sprintf(buf,"SET_NETWORK %d psk \"%s\"",id,passwd.toStdString().data());
+    wpa_ctrl_cmd(_ctrl,buf,resBuff);
 
+    memset(resBuff,0x00,4096);
+    sprintf(buf,"ENABLE_NETWORK %d",id);
+    wpa_ctrl_cmd(_ctrl,buf,resBuff);
+
+    memset(resBuff,0x00,4096);
     wpa_ctrl_cmd(_ctrl,"SAVE_CONFIG",resBuff);
 
     return true;
@@ -75,6 +100,11 @@ bool WPA::networkDisconnect()
     wpa_ctrl_cmd(_ctrl,"DISCONNECT",resBuff);
 
     return true;
+}
+
+void WPA::networkDelete(QString ssid)
+{
+
 }
 
 void WPA::ctrlConnect()
@@ -107,7 +137,6 @@ void WPA::wpa_ctrl_event()
         cout << resBuff <<  endl;
 
         if(string(resBuff).find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
-            cout << "asdasd" << endl;
             emit networkListUpdate();
         }else if(string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             refresh();
@@ -196,10 +225,6 @@ QStringList WPA::parse_to_wifi_name(char *buff)
         }
     }
 
-    for (int i = 1; i < r_size -1;i++) {
-        cout << '\t' << array[i].toStdString() << endl;
-    }
-
     return array;
 }
 
@@ -225,10 +250,6 @@ QStringList WPA::parse_to_network_list(char *buff)
             array.push_back(QString(row.at(2).c_str()));
             r_size++;
         }
-    }
-
-    for (int i = 1; i < r_size -1;i++) {
-        cout << '\t' << array[i].toStdString() << endl;
     }
 
     return array;

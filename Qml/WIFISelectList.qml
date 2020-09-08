@@ -8,6 +8,7 @@ Item {
 
     property string ssidName
     property string currentssidName
+    property var networkList
 
     FontLoader{
         id: openSansSemibold
@@ -166,12 +167,12 @@ Item {
             var currentSSID = wifi.currentSSID()
             if(currentSSID === ""){
                 currentssidName = ""
-                for(var i = 0; i < wifiModel.count; i++){
+                for(let i = 0; i < wifiModel.count; i++){
                     wifiModel.setProperty(i,"current",false)
                 }
             }else{
                 currentssidName = currentSSID
-                for(var i = 0; i < wifiModel.count; i++){
+                for(let i = 0; i < wifiModel.count; i++){
                     if(wifiModel.get(i).name === currentSSID){
                         wifiModel.setProperty(i,"current",true)
                         return
@@ -185,8 +186,11 @@ Item {
     function updateWIFIList(){
         wifiSelectList.currentIndex = -1
         wifiModel.clear()
-        var list = wifi.networkList()
+        var list = wifi.apList()
         var currentSSID = wifi.currentSSID()
+
+        networkList = wifi.networkList()
+
         currentssidName = currentSSID
         for(var i = 0; i < list.length; i++){
             if(currentSSID === list[i]){
@@ -196,7 +200,6 @@ Item {
             }
         }
     }
-
     function inserWIFIList(name,b){
         wifiModel.append({"name":name,"current":b})
     }

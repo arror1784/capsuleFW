@@ -30,9 +30,11 @@ signals:
 public slots:
     void networkScan();
     QStringList networkList();
+    QStringList apList();
+
     bool networkConnect(QString ssid,QString passwd);
     bool networkDisconnect();
-
+    void networkDelete(QString ssid);
     QString currentSSID() const;
 
 private:
