@@ -1,8 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+import App 1.0
 
 Item {
-
     width: 480
     height: 320
 
@@ -133,6 +133,9 @@ Item {
                 if(wifiSelectList.currentIndex === -1){
                     return
                 }
+                for(var i = 0; i < networkList.length; i++){
+                    if(networkList[i]){}
+                }
                 if(ssidName === currentssidName){
                     wifiDisconnectPopup.open(ssidName)
                 }else{
@@ -186,24 +189,28 @@ Item {
     function updateWIFIList(){
         wifiSelectList.currentIndex = -1
         wifiModel.clear()
-        var list = wifi.apList()
+        var count = wifi.networkCount()
+
+        console.log(count)
+
         var currentSSID = wifi.currentSSID()
-
-        networkList = wifi.networkList()
-
         currentssidName = currentSSID
-        for(var i = 0; i < list.length; i++){
-            if(currentSSID === list[i]){
-                inserWIFIList(list[i],true)
+        console.log(currentssidName)
+
+        for(var i = 0; i < count; i++){
+            var data = wifi.getNetwork(i)
+            console.log(data)
+            if(currentSSID === data.getSsid()){
+                inserWIFIList(data.getSsid(),true)
             }else{
-                inserWIFIList(list[i],false)
+                inserWIFIList(data.getSsid(),false)
             }
         }
     }
     function inserWIFIList(name,b){
         wifiModel.append({"name":name,"current":b})
     }
-    function networkscan(){
+    function networkScan(){
         wifi.networkScan()
     }
 }
