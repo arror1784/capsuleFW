@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     NetworkControl nc;
     ResinUpdater ru;
     Updater up;
-    WPA wpa;
+//    WPA wpa;
 //    WPA wpa("/var/run/wpa_supplicant/wlx88366cfb28d9");
 //    wpa_ctrl* wp;
 
@@ -54,17 +54,18 @@ int main(int argc, char *argv[])
     QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
 
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
+    qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
+
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("resinUpdater",&ru);
     ctx->setContextProperty("SWUpdater",&up);
-    ctx->setContextProperty("wifi",&wpa);
+//    ctx->setContextProperty("wifi",&wpa);
 
 //    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
 
 //    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
-//    qDebug() << "verion " << Version::getInstance().getVersion();
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));

@@ -41,26 +41,14 @@ void WPA::networkScan()
     ret = wpa_ctrl_cmd(_ctrl, "SCAN", resBuff);
 }
 
-QStringList WPA::networkList()
+int WPA::networkCount()
 {
-    int ret;
-    char resBuff[4096] = {0};
-
-    memset(resBuff,0x00,4096);
-    ret = wpa_ctrl_cmd(_ctrl, "LIST_NETWORKS", resBuff);
-
-    return parse_to_network_list(resBuff);
+    return wifiList.size();
 }
 
-QStringList WPA::apList()
+WifiInfo *WPA::getNetwork(int index)
 {
-    int ret;
-    char resBuff[4096] = {0};
-
-    memset(resBuff,0x00,4096);
-    ret = wpa_ctrl_cmd(_ctrl, "SCAN_RESULTS", resBuff);
-
-    return parse_to_wifi_name(resBuff);
+    return wifiList[index];
 }
 
 bool WPA::networkConnect(QString ssid, QString passwd)
@@ -84,6 +72,21 @@ bool WPA::networkConnect(QString ssid, QString passwd)
     wpa_ctrl_cmd(_ctrl,buf,resBuff);
 
     memset(resBuff,0x00,4096);
+    sprintf(buf,"SELECT_NETWORK %d",id);
+    wpa_ctrl_cmd(_ctrl,buf,resBuff);
+
+    memset(resBuff,0x00,4096);
+    wpa_ctrl_cmd(_ctrl,"SAVE_CONFIG",resBuff);
+
+    return true;
+}
+
+bool WPA::networkConnect(int id)
+{
+    char buf[4096] = {0};
+    char resBuff[4096] = {0};
+
+    memset(resBuff,0x00,4096);
     sprintf(buf,"ENABLE_NETWORK %d",id);
     wpa_ctrl_cmd(_ctrl,buf,resBuff);
 
@@ -105,6 +108,16 @@ bool WPA::networkDisconnect()
 void WPA::networkDelete(QString ssid)
 {
 
+}
+
+void WPA::networkDelete(int id)
+{
+    char buf[4096] = {0};
+    char resBuff[4096] = {0};
+
+    memset(resBuff,0x00,4096);
+    sprintf(buf,"REMOVE_NETWORK %d",id);
+    wpa_ctrl_cmd(_ctrl,buf,resBuff);
 }
 
 void WPA::ctrlConnect()
@@ -137,6 +150,9 @@ void WPA::wpa_ctrl_event()
         cout << resBuff <<  endl;
 
         if(string(resBuff).find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
+            clearList();
+            parseWifiInfo();
+            parseNetworkInfo();
             emit networkListUpdate();
         }else if(string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             refresh();
@@ -145,6 +161,14 @@ void WPA::wpa_ctrl_event()
             refresh();
             emit currentStateChange();
         }
+    }
+}
+
+void WPA::clearList()
+{
+    while(wifiList.size() > 0){
+        delete wifiList[0];
+        wifiList.removeAt(0);
     }
 }
 
@@ -201,56 +225,70 @@ int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf)
     return 0;
 }
 
-QStringList WPA::parse_to_wifi_name(char *buff)
+void WPA::parseWifiInfo()
 {
     int r_size = 0;
     bool first = true;
-    string myStr(buff), val, line;
+
+    int ret;
+    char resBuff[4096] = {0};
+
+    memset(resBuff,0x00,4096);
+    ret = wpa_ctrl_cmd(_ctrl, "SCAN_RESULTS", resBuff);
+
+    string myStr(resBuff), val, line;
     stringstream ss(myStr);
-    QStringList array;
 
     while (getline(ss, line, '\n')) {
-        vector<string> row;
+        QStringList row;
         stringstream s(line);
         if(first){
             first = false;
             continue;
         }
         while (getline(s, val, '\t')) {
-            row.push_back (val);
+            row.push_back(QString::fromStdString(val));
         }
-        if(!array.contains(QString(row.at(4).c_str()))){
-            array.push_back(QString(row.at(4).c_str()));
-            r_size++;
+        if(row.size() == 5){
+            wifiList.push_back(new WifiInfo(-1,row[4],row[0],row[3],row[1].toInt(),row[2].toInt(),false));
         }
     }
 
-    return array;
+    return;
 }
 
-QStringList WPA::parse_to_network_list(char *buff)
+void WPA::parseNetworkInfo()
 {
     int r_size = 0;
     bool first = true;
-    string myStr(buff), val, line;
+
+    int ret;
+    char resBuff[4096] = {0};
+
+    memset(resBuff,0x00,4096);
+    ret = wpa_ctrl_cmd(_ctrl, "LIST_NETWORKS", resBuff);
+
+    string myStr(resBuff), val, line;
     stringstream ss(myStr);
-    QStringList array;
 
     while (getline(ss, line, '\n')) {
-        vector<string> row;
+        QList<QString> row;
         stringstream s(line);
         if(first){
             first = false;
             continue;
         }
         while (getline(s, val, '\t')) {
-            row.push_back (val);
+            row.push_back(QString::fromStdString(val));
         }
-        if(!array.contains(QString(row.at(2).c_str()))){
-            array.push_back(QString(row.at(2).c_str()));
-            r_size++;
+        if(row.size() == 4){
+            for (int i = 0; i < wifiList.size();i++) {
+                if(wifiList[i]->getSsid().compare(row[1]) && wifiList[i]->getBssid().compare(row[1])){
+                    wifiList[i]->setSaved(true);
+                    wifiList[i]->setNetworkID(row[0].toInt());
+                }
+            }
         }
     }
-
-    return array;
+//    return vvs;
 }

@@ -4,11 +4,32 @@
 #include "wpa_ctrl/wpa_ctrl.h"
 
 #include <QObject>
+#include <QVariantList>
+#include <QList>
+#include <QMap>
 #include <thread>
+
+#include "wifiinfo.h"
 
 //#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlx88366cfb28d9"
 #define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlan0"
 
+
+enum class WIFIInfoType{
+    BSSID=0,
+    FREQ=1,
+    SIGLEV=2,
+    FLAGS=3,
+    SSID=4,
+};
+enum class NetworkInfoType{
+    ID=0,
+    BSSID=1,
+    SSID=2,
+    FREQ=3,
+    SIGLEV=4,
+    FLAGS=5,
+};
 
 class WPA : public QObject
 {
@@ -29,24 +50,31 @@ signals:
 
 public slots:
     void networkScan();
-    QStringList networkList();
-    QStringList apList();
+
+    int networkCount();
+    WifiInfo* getNetwork(int index);
 
     bool networkConnect(QString ssid,QString passwd);
+    bool networkConnect(int id);
+
     bool networkDisconnect();
     void networkDelete(QString ssid);
+    void networkDelete(int id);
     QString currentSSID() const;
 
 private:
     void ctrlConnect();
     void wpa_ctrl_event();
 
+    void clearList();
+
     void refresh();
 
-    QStringList parse_to_wifi_name(char *buff);
-    QStringList parse_to_network_list(char *buff);
+    void parseWifiInfo(); //scan_result
+    void parseNetworkInfo(); //saved_network_list
     int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf);
 
+    QList<WifiInfo*> wifiList;
 
     std::thread th;
 
