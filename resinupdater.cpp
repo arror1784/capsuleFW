@@ -1,4 +1,4 @@
-#include "resinupdater.h"
+﻿#include "resinupdater.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -17,6 +17,8 @@ ResinUpdater::ResinUpdater()
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
+    updateVersionInFo();
+    checkUpdate();
 }
 
 void ResinUpdater::checkUpdate()
@@ -31,6 +33,32 @@ void ResinUpdater::update()
     _requestType = ResinRequestType::DOWNLOAD_ALL;
     request.setUrl(QUrl("https://services.hix.co.kr/resin/download/C10"));
     manager->get(request);
+}
+
+QString ResinUpdater::version()
+{
+    return _updateTime.toString("dd/MM/yyyy");
+}
+
+QString ResinUpdater::lastestVersion()
+{
+    return _lastestUpdateTime.toString("dd/MM/yyyy");
+}
+
+void ResinUpdater::updateVersionInFo()
+{
+    QJsonArray resinList = PrintSetting::getInstance().getResinList();
+
+    for(int i = 0;i < resinList.size();i++) {
+        QString mID = resinList[i].toString();
+        ResinSetting rs(mID);
+
+        QDateTime last = QDateTime::fromString(rs.getResinSetting("last_update").toString(),"MM/dd/yyyy, hh:mm:ss");
+        qDebug() << last << rs.getResinSetting("last_update").toString();
+        if(last > _updateTime){
+            _updateTime = last;
+        }
+    }
 }
 
 void ResinUpdater::requestFinished(QNetworkReply* reply)
@@ -50,31 +78,37 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
                 QJsonArray resinList = PrintSetting::getInstance().getResinList();
+                bool upAvailable = false;
 
                 if(resinList.size() != ja.size()){
-                    emit updateAvailable();
-                    return;
+                    upAvailable = true;
                 }
 
                 for(int i = 0;i < ja.size();i++) {
                     QJsonObject jo = ja[i].toObject();
                     QString mID = jo.keys()[0];
-                    QString lastUpdate = jo.value(mID).toString();;
+                    QString lastUpdate = jo.value(mID).toString();
 
-                    if(!resinList.contains(mID)){
-                        emit updateAvailable();
-                        return;
+                    QDateTime last = QDateTime::fromString(lastUpdate,"MM/dd/yyyy, hh:mm:ss");
+                    if(last > _lastestUpdateTime){
+                        _lastestUpdateTime = last;
                     }
 
-                    ResinSetting rs(mID);
-                    if(rs.getResinSetting("last_update").toString() != lastUpdate){
-                        emit updateAvailable();
-                        return;
+                    if(!resinList.contains(mID)){
+                        upAvailable = true;
+                    }else{
+                        ResinSetting rs(mID);
+                        if(rs.getResinSetting("last_update").toString() != lastUpdate){
+                            upAvailable = true;
+                        }
                     }
 //                    qDebug() << ja[i];
                 }
-                emit updateNotAvailable();
-//                update();
+                if(upAvailable){
+                    emit updateAvailable();
+                }else{
+                    emit updateNotAvailable();
+                }
             }
             break;
         case ResinRequestType::DOWNLOAD:
@@ -101,8 +135,9 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     rs.setResinSetting(ja.value(key).toObject());
                 }
 
-
                 PrintSetting::getInstance().setResinList(sl);
+
+                updateVersionInFo();
                 emit updateFinished();
             }
             break;

@@ -283,7 +283,9 @@ void WPA::parseNetworkInfo()
         }
         if(row.size() == 4){
             for (int i = 0; i < wifiList.size();i++) {
-                if(wifiList[i]->getSsid().compare(row[1]) && wifiList[i]->getBssid().compare(row[1])){
+//                qDebug() << row[1] << row[2];
+//                qDebug() << wifiList[i]->getSsid() << wifiList[i]->getBssid();
+                if(wifiList[i]->getSsid() == row[1] && wifiList[i]->getBssid() == row[2]){
                     wifiList[i]->setSaved(true);
                     wifiList[i]->setNetworkID(row[0].toInt());
                 }

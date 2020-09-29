@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     NetworkControl nc;
     ResinUpdater ru;
     Updater up;
-//    WPA wpa;
+    WPA wpa;
 //    WPA wpa("/var/run/wpa_supplicant/wlx88366cfb28d9");
 //    wpa_ctrl* wp;
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("resinUpdater",&ru);
     ctx->setContextProperty("SWUpdater",&up);
-//    ctx->setContextProperty("wifi",&wpa);
+    ctx->setContextProperty("wifi",&wpa);
 
 //    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
 

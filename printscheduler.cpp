@@ -665,7 +665,9 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
         return;
     }
 
-    _printName =  fileName.split('/').last().split('.').first();
+    QStringList sl = fileName.split('/').last().split('.');
+    sl.removeLast();
+    _printName =  sl.join('.');
     _materialName = materialName;
 
     printStart();

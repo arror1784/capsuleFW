@@ -59,13 +59,12 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                resinUpdater.checkUpdate()
-                resinUpdatePopup.open()
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
             }
         }
     }
     Rectangle {
-        id: firmwareUpdate
+        id: softwareUpdate
         width: 215
         height: 110
 
@@ -108,9 +107,8 @@ Item {
         }
         MouseArea{
             anchors.fill: parent
-            onClicked: {
-                SWUpdater.checkUpdate()
-                swUpdatePopup.open()
+            onClicked: {11
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
             }
         }
     }
@@ -143,57 +141,6 @@ Item {
             onClicked: {
                 stackView.pop(StackView.Immediate)
             }
-        }
-    }
-    ResinUpdatePopup{
-        id: resinUpdatePopup
-        onCancel: {
-            resinUpdatePopup.close()
-        }
-        onResinUpdate: {
-            resinUpdater.update()
-        }
-    }
-    SWUpdatePopup{
-        id: swUpdatePopup
-        onCancel: {
-            swUpdatePopup.close()
-        }
-        onSwUpdate: {
-            SWUpdater.update()
-        }
-    }
-
-    Connections{
-        id: swUpdaterConnection
-        target: SWUpdater
-        onUpdateAvailable:{
-            swUpdatePopup.updateAvailable()
-        }
-        onUpdateNotAvailable:{
-            swUpdatePopup.updateNotAvailable()
-        }
-        onUpdateFinished:{
-            swUpdatePopup.updateFinished()
-        }
-        onUpdateError:{
-            swUpdatePopup.updateError()
-        }
-    }
-    Connections{
-        id: resinUpdaterConnection
-        target: resinUpdater
-        onUpdateAvailable:{
-            resinUpdatePopup.updateAvailable()
-        }
-        onUpdateNotAvailable:{
-            resinUpdatePopup.updateNotAvailable()
-        }
-        onUpdateFinished:{
-            resinUpdatePopup.updateFinished()
-        }
-        onUpdateError:{
-            resinUpdatePopup.updateError()
         }
     }
 }

@@ -199,7 +199,7 @@ Item {
 
         for(var i = 0; i < count; i++){
             var data = wifi.getNetwork(i)
-            console.log(data)
+            console.log(data, data.getSaved())
             if(currentSSID === data.getSsid()){
                 inserWIFIList(data.getSsid(),true)
             }else{

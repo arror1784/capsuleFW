@@ -20,6 +20,8 @@ Updater::Updater():
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
+
+    checkUpdate();
 }
 
 void Updater::saveAsFile(QString name,QByteArray ba)
@@ -126,8 +128,19 @@ void Updater::waitForMCUFirmwareUpdate()
     _MCUFirmwareUpdateFinished = false;
 }
 
+QString Updater::version()
+{
+    return Version::getInstance().getVersion();
+}
+
+QString Updater::lastestVersion()
+{
+    return _lastestVersion;
+}
+
 void Updater::update()
 {
+    qDebug() << "update start";
     _future = std::async([this]() {
         downloadLIST();
         if(waitForRequest()){
@@ -164,7 +177,7 @@ void Updater::update()
         //run update.sh with root
         QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
         QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
-//        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
+        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
     });
 
     return;
@@ -187,10 +200,13 @@ void Updater::requestFinished(QNetworkReply* reply)
     QJsonArray ja;
     QByteArray loadData;
 
+    qDebug() << reply->url();
+
     switch (_requestType) {
         case SWRequestType::UPDATE_CHECK:
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
+            _lastestVersion = jo["version"].toString();
             if(jo["version"].toString() != Version::getInstance().getVersion()){
                 emit updateAvailable();
             }else{

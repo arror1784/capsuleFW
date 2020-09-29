@@ -5,8 +5,8 @@ QT += svg
 QT += network
 QT += websockets
 
-CONFIG += c++11
-#CONFIG += c++1z
+#CONFIG += c++11
+CONFIG += c++1z
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -35,6 +35,7 @@ SOURCES += \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
+    wifiinfo.cpp \
     wpa.cpp \
     wpa_ctrl/common.c \
     wpa_ctrl/os_unix.c \
@@ -76,6 +77,7 @@ HEADERS += \
     updater.h \
     version.h \
     websocketclient.h \
+    wifiinfo.h \
     wpa.h \
     wpa_ctrl/build_config.h \
     wpa_ctrl/common.h \

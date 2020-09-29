@@ -34,5 +34,7 @@
         <file>Qml/WIFIListDelegate.qml</file>
         <file>Qml/WIFIConnectPopup.qml</file>
         <file>Qml/WIFIDisconnectPopup.qml</file>
+        <file>Qml/SWUpdate.qml</file>
+        <file>Qml/ResinUpdate.qml</file>
     </qresource>
 </RCC>
