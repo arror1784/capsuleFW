@@ -261,7 +261,7 @@ void WPA::wpa_ctrl_event()
 
         wpa_ctrl_pending_blocking(_ctrl_event);
         wpa_ctrl_recv(_ctrl_event,resBuff,&size);
-        cout << resBuff <<  endl;
+//        cout << resBuff <<  endl;
 
         if(string(resBuff).find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
             clearList();

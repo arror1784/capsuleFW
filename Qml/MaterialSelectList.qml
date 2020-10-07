@@ -148,8 +148,9 @@ Item {
         id: schedulerConnection
         target: scheduler
         onSendToUIMaterialList: {
-            for(var i = 0; i < name.length; i++)
+            for(var i = 0; i < name.length; i++){
                 inserMaterialList(name[i])
+            }
         }
     }
     Component.onCompleted: {

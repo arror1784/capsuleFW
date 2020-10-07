@@ -3,19 +3,17 @@ import QtQuick 2.0
 Item{
     id: root
 
+    property alias text: movingText.text
+    property alias color: movingText.color
+    property alias font: movingText.font
+
+
     property var animateEnable: false
-    property var text
-    property var color
-    property Font font
 
     Text{
         id:movingText
 
         x:0
-
-        text: parent.text
-        color: parent.color
-        font: parent.font
 
         NumberAnimation on x{
             from: root.width

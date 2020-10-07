@@ -654,21 +654,27 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
         emit sendToUIPrintSettingError(5);
         return;
     }
+    qDebug() << "debug delete print folder start";
 
     deletePrintFolder();
+    qDebug() << "debug delete print folder finish";
 
     if(unZipFiles(fileName)){
         emit sendToUIPrintSettingError(6);
         return;
     }
+    qDebug() << "debug unzip finish";
+
     if(setupForPrint(materialName)){
         emit sendToUIPrintSettingError(3);
         return;
     }
+    qDebug() << "debug setup finish";
 
-    QStringList sl = fileName.split('/').last().split('.');
-    sl.removeLast();
-    _printName =  sl.join('.');
+//    QStringList sl = fileName.split('/').last().split('.');
+//    sl.removeLast();
+//    _printName =  sl.join('.');
+    _printName =  fileName;
     _materialName = materialName;
 
     printStart();

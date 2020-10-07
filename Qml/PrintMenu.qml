@@ -60,8 +60,12 @@ Item {
             SlideText{
                 id: fileNameText
                 width: 200
+
                 text: ""
-                font: Font{family: openSansSemibold.name; pixelSize: 27; bold: true}
+
+                font.family: openSansSemibold.name
+                font.pixelSize: 27
+                font.bold: true
             }
 
         }
