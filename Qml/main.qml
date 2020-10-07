@@ -52,6 +52,21 @@ Window {
     ShutdownPopup{
         id: shutDownPopup
     }
+    Image {
+        id: networkImage
+        width: 20
+        height: 20
+
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.top: parent.top
+        anchors.topMargin: 5
+
+
+        source: "qrc:/image/network.png"
+        visible: true
+//        scale: 0.1
+    }
     Connections{
         id: schedulerConnection
         target: scheduler
@@ -90,5 +105,19 @@ Window {
                 }
             }
         }
+    }
+    Connections{
+        id: wifiConnection
+        target: wifi
+        onConnectedChange:{
+            if(connected){
+                networkImage.visible = true;
+            }else{
+                networkImage.visible = false;
+            }
+        }
+    }
+    Component.onCompleted: {
+        wifi.checkNetworkConnect()
     }
 }

@@ -15,6 +15,9 @@ Rectangle {
     visible: false
     signal disconnectButtonClicked()
 
+    property string ssid: ""
+    property string bssid: ""
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -140,11 +143,15 @@ Rectangle {
         }
     }
 
-    function open(text){
-        setSSID(text)
+    function open(ssid,bssid){
+        setSSID(ssid)
+        setBSSID(bssid)
         popup.open()
     }
     function setSSID(text){
         ssidText.text = text
+    }
+    function setBSSID(text){
+        bssid = text
     }
 }

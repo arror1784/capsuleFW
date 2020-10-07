@@ -46,16 +46,24 @@ Item {
                 font.family: openSansRegular.name
                 font.pixelSize: 15
             }
-            Text {
+//            Text {
+//                id: fileNameText
+//                width: 200
+//                text: ""
+//                font.family: openSansSemibold.name
+//                font.pixelSize: 27
+//                font.bold: true
+
+//                elide: Text.ElideRight
+//            }
+
+            SlideText{
                 id: fileNameText
                 width: 200
                 text: ""
-                font.family: openSansSemibold.name
-                font.pixelSize: 27
-                font.bold: true
-
-                elide: Text.ElideRight
+                font: Font{family: openSansSemibold.name; pixelSize: 27; bold: true}
             }
+
         }
         Column{
             id: remainingTime

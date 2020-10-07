@@ -13,7 +13,15 @@ Rectangle {
     opacity: 0.7
 
     visible: false
-    signal connectButtonClicked(string ssid,string pwd)
+
+    signal connectButtonClicked(string ssid,string bssid,string pwd,int id)
+    signal connectButtonClickedWithoutPSWD(string ssid,string bssid,int id)
+
+    property int networkID: -1
+    property bool wpaEnable: false
+    property string ssid: ""
+    property string bssid: ""
+
 
     FontLoader{
         id: openSansSemibold
@@ -59,10 +67,12 @@ Rectangle {
                     color: "#474747"
                 }
                 Text {
+                    id: wifiPasswordText
                     text: qsTr("WIFI password")
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     color: "#474747"
+                    visible: wpaEnable
                 }
             }
             Column{
@@ -75,7 +85,7 @@ Rectangle {
                     font.pixelSize: 23
                     font.bold: true
                     color: "#474747"
-
+                    text: ssid
                     width: 200
                     elide: Text.ElideRight
                 }
@@ -85,6 +95,7 @@ Rectangle {
                     echoMode: TextInput.Password
                     placeholderText: "Password"
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
+                    visible: wpaEnable
                 }
             }
         }
@@ -92,6 +103,7 @@ Rectangle {
             id: visible
 //            anchors.left: passwordField.right
             text: qsTr("passwd visible")
+            visible: wpaEnable
             onCheckedChanged: {
                 if(checked){
                     passwordField.echoMode = TextInput.Normal
@@ -156,7 +168,12 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    connectButtonClicked(ssidText.text,passwordField.text)
+                    if(wpaEnable){
+                        connectButtonClicked(ssid,bssid,passwordField.text,networkID)
+                    }else{
+                        connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
+                    }
+
                     popup.close()
                 }
             }
@@ -169,13 +186,21 @@ Rectangle {
         }
     }
 
-    function open(text){
-        setSSID(text)
+    function open(ssid,bssid,id,wpa){
+        setSSID(ssid)
+        setBSSID(bssid)
+        networkID = id
         passwordField.text = ""
         visible.checked = false
+
+        wpaEnable = wpa
+
         popup.open()
     }
     function setSSID(text){
-        ssidText.text = text
+        ssid = text
+    }
+    function setBSSID(text){
+        bssid = text
     }
 }

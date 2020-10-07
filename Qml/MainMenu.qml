@@ -158,6 +158,8 @@ Item {
             }
         }
     }
+
+
     InfoPopup{
         id:infoPopup
     }

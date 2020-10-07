@@ -8,18 +8,19 @@ class WifiInfo : public QObject
     Q_OBJECT
 public:
     explicit WifiInfo(QObject *parent = nullptr);
-    WifiInfo(int networkID, QString ssid, QString bssid, QString flags, int freq, int signal_level, bool saved);
+    WifiInfo(int networkID, QString ssid, QString bssid, bool flags, int freq, int signal_level, bool saved,bool connected);
 //    WifiInfo(const WifiInfo& other);
 //    ~WifiInfo();
 
     int networkID;
     QString ssid;
     QString bssid;
-    QString flags;
+    bool flags;
     int freq;
     int signal_level;
 
-    bool saved;
+    bool saved = false;
+    bool connected = false;
 
 signals:
 
@@ -34,8 +35,8 @@ public slots:
     QString getBssid() const;
     void setBssid(const QString &value);
 
-    QString getFlags() const;
-    void setFlags(const QString &value);
+    bool getFlags() const;
+    void setFlags(bool &value);
 
     int getFreq() const;
     void setFreq(int value);
@@ -46,6 +47,8 @@ public slots:
     bool getSaved() const;
     void setSaved(bool value);
 
+    bool getConnected() const;
+    void setConnected(bool value);
 
 };
 

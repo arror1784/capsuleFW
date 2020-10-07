@@ -116,6 +116,7 @@ void PrintScheduler::run(){
     }else{
         _USBPortConnection = true;
     }
+
     addPrintingBed('A');
 
     qDebug() << "print scheduler" << QThread::currentThread();

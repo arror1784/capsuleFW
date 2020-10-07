@@ -8,6 +8,8 @@ Item {
 
     property string ssidName
     property string currentssidName
+    property int currentIndex: -1
+
     property var networkList
 
     FontLoader{
@@ -67,8 +69,8 @@ Item {
             model: wifiModel
             delegate: WIFIListDelegate{
                 onWifiClicked: {
-                    ssidName = name
                     wifiSelectList.currentIndex = index
+                    currentIndex = index
                     wifiSelectList.update()
                 }
             }
@@ -129,18 +131,14 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                console.log(ssidName,currentssidName)
                 if(wifiSelectList.currentIndex === -1){
                     return
                 }
-                for(var i = 0; i < networkList.length; i++){
-                    if(networkList[i]){}
-                }
-                if(ssidName === currentssidName){
-                    wifiDisconnectPopup.open(ssidName)
+                var data = wifi.getNetwork(wifiSelectList.currentIndex)
+                if(data.getConnected()){
+                    wifiDisconnectPopup.open(data.getSsid(),data.getBssid())
                 }else{
-                    wifiConnectPopup.open(ssidName)
-
+                    wifiConnectPopup.open(data.getSsid(),data.getBssid(),data.getNetworkID(),data.getFlags())
                 }
             }
         }
@@ -148,18 +146,23 @@ Item {
     WIFIConnectPopup{
         id:wifiConnectPopup
         onConnectButtonClicked: {
-            wifi.networkConnect(ssid,pwd)
+            wifi.networkConnect(ssid,bssid,pwd,id)
+//            wifi.networkScan()
 //            stackView.pop(it,StackView.Immediate)
+        }
+        onConnectButtonClickedWithoutPSWD: {
+            wifi.networkConnect(ssid,bssid,id)
+//            wifi.networkScan()
         }
     }
     WIFIDisconnectPopup{
         id: wifiDisconnectPopup
         onDisconnectButtonClicked: {
             wifi.networkDisconnect()
+//            wifi.networkScan()
 //            stackView.pop(it,StackView.Immediate)
         }
     }
-
     Connections{
         id: wifiConnection
         target: wifi
@@ -167,23 +170,7 @@ Item {
             updateWIFIList()
         }
         onCurrentStateChange: {
-            var currentSSID = wifi.currentSSID()
-            if(currentSSID === ""){
-                currentssidName = ""
-                for(let i = 0; i < wifiModel.count; i++){
-                    wifiModel.setProperty(i,"current",false)
-                }
-            }else{
-                currentssidName = currentSSID
-                for(let i = 0; i < wifiModel.count; i++){
-                    if(wifiModel.get(i).name === currentSSID){
-                        wifiModel.setProperty(i,"current",true)
-                        return
-                    }else{
-                        wifiModel.setProperty(i,"current",false)
-                    }
-                }
-            }
+            updateWIFIList()
         }
     }
     function updateWIFIList(){
@@ -191,24 +178,13 @@ Item {
         wifiModel.clear()
         var count = wifi.networkCount()
 
-        console.log(count)
-
-        var currentSSID = wifi.currentSSID()
-        currentssidName = currentSSID
-        console.log(currentssidName)
-
         for(var i = 0; i < count; i++){
             var data = wifi.getNetwork(i)
-            console.log(data, data.getSaved())
-            if(currentSSID === data.getSsid()){
-                inserWIFIList(data.getSsid(),true)
-            }else{
-                inserWIFIList(data.getSsid(),false)
-            }
+            inserWIFIList(data.getSsid(),data.getBssid(),data.getFlags(),data.getConnected(),data.getNetworkID())
         }
     }
-    function inserWIFIList(name,b){
-        wifiModel.append({"name":name,"current":b})
+    function inserWIFIList(ssid,bssid,flags,b,networkID){
+        wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
     }
     function networkScan(){
         wifi.networkScan()

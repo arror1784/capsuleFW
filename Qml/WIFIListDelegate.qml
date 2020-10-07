@@ -10,7 +10,9 @@ Rectangle{
 
     signal wifiClicked(int index)
 
-    property string wifiname: ""
+//    property string ssid: ""
+//    property string bssid: ""
+//    property string flags: ""
 
     //name, current, saved, networkID
 
@@ -21,7 +23,7 @@ Rectangle{
 
     Text {
         id: wifiNameText
-        text: current ?  "* " + name : name
+        text: current ?  "* " + ssid : ssid
         color: "#474747"
         font.pixelSize: 20
         font.family: openSansRegular.name
@@ -29,8 +31,7 @@ Rectangle{
     MouseArea{
         anchors.fill: parent
         onClicked: {
-            wifiClicked(index,name)
-            wifiname = name
+            wifiClicked(index,ssid)
         }
     }
 }

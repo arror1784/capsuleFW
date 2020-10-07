@@ -36,5 +36,6 @@
         <file>Qml/WIFIDisconnectPopup.qml</file>
         <file>Qml/SWUpdate.qml</file>
         <file>Qml/ResinUpdate.qml</file>
+        <file>Qml/SlideText.qml</file>
     </qresource>
 </RCC>

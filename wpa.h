@@ -46,6 +46,8 @@ signals:
     void networkListUpdate();
     void currentStateChange();
 
+    void connectedChange(bool connected);
+
     void refreshAvailable();
 
 public slots:
@@ -54,12 +56,19 @@ public slots:
     int networkCount();
     WifiInfo* getNetwork(int index);
 
-    bool networkConnect(QString ssid,QString passwd);
+    bool networkConnect(QString ssid,QString bssid,QString passwd,int networkID);
+    bool networkConnect(QString ssid,QString bssid,QString passwd);
     bool networkConnect(int id);
+
+    bool networkConnect(QString ssid,QString bssid,int networkID);
+    bool networkConnect(QString ssid,QString bssid);
 
     bool networkDisconnect();
     void networkDelete(QString ssid);
     void networkDelete(int id);
+
+    void checkNetworkConnect();
+
     QString currentSSID() const;
 
 private:
@@ -68,13 +77,14 @@ private:
 
     void clearList();
 
-    void refresh();
-
     void parseWifiInfo(); //scan_result
     void parseNetworkInfo(); //saved_network_list
+
+    void checkConnected();
+
     int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf);
 
-    QList<WifiInfo*> wifiList;
+    QList<WifiInfo*> _wifiList;
 
     std::thread th;
 
@@ -83,6 +93,8 @@ private:
     
     QString _currentSSID;
     QString _ctrlPath;
+
+    bool _connected = false;
 };
 
 

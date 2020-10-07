@@ -5,10 +5,20 @@ WifiInfo::WifiInfo(QObject *parent) : QObject(parent)
 
 }
 
-WifiInfo::WifiInfo(int networkID, QString ssid, QString bssid, QString flags, int freq, int signal_level, bool saved):
-    networkID(networkID),ssid(ssid),bssid(bssid),flags(flags),freq(freq),signal_level(signal_level),saved(saved)
+WifiInfo::WifiInfo(int networkID, QString ssid, QString bssid, bool flags, int freq, int signal_level, bool saved,bool connected):
+    networkID(networkID),ssid(ssid),bssid(bssid),flags(flags),freq(freq),signal_level(signal_level),saved(saved),connected(connected)
 {
 
+}
+
+bool WifiInfo::getConnected() const
+{
+    return connected;
+}
+
+void WifiInfo::setConnected(bool value)
+{
+    connected = value;
 }
 
 bool WifiInfo::getSaved() const
@@ -41,12 +51,12 @@ void WifiInfo::setFreq(int value)
     freq = value;
 }
 
-QString WifiInfo::getFlags() const
+bool WifiInfo::getFlags() const
 {
     return flags;
 }
 
-void WifiInfo::setFlags(const QString &value)
+void WifiInfo::setFlags(bool &value)
 {
     flags = value;
 }
