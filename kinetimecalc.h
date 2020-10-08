@@ -6,8 +6,6 @@
 #include <math.h>
 #include <QDebug>
 
-using namespace std;
-
 class KineTimeCalc
 {
 public:

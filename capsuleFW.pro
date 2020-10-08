@@ -6,7 +6,7 @@ QT += network
 QT += websockets
 
 #CONFIG += c++11
-CONFIG += c++1z
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -22,14 +22,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     bedcontrol.cpp \
     bedserialport.cpp \
+    common/jsonreadsetting.cpp \
+    common/jsonsetting.cpp \
+    common/jsonutil.cpp \
+    common/jsonwritesetting.cpp \
     filevalidator.cpp \
     kinetimecalc.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
     networkcontrol.cpp \
+    printersetting.cpp \
     printscheduler.cpp \
-    printsetting.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     updater.cpp \
@@ -64,13 +68,17 @@ HEADERS += \
     bedcontrol.h \
     bedserialport.h \
     common.h \
+    common/jsonreadsetting.h \
+    common/jsonsetting.h \
+    common/jsonutil.h \
+    common/jsonwritesetting.h \
     filevalidator.h \
     kinetimecalc.h \
     logger.h \
     modelno.h \
     networkcontrol.h \
+    printersetting.h \
     printscheduler.h \
-    printsetting.h \
     resinsetting.h \
     resinupdater.h \
     slate-global.h \

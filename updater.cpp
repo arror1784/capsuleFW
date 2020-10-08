@@ -9,7 +9,7 @@
 #include <chrono>
 #include <thread>
 
-#include "printsetting.h"
+#include "printersetting.h"
 #include "resinsetting.h"
 #include "version.h"
 

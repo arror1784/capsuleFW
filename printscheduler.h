@@ -24,6 +24,33 @@
 #include "logger.h"
 #include "updater.h"
 
+struct PrintSetting
+{
+    int totalLayer;
+    double layerHeight;
+
+    int heightOffset;
+    double printerLedOffset;
+
+
+};
+
+struct Resin{
+    double resinLedOffset;
+    int bedCuringLayer;
+    int curingTime;
+    int zHopHeight;
+    int maxSpeed;
+    int initSpeed;
+    int upAccelSpeed;
+    int upDecelSpeed;
+    int downAccelSpeed;
+    int downDecelSpeed;
+    int bedCuringTime;
+    int layerDelay;
+};
+
+
 class WebSocketClient;
 class BedControl;
 class BedSerialport;
@@ -33,6 +60,7 @@ class PrintScheduler : public QThread
 
 public:
     PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
+    ~PrintScheduler();
 
     void initBed();
     void bedFinish();
@@ -51,9 +79,12 @@ public:
 
     int copyProject(QString path);
     int copyFilesPath(QString src, QString dst);
+
     int setupForPrint(QString materialName);
     int unZipFiles(QString path);
+
     int deletePrintFolder();
+    int sayHello();
 
     int donwloadFiles(QJsonObject byte);
 
@@ -177,7 +208,7 @@ private:
 
     std::mutex _mPrint;
 
-    int bedCuringLayer = 5;
+    int _bedCuringLayer = 5;
 
     const QString _fileExtension = ".png";
 

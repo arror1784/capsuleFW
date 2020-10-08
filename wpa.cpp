@@ -14,8 +14,6 @@
 
 #include <QVector>
 
-using namespace std;
-
 WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 {
     ctrlConnect();
@@ -249,10 +247,10 @@ void WPA::wpa_ctrl_event()
     int a;
 
     if(wpa_ctrl_attach(_ctrl_event)){
-        cout << "wpa attack error" << _ctrlPath.toStdString() << endl;
+        std::cout << "wpa attack error" << _ctrlPath.toStdString() << endl;
         return;
     }else{
-        cout << "wpa attack sucess" << _ctrlPath.toStdString() << endl;
+        std::cout << "wpa attack sucess" << _ctrlPath.toStdString() << endl;
     }
 
     while (1) {
@@ -263,19 +261,19 @@ void WPA::wpa_ctrl_event()
         wpa_ctrl_recv(_ctrl_event,resBuff,&size);
 //        cout << resBuff <<  endl;
 
-        if(string(resBuff).find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
+        if(std::string(resBuff).find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
             clearList();
             parseWifiInfo();
             parseNetworkInfo();
             checkConnected();
             emit networkListUpdate();
-        }else if(string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
+        }else if(std::string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             _connected = true;
             checkConnected();
             emit currentStateChange();
 
 
-        }else if(string(resBuff).find(WPA_EVENT_DISCONNECTED) != std::string::npos){
+        }else if(std::string(resBuff).find(WPA_EVENT_DISCONNECTED) != std::string::npos){
             _connected = false;
 //            checkConnected();
             _currentSSID = "";
@@ -286,7 +284,7 @@ void WPA::wpa_ctrl_event()
             emit connectedChange(false);
             emit currentStateChange();
 
-        }else if(string(resBuff).find(WPA_EVENT_SCAN_FAILED) != std::string::npos){
+        }else if(std::string(resBuff).find(WPA_EVENT_SCAN_FAILED) != std::string::npos){
             checkConnected();
             emit currentStateChange();
         }
@@ -337,12 +335,12 @@ void WPA::parseWifiInfo()
     memset(resBuff,0x00,4096);
     ret = wpa_ctrl_cmd(_ctrl, "SCAN_RESULTS", resBuff);
 
-    string myStr(resBuff), val, line;
-    stringstream ss(myStr);
+    std::string myStr(resBuff), val, line;
+    std::stringstream ss(myStr);
 
     while (getline(ss, line, '\n')) {
         QStringList row;
-        stringstream s(line);
+        std::stringstream s(line);
         if(first){
             first = false;
             continue;
@@ -375,14 +373,14 @@ void WPA::parseNetworkInfo()
         memset(resBuff,0x00,4096);
         ret = wpa_ctrl_cmd(_ctrl, "LIST_NETWORKS", resBuff);
 
-    } while (string(resBuff) == "OK");
+    } while (std::string(resBuff) == "OK");
 
-    string myStr(resBuff), val, line;
-    stringstream ss(myStr);
+    std::string myStr(resBuff), val, line;
+    std::stringstream ss(myStr);
 
     while (getline(ss, line, '\n')) {
         QList<QString> row;
-        stringstream s(line);
+        std::stringstream s(line);
         if(first){
             first = false;
             continue;
@@ -409,14 +407,14 @@ void WPA::checkConnected()
 
     wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
-    string myStr(resBuff), val, line;
-    stringstream ss(myStr);
+    std::string myStr(resBuff), val, line;
+    std::stringstream ss(myStr);
     QStringList array;
     QMap<QString,QString> mp;
 
     while (getline(ss, line, '\n')) {
-        vector<string> row;
-        stringstream s(line);
+        std::vector<std::string> row;
+        std::stringstream s(line);
         while (getline(s, val, '=')) {
             row.push_back (val);
         }

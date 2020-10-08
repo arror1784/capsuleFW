@@ -1,14 +1,14 @@
-#include "printsetting.h"
+#include "printersetting.h"
 
 #include <QFile>
 #include <QJsonArray>
 #include <QObject>
 #include <QDebug>
 
-PrintSetting* PrintSetting::_ins = nullptr;
+PrinterSetting* PrinterSetting::_ins = nullptr;
 //const QString PrintSetting::filePath = QString("/opt/capsuleFW/capsuleSetting.json");
 
-PrintSetting::PrintSetting()
+PrinterSetting::PrinterSetting()
 {
     QFile loadFile(filePath);
 
@@ -22,11 +22,11 @@ PrintSetting::PrintSetting()
 }
 
 
-PrintSetting::~PrintSetting(){
+PrinterSetting::~PrinterSetting(){
 //    delete setting;
 }
 
-void PrintSetting::saveFile(){
+void PrinterSetting::saveFile(){
 
     QFile saveFile(filePath);
 
@@ -38,29 +38,31 @@ void PrintSetting::saveFile(){
     saveFile.write(saveDoc.toJson());
 }
 
-QJsonValue PrintSetting::getPrintSetting(QString key){
+QJsonValue PrinterSetting::getPrintSetting(QString key){
     return setting[key];
 }
-void PrintSetting::setPrintSetting(QString key, double value){
+
+void PrinterSetting::setPrintSetting(QString key, double value){
     setting[key] = value;
     saveFile();
 }
-void PrintSetting::setPrintSetting(QString key, int value){
+void PrinterSetting::setPrintSetting(QString key, int value){
     setting[key] = value;
     saveFile();
 }
-void PrintSetting::setPrintSetting(QString key, QString value){
+void PrinterSetting::setPrintSetting(QString key, QString value){
     setting[key] = value;
     saveFile();
 }
 
-void PrintSetting::setPrintSetting(QString key, QJsonObject value)
+void PrinterSetting::setPrintSetting(QString key, QJsonObject value)
 {
     setting[key] = value;
-    saveFile();
+    saveFile
+            ();
 }
 
-QJsonArray PrintSetting::getResinList(){
+QJsonArray PrinterSetting::getResinList(){
     if(setting["enable_material_list"].toArray().isEmpty()){
         return setting["material_list"].toArray();
     }else {
@@ -68,7 +70,7 @@ QJsonArray PrintSetting::getResinList(){
     }
 }
 
-void PrintSetting::setResinList(QJsonArray value)
+void PrinterSetting::setResinList(QJsonArray value)
 {
     setting["material_list"] = value;
     saveFile();

@@ -9,7 +9,7 @@
 
 #include <QByteArray>
 
-#include "printsetting.h"
+#include "printersetting.h"
 #include "resinsetting.h"
 
 ResinUpdater::ResinUpdater()
@@ -47,7 +47,7 @@ QString ResinUpdater::lastestVersion()
 
 void ResinUpdater::updateVersionInFo()
 {
-    QJsonArray resinList = PrintSetting::getInstance().getResinList();
+    QJsonArray resinList = PrinterSetting::getInstance().getResinList();
 
     for(int i = 0;i < resinList.size();i++) {
         QString mID = resinList[i].toString();
@@ -77,7 +77,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
             {
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
-                QJsonArray resinList = PrintSetting::getInstance().getResinList();
+                QJsonArray resinList = PrinterSetting::getInstance().getResinList();
                 bool upAvailable = false;
 
                 if(resinList.size() != ja.size()){
@@ -120,7 +120,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
 
                 QJsonArray sl;
 
-                QJsonArray resinList = PrintSetting::getInstance().getResinList();
+                QJsonArray resinList = PrinterSetting::getInstance().getResinList();
 
                 for (int i = 0; i < resinList.size();i++) {
                     ResinSetting rs(resinList[i].toString());
@@ -135,7 +135,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     rs.setResinSetting(ja.value(key).toObject());
                 }
 
-                PrintSetting::getInstance().setResinList(sl);
+                PrinterSetting::getInstance().setResinList(sl);
 
                 updateVersionInFo();
                 emit updateFinished();

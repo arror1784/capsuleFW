@@ -16,7 +16,7 @@
 #include "bedserialport.h"
 #include "bedcontrol.h"
 #include "printscheduler.h"
-#include "printsetting.h"
+#include "printersetting.h"
 #include "logger.h"
 #include "networkcontrol.h"
 #include "websocketclient.h"
@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     PrintScheduler* printScheduler = new PrintScheduler();
+    qDebug() << printScheduler;
 
     QQmlApplicationEngine engine;
     QQmlContext* ctx = engine.rootContext();
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
 
+    qDebug() << QThread::currentThreadId();
 
     ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);

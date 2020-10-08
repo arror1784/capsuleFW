@@ -3,12 +3,16 @@ import QtQuick 2.0
 Item{
     id: root
 
+//    width: movingText.width
+    height: movingText.paintedHeight
+
     property alias text: movingText.text
     property alias color: movingText.color
     property alias font: movingText.font
 
-
     property var animateEnable: false
+
+    clip: true
 
     Text{
         id:movingText
@@ -23,6 +27,7 @@ Item{
             running: animateEnable
         }
     }
+
     Component.onCompleted: {
         console.log(movingText.width,root.width)
         if(movingText.width > root.width){

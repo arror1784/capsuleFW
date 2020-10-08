@@ -8,21 +8,19 @@
 
 #include "Singleton.h"
 
-class PrintSetting : public QObject , public Hix::Common::Singleton<PrintSetting>
+class PrinterSetting : public QObject , public Hix::Common::Singleton<PrinterSetting>
 {
     Q_OBJECT
 private:
-
-
-    static PrintSetting* _ins;
+    static PrinterSetting* _ins;
     const QString filePath = "/opt/capsuleFW/capsuleSetting.json";
 //    const QString resinPath = "/opt/capsuleFW/resin";
 
     QJsonObject setting;
 
 public:
-    PrintSetting();
-    ~PrintSetting();
+    PrinterSetting();
+    ~PrinterSetting();
 
     void saveFile();
 

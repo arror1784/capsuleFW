@@ -6,7 +6,7 @@ Rectangle{
     width: parent.width
     height: fileNameText.height
 
-    color: "#00000000"
+    color: "#88888888"
 
     property string filename: ""
     property string parentname: ""
@@ -21,7 +21,7 @@ Rectangle{
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
 
-    Text {
+    SlideText {
         id: fileNameText
         text: fileName
         color: "#474747"
