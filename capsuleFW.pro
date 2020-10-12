@@ -27,6 +27,7 @@ SOURCES += \
     common/jsonutil.cpp \
     common/jsonwritesetting.cpp \
     filevalidator.cpp \
+    infosetting.cpp \
     kinetimecalc.cpp \
     logger.cpp \
     main.cpp \
@@ -73,6 +74,7 @@ HEADERS += \
     common/jsonutil.h \
     common/jsonwritesetting.h \
     filevalidator.h \
+    infosetting.h \
     kinetimecalc.h \
     logger.h \
     modelno.h \

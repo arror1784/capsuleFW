@@ -7,6 +7,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QVector>
+
 #include <QByteArray>
 
 #include "printersetting.h"
@@ -47,10 +49,14 @@ QString ResinUpdater::lastestVersion()
 
 void ResinUpdater::updateVersionInFo()
 {
-    QJsonArray resinList = PrinterSetting::getInstance().getResinList();
+    QVector<QString>& resinList = PrinterSetting::getInstance().enableMaterialList;
+
+    if(resinList.empty()){
+        resinList = PrinterSetting::getInstance().materialList;
+    }
 
     for(int i = 0;i < resinList.size();i++) {
-        QString mID = resinList[i].toString();
+        QString mID = resinList[i];
         ResinSetting rs(mID);
 
         QDateTime last = QDateTime::fromString(rs.getResinSetting("last_update").toString(),"MM/dd/yyyy, hh:mm:ss");
@@ -77,7 +83,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
             {
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
-                QJsonArray resinList = PrinterSetting::getInstance().getResinList();
+                QVector<QString> resinList = PrinterSetting::getInstance().materialList;
                 bool upAvailable = false;
 
                 if(resinList.size() != ja.size()){
@@ -118,12 +124,12 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonObject ja = jd.object();
 
-                QJsonArray sl;
+                QVector<QString> sl;
 
-                QJsonArray resinList = PrinterSetting::getInstance().getResinList();
+                QVector<QString> resinList = PrinterSetting::getInstance().materialList;
 
                 for (int i = 0; i < resinList.size();i++) {
-                    ResinSetting rs(resinList[i].toString());
+                    ResinSetting rs(resinList[i]);
                     rs.removeFile();
                 }
 
@@ -135,7 +141,10 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     rs.setResinSetting(ja.value(key).toObject());
                 }
 
-                PrinterSetting::getInstance().setResinList(sl);
+                PrinterSetting::getInstance().materialList = sl;
+                PrinterSetting::getInstance().save();
+
+//                PrinterSetting::getInstance().setResinList(sl);
 
                 updateVersionInFo();
                 emit updateFinished();

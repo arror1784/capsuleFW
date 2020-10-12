@@ -19,6 +19,7 @@
 #include "version.h"
 #include "modelno.h"
 #include "kinetimecalc.h"
+#include "infosetting.h"
 
 #include "zip/zip.h"
 
@@ -481,10 +482,10 @@ int PrintScheduler::setupForPrint(QString materialName)
     QFile file;
     QString val;
     QString filePath = printFilePath;
+    QString infoPath = filePath + QStringLiteral("/info.json");
     int error = 0;
 
     QJsonDocument d;
-    QJsonObject setting;
     QJsonObject materialSetting;
 
     ResinSetting rs(materialName);
@@ -503,26 +504,16 @@ int PrintScheduler::setupForPrint(QString materialName)
     _printState = "ready";
     _totalPrintTime = 0;
 
-    file.setFileName(filePath + QStringLiteral("/info.json"));
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "info file open error";
-        Logger::GetInstance()->write(file.fileName() + " file open error");
-        return -2;
-    }
-    val = file.readAll();
-    file.close();
-
-    d = QJsonDocument::fromJson(val.toUtf8());
-    setting = d.object();
-
-
 
     try {
+        InfoSetting info(infoPath);
+        info.parse();
+
         _bedControl->maxHeight = _bedControl->defaultHeight + PrinterSetting::getInstance().getPrintSetting("height_offset").toInt();
 
-        _bedMaxPrintNum = Hix::Common::Json::getValue<int>(setting,"total_layer");
+        _bedMaxPrintNum = info.totalLayer;
 
-        auto layer_height = round(Hix::Common::Json::getValue<double>(setting,"layer_height") * 10000) / 10000;
+        auto layer_height = round(info.layerHeight * 10000) / 10000;
 
         if(materialName == "Custom"){
             f.setFileName(filePath + QStringLiteral("/resin.json"));
@@ -568,7 +559,7 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         emit sendToLCDSetImageScale(Hix::Common::Json::getValue<double>(materialSetting,"contraction_ratio"));
 
-        double led = (PrinterSetting::getInstance().getPrintSetting("led_offset").toDouble() / 100) *  Hix::Common::Json::getValue<int>(materialSetting,"led_offset");;
+        double led = (PrinterSetting::getInstance().getPrintSetting("led_offset").toDouble() / 100) *  Hix::Common::Json::getValue<int>(materialSetting,"led_offset");
         _bedControl->setLedOffset(led * 10);
 
         //    KineTimeCalc kinCalc(setting["total_layer"].toInt(), materialSetting["bed_curing_layer"].toInt(), materialSetting["layer_delay"].toInt(), setting["layer_height"].toDouble(),

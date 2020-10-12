@@ -5,74 +5,43 @@
 #include <QObject>
 #include <QDebug>
 
-PrinterSetting* PrinterSetting::_ins = nullptr;
-//const QString PrintSetting::filePath = QString("/opt/capsuleFW/capsuleSetting.json");
-
-PrinterSetting::PrinterSetting()
+using namespace Hix::Common;
+PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (filePath)
 {
-    QFile loadFile(filePath);
 
-    if(!loadFile.open(QIODevice::ReadOnly)){
-        qWarning("Could not open json file to read");
-    }
-
-    QByteArray loadData = loadFile.readAll();
-    QJsonDocument loadDoc(QJsonDocument::fromJson(loadData));
-    setting = loadDoc.object();
 }
 
+void PrinterSetting::parse()
+{
+    UVTimeSpend = Json::getValueArray<int>(_object,"UV_time_spend");
+    motorTimeSpend = Json::getValueArray<int>(_object,"motor_time_spend");
+    materialList = Json::getValueArray<QString>(_object,"material_list");
+    enableMaterialList = Json::getValueArray<QString>(_object,"enable_material_list");
 
-PrinterSetting::~PrinterSetting(){
-//    delete setting;
+    defaultHeight = Json::getValue<int>(_object,"default_height");
+    heightOffset = Json::getValue<int>(_object,"height_offset");
+    ledOffset = Json::getValue<double>(_object,"led_offset");
+    modelNo = Json::getValue<QString>(_object,"model_no");
 }
 
-void PrinterSetting::saveFile(){
+void PrinterSetting::save()
+{
+    QJsonObject jo;
+    QFile saveFile(_path);
 
-    QFile saveFile(filePath);
+    Json::setValueArray<int>(jo,"UV_time_spend",UVTimeSpend);
+    Json::setValueArray<int>(jo,"motor_time_spend",motorTimeSpend);
+    Json::setValueArray<QString>(jo,"material_list",materialList);
+    Json::setValueArray<QString>(jo,"enable_material_list",enableMaterialList);
+
+    Json::setValue<int>(jo,"default_height",defaultHeight);
+    Json::setValue<int>(jo,"height_offset",heightOffset);
+    Json::setValue<int>(jo,"led_offset",ledOffset);
 
     if(!saveFile.open(QIODevice::WriteOnly)){
         qDebug() << "save file open error";
     }
-    QJsonDocument saveDoc(setting);
+    QJsonDocument saveDoc(jo);
 
     saveFile.write(saveDoc.toJson());
 }
-
-QJsonValue PrinterSetting::getPrintSetting(QString key){
-    return setting[key];
-}
-
-void PrinterSetting::setPrintSetting(QString key, double value){
-    setting[key] = value;
-    saveFile();
-}
-void PrinterSetting::setPrintSetting(QString key, int value){
-    setting[key] = value;
-    saveFile();
-}
-void PrinterSetting::setPrintSetting(QString key, QString value){
-    setting[key] = value;
-    saveFile();
-}
-
-void PrinterSetting::setPrintSetting(QString key, QJsonObject value)
-{
-    setting[key] = value;
-    saveFile
-            ();
-}
-
-QJsonArray PrinterSetting::getResinList(){
-    if(setting["enable_material_list"].toArray().isEmpty()){
-        return setting["material_list"].toArray();
-    }else {
-        return setting["enable_material_list"].toArray();
-    }
-}
-
-void PrinterSetting::setResinList(QJsonArray value)
-{
-    setting["material_list"] = value;
-    saveFile();
-}
-

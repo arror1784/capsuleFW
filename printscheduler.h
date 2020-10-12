@@ -24,15 +24,15 @@
 #include "logger.h"
 #include "updater.h"
 
-struct PrintSetting
-{
+struct Info{
     int totalLayer;
     double layerHeight;
+};
 
+struct PrintSetting
+{
     int heightOffset;
     double printerLedOffset;
-
-
 };
 
 struct Resin{

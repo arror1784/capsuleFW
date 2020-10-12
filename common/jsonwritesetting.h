@@ -11,8 +11,6 @@ namespace Hix {
 
             class JsonWriteSetting
             {
-            public:
-                JsonWriteSetting();
             protected:
                 virtual void save() = 0;
             };

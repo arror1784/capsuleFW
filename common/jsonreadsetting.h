@@ -11,8 +11,6 @@ namespace Hix {
 
             class JsonReadSetting
             {
-            public:
-                JsonReadSetting();
             protected:
                 virtual void parse() = 0;
             };

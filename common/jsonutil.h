@@ -20,14 +20,14 @@ namespace Hix {
                     std::runtime_error("value doesnt exist for given key");
             }
             template<typename ValueType>
-            std::vector<ValueType> getValueArray(const QJsonObject& json,const QString& key)
+            QVector<ValueType> getValueArray(const QJsonObject& json,const QString& key)
             {
-                std::vector<ValueType> vc;
+                QVector<ValueType> vc;
                 if(json.contains(key))
                 {
                     for(auto i : json[key].toArray().toVariantList())
                     {
-                        vc.insert(i.value<ValueType>());
+                        vc.push_back(i.value<ValueType>());
                     }
 
                     return vc;
@@ -42,11 +42,13 @@ namespace Hix {
                 json[key] = value;
             }
             template<typename ValueType>
-            void setValueArray(QJsonObject& json,const QString& key,const std::vector<ValueType>& value)
+            void setValueArray(QJsonObject& json,const QString& key,const QVector<ValueType>& value)
             {
-                QVector<ValueType> vc = QVector<ValueType>::fromStdVector(value);
-
-                json[key] = QJsonArray::fromStringList(VariantList(vc.toList()));
+                QList<QVariant> lv;
+                for(auto& i : value){
+                    lv.push_back(i);
+                }
+                json[key] = QJsonArray::fromVariantList(lv);
             }
         }
     }
