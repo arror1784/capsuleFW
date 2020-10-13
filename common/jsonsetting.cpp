@@ -14,6 +14,7 @@ Hix::Common::Json::JsonSetting::JsonSetting(const QString& path) : _path(path)
 
     if(!loadFile.open(QIODevice::ReadOnly)){
         qWarning("Could not open json file to read");
+        return;
     }
 
     QByteArray loadData = loadFile.readAll();

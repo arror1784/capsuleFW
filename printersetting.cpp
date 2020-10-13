@@ -6,7 +6,7 @@
 #include <QDebug>
 
 using namespace Hix::Common;
-PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (filePath)
+PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (_filePath)
 {
 
 }
@@ -21,7 +21,6 @@ void PrinterSetting::parse()
     defaultHeight = Json::getValue<int>(_object,"default_height");
     heightOffset = Json::getValue<int>(_object,"height_offset");
     ledOffset = Json::getValue<double>(_object,"led_offset");
-    modelNo = Json::getValue<QString>(_object,"model_no");
 }
 
 void PrinterSetting::save()

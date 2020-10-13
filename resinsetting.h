@@ -5,38 +5,44 @@
 #include <QJsonObject>
 #include <QDebug>
 
-class ResinSetting
+#include "common/jsonreadsetting.h"
+#include "common/jsonsetting.h"
+#include "common/jsonwritesetting.h"
+
+#include "common/jsonutil.h"
+
+class ResinSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting, public Hix::Common::Json::JsonWriteSetting
 {
+private:
+
 public:
-    ResinSetting(QString path/*,QString layerHeight*/);
+    ResinSetting(QString resin/*,QString layerHeight*/);
 
-    QJsonObject getJsonObject(){return setting;}
-    QJsonObject getJsonObjectLayerHeight(double layerHeight){
-        QString s;
-        s.setNum(layerHeight);
-        return setting[s].toObject();
-    }
+    struct resinInfo{
+        double resinLedOffset;
+        double contractionRatio;
+        double layerHeight;
+        int bedCuringLayer;
+        int curingTime;
+        int zHopHeight;
+        int maxSpeed;
+        int initSpeed;
+        int upAccelSpeed;
+        int upDecelSpeed;
+        int downAccelSpeed;
+        int downDecelSpeed;
+        int bedCuringTime;
+        int layerDelay;
+        int material;
+    };
 
-    void saveFile();
+    QString lastUpdate;
+    QMap<QString,resinInfo> resinList;
+
+    void parse() override;
+    void save() override;
 
     bool removeFile();
-
-    QJsonValue getResinSetting(QString key);
-    void setResinSetting(QString key,double value);
-    void setResinSetting(QString key,int value);
-    void setResinSetting(QString key,QString value);
-
-    void setResinSetting(QJsonObject value);
-
-    bool getOpen() const;
-
-private:
-    const QString resinPath = "/opt/capsuleFW/resin";
-    QJsonObject setting;
-    QString filePath;
-
-    bool _open = false;
-    QString _layerHeight;
 
 };
 

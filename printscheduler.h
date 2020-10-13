@@ -37,6 +37,7 @@ struct PrintSetting
 
 struct Resin{
     double resinLedOffset;
+    double contractionRatio;
     int bedCuringLayer;
     int curingTime;
     int zHopHeight;
