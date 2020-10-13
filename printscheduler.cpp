@@ -34,12 +34,6 @@ PrintScheduler::PrintScheduler() :
     _LCDState(true)
 {
 }
-
-PrintScheduler::~PrintScheduler()
-{
-    qDebug() << "dis " << this;
-}
-
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
 
@@ -53,7 +47,7 @@ void PrintScheduler::addPrintingBed(char name){
 
     initPrint();
 
-    _bedControl->defaultHeight = PrinterSetting::getInstance().getPrintSetting("default_height").toInt();
+    _bedControl->defaultHeight = _printerSetting.defaultHeight;
 }
 
 int PrintScheduler::addSerialPort(){
@@ -180,18 +174,18 @@ void PrintScheduler::initPrint()
 {
     ResinSetting rs("default");
 
-    _bedControl->setBedCuringTime(rs.getResinSetting("bed_curing_time").toInt());
-    _bedControl->setCuringTime(rs.getResinSetting("curing_time").toInt());
+    _bedControl->setBedCuringTime(3);
+    _bedControl->setCuringTime(5000);
 
-    _bedControl->setZHopHeightTime(rs.getResinSetting("z_hop_height").toInt());
+    _bedControl->setZHopHeightTime(3000);
 
-    _bedControl->setMaxSpeed(rs.getResinSetting("max_speed").toInt());
-    _bedControl->setInitSpeed(rs.getResinSetting("init_speed").toInt());
+    _bedControl->setMaxSpeed(500);
+    _bedControl->setInitSpeed(0);
 
-    _bedControl->setAccleSpeed(rs.getResinSetting("up_accel_speed").toInt(),1);
-    _bedControl->setDecelSpeed(rs.getResinSetting("up_decel_speed").toInt(),1);
-    _bedControl->setAccleSpeed(rs.getResinSetting("down_accel_speed").toInt(),0);
-    _bedControl->setDecelSpeed(rs.getResinSetting("down_decel_speed").toInt(),0);
+    _bedControl->setAccleSpeed(6,1);
+    _bedControl->setDecelSpeed(30,1);
+    _bedControl->setAccleSpeed(50,0);
+    _bedControl->setDecelSpeed(50,0);
 
     _bedControl->setUVtime(0);
 
@@ -294,17 +288,19 @@ void PrintScheduler::receiveFromBedControl(int receive){
     }
 }
 void PrintScheduler::setMotorSpendtime(){
-    QJsonObject jo = PrinterSetting::getInstance().getPrintSetting("motor_time_spend").toObject();
+    auto jo = _printerSetting.motorTimeSpend;
+
     int time;
 
-    if(jo[_materialName].isNull()){
+    if(jo.contains(_materialName)){
         time = 0;
         jo.insert(_materialName,0);
     }else{
-        time = jo[_materialName].toInt();
+        time = jo[_materialName];
     }
     jo[_materialName] = time + _printTime - (_bedControl->UVtime() + _bedControl->delayTime());
-    PrinterSetting::getInstance().setPrintSetting("motor_time_spend",jo);
+    _printerSetting.motorTimeSpend = jo;
+    _printerSetting.save();
 }
 void PrintScheduler::receiveFromSerialPort(int state){
 
@@ -486,7 +482,7 @@ int PrintScheduler::setupForPrint(QString materialName)
     int error = 0;
 
     QJsonDocument d;
-    QJsonObject materialSetting;
+    ResinSetting::resinInfo materialSetting;
 
     ResinSetting rs(materialName);
 
@@ -509,7 +505,7 @@ int PrintScheduler::setupForPrint(QString materialName)
         InfoSetting info(infoPath);
         info.parse();
 
-        _bedControl->maxHeight = _bedControl->defaultHeight + PrinterSetting::getInstance().getPrintSetting("height_offset").toInt();
+        _bedControl->maxHeight = _bedControl->defaultHeight + _printerSetting.heightOffset;
 
         _bedMaxPrintNum = info.totalLayer;
 
@@ -526,13 +522,30 @@ int PrintScheduler::setupForPrint(QString materialName)
             f.close();
 
             fd = QJsonDocument::fromJson(fval.toUtf8());
+            QJsonObject jo = fd.object();
 
-            materialSetting = fd.object();
+            materialSetting.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
+            materialSetting.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
+            materialSetting.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
+
+            materialSetting.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
+            materialSetting.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
+            materialSetting.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
+            materialSetting.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
+            materialSetting.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
+            materialSetting.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
+            materialSetting.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
+            materialSetting.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
+            materialSetting.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
+            materialSetting.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
+            materialSetting.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
+            materialSetting.material = Hix::Common::Json::getValue<int>(jo,"material");
+
         }else{
-            if(rs.getOpen())
-                materialSetting = rs.getJsonObjectLayerHeight(layer_height);
-            else
-                return -5;
+//            if(rs.getOpen())
+                materialSetting = rs.resinList[QString::number(layer_height)];
+//            else
+//                return -5;
         }
 
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
@@ -543,23 +556,23 @@ int PrintScheduler::setupForPrint(QString materialName)
             return -4;
         }
 
-        _bedCuringLayer = Hix::Common::Json::getValue<int>(materialSetting,"bed_curing_layer");
-        _bedControl->setCuringTime(Hix::Common::Json::getValue<int>(materialSetting,"curing_time"));
-        _bedControl->setZHopHeightTime(Hix::Common::Json::getValue<int>(materialSetting,"z_hop_height"));
-        _bedControl->setMaxSpeed(Hix::Common::Json::getValue<int>(materialSetting,"max_speed"));
-        _bedControl->setInitSpeed(Hix::Common::Json::getValue<int>(materialSetting,"init_speed"));
-        _bedControl->setAccleSpeed(Hix::Common::Json::getValue<int>(materialSetting,"up_accel_speed"),1);
-        _bedControl->setDecelSpeed(Hix::Common::Json::getValue<int>(materialSetting,"up_decel_speed"),1);
-        _bedControl->setAccleSpeed(Hix::Common::Json::getValue<int>(materialSetting,"down_accel_speed"),0);
-        _bedControl->setDecelSpeed(Hix::Common::Json::getValue<int>(materialSetting,"down_decel_speed"),0);
-        _bedControl->setBedCuringTime(Hix::Common::Json::getValue<int>(materialSetting,"bed_curing_time"));
-        _bedControl->layerDelay = Hix::Common::Json::getValue<int>(materialSetting,"layer_delay");
+        _bedCuringLayer = materialSetting.bedCuringLayer;
+        _bedControl->setCuringTime(materialSetting.curingTime);
+        _bedControl->setZHopHeightTime(materialSetting.zHopHeight);
+        _bedControl->setMaxSpeed(materialSetting.maxSpeed);
+        _bedControl->setInitSpeed(materialSetting.initSpeed);
+        _bedControl->setAccleSpeed(materialSetting.upAccelSpeed,1);
+        _bedControl->setDecelSpeed(materialSetting.upDecelSpeed,1);
+        _bedControl->setAccleSpeed(materialSetting.downAccelSpeed,0);
+        _bedControl->setDecelSpeed(materialSetting.downDecelSpeed,0);
+        _bedControl->setBedCuringTime(materialSetting.bedCuringTime);
+        _bedControl->layerDelay = materialSetting.layerDelay;
 
         _bedControl->setUVtime(0);
 
-        emit sendToLCDSetImageScale(Hix::Common::Json::getValue<double>(materialSetting,"contraction_ratio"));
+        emit sendToLCDSetImageScale(materialSetting.contractionRatio);
 
-        double led = (PrinterSetting::getInstance().getPrintSetting("led_offset").toDouble() / 100) *  Hix::Common::Json::getValue<int>(materialSetting,"led_offset");
+        double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
 
         //    KineTimeCalc kinCalc(setting["total_layer"].toInt(), materialSetting["bed_curing_layer"].toInt(), materialSetting["layer_delay"].toInt(), setting["layer_height"].toDouble(),
@@ -745,8 +758,9 @@ void PrintScheduler::receiveFromUIPrintPause(){
     emit sendToUIChangeToPauseStart();
 }
 void PrintScheduler::receiveFromUIGetMaterialList(){
-    QJsonArray a = PrinterSetting::getInstance().getResinList();
-    emit sendToUIMaterialList(a.toVariantList());
+    auto &a = _printerSetting.materialList;
+    QVariant var = QVariant::fromValue(a);
+    emit sendToUIMaterialList(QVariantList::fromVector(var.value<QVector<QVariant>>())); // it can work?????
 }
 
 void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
@@ -766,19 +780,19 @@ void PrintScheduler::receiveFromUIConnected()
     emit sendToUIPortOpenError();
 //    emit sendToUI
 }
-QVariant PrintScheduler::receiveFromUIGetPrinterOption(QString key){
-    return PrinterSetting::getInstance().getPrintSetting(key).toVariant();
-}
+//QVariant PrintScheduler::receiveFromUIGetPrinterOption(QString key){
+//    return _printScheduler->getPrintSetting(key).toVariant();
+//}
 
-void PrintScheduler::receiveFromUISetPrinterOption(QString key,double value){
-    PrinterSetting::getInstance().setPrintSetting(key,value);
-}
-void PrintScheduler::receiveFromUISetPrinterOption(QString key,int value){
-    PrinterSetting::getInstance().setPrintSetting(key,value);
-}
-void PrintScheduler::receiveFromUISetPrinterOption(QString key,QString value){
-    PrinterSetting::getInstance().setPrintSetting(key,value);
-}
+//void PrintScheduler::receiveFromUISetPrinterOption(QString key,double value){
+//    _printScheduler->setPrintSetting(key,value);
+//}
+//void PrintScheduler::receiveFromUISetPrinterOption(QString key,int value){
+//    _printScheduler->setPrintSetting(key,value);
+//}
+//void PrintScheduler::receiveFromUISetPrinterOption(QString key,QString value){
+//    _printScheduler->setPrintSetting(key,value);
+//}
 
 QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString key){
     if(material == "Custom"){
@@ -804,9 +818,10 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
         return setting[key].toVariant();
     }else{
         ResinSetting rs(material);
-        return rs.getResinSetting(key).toVariant();
+//        return rs.getResinSetting(key).toVariant();
     }
 }
+
 QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
 
     try {
@@ -886,7 +901,7 @@ void PrintScheduler::receiveFromUIMoveMicro(int micro){
 void PrintScheduler::receiveFromUIMoveMaxHeight(){
     char buffer[50] = {0};
 
-    sprintf(buffer,"G01 A%d M0",-(PrinterSetting::getInstance().getPrintSetting("default_height").toInt() + PrinterSetting::getInstance().getPrintSetting("height_offset").toInt()));
+    sprintf(buffer,"G01 A%d M0",-(_printerSetting.defaultHeight + _printerSetting.heightOffset));
     bedSerialPort->sendCommand(buffer);
 }
 

@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QNetworkRequest>
 #include <QDateTime>
-//#include <QNetworkReply>
+#include <QNetworkReply>
+#include <printscheduler.h>
 
 enum class ResinRequestType
 {
@@ -20,7 +21,7 @@ class ResinUpdater : public QObject
 {
     Q_OBJECT
 public:
-    ResinUpdater();
+    ResinUpdater(PrintScheduler *sched);
 
 public slots:
     void requestFinished(QNetworkReply* reply);
@@ -49,6 +50,7 @@ private:
 
     QDateTime _updateTime;
     QDateTime _lastestUpdateTime;
+    PrintScheduler *_printScheduler;
 };
 
 #endif // RESINUPDATER_H

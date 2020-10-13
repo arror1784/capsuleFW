@@ -23,45 +23,20 @@
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
-
-struct Info{
-    int totalLayer;
-    double layerHeight;
-};
-
-struct PrintSetting
-{
-    int heightOffset;
-    double printerLedOffset;
-};
-
-struct Resin{
-    double resinLedOffset;
-    double contractionRatio;
-    int bedCuringLayer;
-    int curingTime;
-    int zHopHeight;
-    int maxSpeed;
-    int initSpeed;
-    int upAccelSpeed;
-    int upDecelSpeed;
-    int downAccelSpeed;
-    int downDecelSpeed;
-    int bedCuringTime;
-    int layerDelay;
-};
-
+#include "printersetting.h"
 
 class WebSocketClient;
 class BedControl;
 class BedSerialport;
+class ResinUpdater;
 class PrintScheduler : public QThread
 {
     Q_OBJECT
-
 public:
     PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
-    ~PrintScheduler();
+
+    friend class BedControl;
+    friend class ResinUpdater;
 
     void initBed();
     void bedFinish();
@@ -159,7 +134,7 @@ public slots:
     QString receiveFromUIGetPrintName(){return _printName;}
     QString receiveFromUIGetMaterialName(){return _materialName;}
 
-    QVariant receiveFromUIGetPrinterOption(QString key);
+//    QVariant receiveFromUIGetPrinterOption(QString key);
 
     QVariant receiveFromUIGetPrintOption(QString key);
     QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
@@ -169,9 +144,9 @@ public slots:
 
     void receiveFromUIPrintFinishError();
 
-    void receiveFromUISetPrinterOption(QString key,double value);   //only QML
-    void receiveFromUISetPrinterOption(QString key,int value);      //only QML
-    void receiveFromUISetPrinterOption(QString key,QString value);  //only QML
+//    void receiveFromUISetPrinterOption(QString key,double value);   //only QML
+//    void receiveFromUISetPrinterOption(QString key,int value);      //only QML
+//    void receiveFromUISetPrinterOption(QString key,QString value);  //only QML
 
     QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
     QVariant receiveFromUIGetMaterialOption(QString material,QString key);
@@ -204,12 +179,12 @@ protected:
     void run()override;
 
 private:
+    PrinterSetting _printerSetting;
+
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
 
     std::mutex _mPrint;
-
-    int _bedCuringLayer = 5;
 
     const QString _fileExtension = ".png";
 
@@ -225,6 +200,8 @@ private:
     int _bedMoveFinished;
     int _bedMaxPrintNum;
 
+
+    int _bedCuringLayer = 5;
     int _progress = 0;
     long long _lastStartTime = 0;
     long long _elapsedTime = 0;

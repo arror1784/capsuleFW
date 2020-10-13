@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     QQmlContext* ctx = engine.rootContext();
 
     NetworkControl nc;
-    ResinUpdater ru;
+    ResinUpdater ru(printScheduler);
     Updater up;
     WPA wpa;
 //    WPA wpa("/var/run/wpa_supplicant/wlx88366cfb28d9");

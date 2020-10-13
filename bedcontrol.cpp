@@ -1,4 +1,4 @@
-#include "bedcontrol.h"
+﻿#include "bedcontrol.h"
 
 #include "bedserialport.h"
 #include "printscheduler.h"
@@ -112,14 +112,14 @@ void BedControl::printDelay(){
     future = QtConcurrent::run([this](){
         //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
         QString material = _sched->materialName();
-        QJsonObject jo = PrinterSetting::getInstance().getPrintSetting("UV_time_spend").toObject();
+        auto jo = _sched->_printerSetting.UVTimeSpend;
         int time;
 
-        if(jo[material].isNull()){
+        if(jo.contains(material)){
             time = 0;
             jo.insert(material,0);
         }else{
-            time = jo[material].toInt();
+            time = jo[material];
         }
         _delayTime += layerDelay;
         QThread::msleep(layerDelay);
@@ -142,7 +142,8 @@ void BedControl::printDelay(){
             _UVtime += curingTime;
         }
 
-        PrinterSetting::getInstance().setPrintSetting("UV_time_spend",jo);
+        _sched->_printerSetting.UVTimeSpend = jo;
+        _sched->_printerSetting.save();
         moveUpCommand();
     });
 }

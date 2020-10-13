@@ -15,8 +15,9 @@
 
 #include <QJsonArray>
 #include <vector>
+#include <QMap>
 
-class PrinterSetting : public Hix::Common::Singleton<PrinterSetting>, public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting, public Hix::Common::Json::JsonWriteSetting
+class PrinterSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting, public Hix::Common::Json::JsonWriteSetting
 {
 private:
     const QString _filePath = "/opt/capsuleFW/capsuleSetting.json";
@@ -27,8 +28,8 @@ public:
     void parse() override;
     void save() override;
 
-    QVector<int> UVTimeSpend;
-    QVector<int> motorTimeSpend;
+    QMap<QString,int> UVTimeSpend;
+    QMap<QString,int> motorTimeSpend;
     QVector<QString> materialList;
     QVector<QString> enableMaterialList;
 
