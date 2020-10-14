@@ -750,6 +750,18 @@ void PrintScheduler::receiveFromUIPrintFinish(){
 void PrintScheduler::receiveFromUIPrintFinishError(){
     bedError();
 }
+
+void PrintScheduler::receiveFromUISetHeightOffset(int value)
+{
+    _printerSetting.heightOffset = value;
+    _printerSetting.save();
+}
+
+void PrintScheduler::receiveFromUISetLedOffset(double value)
+{
+    _printerSetting.ledOffset = value;
+    _printerSetting.save();
+}
 void PrintScheduler::receiveFromUIPrintPause(){
 
 //    _wsClient->sendPauseStart();
@@ -784,15 +796,24 @@ void PrintScheduler::receiveFromUIConnected()
 //    return _printScheduler->getPrintSetting(key).toVariant();
 //}
 
-//void PrintScheduler::receiveFromUISetPrinterOption(QString key,double value){
-//    _printScheduler->setPrintSetting(key,value);
-//}
-//void PrintScheduler::receiveFromUISetPrinterOption(QString key,int value){
-//    _printScheduler->setPrintSetting(key,value);
-//}
-//void PrintScheduler::receiveFromUISetPrinterOption(QString key,QString value){
-//    _printScheduler->setPrintSetting(key,value);
-//}
+
+
+QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
+
+    try {
+        QString val;
+        miniz_cpp::zip_file file(path.toStdString());
+        val = QString::fromStdString(file.read("resin.json"));
+
+        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+        QJsonObject setting = d.object();
+
+        return setting[key].toVariant();
+
+    } catch (std::exception e) {
+        return 0;
+    }
+}
 
 QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString key){
     if(material == "Custom"){
@@ -819,23 +840,6 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
     }else{
         ResinSetting rs(material);
 //        return rs.getResinSetting(key).toVariant();
-    }
-}
-
-QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
-
-    try {
-        QString val;
-        miniz_cpp::zip_file file(path.toStdString());
-        val = QString::fromStdString(file.read("resin.json"));
-
-        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-        QJsonObject setting = d.object();
-
-        return setting[key].toVariant();
-
-    } catch (std::exception e) {
-        return 0;
     }
 }
 

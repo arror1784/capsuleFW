@@ -20,7 +20,6 @@
 class PrinterSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting, public Hix::Common::Json::JsonWriteSetting
 {
 private:
-    const QString _filePath = "/opt/capsuleFW/capsuleSetting.json";
 
 public:
     PrinterSetting();

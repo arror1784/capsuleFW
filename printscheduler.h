@@ -144,9 +144,8 @@ public slots:
 
     void receiveFromUIPrintFinishError();
 
-//    void receiveFromUISetPrinterOption(QString key,double value);   //only QML
-//    void receiveFromUISetPrinterOption(QString key,int value);      //only QML
-//    void receiveFromUISetPrinterOption(QString key,QString value);  //only QML
+    void receiveFromUISetHeightOffset(int value);
+    void receiveFromUISetLedOffset(double value);
 
     QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
     QVariant receiveFromUIGetMaterialOption(QString material,QString key);

@@ -262,7 +262,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromUISetPrinterOption("led_offset",currentLEDBrightness)
+                scheduler.receiveFromUISetLedOffset(currentLEDBrightness)
                 stackView.pop(StackView.Immediate)
             }
         }

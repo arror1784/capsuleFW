@@ -1,4 +1,4 @@
-#include "resinsetting.h"
+﻿#include "resinsetting.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -22,7 +22,6 @@ void ResinSetting::parse()
     for(auto &i : _object.keys()){
         if(i == "last_update"){
             lastUpdate = Hix::Common::Json::getValue<QString>(_object,"last_update");
-            continue;
         }else{
             resinInfo ri;
             QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(_object,i);
