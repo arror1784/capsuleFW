@@ -33,13 +33,15 @@
 #endif /* _MSC_VER */
 
 #ifndef CONFIG_NATIVE_WINDOWS
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #ifndef __vxworks
 #include <sys/uio.h>
 #include <sys/time.h>
 #endif /* __vxworks */
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#else
+# include <ws2tcpip.h>
+# include <io.h>
 #endif /* CONFIG_NATIVE_WINDOWS */
-
 #endif /* INCLUDES_H */

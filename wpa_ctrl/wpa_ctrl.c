@@ -11,11 +11,25 @@
 #define CONFIG_CTRL_IFACE
 #define CONFIG_CTRL_IFACE_UNIX
 
-#ifdef CONFIG_CTRL_IFACE
-
-#ifdef CONFIG_CTRL_IFACE_UNIX
+#ifndef _MSC_VER
 #include <sys/un.h>
 #include <unistd.h>
+#else
+# include <ws2tcpip.h>
+# include <io.h>
+#define UNIX_PATH_MAX 108
+typedef struct sockaddr_un {
+	ADDRESS_FAMILY sun_family;
+	char sun_path[UNIX_PATH_MAX];
+} SOCKADDR_UN, * PSOCKADDR_UN;
+
+#endif
+#ifdef CONFIG_CTRL_IFACE
+
+//was this intentional?
+#ifdef CONFIG_CTRL_IFACE_UNIX
+//#include <sys/un.h>
+//#include <unistd.h>
 #include <fcntl.h>
 #endif /* CONFIG_CTRL_IFACE_UNIX */
 #ifdef CONFIG_CTRL_IFACE_UDP_REMOTE

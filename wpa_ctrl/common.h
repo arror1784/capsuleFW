@@ -77,14 +77,23 @@ typedef int socklen_t;
 /* Define platform specific integer types */
 
 #ifdef _MSC_VER
-typedef UINT64 u64;
-typedef UINT32 u32;
-typedef UINT16 u16;
-typedef UINT8 u8;
-typedef INT64 s64;
-typedef INT32 s32;
-typedef INT16 s16;
-typedef INT8 s8;
+#include <stdint.h>
+//typedef UINT64 u64;
+//typedef UINT32 u32;
+//typedef UINT16 u16;
+//typedef UINT8 u8;
+//typedef INT64 s64;
+//typedef INT32 s32;
+//typedef INT16 s16;
+//typedef INT8 s8;
+typedef uint64_t u64;
+typedef uint32_t u32;
+typedef uint16_t u16;
+typedef uint8_t u8;
+typedef int64_t s64;
+typedef int32_t s32;
+typedef int16_t s16;
+typedef int8_t s8;
 #define WPA_TYPES_DEFINED
 #endif /* _MSC_VER */
 
@@ -160,6 +169,16 @@ static inline unsigned int wpa_swap_32(unsigned int v)
 #endif /* __BIG_ENDIAN */
 #endif /* __LITTLE_ENDIAN */
 #endif /* __BYTE_ORDER */
+
+//ah beepbeep
+#ifdef _MSC_VER
+#include <Windows.h>
+#if REG_DWORD == REG_DWORD_LITTLE_ENDIAN
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#else
+#define __BYTE_ORDER __BIG_ENDIAN
+#endif
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define le_to_host16(n) ((__force u16) (le16) (n))

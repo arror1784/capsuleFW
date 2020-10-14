@@ -16,6 +16,9 @@
 #define BUILD_CONFIG_H
 
 /* Insert configuration defines, e.g., #define EAP_MD5, here, if needed. */
+#ifdef _MSC_VER
+#define CONFIG_WIN32_DEFAULTS
+#endif
 
 #ifdef CONFIG_WIN32_DEFAULTS
 #define CONFIG_NATIVE_WINDOWS

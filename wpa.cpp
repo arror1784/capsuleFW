@@ -7,9 +7,8 @@
 #include <stdio.h>
 #include <QMap>
 #include <QDebug>
-#include <unistd.h>
-
-#include <error.h>
+//#include <unistd.h>
+//#include <error.h>
 #include <cstdlib>
 
 #include <QVector>

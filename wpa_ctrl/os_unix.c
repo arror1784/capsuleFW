@@ -9,7 +9,12 @@
 #include "includes.h"
 
 #include <time.h>
+#ifndef _MSC_VER
 #include <sys/wait.h>
+
+#else
+
+#endif 
 
 #ifdef ANDROID
 #include <sys/capability.h>
@@ -67,6 +72,15 @@ int os_get_time(struct os_time *t)
 }
 
 
+struct timespec {
+	long tv_sec;
+	long tv_nsec;
+}; 
+//int getRealTimeSinceEpch(int, timespec* spec)
+//{
+//	const auto p0 = std::chrono::time_point<std::chrono::system_clock>{};
+//}
+
 int os_get_reltime(struct os_reltime *t)
 {
 #ifndef __MACH__
@@ -75,32 +89,32 @@ int os_get_reltime(struct os_reltime *t)
 #elif defined(CLOCK_MONOTONIC)
 	static clockid_t clock_id = CLOCK_MONOTONIC;
 #else
-	static clockid_t clock_id = CLOCK_REALTIME;
+	//static clockid_t clock_id = CLOCK_REALTIME;
 #endif
 	struct timespec ts;
 	int res;
 
 	while (1) {
-		res = clock_gettime(clock_id, &ts);
+		//res = clock_gettime(clock_id, &ts);
 		if (res == 0) {
 			t->sec = ts.tv_sec;
 			t->usec = ts.tv_nsec / 1000;
 			return 0;
 		}
-		switch (clock_id) {
-#ifdef CLOCK_BOOTTIME
-		case CLOCK_BOOTTIME:
-			clock_id = CLOCK_MONOTONIC;
-			break;
-#endif
-#ifdef CLOCK_MONOTONIC
-		case CLOCK_MONOTONIC:
-			clock_id = CLOCK_REALTIME;
-			break;
-#endif
-		case CLOCK_REALTIME:
-			return -1;
-		}
+//		switch (clock_id) {
+//#ifdef CLOCK_BOOTTIME
+//		case CLOCK_BOOTTIME:
+//			clock_id = CLOCK_MONOTONIC;
+//			break;
+//#endif
+//#ifdef CLOCK_MONOTONIC
+//		case CLOCK_MONOTONIC:
+//			clock_id = CLOCK_REALTIME;
+//			break;
+//#endif
+//		case CLOCK_REALTIME:
+//			return -1;
+//		}
 	}
 #else /* __MACH__ */
 	uint64_t abstime, nano;
