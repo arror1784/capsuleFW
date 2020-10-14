@@ -281,7 +281,7 @@ Item {
                 goHome = true
                 waitPopup.open()
                 scheduler.receiveFromUIGoHome()
-                scheduler.receiveFromUISetPrinterOption("height_offset",maxHightOffset)
+                scheduler.receiveFromUISetHeightOffset(maxHightOffset)
             }
         }
     }

@@ -13,6 +13,7 @@
 
 #include "printersetting.h"
 #include "resinsetting.h"
+#include "common/jsonutil.h"
 
 ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
 //    : _url("http://10.42.0.1:8000/resin/download/")
@@ -144,28 +145,36 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     QString mID = key;
                     sl.append(mID);
                     //To do add resin create code
+                    ResinSetting rs(mID);
+                    QJsonObject object = ja.value(key).toObject();
 
-//                    ResinSetting rs(mID);
-//                    ResinSetting::resinInfo ri;
-//                    QJsonObject jo = ja.value(key).toObject();
+                    for(auto &i : object.keys()){
+                        if(i == "last_update"){
+                            rs.lastUpdate = Hix::Common::Json::getValue<QString>(object,"last_update");
+                        }else{
+                            ResinSetting::resinInfo ri;
+                            QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(object,i);
 
-//                    ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-//                    ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
-//                    ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
+                            ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
+                            ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
+                            ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
-//                    ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
-//                    ri.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
-//                    ri.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
-//                    ri.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
-//                    ri.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
-//                    ri.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
-//                    ri.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
-//                    ri.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
-//                    ri.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
-//                    ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
-//                    ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
-//                    ri.material = Hix::Common::Json::getValue<int>(jo,"material");
-//                    rs.resinList.insert(ja.value(key).toObject());
+                            ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
+                            ri.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
+                            ri.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
+                            ri.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
+                            ri.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
+                            ri.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
+                            ri.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
+                            ri.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
+                            ri.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
+                            ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
+                            ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
+                            ri.material = Hix::Common::Json::getValue<int>(jo,"material");
+
+                            rs.resinList.insert(i,ri);
+                        }
+                    }
                 }
 
                 _printScheduler->_printerSetting.materialList = sl;
