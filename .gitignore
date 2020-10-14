@@ -1,2 +1,4 @@
 /.project
 .vscode
+/build
+vc140.pdb
