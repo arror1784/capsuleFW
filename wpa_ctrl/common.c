@@ -5,6 +5,7 @@
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
  */
+#ifndef _MSC_VER
 
 #include "includes.h"
 
@@ -1200,3 +1201,5 @@ int str_starts(const char *str, const char *start)
 {
 	return os_strncmp(str, start, os_strlen(start)) == 0;
 }
+
+#endif

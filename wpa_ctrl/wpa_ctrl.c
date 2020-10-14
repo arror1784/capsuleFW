@@ -6,6 +6,7 @@
  * See README for more details.
  */
 
+#ifndef _MSC_VER
 #include "includes.h"
 
 #define CONFIG_CTRL_IFACE
@@ -760,3 +761,5 @@ int wpa_ctrl_get_fd(struct wpa_ctrl *ctrl)
 #endif /* CONFIG_CTRL_IFACE_NAMED_PIPE */
 
 #endif /* CONFIG_CTRL_IFACE */
+
+#endif

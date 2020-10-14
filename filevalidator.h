@@ -13,15 +13,14 @@
     along with Slate. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FILEVALIDATOR_H
-#define FILEVALIDATOR_H
+#pragma once
 
 #include <QObject>
 #include <QUrl>
 
 #include "slate-global.h"
 
-class SLATE_EXPORT FileValidator : public QObject
+class FileValidator : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
@@ -57,4 +56,3 @@ protected:
     bool mTreatAsImage;
 };
 
-#endif // FILEVALIDATOR_H

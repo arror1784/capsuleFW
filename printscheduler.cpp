@@ -606,12 +606,13 @@ int PrintScheduler::deletePrintFolder()
 //        qDebug() << " create folder sucess";
 //    }
     qDebug() << "hello world" << this;
-
+    return 0;
 }
 
 int PrintScheduler::sayHello()
 {
     qDebug() << "say hello";
+    return 0;
 }
 
 

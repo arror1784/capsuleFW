@@ -1,7 +1,6 @@
-#ifndef WPA_H
-#define WPA_H
+#pragma once
 
-#include "wpa_ctrl/wpa_ctrl.h"
+
 
 #include <QObject>
 #include <QVariantList>
@@ -99,4 +98,3 @@ private:
 
 
 
-#endif // WPA_H
