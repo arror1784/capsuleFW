@@ -13,6 +13,7 @@ namespace Hix {
             {
             protected:
                 virtual void parse() = 0;
+                virtual QString serialize() = 0;
             };
         }
     }

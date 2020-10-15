@@ -3,7 +3,6 @@
 
 #include "common/jsonreadsetting.h"
 #include "common/jsonsetting.h"
-#include "common/jsonwritesetting.h"
 
 #include "common/jsonutil.h"
 
@@ -13,6 +12,7 @@ public:
     InfoSetting(QString& path);
 
     void parse() override;
+    QString serialize() override;
 
     double layerHeight;
     int totalLayer;

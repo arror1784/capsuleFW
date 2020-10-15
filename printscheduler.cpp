@@ -11,6 +11,8 @@
 
 #include <QDateTime>
 
+#include <limits>
+
 #include "printersetting.h"
 #include "QJsonArray"
 #include "QProcess"
@@ -29,10 +31,52 @@
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
+static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
 PrintScheduler::PrintScheduler() :
     _LCDState(true)
 {
+    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+    QObject::connect(_wsClient,&WebSocketClient::startByWeb,this,&PrintScheduler::receiveFromUIPrintStart);
+    QObject::connect(_wsClient,&WebSocketClient::pauseByWeb,this,&PrintScheduler::receiveFromUIPrintPause);
+    QObject::connect(_wsClient,&WebSocketClient::resumeByWeb,this,&PrintScheduler::receiveFromUIPrintResume);
+    QObject::connect(_wsClient,&WebSocketClient::finishByWeb,this,&PrintScheduler::receiveFromUIPrintFinish);
+    QObject::connect(_wsClient,&WebSocketClient::getMaterialListbyWeb,this,&PrintScheduler::receiveFromUIGetMaterialList);
+    QObject::connect(_wsClient,&WebSocketClient::getPrintInfoByWeb,this,&PrintScheduler::receiveFromUIGetPrintInfoToWeb);
+
+
+    QObject::connect(this,&PrintScheduler::sendToUIUpdateProgress,_wsClient,&WebSocketClient::updateProgressToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrint,_wsClient,&WebSocketClient::changeToPrintToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseStart,_wsClient,&WebSocketClient::changeToPauseStartToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseFinish,_wsClient,&WebSocketClient::changeToPauseFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToResume,_wsClient,&WebSocketClient::changeToResumeToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToQuit,_wsClient,&WebSocketClient::changeToQuitToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintFinish,_wsClient,&WebSocketClient::changeToPrintFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkError,_wsClient,&WebSocketClient::changeToPrintWorkErrorToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkErrorFinish,_wsClient,&WebSocketClient::changeToPrintWorkErrorFinishToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUIPrintSettingError,_wsClient,&WebSocketClient::changeToPrintSettingErrorToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIMaterialList,_wsClient,&WebSocketClient::materialListToWeb);
+
+    QObject::connect(this,&PrintScheduler::sendToUIEnableTimer,_wsClient,&WebSocketClient::enableTimer);
+
+    QObject::connect(this,&PrintScheduler::sendToUIPrintInfo,_wsClient,&WebSocketClient::getPrintInfoToWeb);
+    QObject::connect(this,&PrintScheduler::sendToUISetTotalTime,_wsClient,&WebSocketClient::setTotalTime);
+
+
+    _wsClient->open();
+
+    if(addSerialPort()){
+        _USBPortConnection = false;
+        _printState = "USBCONNECTIONERROR";
+        emit sendToUIPortOpenError();
+    }else{
+        _USBPortConnection = true;
+    }
+
+    addPrintingBed('A');
+
 }
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
@@ -76,56 +120,6 @@ int PrintScheduler::saveFile(QString path, QByteArray byte){
     saveFile.write(byte);
     saveFile.close();
     return 0;
-}
-
-void PrintScheduler::run(){
-
-    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
-    QObject::connect(_wsClient,&WebSocketClient::startByWeb,this,&PrintScheduler::receiveFromUIPrintStart);
-    QObject::connect(_wsClient,&WebSocketClient::pauseByWeb,this,&PrintScheduler::receiveFromUIPrintPause);
-    QObject::connect(_wsClient,&WebSocketClient::resumeByWeb,this,&PrintScheduler::receiveFromUIPrintResume);
-    QObject::connect(_wsClient,&WebSocketClient::finishByWeb,this,&PrintScheduler::receiveFromUIPrintFinish);
-    QObject::connect(_wsClient,&WebSocketClient::getMaterialListbyWeb,this,&PrintScheduler::receiveFromUIGetMaterialList);
-    QObject::connect(_wsClient,&WebSocketClient::getPrintInfoByWeb,this,&PrintScheduler::receiveFromUIGetPrintInfoToWeb);
-
-
-    QObject::connect(this,&PrintScheduler::sendToUIUpdateProgress,_wsClient,&WebSocketClient::updateProgressToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrint,_wsClient,&WebSocketClient::changeToPrintToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseStart,_wsClient,&WebSocketClient::changeToPauseStartToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseFinish,_wsClient,&WebSocketClient::changeToPauseFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToResume,_wsClient,&WebSocketClient::changeToResumeToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToQuit,_wsClient,&WebSocketClient::changeToQuitToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintFinish,_wsClient,&WebSocketClient::changeToPrintFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkError,_wsClient,&WebSocketClient::changeToPrintWorkErrorToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkErrorFinish,_wsClient,&WebSocketClient::changeToPrintWorkErrorFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIPrintSettingError,_wsClient,&WebSocketClient::changeToPrintSettingErrorToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIMaterialList,_wsClient,&WebSocketClient::materialListToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIEnableTimer,_wsClient,&WebSocketClient::enableTimer);
-
-    QObject::connect(this,&PrintScheduler::sendToUIPrintInfo,_wsClient,&WebSocketClient::getPrintInfoToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUISetTotalTime,_wsClient,&WebSocketClient::setTotalTime);
-
-
-    _wsClient->open();
-
-    if(addSerialPort()){
-        _USBPortConnection = false;
-        _printState = "USBCONNECTIONERROR";
-        emit sendToUIPortOpenError();
-        while(true)
-            QThread::exec();
-    }else{
-        _USBPortConnection = true;
-    }
-
-    addPrintingBed('A');
-
-    qDebug() << "print scheduler" << QThread::currentThread();
-    while(true)
-        QThread::exec();
 }
 
 QString PrintScheduler::materialName() const
@@ -457,8 +451,6 @@ int PrintScheduler::donwloadFiles(QJsonObject byte)
 bool PrintScheduler::isCustom(QString path)
 {
     QString val;
-
-    qDebug() << path;
     try {
 
         miniz_cpp::zip_file file(path.toStdString());
@@ -596,25 +588,18 @@ int PrintScheduler::setupForPrint(QString materialName)
 int PrintScheduler::deletePrintFolder()
 {
 
-//    std::filesystem::path dir(printFilePath.toStdString());
-//    if(std::filesystem::exists(dir) == true){
-//        std::filesystem::remove_all(dir);
-//    }
-//    if(!std::filesystem::create_directory(dir)){
-//        qDebug()<< " create folder fail" << printFilePath;
-//    }else{
-//        qDebug() << " create folder sucess";
-//    }
+    std::filesystem::path dir(printFilePath.toStdString());
+    if(std::filesystem::exists(dir) == true){
+        std::filesystem::remove_all(dir);
+    }
+    if(!std::filesystem::create_directory(dir)){
+        qDebug()<< " create folder fail" << printFilePath;
+    }else{
+        qDebug() << " create folder sucess";
+    }
     qDebug() << "hello world" << this;
 
 }
-
-int PrintScheduler::sayHello()
-{
-    qDebug() << "say hello";
-}
-
-
 int PrintScheduler::unZipFiles(QString path)
 {
     try {
@@ -630,7 +615,6 @@ int PrintScheduler::unZipFiles(QString path)
 void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName)
 {
     qDebug() << fileName;
-//    std::lock_guard<std::mutex> ml(_mPrint);
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
         return;
@@ -643,18 +627,14 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
         emit sendToUIPrintSettingError(5);
         return;
     }
-//    deletePrintFolder();
-    qDebug() << this;
-
-    qDebug() << QThread::currentThreadId();
-    sayHello();
+    deletePrintFolder();
 
     qDebug() << "debug delete print folder finish";
 
-//    if(unZipFiles(fileName)){
-//        emit sendToUIPrintSettingError(6);
-//        return;
-//    }
+    if(unZipFiles(fileName)){
+        emit sendToUIPrintSettingError(6);
+        return;
+    }
     qDebug() << "debug unzip finish";
 
     if(setupForPrint(materialName)){
@@ -663,10 +643,9 @@ void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString material
     }
     qDebug() << "debug setup finish";
 
-//    QStringList sl = fileName.split('/').last().split('.');
-//    sl.removeLast();
-//    _printName =  sl.join('.');
-    _printName =  fileName;
+    QStringList sl = fileName.split('/').last().split('.');
+    sl.removeLast();
+    _printName =  sl.join('.');
     _materialName = materialName;
 
     printStart();
@@ -762,6 +741,7 @@ void PrintScheduler::receiveFromUISetLedOffset(double value)
     _printerSetting.ledOffset = value;
     _printerSetting.save();
 }
+
 void PrintScheduler::receiveFromUIPrintPause(){
 
 //    _wsClient->sendPauseStart();
@@ -787,35 +767,17 @@ void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
     emit sendToUIPrintInfo(_printState, _materialName, _printName, _layerHeight, eT, _totalPrintTime, _progress,_enableTimer);
 }
 
-void PrintScheduler::receiveFromUIConnected()
+int PrintScheduler::receiveFromUIGetHeightOffset()
 {
-    emit sendToUIPortOpenError();
-//    emit sendToUI
-}
-//QVariant PrintScheduler::receiveFromUIGetPrinterOption(QString key){
-//    return _printScheduler->getPrintSetting(key).toVariant();
-//}
-
-
-
-QVariant PrintScheduler::receiveFromUIGetMaterialOptionFromPath(QString path,QString key){
-
-    try {
-        QString val;
-        miniz_cpp::zip_file file(path.toStdString());
-        val = QString::fromStdString(file.read("resin.json"));
-
-        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-        QJsonObject setting = d.object();
-
-        return setting[key].toVariant();
-
-    } catch (std::exception e) {
-        return 0;
-    }
+    return _printerSetting.heightOffset;
 }
 
-QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString key){
+double PrintScheduler::receiveFromUIGetLedOffset()
+{
+    return _printerSetting.ledOffset;
+}
+
+QString PrintScheduler::receiveFromUIGetMaterialOption(QString material){
     if(material == "Custom"){
         QFile file;
         QString val;
@@ -825,7 +787,6 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
             qDebug() << "info file open error";
             qDebug() << file.fileName();
             Logger::GetInstance()->write(file.fileName() + " file open error");
-            return -2;
         }else{
             qDebug() << "resin file open sucess";
             Logger::GetInstance()->write(file.fileName() + " file open sucess");
@@ -834,54 +795,35 @@ QVariant PrintScheduler::receiveFromUIGetMaterialOption(QString material,QString
         file.close();
 
         QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-        QJsonObject setting = d.object();
 
-        return setting[key].toVariant();
+        return d.toJson();
     }else{
         ResinSetting rs(material);
-//        return rs.getResinSetting(key).toVariant();
+        return rs.serialize();
     }
 }
 
-QVariant PrintScheduler::receiveFromUIGetPrintOption(QString key)
+QString PrintScheduler::receiveFromUIGetPrintOption()
 {
-    QFile file;
-    QString val;
+    QString val = printFilePath + QStringLiteral("/info.json");
 
-    file.setFileName(printFilePath + QStringLiteral("/info.json"));
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << "info file open error";
-        qDebug() << file.fileName();
-        Logger::GetInstance()->write(file.fileName() + " file open error");
-        return -2;
-    }else{
-        qDebug() << "info file open sucess";
-        Logger::GetInstance()->write(file.fileName() + " file open sucess");
-    }
-    val = file.readAll();
-    file.close();
+    InfoSetting info(val);
 
-    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-    QJsonObject setting = d.object();
-
-    return setting[key].toVariant();
+    return info.serialize();
 }
-QVariant PrintScheduler::receiveFromUIGetPrintOptionFromPath(QString key, QString path)
+
+QString PrintScheduler::receiveFromUIGetInfoSetting(QString path)
 {
     try {
         QString val;
         miniz_cpp::zip_file file(path.toStdString());
         val = QString::fromStdString(file.read("info.json"));
 
-        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-        QJsonObject setting = d.object();
-
-        return setting[key].toVariant();
+        return val;
 
     } catch (std::exception& e) {
-        return 0;
+        return "";
     }
-
 }
 
 void PrintScheduler::receiveFromUISetTotalPrintTime(int time)
@@ -911,12 +853,12 @@ void PrintScheduler::receiveFromUIMoveMaxHeight(){
 
 QString PrintScheduler::receiveFromUIGetVersion()
 {
-    return Version::getInstance().getVersion();
+    return Version::getInstance().version;
 }
 
 QString PrintScheduler::receiveFromUIGetModelNo()
 {
-    return ModelNo::getInstance().getModelNo();
+    return ModelNo::getInstance().modelNo;
 }
 
 void PrintScheduler::receiveFromUISetPrintTime(int time)

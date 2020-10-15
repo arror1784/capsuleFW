@@ -16,6 +16,8 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
+    signal hello()
+
     StackView{
         id: stackView
         anchors.fill: parent
@@ -118,6 +120,12 @@ Window {
         }
     }
     Component.onCompleted: {
+
+        hello.connect(scheduler.sendToUIChangeToPrint)
+        scheduler.receiveFromQMLPrintStart.connect(hello)
+
+
+
         wifi.checkNetworkConnect()
     }
 }

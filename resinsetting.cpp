@@ -48,6 +48,15 @@ void ResinSetting::parse()
     }
 }
 
+QString ResinSetting::serialize()
+{
+    save();
+
+    QJsonDocument doc(_object);
+
+    return doc.toJson();
+}
+
 void ResinSetting::save()
 {
     QJsonObject jo;
@@ -81,6 +90,7 @@ void ResinSetting::save()
     if(!saveFile.open(QIODevice::WriteOnly)){
         qDebug() << "save file open error";
     }
+    _object = jo;
     QJsonDocument saveDoc(jo);
 
     saveFile.write(saveDoc.toJson());

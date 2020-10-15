@@ -242,16 +242,23 @@ Item {
             startTime = new Date().getTime()
         }
 
-
-//      sendToUIPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress)
+//      onSendToUIPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress)
 
         onSendToUIFirstlayerStart:{
             var currentDate = new Date()
             firstLayerTimeStart = currentDate.getTime()
         }
         onSendToUIFirstlayerFinish:{
-            var total_layer = scheduler.receiveFromUIGetPrintOption("total_layer")
-            var bed_curting_layer = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName(),"bed_curing_layer")
+            //To do Todo
+
+//            var JsonStringPrint = scheduler.receiveFromUIGetInfoSetting(stackView.get(1).selectedFilePath);
+//            var JsonObjectPrint = JSON.parse(JsonString);
+
+//            var JsonStringPrint = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName())
+//            var JsonObjectPrint = JSON.parse(JsonString);
+
+//            var total_layer = JsonObjectPrint.total_layer
+//            var bed_curting_layer = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName(),"bed_curing_layer")
 
             var T = new Date()
             var Tduration = T.getTime() - firstLayerTimeStart
@@ -288,11 +295,12 @@ Item {
         ct = 0
         waitPopupOpened = false
 
-        fileNameText.text = scheduler.receiveFromUIGetPrintName()
-        fileInfoPopup.setText(scheduler.receiveFromUIGetPrintName(),
-                              "Calculating",
-                              scheduler.receiveFromUIGetMaterialName(),
-                              scheduler.receiveFromUIGetPrintOption("layer_height"))
+//        fileNameText.text = scheduler.receiveFromUIGetPrintName()
+//        fileInfoPopup.setText(scheduler.receiveFromUIGetPrintName(),
+//                              "Calculating",
+//                              scheduler.receiveFromUIGetMaterialName(),
+//                              scheduler.receiveFromUIGetPrintOption("layer_height"))
+        //Todo To do
     }
 
 }

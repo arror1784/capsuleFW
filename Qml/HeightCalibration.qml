@@ -321,6 +321,6 @@ Item {
         waitPopup.open()
         scheduler.receiveFromUIAutoHome()
 //        scheduler.receiveFromUIMoveMaxHeight()
-        maxHightOffset = scheduler.receiveFromUIGetPrinterOption("height_offset")
+        maxHightOffset = scheduler.receiveFromUIGetHeightOffset()
     }
 }

@@ -151,7 +151,7 @@ Item {
         }
     }
     Component.onCompleted: {
-        fileName.text = scheduler.receiveFromUIGetPrintName()
+//        fileName.text = scheduler.receiveFromUIGetPrintName()
         var it = stackView.find(function(item,index){return item.isPrinMenu})
         timesec = it.timesec
         timemin = it.timemin

@@ -130,7 +130,7 @@ void Updater::waitForMCUFirmwareUpdate()
 
 QString Updater::version()
 {
-    return Version::getInstance().getVersion();
+    return Version::getInstance().version;
 }
 
 QString Updater::lastestVersion()
@@ -207,7 +207,7 @@ void Updater::requestFinished(QNetworkReply* reply)
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
             _lastestVersion = jo["version"].toString();
-            if(jo["version"].toString() != Version::getInstance().getVersion()){
+            if(jo["version"].toString() != Version::getInstance().version){
                 emit updateAvailable();
             }else{
                 emit updateNotAvailable();

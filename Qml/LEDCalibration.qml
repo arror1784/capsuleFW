@@ -273,6 +273,6 @@ Item {
         target: scheduler
     }
     Component.onCompleted: {
-        currentLEDBrightness = scheduler.receiveFromUIGetPrinterOption("led_offset")
+        currentLEDBrightness = scheduler.receiveFromUIGetLedOffset()
     }
 }

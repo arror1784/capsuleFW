@@ -128,11 +128,15 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(materialSelectList.currentIndex !== -1){
+                    var JsonString = scheduler.receiveFromUIGetInfoSetting(stackView.get(1).selectedFilePath);
+                    var JsonObject= JSON.parse(JsonString);
+
                     materialName = materialSelectList.currentItem.metarialname
                     printingPopup.open()
                     printingPopup.setText(stackView.get(1).selectedFileName,
                                           materialName,
-                                          scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).selectedFilePath))
+                                          JsonObject.layer_height)
+                    //To do Todo
                 }
             }
         }
