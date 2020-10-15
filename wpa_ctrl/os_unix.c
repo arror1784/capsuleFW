@@ -5,6 +5,7 @@
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
  */
+#ifndef _MSC_VER
 
 #include "includes.h"
 
@@ -817,3 +818,4 @@ int os_exec(const char *program, const char *arg, int wait_completion)
 
 	return 0;
 }
+#endif

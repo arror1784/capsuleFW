@@ -8,7 +8,6 @@
 using namespace Hix::Common;
 
 constexpr auto _filePath = "/opt/capsuleFW/capsuleSetting.json";
-
 PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (_filePath)
 {
 

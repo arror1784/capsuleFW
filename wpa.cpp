@@ -7,9 +7,13 @@
 #include <stdio.h>
 #include <QMap>
 #include <QDebug>
+#ifndef _MSC_VER
+#include "wpa_ctrl/wpa_ctrl.h"
 #include <unistd.h>
 
 #include <error.h>
+
+#endif
 #include <cstdlib>
 
 #include <QVector>
@@ -234,14 +238,18 @@ void WPA::checkNetworkConnect()
 
 void WPA::ctrlConnect()
 {
+#ifndef _MSC_VER
+
     _ctrl = wpa_ctrl_open(_ctrlPath.toStdString().data());
     _ctrl_event = wpa_ctrl_open(_ctrlPath.toStdString().data());
 
     checkConnected();
+#endif
 }
 
 void WPA::wpa_ctrl_event()
 {
+#ifndef _MSC_VER
     char *resBuff = new char[4096];
     size_t size = 4096;
     int a;
@@ -289,6 +297,7 @@ void WPA::wpa_ctrl_event()
             emit currentStateChange();
         }
     }
+#endif
 }
 
 void WPA::clearList()
@@ -308,6 +317,8 @@ QString WPA::currentSSID() const
 
 int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf)
 {
+#ifndef _MSC_VER
+
     int ret;
     size_t len = 4096;
 
@@ -320,8 +331,9 @@ int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf)
         return -1;
     }
     buf[len -1] = '\0';
-
+#endif
     return 0;
+
 }
 
 void WPA::parseWifiInfo()

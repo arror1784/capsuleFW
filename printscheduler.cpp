@@ -598,8 +598,19 @@ int PrintScheduler::deletePrintFolder()
         qDebug() << " create folder sucess";
     }
     qDebug() << "hello world" << this;
-
+    return 0;
 }
+<<<<<<< HEAD
+=======
+
+int PrintScheduler::sayHello()
+{
+    qDebug() << "say hello";
+    return 0;
+}
+
+
+>>>>>>> 65ce7c2ffde62c516e2f780a362c5e7c4eae7021
 int PrintScheduler::unZipFiles(QString path)
 {
     try {

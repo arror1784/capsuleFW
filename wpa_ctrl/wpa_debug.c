@@ -5,6 +5,7 @@
  * This software may be distributed under the terms of the BSD license.
  * See README for more details.
  */
+#ifndef _MSC_VER
 
 #include "includes.h"
 
@@ -860,3 +861,4 @@ int str_to_debug_level(const char *s)
 		return MSG_ERROR;
 	return -1;
 }
+#endif
