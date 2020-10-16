@@ -1,4 +1,4 @@
-
+﻿
 #ifndef PRINTSCHEDULER_H
 #define PRINTSCHEDULER_H
 
@@ -120,6 +120,17 @@ signals:
     void sendToUISWUpdateFinished();        //only QML
     void sendToUISWUpdateError();           //only QML
 
+    void sendToUIHeightOffset(int offset);
+    void sendToUILEDOffset(double offset);
+
+    void sendToUIMaterialOption(QString material,QString option);
+    void sendToUIGetPrintOption(QString option);
+
+    void sendToUIGetInfoSetting(QString path,QString option);
+    void sendToUIIsCustom(bool value);
+    void sendToUIVersion(QString version);
+    void sendToUIModelNo(QString modelNo);
+
 public slots:
 
     void receiveFromQMLPrintStart(QString path,QString materialName);
@@ -166,8 +177,8 @@ public slots:
     void receiveFromUIMoveMicro(int micro);
     void receiveFromUIMoveMaxHeight();
 
-    QString receiveFromUIGetVersion();
-    QString receiveFromUIGetModelNo();
+    void receiveFromUIGetVersion();
+    void receiveFromUIGetModelNo();
 
     void receiveFromUISetPrintTime(int time);       //for real time
 

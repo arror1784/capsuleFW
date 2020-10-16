@@ -455,12 +455,15 @@ bool PrintScheduler::isCustom(QString path)
 
         miniz_cpp::zip_file file(path.toStdString());
         if(file.has_file("resin.json")){
+            emit sendToUIIsCustom(true);
             return true;
         }else{
+            emit sendToUIIsCustom(false);
             return false;
         }
 
     } catch (std::exception e) {
+        emit sendToUIIsCustom(false);
         return false;
     }
 }
@@ -598,19 +601,8 @@ int PrintScheduler::deletePrintFolder()
         qDebug() << " create folder sucess";
     }
     qDebug() << "hello world" << this;
-    return 0;
+
 }
-<<<<<<< HEAD
-=======
-
-int PrintScheduler::sayHello()
-{
-    qDebug() << "say hello";
-    return 0;
-}
-
-
->>>>>>> 65ce7c2ffde62c516e2f780a362c5e7c4eae7021
 int PrintScheduler::unZipFiles(QString path)
 {
     try {
@@ -780,11 +772,13 @@ void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
 
 int PrintScheduler::receiveFromUIGetHeightOffset()
 {
+    emit sendToUIHeightOffset(_printerSetting.heightOffset);
     return _printerSetting.heightOffset;
 }
 
 double PrintScheduler::receiveFromUIGetLedOffset()
 {
+    emit sendToUILEDOffset(_printerSetting.ledOffset);
     return _printerSetting.ledOffset;
 }
 
@@ -807,9 +801,11 @@ QString PrintScheduler::receiveFromUIGetMaterialOption(QString material){
 
         QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
+        emit sendToUIMaterialOption(material,d.toJson());
         return d.toJson();
     }else{
         ResinSetting rs(material);
+        emit sendToUIMaterialOption(material,rs.serialize());
         return rs.serialize();
     }
 }
@@ -820,6 +816,7 @@ QString PrintScheduler::receiveFromUIGetPrintOption()
 
     InfoSetting info(val);
 
+    emit sendToUIGetPrintOption(info.serialize());
     return info.serialize();
 }
 
@@ -830,9 +827,11 @@ QString PrintScheduler::receiveFromUIGetInfoSetting(QString path)
         miniz_cpp::zip_file file(path.toStdString());
         val = QString::fromStdString(file.read("info.json"));
 
+        emit sendToUIGetInfoSetting(path,val);
         return val;
 
     } catch (std::exception& e) {
+        emit sendToUIGetInfoSetting(path,"");
         return "";
     }
 }
@@ -862,14 +861,14 @@ void PrintScheduler::receiveFromUIMoveMaxHeight(){
     bedSerialPort->sendCommand(buffer);
 }
 
-QString PrintScheduler::receiveFromUIGetVersion()
+void PrintScheduler::receiveFromUIGetVersion()
 {
-    return Version::getInstance().version;
+    emit sendToUIVersion(Version::getInstance().version);
 }
 
-QString PrintScheduler::receiveFromUIGetModelNo()
+void PrintScheduler::receiveFromUIGetModelNo()
 {
-    return ModelNo::getInstance().modelNo;
+    emit sendToUIModelNo(ModelNo::getInstance().modelNo);
 }
 
 void PrintScheduler::receiveFromUISetPrintTime(int time)

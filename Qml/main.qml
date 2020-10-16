@@ -16,7 +16,7 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
-    signal hello()
+    signal sendToBusySet(bool value)
 
     StackView{
         id: stackView
@@ -28,11 +28,11 @@ Window {
         onCurrentItemChanged: {
 
             if(currentItem.name === "mainMenu"){
-                scheduler.receiveFromUIBusySet(false)
+                sendToBusySet(false)
             }else if(currentItem.name === "usbPortOpenError"){
-                scheduler.receiveFromUIBusySet(true)
+                sendToBusySet(true)
             }else{
-                scheduler.receiveFromUIBusySet(true)
+                ssendToBusySet(true)
             }
         }
     }
@@ -69,20 +69,17 @@ Window {
         visible: true
 //        scale: 0.1
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIPrintSettingError :{
+        function receivePrintSettingError(code){
 //            stackView.pop(mainMenu,StackView.Immediate)
             errorPopup.open(code)
         }
-        onSendToUIExitError :{
+        function receiveExitError(){
             busyErrorPopup.open()
         }
-        onSendToUIExit:{
+        function receiveExit(){
             shutDownPopup.open()
         }
-        onSendToUILCDState:{
+        function receiveLCDState(state){
 
             if(state){
                 lcdOff.close()
@@ -90,11 +87,11 @@ Window {
                 lcdOff.open()
             }
         }
-        onSendToUIPortOpenError:{
+        function receivePortOpenError(){
             if(stackView.currentItem.name !== "USBPortOpenError")
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
         }
-        onSendToUIChangeToPrint: {
+        function receiveChangeToPrint(){
             var it = stackView.find(function(item,index){return item.isPrinMenu})
             if(stackView.currentItem.isPrinMenu){
                 console.debug("isPrintMenu")
@@ -107,7 +104,6 @@ Window {
                 }
             }
         }
-    }
     Connections{
         id: wifiConnection
         target: wifi
@@ -120,11 +116,14 @@ Window {
         }
     }
     Component.onCompleted: {
+        scheduler.sendToUIPrintSettingError.connect(receivePrintSettingError)
+        scheduler.sendToUIExitError.connect(receiveExitError)
+        scheduler.sendToUIExit.connect(receiveExit)
+        scheduler.sendToUILCDState.connect(receiveLCDState)
+        scheduler.sendToUIPortOpenError.connect(receivePortOpenError)
+        scheduler.sendToUIChangeToPrint(receiveChangeToPrint)
 
-        hello.connect(scheduler.sendToUIChangeToPrint)
-        scheduler.receiveFromQMLPrintStart.connect(hello)
-
-
+        sendToBusySet.connect(scheduler.receiveFromUIBusySet)
 
         wifi.checkNetworkConnect()
     }

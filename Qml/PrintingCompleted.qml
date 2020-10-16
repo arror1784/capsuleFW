@@ -9,6 +9,8 @@ Item {
     property int timesec: 0
     property int timemin: 0
 
+    signal sendToPrintAgain()
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -114,7 +116,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromUIPrintAgain()
+                sendToPrintAgain()
             }
         }
     }
@@ -148,12 +150,10 @@ Item {
             }
         }
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-    }
 
     Component.onCompleted: {
+        sendToPrintAgain.connect(scheduler.receiveFromUIPrintAgain)
+
 //        fileName.text = scheduler.receiveFromUIGetPrintName()
         var it = stackView.find(function(item,index){return item.isPrinMenu})
         timesec = it.timesec

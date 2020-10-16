@@ -13,6 +13,12 @@ Item {
     property bool goMicro: false
     property bool goAutoHome: false
 
+    signal sendToMoveMicro(int micro)
+    signal sendToGoHome()
+    signal sendToAutoHome()
+    signal sendToSetHeightOffset(int offset)
+    signal sendToMoveMaxHeight()
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -101,7 +107,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(-100)
+                sendToMoveMicro(-100)
                 maxHightOffset += -100
             }
         }
@@ -142,7 +148,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(100)
+                sendToMoveMicro(100)
                 maxHightOffset += 100
             }
         }
@@ -171,7 +177,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(-10)
+                sendToMoveMicro(-10)
                 maxHightOffset += -10
             }
         }
@@ -212,7 +218,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(10)
+                sendToMoveMicro(10)
                 maxHightOffset += 10
             }
         }
@@ -246,7 +252,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromUIGoHome()
+                sendToGoHome()
             }
         }
     }
@@ -280,37 +286,41 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromUIGoHome()
-                scheduler.receiveFromUISetHeightOffset(maxHightOffset)
+                sendToGoHome()
+                sendToSetHeightOffset(maxHightOffset)
             }
         }
     }
     WaitPopup{
         id: waitPopup
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIMoveOk:{
-            if(goHome){
-                goHome = false
-                waitPopup.close()
-                stackView.pop(StackView.Immediate)
-            }else if(goMaxheight){
-                goMaxheight = false
-                buttonEnabled = true
-                waitPopup.close()
-            }else if(goMicro){
-                goMicro = false
-                buttonEnabled = true
-            }else if(goAutoHome){
-                goAutoHome = false
-                goMaxheight = true
-                scheduler.receiveFromUIMoveMaxHeight()
-            }
+    function receiveUIMoveOk(){
+        if(goHome){
+            goHome = false
+            waitPopup.close()
+            stackView.pop(StackView.Immediate)
+        }else if(goMaxheight){
+            goMaxheight = false
+            buttonEnabled = true
+            waitPopup.close()
+        }else if(goMicro){
+            goMicro = false
+            buttonEnabled = true
+        }else if(goAutoHome){
+            goAutoHome = false
+            goMaxheight = true
+            sendToMoveMaxHeight()
         }
     }
     Component.onCompleted: {
+
+        sendToMoveMicro.connect(scheduler.receiveFromUIMoveMicro)
+        sendToGoHome.connect(scheduler.receiveFromUIGoHome)
+        sendToSetHeightOffset.connect(scheduler.receiveFromUISetHeightOffset)
+        sendToMoveMaxHeight.connect(scheduler.receiveFromUIMoveMaxHeight)
+        sendToAutoHome.connect(scheduler.receiveFromUIAutoHome)
+
+        scheduler.sendToUIMoveOk.connect(receiveUIMoveOk)
 
         buttonEnabled = false
         goHome = false
@@ -319,7 +329,7 @@ Item {
         goAutoHome = true
 
         waitPopup.open()
-        scheduler.receiveFromUIAutoHome()
+        sendToAutoHome()
 //        scheduler.receiveFromUIMoveMaxHeight()
         maxHightOffset = scheduler.receiveFromUIGetHeightOffset()
     }
