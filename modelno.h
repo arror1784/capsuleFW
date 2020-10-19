@@ -1,28 +1,23 @@
 #ifndef MODELNO_H
 #define MODELNO_H
 
-#include <QObject>
-#include <QJsonObject>
-
 #include "Singleton.h"
 
-class ModelNo : public QObject, public Hix::Common::Singleton<ModelNo>
+#include "common/jsonreadsetting.h"
+#include "common/jsonsetting.h"
+
+#include "common/jsonutil.h"
+
+class ModelNo : public QObject, public Hix::Common::Singleton<ModelNo>, public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting
 {
-    Q_OBJECT
-private:
-    static ModelNo* _ins;
-
-    const QString _url = "/opt/capsuleFW/modelNo.json";
-
-    QJsonObject _setting;
-
-    bool _opend = false;
-
 public:
     ModelNo();
     ~ModelNo();
 
-    QString getModelNo();
+    void parse() override;
+    QString serialize() override;
+
+    QString modelNo;
 
 };
 

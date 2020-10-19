@@ -44,8 +44,6 @@ signals:
 
     void getPrintInfoByWeb();
 
-
-
 public slots:
     void updateProgressToWeb(int progress); //update Progress
 

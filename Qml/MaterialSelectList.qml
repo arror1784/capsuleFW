@@ -9,6 +9,9 @@ Item {
 
     property string materialName
 
+    signal sendToPrintStart(string path,string material)
+    signal sendToGetMaterialList()
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -128,11 +131,15 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(materialSelectList.currentIndex !== -1){
+                    var JsonString = scheduler.receiveFromUIGetInfoSetting(stackView.get(1).selectedFilePath);
+                    var JsonObject= JSON.parse(JsonString);
+
                     materialName = materialSelectList.currentItem.metarialname
                     printingPopup.open()
                     printingPopup.setText(stackView.get(1).selectedFileName,
                                           materialName,
-                                          scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).selectedFilePath))
+                                          JsonObject.layer_height)
+                    //To do Todo
                 }
             }
         }
@@ -140,26 +147,27 @@ Item {
     PrintingPopup{
         id: printingPopup
         onStartPrintingButtonClicked:{
-            scheduler.receiveFromQMLPrintStart(stackView.get(1).selectedFilePath,materialSelectList.currentItem.metarialname)
+            sendToPrintStart(stackView.get(1).selectedFilePath,materialSelectList.currentItem.metarialname)
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIMaterialList: {
-            for(var i = 0; i < name.length; i++){
-                inserMaterialList(name[i])
-            }
+    function receiveMaterialList(name){
+        for(var i = 0; i < name.length; i++){
+            inserMaterialList(name[i])
         }
     }
     Component.onCompleted: {
+        scheduler.sendToUIMaterialList(receiveMaterialList)
+
+        sendToPrintStart.connect(scheduler.receiveFromQMLPrintStart)
+        sendToGetMaterialList.connect(scheduler.receiveFromUIGetMaterialList)
+
         materialSelectList.currentIndex = -1
         if(scheduler.isCustom(stackView.get(1).selectedFilePath)){
             inserMaterialList("Custom")
         }
 
-        scheduler.receiveFromUIGetMaterialList()
+        sendToGetMaterialList()
     }
     function inserMaterialList(name){
         materialModel.append({"name":name})

@@ -43,6 +43,7 @@ public:
     std::unordered_map<QString,resinInfo> resinList;
 
     void parse() override;
+    QString serialize() override;
     void save() override;
 
     bool removeFile();

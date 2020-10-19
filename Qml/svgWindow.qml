@@ -38,21 +38,23 @@ Window {
         anchors.fill: parent
         cursorShape: Qt.BlankCursor
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToLCDChangeImage: {
-            console.log(imagePath)
-            printImage.source = imagePath
-        }
-        onSendToLCDSetImageScale: {
-            printImage.scale = value
-        }
-        onSendToUIChangeToPrintWorkErrorFinish:{
-            printImage.source = "qrc:/image/defaultBlackImage.png"
-        }
-        onSendToUIChangeToPrintFinish:{
-            printImage.source = "qrc:/image/defaultBlackImage.png"
-        }
+    function receiveLCDChangeImage(imagePath){
+        console.log(imagePath)
+        printImage.source = imagePath
+    }
+    function receiveLCDSetImageScale(value) {
+        printImage.scale = value
+    }
+    function receiveUIChangeToPrintWorkErrorFinish(){
+        printImage.source = "qrc:/image/defaultBlackImage.png"
+    }
+    function receiveUIChangeToPrintFinish(){
+        printImage.source = "qrc:/image/defaultBlackImage.png"
+    }
+    Component.onCompleted: {
+        scheduler.sendToLCDChangeImage.connect(receiveLCDChangeImage)
+        scheduler.sendToLCDSetImageScale(receiveLCDSetImageScale)
+        scheduler.sendToUIChangeToPrintWorkErrorFinish(receiveUIChangeToPrintWorkErrorFinish)
+        scheduler.sendToUIChangeToPrintFinish(receiveUIChangeToPrintFinish)
     }
 }

@@ -37,6 +37,7 @@ SOURCES += \
     printscheduler.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
+    schedulerthread.cpp \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
@@ -83,6 +84,7 @@ HEADERS += \
     printscheduler.h \
     resinsetting.h \
     resinupdater.h \
+    schedulerthread.h \
     updater.h \
     version.h \
     websocketclient.h \

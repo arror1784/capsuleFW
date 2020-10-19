@@ -1,4 +1,4 @@
-
+﻿
 #ifndef PRINTSCHEDULER_H
 #define PRINTSCHEDULER_H
 
@@ -23,13 +23,14 @@
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
+#include "version.h"
 #include "printersetting.h"
 
 class WebSocketClient;
 class BedControl;
 class BedSerialport;
 class ResinUpdater;
-class PrintScheduler : public QThread
+class PrintScheduler : public QObject
 {
     Q_OBJECT
 public:
@@ -69,6 +70,9 @@ public:
 
     void printStart();
     void printResume();
+
+    void setMotorSpendtime();
+    QString materialName() const;
 
 signals:
     void sendToLCDChangeImage(QString imagePath);   //only QML
@@ -116,8 +120,18 @@ signals:
     void sendToUISWUpdateFinished();        //only QML
     void sendToUISWUpdateError();           //only QML
 
+    void sendToUIHeightOffset(int offset);
+    void sendToUILEDOffset(double offset);
+
+    void sendToUIMaterialOption(QString material,QString option);
+    void sendToUIGetPrintOption(QString option);
+
+    void sendToUIGetInfoSetting(QString path,QString option);
+    void sendToUIIsCustom(bool value);
+    void sendToUIVersion(QString version);
+    void sendToUIModelNo(QString modelNo);
+
 public slots:
-    void receiveFromUIConnected();
 
     void receiveFromQMLPrintStart(QString path,QString materialName);
     void receiveFromUIPrintStart(QString fileName,QString materialName,QJsonObject byte);
@@ -129,15 +143,21 @@ public slots:
 
     void receiveFromUIGetMaterialList();
 
-    void receiveFromUIGetPrintInfoToWeb();
+    void receiveFromUIGetPrintInfoToWeb();                    // when print time calc finish, send to web info
 
-    QString receiveFromUIGetPrintName(){return _printName;}
-    QString receiveFromUIGetMaterialName(){return _materialName;}
+//    QString receiveFromUIGetPrintName(){return _printName;} // UI has information
+//    QString receiveFromUIGetMaterialName(){return _materialName;} // UI has information
 
-//    QVariant receiveFromUIGetPrinterOption(QString key);
+    int receiveFromUIGetHeightOffset();
+    double receiveFromUIGetLedOffset();
 
-    QVariant receiveFromUIGetPrintOption(QString key);
-    QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
+    QString receiveFromUIGetMaterialOption(QString material);
+
+//    QVariant receiveFromUIGetPrintOption(QString key);
+//    QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
+
+    QString receiveFromUIGetPrintOption();
+    QString receiveFromUIGetInfoSetting(QString path);
 
     void receiveFromUISetTotalPrintTime(int time);
     //use only qml or scheduler
@@ -146,9 +166,6 @@ public slots:
 
     void receiveFromUISetHeightOffset(int value);
     void receiveFromUISetLedOffset(double value);
-
-    QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
-    QVariant receiveFromUIGetMaterialOption(QString material,QString key);
 
     bool isCustom(QString path);
 
@@ -160,8 +177,8 @@ public slots:
     void receiveFromUIMoveMicro(int micro);
     void receiveFromUIMoveMaxHeight();
 
-    QString receiveFromUIGetVersion();
-    QString receiveFromUIGetModelNo();
+    void receiveFromUIGetVersion();
+    void receiveFromUIGetModelNo();
 
     void receiveFromUISetPrintTime(int time);       //for real time
 
@@ -170,15 +187,9 @@ public slots:
 public:
     BedSerialport* bedSerialPort = nullptr;
 
-    QString materialName() const;
-
-    void setMotorSpendtime();
-
-protected:
-    void run()override;
-
 private:
     PrinterSetting _printerSetting;
+    Version _version;
 
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
@@ -204,12 +215,13 @@ private:
     int _progress = 0;
     long long _lastStartTime = 0;
     long long _elapsedTime = 0;
-    bool _enableTimer = false;
     double _layerHeight = 0.0;
-    QString _printState = "ready";
     long long _totalPrintTime = 0;
+    QString _printState = "ready";
 
     int _printTime = 0;
+
+    bool _enableTimer = false;
 
     bool _bedError = false;
 

@@ -241,8 +241,4 @@ Item {
     IpPopup{
         id: ipPopup
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-    }
 }

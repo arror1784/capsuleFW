@@ -14,6 +14,7 @@ Rectangle {
     visible: false
 
     signal back()
+    signal sendToShutdown()
 
     FontLoader{
         id: openSansSemibold
@@ -104,7 +105,7 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    scheduler.receiveFromUIShutdown()
+                    sendToShutdown()
                 }
             }
         }
@@ -115,14 +116,13 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-    }
     function open(){
         popup.open()
     }
     function close(){
         popup.close()
+    }
+    Component.onCompleted: {
+        sendToShutdown.connect(scheduler.receiveFromUIShutdown)
     }
 }

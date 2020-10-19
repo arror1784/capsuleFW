@@ -13,9 +13,12 @@
 #include <QQmlContext>
 #include <QQuickView>
 
+#include <wpa.h>
+
 #include "bedserialport.h"
 #include "bedcontrol.h"
 #include "printscheduler.h"
+#include "schedulerthread.h"
 #include "printersetting.h"
 #include "logger.h"
 #include "networkcontrol.h"
@@ -23,7 +26,6 @@
 #include "resinupdater.h"
 #include "filevalidator.h"
 #include "updater.h"
-#include <wpa.h>
 #include "version.h"
 
 #include "kinetimecalc.h"
@@ -38,32 +40,30 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    PrintScheduler* printScheduler = new PrintScheduler();
-    qDebug() << printScheduler;
+//    PrintScheduler* printScheduler = new PrintScheduler();
 
     QQmlApplicationEngine engine;
+
+    SchedulerThread backThread(engine);
+
     QQmlContext* ctx = engine.rootContext();
 
-    NetworkControl nc;
-    ResinUpdater ru(printScheduler);
-    Updater up;
-    WPA wpa;
-//    WPA wpa("/var/run/wpa_supplicant/wlx88366cfb28d9");
-//    wpa_ctrl* wp;
+//    NetworkControl nc;
+//    ResinUpdater ru(printScheduler);
+//    Updater up;
+//    WPA wpa;
 
-    QObject::connect(&up,&Updater::updateMCUFirmware,printScheduler,&PrintScheduler::receiveFromUpdaterFirmUpdate);
-    QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
+//    QObject::connect(&up,&Updater::updateMCUFirmware,printScheduler,&PrintScheduler::receiveFromUpdaterFirmUpdate);
+//    QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
 
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
 
-    qDebug() << QThread::currentThreadId();
-
-    ctx->setContextProperty("scheduler",printScheduler);
-    ctx->setContextProperty("nc",&nc);
-    ctx->setContextProperty("resinUpdater",&ru);
-    ctx->setContextProperty("SWUpdater",&up);
-    ctx->setContextProperty("wifi",&wpa);
+//    ctx->setContextProperty("scheduler",printScheduler);
+//    ctx->setContextProperty("nc",&nc);
+//    ctx->setContextProperty("resinUpdater",&ru);
+//    ctx->setContextProperty("SWUpdater",&up);
+//    ctx->setContextProperty("wifi",&wpa);
 
 //    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     if (engine.rootObjects().isEmpty())
         return -1;
 
-    printScheduler->start();
+//    printScheduler->start();
 
     return app.exec();
 }

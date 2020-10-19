@@ -59,7 +59,13 @@ void PrinterSetting::save()
     if(!saveFile.open(QIODevice::WriteOnly)){
         qDebug() << "save file open error";
     }
+    _object = jo;
     QJsonDocument saveDoc(jo);
 
     saveFile.write(saveDoc.toJson());
+}
+
+QString PrinterSetting::serialize()
+{
+
 }

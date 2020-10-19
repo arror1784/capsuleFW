@@ -26,6 +26,7 @@ public:
 
     void parse() override;
     void save() override;
+    QString serialize() override;
 
     QMap<QString,int> UVTimeSpend;
     QMap<QString,int> motorTimeSpend;

@@ -164,8 +164,4 @@ Item {
         id:infoPopup
     }
 
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-    }
 }

@@ -1,28 +1,23 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include <QObject>
-#include <QJsonObject>
-
 #include "Singleton.h"
 
-class Version : public QObject, public Hix::Common::Singleton<Version>
+#include "common/jsonreadsetting.h"
+#include "common/jsonsetting.h"
+
+#include "common/jsonutil.h"
+
+class Version : public Hix::Common::Singleton<Version>, public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting
 {
-    Q_OBJECT
-private:
-    static Version* _ins;
-
-    const QString _url = "/opt/capsuleFW/version.json";
-
-    QJsonObject _setting;
-
-    bool _opend = false;
-
 public:    
     Version();
     ~Version();
 
-    QString getVersion();
+    void parse() override;
+    QString serialize() override;
+
+    QString version;
 
 };
 
