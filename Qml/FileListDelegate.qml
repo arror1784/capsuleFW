@@ -21,7 +21,7 @@ Rectangle{
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
 
-    SlideText {
+    Text {
         id: fileNameText
         text: fileName
         color: "#474747"

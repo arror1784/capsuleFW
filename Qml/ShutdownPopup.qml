@@ -122,7 +122,4 @@ Rectangle {
     function close(){
         popup.close()
     }
-    Component.onCompleted: {
-        sendToShutdown.connect(scheduler.receiveFromUIShutdown)
-    }
 }

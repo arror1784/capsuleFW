@@ -7,6 +7,11 @@ Item {
     width: 480
     height: 320
 //    property alias rectangleWidth: rectangle.width
+    property string version
+    property string modelNo
+
+    signal sendToGetVersion()
+    signal sendToGetModelNo()
 
     FontLoader{
         id: openSansSemibold
@@ -151,17 +156,29 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                var version = scheduler.receiveFromUIGetVersion()
-                var modelNo = scheduler.receiveFromUIGetModelNo()
                 infoPopup.open()
                 infoPopup.setText(version,modelNo)
             }
         }
     }
-
-
     InfoPopup{
         id:infoPopup
     }
+    function recevieGetVersion(ver){
+        version = ver
+    }
+    function receiveGetModelNO(mo){
+        modelNo = mo
+    }
 
+    Component.onCompleted: {
+        scheduler.sendToUIVersion.connect(recevieGetVersion)
+        scheduler.sendToUIModelNo.connect(receiveGetModelNO)
+
+        sendToGetVersion.connect(scheduler.receiveFromUIGetVersion)
+        sendToGetModelNo.connect(scheduler.receiveFromUIGetModelNo)
+
+        sendToGetModelNo()
+        sendToGetVersion()
+    }
 }

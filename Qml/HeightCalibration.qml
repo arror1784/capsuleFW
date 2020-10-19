@@ -19,6 +19,8 @@ Item {
     signal sendToSetHeightOffset(int offset)
     signal sendToMoveMaxHeight()
 
+    signal sendToGetHeightOffset()
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -312,6 +314,10 @@ Item {
             sendToMoveMaxHeight()
         }
     }
+    function receiveHeigthOffset(offset){
+        maxHightOffset = offset
+    }
+
     Component.onCompleted: {
 
         sendToMoveMicro.connect(scheduler.receiveFromUIMoveMicro)
@@ -319,8 +325,10 @@ Item {
         sendToSetHeightOffset.connect(scheduler.receiveFromUISetHeightOffset)
         sendToMoveMaxHeight.connect(scheduler.receiveFromUIMoveMaxHeight)
         sendToAutoHome.connect(scheduler.receiveFromUIAutoHome)
+        sendToGetHeightOffset.connect(scheduler.receiveFromUIGetHeightOffset)
 
         scheduler.sendToUIMoveOk.connect(receiveUIMoveOk)
+        scheduler.sendToUIHeightOffset.connect(receiveHeigthOffset)
 
         buttonEnabled = false
         goHome = false
@@ -328,9 +336,9 @@ Item {
         goMicro = false
         goAutoHome = true
 
-        waitPopup.open()
         sendToAutoHome()
-//        scheduler.receiveFromUIMoveMaxHeight()
-        maxHightOffset = scheduler.receiveFromUIGetHeightOffset()
+        receiveHeigthOffset()
+
+        waitPopup.open()
     }
 }

@@ -11,6 +11,8 @@ Item {
 
     signal sendToPrintStart(string path,string material)
     signal sendToGetMaterialList()
+    signal sendToIsCustom(string path)
+    signal sendToInfoSetting(string path)
 
     FontLoader{
         id: openSansSemibold
@@ -131,14 +133,8 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(materialSelectList.currentIndex !== -1){
-                    var JsonString = scheduler.receiveFromUIGetInfoSetting(stackView.get(1).selectedFilePath);
-                    var JsonObject= JSON.parse(JsonString);
-
-                    materialName = materialSelectList.currentItem.metarialname
+                    sendToInfoSetting(stackView.get(1).selectedFilePath)
                     printingPopup.open()
-                    printingPopup.setText(stackView.get(1).selectedFileName,
-                                          materialName,
-                                          JsonObject.layer_height)
                     //To do Todo
                 }
             }
@@ -152,21 +148,40 @@ Item {
         }
     }
     function receiveMaterialList(name){
+        console.log("hello world")
         for(var i = 0; i < name.length; i++){
             inserMaterialList(name[i])
         }
     }
+    function receiveIsCustom(value){
+        if(value){
+            inserMaterialList("Custom")
+        }
+    }
+    function receiveInfoSetting(path, option){
+        var JsonString = option
+        var JsonObject= JSON.parse(JsonString)
+
+        materialName = materialSelectList.currentItem.metarialname
+
+        printingPopup.setText(stackView.get(1).selectedFileName,
+                              materialName,
+                              JsonObject.layer_height)
+    }
+
     Component.onCompleted: {
-        scheduler.sendToUIMaterialList(receiveMaterialList)
+        scheduler.sendToUIMaterialList.connect(receiveMaterialList)
+        scheduler.sendToUIIsCustom.connect(receiveIsCustom)
+        scheduler.sendToUIGetInfoSetting.connect(receiveInfoSetting)
 
         sendToPrintStart.connect(scheduler.receiveFromQMLPrintStart)
         sendToGetMaterialList.connect(scheduler.receiveFromUIGetMaterialList)
+        sendToIsCustom.connect(scheduler.isCustom)
+        sendToInfoSetting.connect(scheduler.receiveFromUIGetInfoSetting)
 
         materialSelectList.currentIndex = -1
-        if(scheduler.isCustom(stackView.get(1).selectedFilePath)){
-            inserMaterialList("Custom")
-        }
 
+        sendToIsCustom(stackView.get(1).selectedFilePath)
         sendToGetMaterialList()
     }
     function inserMaterialList(name){

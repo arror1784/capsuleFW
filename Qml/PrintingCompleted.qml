@@ -154,9 +154,10 @@ Item {
     Component.onCompleted: {
         sendToPrintAgain.connect(scheduler.receiveFromUIPrintAgain)
 
-//        fileName.text = scheduler.receiveFromUIGetPrintName()
         var it = stackView.find(function(item,index){return item.isPrinMenu})
         timesec = it.timesec
         timemin = it.timemin
+        fileName.text = it.printName
+
     }
 }

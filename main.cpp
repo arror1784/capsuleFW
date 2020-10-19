@@ -45,9 +45,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     SchedulerThread backThread(engine);
+    backThread.start();
 
     QQmlContext* ctx = engine.rootContext();
-
+    qDebug() << "main" << QThread::currentThread();
 //    NetworkControl nc;
 //    ResinUpdater ru(printScheduler);
 //    Updater up;
@@ -69,10 +70,10 @@ int main(int argc, char *argv[])
 
 //    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
 
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+//    if (engine.rootObjects().isEmpty())
+//        return -1;
 
 //    printScheduler->start();
 

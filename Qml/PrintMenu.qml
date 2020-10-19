@@ -19,12 +19,17 @@ Item {
 
     property bool isPrinMenu: true
 
+    property string printName
+    property string materialName
+
     signal sendToPrintPause()
     signal sendToPrintResume()
     signal sendToPrintFinish()
     signal sendToSetPrintTime(int time)
     signal sendToSetTotalPrintTime(int time)
     signal sendToGetPrintInfoToWeb()
+
+    signal sendToGetPrintInfo()
 
     FontLoader{
         id: openSansSemibold
@@ -239,15 +244,6 @@ Item {
         waitPopup.open()
         waitPopupOpened = true
     }
-    function receivePrintInfo(){
-        eltime = elapsedTime;
-        startTime = new Date().getTime()
-    }
-
-    function receivePrintInfo(printerState,material, fileName, layerHeight, elapsedTime, totalTime, progress){
-
-    }
-
     function receiveFirstlayerStart(){
         var currentDate = new Date()
         firstLayerTimeStart = currentDate.getTime()
@@ -277,33 +273,21 @@ Item {
         sendToSetTotalPrintTime(currentDate)
         fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
     }
-    Component.onCompleted: {
-        scheduler.sendToUIUpdateProgress.connect(receiveUpdateProgress)
-        scheduler.sendToUIEnableTimer.connect(receiveEnableTimer)
-        scheduler.sendToUIChangeToPauseStart(receiveChangeToPauseStart)
-        scheduler.sendToUIChangeToPauseFinish.connect(receiveChangeToPauseFinish)
-        scheduler.sendToUIChangeToResume.connect(receiveChangeToResume)
-        scheduler.sendToUIChangeToQuit.connect(receiveChangeToQuit)
-        scheduler.sendToUIChangeToPrintFinish.connect(eceiveChangeToPrintFinish)
-        scheduler.sendToUIChangeToPrintWorkErrorFinish.connect(receiveChangeToPrintWorkErrorFinish)
-        scheduler.sendToUIChangeToPrintWorkError.connect(receiveChangeToPrintWorkError)
-        scheduler.sendToUIPrintInfo.connect(receivePrintInfo)
-        scheduler.sendToUIFirstlayerStart.connect(receiveFirstlayerStart)
-        scheduler.sendToUIFirstlayerFinish.connect(receiveFirstlayerFinish)
 
+    function receivePrintInfo(printerState,material, fileName, layerHeight, elapsedTime, totalTime, progress,enableTimer){
+        progressBar.setCurrentValue(progress)
 
-        sendToPrintPause.connect(scheduler.receiveFromUIPrintPause)
-        sendToPrintResume.connect(scheduler.receiveFromUIPrintResume)
-        sendToPrintFinish.connect(scheduler.receiveFromUIPrintFinish)
-        sendToSetPrintTime.connect(scheduler.receiveFromUISetPrintTime)
-        sendToSetTotalPrintTime.connect(scheduler.receiveFromUISetTotalPrintTime)
-        sendToGetPrintInfoToWeb.connect(scheduler.receiveFromUISetTotalPrintTime)
+        printName = fileName
+        fileNameText.text = fileName
+        fileInfoPopup.setFilename(fileName)
 
-        sendToGetPrintInfoToWeb();
-        clear()
-    }
-    function setProgressValue(value){
-        progressBar.setCurrentValue(value)
+        materialName = material
+        fileInfoPopup.setMaterial(material)
+
+        fileInfoPopup.setLayerHeight(layerHeight)
+
+        eltime = elapsedTime;
+        startTime = new Date().getTime()
     }
     function clear(){
         progressBar.setCurrentValue(0)
@@ -319,12 +303,35 @@ Item {
         ct = 0
         waitPopupOpened = false
 
-//        fileNameText.text = scheduler.receiveFromUIGetPrintName()
-//        fileInfoPopup.setText(scheduler.receiveFromUIGetPrintName(),
-//                              "Calculating",
-//                              scheduler.receiveFromUIGetMaterialName(),
+        fileInfoPopup.setPrintingTime("Calculating")
 //                              scheduler.receiveFromUIGetPrintOption("layer_height"))
         //Todo To do
     }
+    Component.onCompleted: {
+        scheduler.sendToUIUpdateProgress.connect(receiveUpdateProgress)
+        scheduler.sendToUIEnableTimer.connect(receiveEnableTimer)
+        scheduler.sendToUIChangeToPauseStart(receiveChangeToPauseStart)
+        scheduler.sendToUIChangeToPauseFinish.connect(receiveChangeToPauseFinish)
+        scheduler.sendToUIChangeToResume.connect(receiveChangeToResume)
+        scheduler.sendToUIChangeToQuit.connect(receiveChangeToQuit)
+        scheduler.sendToUIChangeToPrintFinish.connect(eceiveChangeToPrintFinish)
+        scheduler.sendToUIChangeToPrintWorkErrorFinish.connect(receiveChangeToPrintWorkErrorFinish)
+        scheduler.sendToUIChangeToPrintWorkError.connect(receiveChangeToPrintWorkError)
+        scheduler.sendToUIPrintInfo.connect(receivePrintInfo)
+        scheduler.sendToUIFirstlayerStart.connect(receiveFirstlayerStart)
+        scheduler.sendToUIFirstlayerFinish.connect(receiveFirstlayerFinish)
+        scheduler.sendToUIPrintInfo.connect(receivePrintInfo)
 
+        sendToPrintPause.connect(scheduler.receiveFromUIPrintPause)
+        sendToPrintResume.connect(scheduler.receiveFromUIPrintResume)
+        sendToPrintFinish.connect(scheduler.receiveFromUIPrintFinish)
+        sendToSetPrintTime.connect(scheduler.receiveFromUISetPrintTime)
+        sendToSetTotalPrintTime.connect(scheduler.receiveFromUISetTotalPrintTime)
+//        sendToGetPrintInfoToWeb.connect(scheduler.receiveFromUISetTotalPrintTime)
+        sendToGetPrintInfo.connect(scheduler.receiveFromUIGetPrintInfoToWeb)
+
+        sendToGetPrintInfo();
+//        sendToGetPrintInfoToWeb();
+        clear()
+    }
 }

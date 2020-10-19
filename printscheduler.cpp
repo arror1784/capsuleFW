@@ -864,11 +864,15 @@ void PrintScheduler::receiveFromUIMoveMaxHeight(){
 void PrintScheduler::receiveFromUIGetVersion()
 {
     emit sendToUIVersion(Version::getInstance().version);
+    return;
 }
 
 void PrintScheduler::receiveFromUIGetModelNo()
 {
-    emit sendToUIModelNo(ModelNo::getInstance().modelNo);
+//    {
+//        emit sendToUIModelNo(ModelNo::getInstance().modelNo);
+//    }
+    return;
 }
 
 void PrintScheduler::receiveFromUISetPrintTime(int time)

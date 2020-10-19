@@ -17,6 +17,7 @@ Window {
     screen: Qt.application.screens[1]
 
     signal sendToBusySet(bool value)
+    signal wifiConnectCheck()
 
     StackView{
         id: stackView
@@ -32,7 +33,7 @@ Window {
             }else if(currentItem.name === "usbPortOpenError"){
                 sendToBusySet(true)
             }else{
-                ssendToBusySet(true)
+                sendToBusySet(true)
             }
         }
     }
@@ -53,6 +54,7 @@ Window {
     }
     ShutdownPopup{
         id: shutDownPopup
+
     }
     Image {
         id: networkImage
@@ -104,15 +106,11 @@ Window {
                 }
             }
         }
-    Connections{
-        id: wifiConnection
-        target: wifi
-        onConnectedChange:{
-            if(connected){
-                networkImage.visible = true;
-            }else{
-                networkImage.visible = false;
-            }
+    function wifiConnectedChange(connected){
+        if(connected){
+            networkImage.visible = true;
+        }else{
+            networkImage.visible = false;
         }
     }
     Component.onCompleted: {
@@ -125,6 +123,11 @@ Window {
 
         sendToBusySet.connect(scheduler.receiveFromUIBusySet)
 
-        wifi.checkNetworkConnect()
+        wifi.connectedChange.connect(wifiConnectedChange)
+        wifiConnectCheck.connect(wifi.checkNetworkConnect)
+
+//        shutDownPopup.sendToShutdown.connect(scheduler.receiveFromUIShutdown)
+
+        wifiConnectCheck()
     }
 }
