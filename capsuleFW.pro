@@ -83,7 +83,6 @@ HEADERS += \
     printscheduler.h \
     resinsetting.h \
     resinupdater.h \
-    slate-global.h \
     updater.h \
     version.h \
     websocketclient.h \
