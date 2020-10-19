@@ -14,6 +14,7 @@
 */
 
 #include "filevalidator.h"
+#include <QtGlobal>
 
 #include <QFile>
 #include <QImage>

@@ -4,12 +4,15 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QDebug>
+#include <unordered_map>
+
 
 #include "common/jsonreadsetting.h"
 #include "common/jsonsetting.h"
 #include "common/jsonwritesetting.h"
 
 #include "common/jsonutil.h"
+
 
 class ResinSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting, public Hix::Common::Json::JsonWriteSetting
 {
@@ -37,7 +40,7 @@ public:
     };
 
     QString lastUpdate;
-    QMap<QString,resinInfo> resinList;
+    std::unordered_map<QString,resinInfo> resinList;
 
     void parse() override;
     QString serialize() override;

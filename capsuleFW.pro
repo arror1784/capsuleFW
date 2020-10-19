@@ -85,7 +85,6 @@ HEADERS += \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
-    slate-global.h \
     updater.h \
     version.h \
     websocketclient.h \
