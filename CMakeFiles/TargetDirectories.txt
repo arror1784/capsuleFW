@@ -1,4 +1,0 @@
-/home/jsh/workspace/capsuleFW/CMakeFiles/rebuild_cache.dir
-/home/jsh/workspace/capsuleFW/CMakeFiles/capsuleFW.dir
-/home/jsh/workspace/capsuleFW/CMakeFiles/edit_cache.dir
-/home/jsh/workspace/capsuleFW/CMakeFiles/capsuleFW_autogen.dir
