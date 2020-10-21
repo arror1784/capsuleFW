@@ -12,6 +12,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 # if (${Qt5_FOUND})
 #     message("Found Qt " ${Qt5_VERSION})
 # else()
@@ -92,6 +96,8 @@ wpa_ctrl/wpa_debug.h
 wpa_ctrl/wpabuf.h
 ymodem.h
 zip/zip.h
+schedulerthread.h
+schedulerthread.cpp
 #    zip/zip_file.hpp
 )
 

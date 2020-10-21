@@ -10,7 +10,6 @@ class SchedulerThread : public QThread
 {
     Q_OBJECT
 public:
-    SchedulerThread();
     SchedulerThread(QQmlApplicationEngine& engine);
 
     PrintScheduler *sched() const;

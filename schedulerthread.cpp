@@ -1,7 +1,7 @@
 ﻿#include "schedulerthread.h"
 
 #include <QQmlContext>
-
+#include <QQmlApplicationEngine>
 #include "printscheduler.h"
 #include "networkcontrol.h"
 #include "resinupdater.h"

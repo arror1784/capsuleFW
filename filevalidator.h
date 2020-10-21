@@ -18,8 +18,6 @@
 #include <QObject>
 #include <QUrl>
 
-#include "slate-global.h"
-
 class FileValidator : public QObject
 {
     Q_OBJECT

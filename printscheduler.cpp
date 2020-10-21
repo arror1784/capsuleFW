@@ -65,6 +65,8 @@ PrintScheduler::PrintScheduler() :
     QObject::connect(this,&PrintScheduler::sendToUISetTotalTime,_wsClient,&WebSocketClient::setTotalTime);
 
 
+
+#ifndef _MSC_VER
     _wsClient->open();
 
     if(addSerialPort()){
@@ -74,8 +76,10 @@ PrintScheduler::PrintScheduler() :
     }else{
         _USBPortConnection = true;
     }
-
     addPrintingBed('A');
+
+#endif
+
 
 }
 void PrintScheduler::addPrintingBed(char name){
@@ -601,6 +605,7 @@ int PrintScheduler::deletePrintFolder()
         qDebug() << " create folder sucess";
     }
     qDebug() << "hello world" << this;
+    return 0;
 
 }
 int PrintScheduler::unZipFiles(QString path)
