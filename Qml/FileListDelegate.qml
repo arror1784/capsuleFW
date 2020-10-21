@@ -6,7 +6,7 @@ Rectangle{
     width: parent.width
     height: fileNameText.height
 
-    color: "#88888888"
+    color: "#00000000"
 
     property string filename: ""
     property string parentname: ""

@@ -30,9 +30,7 @@ void SchedulerThread::run()
 
     WebSocketClient wsClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
     QObject::connect(&wsClient,&WebSocketClient::startByWeb,_sched,&PrintScheduler::receiveFromUIPrintStart);
-    QObject::connect(&wsClient,&WebSocketClient::pauseByWeb,_sched,&PrintScheduler::receiveFromUIPrintPause);
-    QObject::connect(&wsClient,&WebSocketClient::resumeByWeb,_sched,&PrintScheduler::receiveFromUIPrintResume);
-    QObject::connect(&wsClient,&WebSocketClient::finishByWeb,_sched,&PrintScheduler::receiveFromUIPrintFinish);
+    QObject::connect(&wsClient,&WebSocketClient::changeStateByWeb,_sched,&PrintScheduler::receiveFromUIPrintStateChange);
     QObject::connect(&wsClient,&WebSocketClient::getMaterialListbyWeb,_sched,&PrintScheduler::receiveFromUIGetMaterialList);
     QObject::connect(&wsClient,&WebSocketClient::getPrintInfoByWeb,_sched,&PrintScheduler::receiveFromUIGetPrintInfoToWeb);
 
@@ -40,13 +38,7 @@ void SchedulerThread::run()
     QObject::connect(_sched,&PrintScheduler::sendToUIUpdateProgress,&wsClient,&WebSocketClient::updateProgressToWeb);
 
     QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPrint,&wsClient,&WebSocketClient::changeToPrintToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPauseStart,&wsClient,&WebSocketClient::changeToPauseStartToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPauseFinish,&wsClient,&WebSocketClient::changeToPauseFinishToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToResume,&wsClient,&WebSocketClient::changeToResumeToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToQuit,&wsClient,&WebSocketClient::changeToQuitToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPrintFinish,&wsClient,&WebSocketClient::changeToPrintFinishToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPrintWorkError,&wsClient,&WebSocketClient::changeToPrintWorkErrorToWeb);
-    QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPrintWorkErrorFinish,&wsClient,&WebSocketClient::changeToPrintWorkErrorFinishToWeb);
+    QObject::connect(_sched,&PrintScheduler::sendToUIChangeState,&wsClient,&WebSocketClient::changeToStateToWeb);
     QObject::connect(_sched,&PrintScheduler::sendToUIPrintSettingError,&wsClient,&WebSocketClient::changeToPrintSettingErrorToWeb);
 
     QObject::connect(_sched,&PrintScheduler::sendToUIMaterialList,&wsClient,&WebSocketClient::materialListToWeb);
@@ -56,7 +48,7 @@ void SchedulerThread::run()
     QObject::connect(_sched,&PrintScheduler::sendToUIPrintInfo,&wsClient,&WebSocketClient::getPrintInfoToWeb);
     QObject::connect(_sched,&PrintScheduler::sendToUISetTotalTime,&wsClient,&WebSocketClient::setTotalTime);
 
-    wsClient.open();
+//    wsClient.open();
 
 //    std::function<void()> func = [this,&nc,&ru,&up,&wpa]() {
 //        qDebug() << "func" << QThread::currentThread();

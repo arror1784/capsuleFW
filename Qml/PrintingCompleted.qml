@@ -9,8 +9,6 @@ Item {
     property int timesec: 0
     property int timemin: 0
 
-    signal sendToPrintAgain()
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -116,7 +114,8 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                sendToPrintAgain()
+                var arg = []
+                connection.receiveFromQmlPrintStart(arg)
             }
         }
     }
@@ -152,8 +151,6 @@ Item {
     }
 
     Component.onCompleted: {
-        sendToPrintAgain.connect(scheduler.receiveFromUIPrintAgain)
-
         var it = stackView.find(function(item,index){return item.isPrinMenu})
         timesec = it.timesec
         timemin = it.timemin

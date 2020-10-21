@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 //    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 

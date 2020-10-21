@@ -12,6 +12,14 @@ Item{
 
     property var animateEnable: false
 
+    function calcTextWidth(){
+        if(movingText.width > root.width){
+            animateEnable = true
+        }else{
+            animateEnable = false
+        }
+    }
+
     clip: true
 
     Text{
@@ -25,15 +33,14 @@ Item{
             loops: Animation.Infinite
             duration: 10000
             running: animateEnable
+
+        }
+        onTextChanged: {
+            calcTextWidth()
+
         }
     }
-
     Component.onCompleted: {
-        console.log(movingText.width,root.width)
-        if(movingText.width > root.width){
-            animateEnable = true
-        }else{
-            animateEnable = false
-        }
+        calcTextWidth()
     }
 }
