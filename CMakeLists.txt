@@ -12,6 +12,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+LINK_LIBRARIES( -lpthread)
+
 # if (${Qt5_FOUND})
 #     message("Found Qt " ${Qt5_VERSION})
 # else()
@@ -58,9 +60,13 @@ wpa_ctrl/wpa_ctrl.c
 wpa_ctrl/wpa_debug.c
 ymodem.cpp
 zip/zip.cpp
+qmlconnecter.cpp
+qmlconnecter.h
 Singleton.h
 bedcontrol.h
 bedserialport.h
+schedulerthread.h
+schedulerthread.cpp
 common.h
 common/jsonreadsetting.h
 common/jsonsetting.h
@@ -92,6 +98,9 @@ wpa_ctrl/wpa_debug.h
 wpa_ctrl/wpabuf.h
 ymodem.h
 zip/zip.h
+qml.qrc
+font.qrc
+image.qrc
 #    zip/zip_file.hpp
 )
 

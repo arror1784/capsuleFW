@@ -21,7 +21,7 @@ Updater::Updater():
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
 
-    checkUpdate();
+//    checkUpdate();
 }
 
 void Updater::saveAsFile(QString name,QByteArray ba)
@@ -141,7 +141,7 @@ QString Updater::lastestVersion()
 void Updater::update()
 {
     qDebug() << "update start";
-    _future = std::async([this]() {
+//    _future = std::async([https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/this]() {
         downloadLIST();
         if(waitForRequest()){
             emit updateError();
@@ -178,7 +178,7 @@ void Updater::update()
         QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
         QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
         QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
-    });
+//    });
 
     return;
 }

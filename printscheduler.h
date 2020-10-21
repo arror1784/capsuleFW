@@ -20,6 +20,8 @@
 
 #include <mutex>
 
+#include <QDebug>
+
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
@@ -94,6 +96,9 @@ signals:
     void sendToUIChangeToPrintWorkError();          //Error when Printing
     void sendToUIChangeToPrintWorkErrorFinish();    //change UI State Print To Ready By Error
 
+    void sendToUIChangeState(QString state);
+
+
     void sendToUIPrintSettingError(int code);       //print setting Error when received print start from UI
 
     void sendToUIEnableTimer(bool enable);      //for enabel Timer
@@ -137,16 +142,11 @@ public slots:
     void receiveFromUIPrintStart(QString fileName,QString materialName,QJsonObject byte);
     void receiveFromUIPrintAgain();
 
-    void receiveFromUIPrintResume();
-    void receiveFromUIPrintPause();
-    void receiveFromUIPrintFinish();
+    void receiveFromUIPrintStateChange(QString CMD);
 
     void receiveFromUIGetMaterialList();
 
     void receiveFromUIGetPrintInfoToWeb();                    // when print time calc finish, send to web info
-
-//    QString receiveFromUIGetPrintName(){return _printName;} // UI has information
-//    QString receiveFromUIGetMaterialName(){return _materialName;} // UI has information
 
     int receiveFromUIGetHeightOffset();
     double receiveFromUIGetLedOffset();
@@ -174,8 +174,8 @@ public slots:
 
     void receiveFromUIGoHome();
     void receiveFromUIAutoHome();
-    void receiveFromUIMoveMicro(int micro);
     void receiveFromUIMoveMaxHeight();
+    void receiveFromUIMoveMicro(int micro);
 
     void receiveFromUIGetVersion();
     void receiveFromUIGetModelNo();
@@ -183,6 +183,7 @@ public slots:
     void receiveFromUISetPrintTime(int time);       //for real time
 
     void receiveFromUpdaterFirmUpdate(QString path);
+
 
 public:
     BedSerialport* bedSerialPort = nullptr;

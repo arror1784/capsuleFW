@@ -18,7 +18,6 @@
 #include <QObject>
 #include <QUrl>
 
-#include "slate-global.h"
 
 class FileValidator : public QObject
 {
@@ -41,6 +40,8 @@ public:
 
     bool treatAsImage() const;
     void setTreatAsImage(bool treatAsImage);
+
+    Q_INVOKABLE void hello();
 
 signals:
     void urlChanged();

@@ -7,8 +7,8 @@ Item {
     width: 480
     height: 320
 //    property alias rectangleWidth: rectangle.width
-    property string version
-    property string modelNo
+    property string version: ""
+    property string modelNo: ""
 
     signal sendToGetVersion()
     signal sendToGetModelNo()
@@ -178,7 +178,7 @@ Item {
         sendToGetVersion.connect(scheduler.receiveFromUIGetVersion)
         sendToGetModelNo.connect(scheduler.receiveFromUIGetModelNo)
 
-        sendToGetModelNo()
-        sendToGetVersion()
+//        sendToGetModelNo()
+//        sendToGetVersion()
     }
 }

@@ -40,7 +40,7 @@ public:
     };
 
     QString lastUpdate;
-    std::unordered_map<QString,resinInfo> resinList;
+    QMap<QString,resinInfo> resinList;
 
     void parse() override;
     QString serialize() override;
