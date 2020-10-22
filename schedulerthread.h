@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QThread>
+#include "qmlconnecter.h"
 
 class PrintScheduler;
 class QQmlApplicationEngine;
@@ -10,7 +11,8 @@ class SchedulerThread : public QThread
 {
     Q_OBJECT
 public:
-    SchedulerThread(QQmlApplicationEngine& engine);
+    SchedulerThread();
+    SchedulerThread(QQmlApplicationEngine& engine, QmlConnecter& conn);
 
     PrintScheduler *sched() const;
 
@@ -19,6 +21,7 @@ private:
     QQmlApplicationEngine& _engine;
 
     PrintScheduler* _sched;
+    QmlConnecter& _conn;
 };
 
 #endif // SCHEDULERTHREAD_H

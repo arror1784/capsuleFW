@@ -27,7 +27,7 @@
 
 #include "ymodem.h"
 
-#include "filesystem"
+#include <filesystem>
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
@@ -36,50 +36,16 @@ static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 PrintScheduler::PrintScheduler() :
     _LCDState(true)
 {
-    _wsClient = new WebSocketClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
-    QObject::connect(_wsClient,&WebSocketClient::startByWeb,this,&PrintScheduler::receiveFromUIPrintStart);
-    QObject::connect(_wsClient,&WebSocketClient::pauseByWeb,this,&PrintScheduler::receiveFromUIPrintPause);
-    QObject::connect(_wsClient,&WebSocketClient::resumeByWeb,this,&PrintScheduler::receiveFromUIPrintResume);
-    QObject::connect(_wsClient,&WebSocketClient::finishByWeb,this,&PrintScheduler::receiveFromUIPrintFinish);
-    QObject::connect(_wsClient,&WebSocketClient::getMaterialListbyWeb,this,&PrintScheduler::receiveFromUIGetMaterialList);
-    QObject::connect(_wsClient,&WebSocketClient::getPrintInfoByWeb,this,&PrintScheduler::receiveFromUIGetPrintInfoToWeb);
-
-
-    QObject::connect(this,&PrintScheduler::sendToUIUpdateProgress,_wsClient,&WebSocketClient::updateProgressToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrint,_wsClient,&WebSocketClient::changeToPrintToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseStart,_wsClient,&WebSocketClient::changeToPauseStartToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPauseFinish,_wsClient,&WebSocketClient::changeToPauseFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToResume,_wsClient,&WebSocketClient::changeToResumeToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToQuit,_wsClient,&WebSocketClient::changeToQuitToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintFinish,_wsClient,&WebSocketClient::changeToPrintFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkError,_wsClient,&WebSocketClient::changeToPrintWorkErrorToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIChangeToPrintWorkErrorFinish,_wsClient,&WebSocketClient::changeToPrintWorkErrorFinishToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUIPrintSettingError,_wsClient,&WebSocketClient::changeToPrintSettingErrorToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIMaterialList,_wsClient,&WebSocketClient::materialListToWeb);
-
-    QObject::connect(this,&PrintScheduler::sendToUIEnableTimer,_wsClient,&WebSocketClient::enableTimer);
-
-    QObject::connect(this,&PrintScheduler::sendToUIPrintInfo,_wsClient,&WebSocketClient::getPrintInfoToWeb);
-    QObject::connect(this,&PrintScheduler::sendToUISetTotalTime,_wsClient,&WebSocketClient::setTotalTime);
-
-
-
-#ifndef _MSC_VER
-    _wsClient->open();
-
     if(addSerialPort()){
         _USBPortConnection = false;
         _printState = "USBCONNECTIONERROR";
         emit sendToUIPortOpenError();
+        return;
     }else{
         _USBPortConnection = true;
     }
+
     addPrintingBed('A');
-
-#endif
-
 
 }
 void PrintScheduler::addPrintingBed(char name){
@@ -263,7 +229,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
             break;
         case PRINT_MOVE_AUTOHOME_OK:
             break;
-        case PRINT_MOVE_FINISH_OK:    qDebug() << QThread::currentThreadId();
+        case PRINT_MOVE_FINISH_OK:
 
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
@@ -606,7 +572,6 @@ int PrintScheduler::deletePrintFolder()
     }
     qDebug() << "hello world" << this;
     return 0;
-
 }
 int PrintScheduler::unZipFiles(QString path)
 {
@@ -715,24 +680,29 @@ void PrintScheduler::receiveFromUIPrintAgain()
     printStart();
 }
 
-void PrintScheduler::receiveFromUIPrintResume(){
-
-    if(_bedWork == BED_PAUSE){
-        printResume();
-        _lastStartTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
-        _enableTimer = true;
-        _printState = "print";
-        emit sendToUIEnableTimer(true);
-        emit sendToUIChangeToResume();
-    }/*else{
-        printStart();
-    }*/
-}
-
-void PrintScheduler::receiveFromUIPrintFinish(){
-    bedFinish();
-    _printState = "quit";
-    emit sendToUIChangeToQuit();
+void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
+{
+    if(CMD == "pause"){
+    //    _wsClient->sendPauseStart();
+        _bedWork = BED_PAUSE_WORK;
+        _printState = "pauseStart";
+        emit sendToUIChangeToPauseStart();
+    }else if(CMD == "resume"){
+        if(_bedWork == BED_PAUSE){
+            printResume();
+            _lastStartTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+            _enableTimer = true;
+            _printState = "print";
+            emit sendToUIEnableTimer(true);
+            emit sendToUIChangeToResume();
+        }/*else{
+            printStart();
+        }*/
+    }else if(CMD == "finish"){
+        bedFinish();
+        _printState = "quit";
+        emit sendToUIChangeToQuit();
+    }
 }
 void PrintScheduler::receiveFromUIPrintFinishError(){
     bedError();
@@ -750,13 +720,6 @@ void PrintScheduler::receiveFromUISetLedOffset(double value)
     _printerSetting.save();
 }
 
-void PrintScheduler::receiveFromUIPrintPause(){
-
-//    _wsClient->sendPauseStart();
-    _bedWork = BED_PAUSE_WORK;
-    _printState = "pauseStart";
-    emit sendToUIChangeToPauseStart();
-}
 void PrintScheduler::receiveFromUIGetMaterialList(){
     auto &a = _printerSetting.materialList;
     QVariant var = QVariant::fromValue(a);
@@ -877,7 +840,7 @@ void PrintScheduler::receiveFromUIGetModelNo()
 //    {
 //        emit sendToUIModelNo(ModelNo::getInstance().modelNo);
 //    }
-    return;
+//    return;
 }
 
 void PrintScheduler::receiveFromUISetPrintTime(int time)

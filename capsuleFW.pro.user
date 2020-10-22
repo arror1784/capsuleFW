@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.9.0, 2020-10-16T13:20:35. -->
+<!-- Written by QtCreator 4.9.0, 2020-10-19T16:29:35. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -8,7 +8,7 @@
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
-  <value type="int">0</value>
+  <value type="int">3</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.EditorSettings</variable>
@@ -271,8 +271,8 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-rpi17-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-rpi17-Release/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-rpi17-Debug/capsuleFW</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
        <value type="QString">10.42.0.184</value>
@@ -289,12 +289,12 @@
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes">
-       <value type="QDateTime">2020-10-07T20:18:24.559</value>
-       <value type="QDateTime">2020-10-07T20:41:52.471</value>
+       <value type="QDateTime">2020-10-19T16:25:28.053</value>
+       <value type="QDateTime">2020-10-19T15:27:55.533</value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes">
-       <value type="QDateTime">2020-10-07T20:18:27.000</value>
-       <value type="QDateTime">2020-10-07T20:41:55.000</value>
+       <value type="QDateTime">2020-10-19T16:25:30.000</value>
+       <value type="QDateTime">2020-10-19T15:43:03.000</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
@@ -594,44 +594,44 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
+       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
        <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Release/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
-       <value type="QString">/home/jsh/workspace/build-capsuleFW-Unnamed-Debug/capsuleFW</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
-       <value type="QString">10.42.0.184</value>
-       <value type="QString">192.168.1.127</value>
-       <value type="QString">10.42.0.50</value>
-       <value type="QString">10.42.0.212</value>
-       <value type="QString">10.42.0.251</value>
-       <value type="QString">192.168.1.194</value>
-       <value type="QString">192.168.1.101</value>
        <value type="QString">10.42.0.116</value>
-       <value type="QString">10.42.0.184</value>
        <value type="QString">10.42.0.50</value>
-       <value type="QString">192.168.1.190</value>
        <value type="QString">10.42.0.140</value>
-       <value type="QString">192.168.1.102</value>
        <value type="QString">10.42.0.57</value>
-       <value type="QString">10.42.0.32</value>
+       <value type="QString">192.168.1.190</value>
+       <value type="QString">192.168.1.101</value>
+       <value type="QString">192.168.1.127</value>
+       <value type="QString">10.42.0.184</value>
+       <value type="QString">192.168.1.194</value>
        <value type="QString">10.42.0.212</value>
        <value type="QString">10.42.0.220</value>
+       <value type="QString">192.168.1.102</value>
+       <value type="QString">10.42.0.32</value>
+       <value type="QString">10.42.0.50</value>
+       <value type="QString">10.42.0.251</value>
+       <value type="QString">10.42.0.184</value>
        <value type="QString">10.42.0.140</value>
+       <value type="QString">10.42.0.212</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
        <value type="QString">/opt/capsuleFW/bin</value>
@@ -676,44 +676,44 @@
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes">
-       <value type="QDateTime">2020-05-29T18:32:09.181</value>
-       <value type="QDateTime">2020-02-14T15:58:40.727</value>
-       <value type="QDateTime">2020-05-29T18:39:38.112</value>
-       <value type="QDateTime">2020-06-01T23:42:20.801</value>
-       <value type="QDateTime">2020-04-28T14:06:06.409</value>
+       <value type="QDateTime">2020-06-30T14:45:37.233</value>
+       <value type="QDateTime">2020-06-08T20:41:17.148</value>
+       <value type="QDateTime">2020-06-01T20:06:34.908</value>
+       <value type="QDateTime">2020-08-06T16:53:26.571</value>
        <value type="QDateTime">2020-04-22T12:45:10.587</value>
        <value type="QDateTime">2020-04-14T14:12:16.980</value>
-       <value type="QDateTime">2020-06-30T14:45:37.233</value>
-       <value type="QDateTime">2020-09-18T13:56:31.357</value>
-       <value type="QDateTime">2020-06-08T20:41:17.148</value>
+       <value type="QDateTime">2020-02-14T15:58:40.727</value>
+       <value type="QDateTime">2020-05-29T18:32:09.181</value>
        <value type="QDateTime">2020-04-22T12:45:10.587</value>
-       <value type="QDateTime">2020-06-16T13:33:54.456</value>
-       <value type="QDateTime">2020-03-12T15:03:08.884</value>
-       <value type="QDateTime">2020-08-06T16:53:26.571</value>
-       <value type="QDateTime">2020-07-28T18:43:25.413</value>
        <value type="QDateTime">2020-05-29T18:39:38.112</value>
        <value type="QDateTime">2020-05-28T15:55:20.744</value>
-       <value type="QDateTime">2020-06-01T20:06:34.908</value>
+       <value type="QDateTime">2020-03-12T15:03:08.884</value>
+       <value type="QDateTime">2020-07-28T18:43:25.413</value>
+       <value type="QDateTime">2020-05-29T18:39:38.112</value>
+       <value type="QDateTime">2020-04-28T14:06:06.409</value>
+       <value type="QDateTime">2020-09-18T13:56:31.357</value>
+       <value type="QDateTime">2020-06-16T13:33:54.456</value>
+       <value type="QDateTime">2020-06-01T23:42:20.801</value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes">
-       <value type="QDateTime">2020-05-29T18:32:11.000</value>
-       <value type="QDateTime">2020-02-14T15:58:52.000</value>
-       <value type="QDateTime">2020-05-29T18:39:43.000</value>
-       <value type="QDateTime">2020-06-02T00:07:43.000</value>
-       <value type="QDateTime">2020-04-28T13:58:31.000</value>
-       <value type="QDateTime">2020-04-22T12:57:22.000</value>
-       <value type="QDateTime">2020-04-14T14:12:26.000</value>
        <value type="QDateTime">2020-06-30T14:45:42.000</value>
-       <value type="QDateTime">2020-09-18T13:57:07.000</value>
        <value type="QDateTime">2020-06-08T20:41:19.000</value>
-       <value type="QDateTime">2020-04-22T12:45:17.000</value>
-       <value type="QDateTime">2020-06-16T13:34:02.000</value>
-       <value type="QDateTime">2020-03-12T15:04:08.000</value>
+       <value type="QDateTime">2020-06-01T20:06:37.000</value>
        <value type="QDateTime">2020-08-06T16:53:50.000</value>
-       <value type="QDateTime">2020-07-28T18:43:28.000</value>
+       <value type="QDateTime">2020-04-22T12:45:17.000</value>
+       <value type="QDateTime">2020-04-14T14:12:26.000</value>
+       <value type="QDateTime">2020-02-14T15:58:52.000</value>
+       <value type="QDateTime">2020-05-29T18:32:11.000</value>
+       <value type="QDateTime">2020-04-22T12:57:22.000</value>
        <value type="QDateTime">2020-05-29T18:50:58.000</value>
        <value type="QDateTime">2020-05-28T13:56:39.000</value>
-       <value type="QDateTime">2020-06-01T20:06:37.000</value>
+       <value type="QDateTime">2020-03-12T15:04:08.000</value>
+       <value type="QDateTime">2020-07-28T18:43:28.000</value>
+       <value type="QDateTime">2020-05-29T18:39:43.000</value>
+       <value type="QDateTime">2020-04-28T13:58:31.000</value>
+       <value type="QDateTime">2020-09-18T13:57:07.000</value>
+       <value type="QDateTime">2020-06-16T13:34:02.000</value>
+       <value type="QDateTime">2020-06-02T00:07:43.000</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
@@ -1387,7 +1387,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/jsh/workspace/build-capsuleFW-Desktop_Qt_5_12_3_GCC_64bit-Debug</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

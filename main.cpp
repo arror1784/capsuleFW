@@ -27,8 +27,10 @@
 #include "filevalidator.h"
 #include "updater.h"
 #include "version.h"
+#include "qmlconnecter.h"
 
 #include "kinetimecalc.h"
+#include "FilesystemModel.h"
 
 #include "wpa_ctrl/wpa_ctrl.h"
 
@@ -44,36 +46,24 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    //SchedulerThread backThread(engine);
+    //QQmlContext* ctx = engine.rootContext();
+    //qDebug() << "main" << QThread::currentThread();
+
+    //QmlConnecter connecter;
+    //SchedulerThread backThread(engine,connecter);
+
     //backThread.start();
-
-    QQmlContext* ctx = engine.rootContext();
-    qDebug() << "main" << QThread::currentThread();
-//    NetworkControl nc;
-//    ResinUpdater ru(printScheduler);
-//    Updater up;
-//    WPA wpa;
-
-//    QObject::connect(&up,&Updater::updateMCUFirmware,printScheduler,&PrintScheduler::receiveFromUpdaterFirmUpdate);
-//    QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
-
-    qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
+    qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
 
-//    ctx->setContextProperty("scheduler",printScheduler);
-//    ctx->setContextProperty("nc",&nc);
-//    ctx->setContextProperty("resinUpdater",&ru);
-//    ctx->setContextProperty("SWUpdater",&up);
-//    ctx->setContextProperty("wifi",&wpa);
+    //ctx->setContextProperty("connection",&connecter);
 
 //    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
 
-//    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
-
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-//    if (engine.rootObjects().isEmpty())
-//        return -1;
+    //engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
 
 //    printScheduler->start();
 

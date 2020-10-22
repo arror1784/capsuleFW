@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <QMap>
 #include <QDebug>
+#include <QThread>
 #ifndef _MSC_VER
 #include "wpa_ctrl/wpa_ctrl.h"
 #include <unistd.h>
@@ -22,14 +23,14 @@ WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 {
     ctrlConnect();
     runEvent();
-    checkConnected();
+//    checkConnected();
 }
 
 WPA::WPA(const char *ctrl_path) : _ctrlPath(ctrl_path)
 {
     ctrlConnect();
     runEvent();
-    checkConnected();
+//    checkConnected();
 }
 
 void WPA::runEvent()
@@ -233,6 +234,7 @@ void WPA::networkDelete(int id)
 
 void WPA::checkNetworkConnect()
 {
+    qDebug() << "WPA" << QThread::currentThread();
     checkConnected();
 }
 
@@ -243,7 +245,7 @@ void WPA::ctrlConnect()
     _ctrl = wpa_ctrl_open(_ctrlPath.toStdString().data());
     _ctrl_event = wpa_ctrl_open(_ctrlPath.toStdString().data());
 
-    checkConnected();
+//    checkConnected();
 #endif
 }
 
@@ -273,11 +275,11 @@ void WPA::wpa_ctrl_event()
             clearList();
             parseWifiInfo();
             parseNetworkInfo();
-            checkConnected();
+//            checkConnected();
             emit networkListUpdate();
         }else if(std::string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             _connected = true;
-            checkConnected();
+//            checkConnected();
             emit currentStateChange();
 
 
@@ -293,7 +295,7 @@ void WPA::wpa_ctrl_event()
             emit currentStateChange();
 
         }else if(std::string(resBuff).find(WPA_EVENT_SCAN_FAILED) != std::string::npos){
-            checkConnected();
+//            checkConnected();
             emit currentStateChange();
         }
     }
@@ -447,4 +449,5 @@ void WPA::checkConnected()
         _connected = false;
         emit connectedChange(false);
     }
+    return;
 }

@@ -8,13 +8,9 @@ Rectangle{
 
     color: "#88888888"
 
-    property string filename: ""
-    property string parentname: ""
-    property string filepath: ""
-
     signal dirClicked(string path, string name,int index)
     signal fileClicked(string path, string name,int index)
-    signal fileDoubleClicked(string path, string name)
+    signal fileDoubleClicked(url path, string name)
 
     FontLoader{
         id: openSansRegular
@@ -35,16 +31,17 @@ Rectangle{
         anchors.fill: parent
         onClicked: {
             if(fileIsDir === true){
-                dirClicked(filePath, fileName,index)
+                // console.log("fileURL ", fileURL);
+                dirClicked(filePath , fileName,index)
             }else{
-                fileClicked(filePath, fileName,index)
+                fileClicked(filePath , fileName,index)
             }
         }
         onDoubleClicked: {
             if(fileIsDir === true){
-                dirClicked(filePath, fileName,index)
+                dirClicked(filePath , fileName,index)
             }else{
-                fileDoubleClicked(filePath, fileName)
+                fileDoubleClicked(filePath , fileName)
             }
         }
     }

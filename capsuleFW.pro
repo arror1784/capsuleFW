@@ -35,6 +35,7 @@ SOURCES += \
     networkcontrol.cpp \
     printersetting.cpp \
     printscheduler.cpp \
+    qmlconnecter.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     schedulerthread.cpp \
@@ -82,6 +83,7 @@ HEADERS += \
     networkcontrol.h \
     printersetting.h \
     printscheduler.h \
+    qmlconnecter.h \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
