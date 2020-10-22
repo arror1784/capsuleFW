@@ -13,14 +13,6 @@ Item {
     property bool goMicro: false
     property bool goAutoHome: false
 
-    signal sendToMoveMicro(int micro)
-    signal sendToGoHome()
-    signal sendToAutoHome()
-    signal sendToSetHeightOffset(int offset)
-    signal sendToMoveMaxHeight()
-
-    signal sendToGetHeightOffset()
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -109,7 +101,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                sendToMoveMicro(-100)
+                connection.receiveFromQmlMoveMotor("moveMicro",-100)
                 maxHightOffset += -100
             }
         }
@@ -150,7 +142,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                sendToMoveMicro(100)
+                connection.receiveFromQmlMoveMotor("moveMicro",100)
                 maxHightOffset += 100
             }
         }
@@ -179,7 +171,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                sendToMoveMicro(-10)
+                connection.receiveFromQmlMoveMotor("moveMicro",-10)
                 maxHightOffset += -10
             }
         }
@@ -220,7 +212,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                sendToMoveMicro(10)
+                connection.receiveFromQmlMoveMotor("moveMicro",10)
                 maxHightOffset += 10
             }
         }
@@ -254,7 +246,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                sendToGoHome()
+                connection.receiveFromQmlMoveMotor("goHome",0)
             }
         }
     }
@@ -288,56 +280,48 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                sendToGoHome()
-                sendToSetHeightOffset(maxHightOffset)
+                connection.receiveFromQmlMoveMotor("goHome",0)
+                connection.receiveFromQmlSetHeightOffset(maxHightOffset)
             }
         }
     }
     WaitPopup{
         id: waitPopup
     }
-    function receiveUIMoveOk(){
-        if(goHome){
-            goHome = false
-            waitPopup.close()
-            stackView.pop(StackView.Immediate)
-        }else if(goMaxheight){
-            goMaxheight = false
-            buttonEnabled = true
-            waitPopup.close()
-        }else if(goMicro){
-            goMicro = false
-            buttonEnabled = true
-        }else if(goAutoHome){
-            goAutoHome = false
-            goMaxheight = true
-            sendToMoveMaxHeight()
+    Connections{
+        target: connection
+        onSendToQmlMoveOk:{
+            if(goHome){
+                goHome = false
+                waitPopup.close()
+                stackView.pop(StackView.Immediate)
+            }else if(goMaxheight){
+                goMaxheight = false
+                buttonEnabled = true
+                waitPopup.close()
+            }else if(goMicro){
+                goMicro = false
+                buttonEnabled = true
+            }else if(goAutoHome){
+                goAutoHome = false
+                goMaxheight = true
+                connection.receiveFromQmlMoveMotor("moveMaxHeight",0)
+            }
         }
-    }
-    function receiveHeigthOffset(offset){
-        maxHightOffset = offset
+        onSendToQmlHeightOffset:{
+            maxHightOffset = offset
+        }
     }
 
     Component.onCompleted: {
-
-        sendToMoveMicro.connect(scheduler.receiveFromUIMoveMicro)
-        sendToGoHome.connect(scheduler.receiveFromUIGoHome)
-        sendToSetHeightOffset.connect(scheduler.receiveFromUISetHeightOffset)
-        sendToMoveMaxHeight.connect(scheduler.receiveFromUIMoveMaxHeight)
-        sendToAutoHome.connect(scheduler.receiveFromUIAutoHome)
-        sendToGetHeightOffset.connect(scheduler.receiveFromUIGetHeightOffset)
-
-        scheduler.sendToUIMoveOk.connect(receiveUIMoveOk)
-        scheduler.sendToUIHeightOffset.connect(receiveHeigthOffset)
-
         buttonEnabled = false
         goHome = false
         goMaxheight = false
         goMicro = false
         goAutoHome = true
 
-        sendToAutoHome()
-        receiveHeigthOffset()
+        connection.receiveFromQmlMoveMotor("autoHome",0)
+        connection.receiveFromQmlGetHeightOffset()
 
         waitPopup.open()
     }

@@ -38,23 +38,39 @@ Window {
         anchors.fill: parent
         cursorShape: Qt.BlankCursor
     }
-    function receiveLCDChangeImage(imagePath){
-        console.log(imagePath)
-        printImage.source = imagePath
-    }
-    function receiveLCDSetImageScale(value) {
-        printImage.scale = value
-    }
-    function receiveUIChangeToPrintWorkErrorFinish(){
-        printImage.source = "qrc:/image/defaultBlackImage.png"
-    }
-    function receiveUIChangeToPrintFinish(){
-        printImage.source = "qrc:/image/defaultBlackImage.png"
+    Connections{
+        target: connection
+        onSendToQmlChangeImage:{
+            console.log(imagePath)
+            printImage.source = imagePath
+        }
+        onSendToQmlSetImageScale:{
+            printImage.scale = value
+        }
+
+        onSendToQmlChangeState:{
+            if(state == "pauseStart"){
+                quitPopup.open()
+                quitPopup.setButtonEnabled(false)
+            }else if(state === "pauseFinish"){
+                quitPopup.setButtonEnabled(true)
+
+            }else if(state === "resume"){
+                quitPopup.close()
+            }else if(state == "quit"){
+                quitPopup.close()
+                waitPopup.open()
+                waitPopupOpened = true
+            }else if(state === "printFinish"){
+                printImage.source = "qrc:/image/defaultBlackImage.png"
+            }else if(state === "printError"){
+                waitPopup.open()
+                waitPopupOpened = true
+            }else if(state === "printErrorFinish"){
+                printImage.source = "qrc:/image/defaultBlackImage.png"
+            }
+        }
     }
     Component.onCompleted: {
-        scheduler.sendToLCDChangeImage.connect(receiveLCDChangeImage)
-        scheduler.sendToLCDSetImageScale(receiveLCDSetImageScale)
-        scheduler.sendToUIChangeToPrintWorkErrorFinish(receiveUIChangeToPrintWorkErrorFinish)
-        scheduler.sendToUIChangeToPrintFinish(receiveUIChangeToPrintFinish)
     }
 }

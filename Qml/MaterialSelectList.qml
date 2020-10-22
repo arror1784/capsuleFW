@@ -133,7 +133,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(materialSelectList.currentIndex !== -1){
-                    sendToInfoSetting(stackView.get(1).selectedFilePath)
+                    connection.receiveFromQmlGetInfoSetting(stackView.get(1).selectedFilePath)
                     printingPopup.open()
                     //To do Todo
                 }
@@ -143,46 +143,43 @@ Item {
     PrintingPopup{
         id: printingPopup
         onStartPrintingButtonClicked:{
-            sendToPrintStart(stackView.get(1).selectedFilePath,materialSelectList.currentItem.metarialname)
+            var arg = []
+            arg.push(stackView.get(1).selectedFilePath)
+            arg.push(materialSelectList.currentItem.metarialname)
+            connection.receiveFromQmlPrintStart(arg)
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
-    function receiveMaterialList(name){
-        console.log("hello world")
-        for(var i = 0; i < name.length; i++){
-            inserMaterialList(name[i])
+    Connections{
+        target: connection
+        onSendToQmlMaterialList:function aa(name){
+            console.log("hello world", name)
+            for(var i = 0; i < name.length; i++){
+                inserMaterialList(name[i])
+            }
+        }
+        onSendToQmlIsCustom:{
+            if(value){
+                inserMaterialList("Custom")
+            }
+        }
+        onSendToQmlGetInfoSetting:{
+            console.log(option)
+            var JsonString = option
+            var JsonObject = JSON.parse(JsonString)
+
+            materialName = materialSelectList.currentItem.metarialname
+
+            printingPopup.setText(stackView.get(1).selectedFileName,
+                                  materialName,
+                                  JsonObject.layer_height)
         }
     }
-    function receiveIsCustom(value){
-        if(value){
-            inserMaterialList("Custom")
-        }
-    }
-    function receiveInfoSetting(path, option){
-        var JsonString = option
-        var JsonObject= JSON.parse(JsonString)
-
-        materialName = materialSelectList.currentItem.metarialname
-
-        printingPopup.setText(stackView.get(1).selectedFileName,
-                              materialName,
-                              JsonObject.layer_height)
-    }
-
     Component.onCompleted: {
-        scheduler.sendToUIMaterialList.connect(receiveMaterialList)
-        scheduler.sendToUIIsCustom.connect(receiveIsCustom)
-        scheduler.sendToUIGetInfoSetting.connect(receiveInfoSetting)
-
-        sendToPrintStart.connect(scheduler.receiveFromQMLPrintStart)
-        sendToGetMaterialList.connect(scheduler.receiveFromUIGetMaterialList)
-        sendToIsCustom.connect(scheduler.isCustom)
-        sendToInfoSetting.connect(scheduler.receiveFromUIGetInfoSetting)
-
         materialSelectList.currentIndex = -1
 
-        sendToIsCustom(stackView.get(1).selectedFilePath)
-        sendToGetMaterialList()
+        connection.receiveFromQmlisCustom(stackView.get(1).selectedFilePath)
+        connection.receiveFromQmlGetMaterialList()
     }
     function inserMaterialList(name){
         materialModel.append({"name":name})

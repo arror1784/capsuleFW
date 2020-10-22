@@ -10,9 +10,6 @@ Item {
     property string version: ""
     property string modelNo: ""
 
-    signal sendToGetVersion()
-    signal sendToGetModelNo()
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -156,29 +153,23 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                connection.receiveFromQmlGetProductInfo()
                 infoPopup.open()
-                infoPopup.setText(version,modelNo)
+//                infoPopup.setText(version,modelNo)
             }
         }
     }
     InfoPopup{
         id:infoPopup
     }
-    function recevieGetVersion(ver){
-        version = ver
-    }
-    function receiveGetModelNO(mo){
-        modelNo = mo
-    }
-
-    Component.onCompleted: {
-        scheduler.sendToUIVersion.connect(recevieGetVersion)
-        scheduler.sendToUIModelNo.connect(receiveGetModelNO)
-
-        sendToGetVersion.connect(scheduler.receiveFromUIGetVersion)
-        sendToGetModelNo.connect(scheduler.receiveFromUIGetModelNo)
-
-//        sendToGetModelNo()
-//        sendToGetVersion()
+    Connections{
+        target: connection
+        onSendToQmlProductInfo:{
+            var JsonString = json
+            var JsonObject = JSON.parse(JsonString);
+            version = JsonObject.version
+            modelNo = JsonObject.modelNo
+            infoPopup.setText(version,modelNo)
+        }
     }
 }

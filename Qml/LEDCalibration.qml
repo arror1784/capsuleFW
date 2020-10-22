@@ -9,9 +9,6 @@ Item {
     property var minLEDBrightness: 80.0
     property var currentLEDBrightness: 0.0
 
-    signal sendToSetLedOffset(int offset)
-    signal sendToGetLedOffset()
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -265,21 +262,18 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                sendToSetLedOffset(currentLEDBrightness)
+                connection.receiveFromQmlSetLedOffset(currentLEDBrightness)
                 stackView.pop(StackView.Immediate)
             }
         }
     }
-    function receiveLedOffset(offset){
-        currentLEDBrightness = offset
+    Connections{
+        target: connection
+        onSendToQmlLEDOffset:{
+            currentLEDBrightness = offset
+        }
     }
-
     Component.onCompleted: {
-        sendToSetLedOffset.connect(scheduler.receiveFromUISetLedOffset)
-        scheduler.sendToUILEDOffset.connect(receiveLedOffset)
-        sendToGetLedOffset.connect(scheduler.receiveFromUIGetLedOffset)
-
-        sendToGetLedOffset()
-//        currentLEDBrightness = scheduler.receiveFromUIGetLedOffset()
+        connection.receiveFromQmlGetLedOffset()
     }
 }

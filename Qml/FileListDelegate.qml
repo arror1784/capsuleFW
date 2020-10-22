@@ -6,7 +6,7 @@ Rectangle{
     width: parent.width
     height: fileNameText.height
 
-    color: "#88888888"
+    color: "#00000000"
 
     signal dirClicked(string path, string name,int index)
     signal fileClicked(string path, string name,int index)

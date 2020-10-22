@@ -36,6 +36,9 @@ static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 PrintScheduler::PrintScheduler() :
     _LCDState(true)
 {
+    _printerSetting.parse();
+    _version.parse();
+
     if(addSerialPort()){
         _USBPortConnection = false;
         _printState = "USBCONNECTIONERROR";
@@ -146,10 +149,10 @@ void PrintScheduler::initPrint()
     _bedControl->setMaxSpeed(500);
     _bedControl->setInitSpeed(0);
 
-    _bedControl->setAccleSpeed(6,1);
-    _bedControl->setDecelSpeed(30,1);
-    _bedControl->setAccleSpeed(50,0);
-    _bedControl->setDecelSpeed(50,0);
+    _bedControl->setAccleSpeed(80,1);
+    _bedControl->setDecelSpeed(80,1);
+    _bedControl->setAccleSpeed(80,0);
+    _bedControl->setDecelSpeed(80,0);
 
     _bedControl->setUVtime(0);
 
@@ -163,13 +166,13 @@ void PrintScheduler::printLayer(){
         _bedMoveFinished = PRINT_MOVE_READY;
 
         if(_bedPrintImageNum == _bedMaxPrintNum){
-            receiveFromUIPrintFinish();
+            receiveFromUIPrintStateChange("finish");
             return;
         }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension) == false){
 //            receiveFromUIPrintFinishError();
             _bedError = true;
             _printState = "error";
-            emit sendToUIChangeToPrintWorkError();
+            emit sendToUIChangeState("printError");
         }
         _bedPrintImageNum++;
 
@@ -205,7 +208,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
             emit sendToUIEnableTimer(true);
         case PRINT_MOVE_LAYER_OK:
             if(_bedError){
-                receiveFromUIPrintFinishError();
+//                receiveFromUIPrintFinishError();
                 break;
             }
             if(_bedWork == BED_PAUSE_WORK){
@@ -214,7 +217,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
 
                 _enableTimer = false;
                 emit sendToUIEnableTimer(false);
-                emit sendToUIChangeToPauseFinish();
+                emit sendToUIChangeState("pauseFinish");
 //                _wsClient->sendPauseFinish();
                 _bedWork = BED_PAUSE;
             }
@@ -234,12 +237,12 @@ void PrintScheduler::receiveFromBedControl(int receive){
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
             if(_bedError){
-                emit sendToUIChangeToPrintWorkErrorFinish();
+                emit sendToUIChangeState("printErrorFinish");
 //                _wsClient->sendFinish();
                 _printState = "ready";
                 _bedError = false;
             }else{
-                emit sendToUIChangeToPrintFinish();
+                emit sendToUIChangeState("printFinish");
                 _printState = "ready";
 //                _wsClient->sendFinish();
             }
@@ -272,10 +275,9 @@ void PrintScheduler::receiveFromSerialPort(int state){
         emit sendToUIMoveOk();
     }else if (state == SHUTDOWN) {
         if(_isBusy)
-            emit sendToUIExitError();
-        else    qDebug() << QThread::currentThreadId();
-
-            emit sendToUIExit();
+            emit sendToUIExit(false);
+        else
+            emit sendToUIExit(true);
     }else if(state == LCD_ON){
         emit sendToUILCDState(true);
     }else if(state == LCD_OFF){
@@ -287,7 +289,7 @@ void PrintScheduler::receiveFromSerialPort(int state){
         }else{
             _bedError = true;
             _printState = "error";
-            emit sendToUIChangeToPrintWorkError();
+            emit sendToUIChangeState("printError");
         }
         emit sendToUILCDState(false);
     }
@@ -450,6 +452,7 @@ int PrintScheduler::setupForPrint(QString materialName)
     ResinSetting::resinInfo materialSetting;
 
     ResinSetting rs(materialName);
+    rs.parse();
 
     QFile f;
     QString fval;
@@ -585,97 +588,65 @@ int PrintScheduler::unZipFiles(QString path)
     return 0;
 }
 
-void PrintScheduler::receiveFromQMLPrintStart(QString fileName, QString materialName)
+void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
 {
-    qDebug() << fileName;
+    auto size = args.size();
+    QString fileName;
+    QString materialName;
+
     if(!_LCDState){
         emit sendToUIPrintSettingError(1);
-        return;
-    }
-    if(_printState != "ready"){
-        emit sendToUIPrintSettingError(4);
         return;
     }
     if(!_USBPortConnection){
         emit sendToUIPrintSettingError(5);
         return;
     }
+    if(_printState != "ready"){
+        emit sendToUIPrintSettingError(4);
+        return;
+    }
+
+    if(size == 0){
+        printStart();
+        return;
+    }
+
+    fileName = args[0].toString();
+    materialName = args[1].toString();
+
     deletePrintFolder();
 
-    qDebug() << "debug delete print folder finish";
+    if(size == 2){
+        if(unZipFiles(fileName)){
+            emit sendToUIPrintSettingError(6);
+            return;
+        }
 
-    if(unZipFiles(fileName)){
-        emit sendToUIPrintSettingError(6);
-        return;
+        if(setupForPrint(materialName)){
+            emit sendToUIPrintSettingError(3);
+            return;
+        }
+    }else if(size == 3){
+        QJsonObject object = args[2].toJsonObject();
+        if(donwloadFiles(object)){
+            emit sendToUIPrintSettingError(2);
+            return;
+        }
+        if(unZipFiles(printFilePath + "/" + fileName)){
+            emit sendToUIPrintSettingError(6);
+            return;
+        }
+
+        if(setupForPrint(materialName)){
+            emit sendToUIPrintSettingError(3);
+            return;
+        }
     }
-    qDebug() << "debug unzip finish";
-
-    if(setupForPrint(materialName)){
-        emit sendToUIPrintSettingError(3);
-        return;
-    }
-    qDebug() << "debug setup finish";
-
     QStringList sl = fileName.split('/').last().split('.');
     sl.removeLast();
     _printName =  sl.join('.');
     _materialName = materialName;
-
-    printStart();
-}
-
-void PrintScheduler::receiveFromUIPrintStart(QString fileName, QString materialName, QJsonObject byte)
-{
-    qDebug() << fileName << materialName;
-//    std::lock_guard<std::mutex> ml(_mPrint);
-    if(!_LCDState){
-        emit sendToUIPrintSettingError(1);
-        return;
-    }
-    if(!_USBPortConnection){
-        emit sendToUIPrintSettingError(5);
-        return;
-    }
-    if(_printState != "ready"){
-        emit sendToUIPrintSettingError(4);
-        return;
-    }
-
-    deletePrintFolder();
-
-    if(donwloadFiles(byte)){
-        emit sendToUIPrintSettingError(2);
-        return;
-    }
-    if(unZipFiles(printFilePath + "/" + fileName)){
-        emit sendToUIPrintSettingError(6);
-        return;
-    }
-
-    if(setupForPrint(materialName)){
-        emit sendToUIPrintSettingError(3);
-        return;
-    }
-//    QStringList sl = fileName.split('/').last().split('.');
-//    sl.removeLast();
-//    _printName =  sl.join('.');
-    _printName =  fileName;
-    _materialName = materialName;
-
-    printStart();
-}
-
-void PrintScheduler::receiveFromUIPrintAgain()
-{
-    if(!_LCDState){
-        emit sendToUIPrintSettingError(1);
-        return;
-    }
-    if(setupForPrint(_materialName)){
-        emit sendToUIPrintSettingError(3);
-        return;
-    }
-    qDebug() << _printName << _materialName;
 
     printStart();
 }
@@ -686,7 +657,7 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
     //    _wsClient->sendPauseStart();
         _bedWork = BED_PAUSE_WORK;
         _printState = "pauseStart";
-        emit sendToUIChangeToPauseStart();
+        emit sendToUIChangeState("pauseStart");
     }else if(CMD == "resume"){
         if(_bedWork == BED_PAUSE){
             printResume();
@@ -694,36 +665,42 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
             _enableTimer = true;
             _printState = "print";
             emit sendToUIEnableTimer(true);
-            emit sendToUIChangeToResume();
+            emit sendToUIChangeState("resume");
         }/*else{
             printStart();
         }*/
     }else if(CMD == "finish"){
         bedFinish();
         _printState = "quit";
-        emit sendToUIChangeToQuit();
+        emit sendToUIChangeState("quit");
     }
 }
-void PrintScheduler::receiveFromUIPrintFinishError(){
-    bedError();
-}
+//void PrintScheduler::receiveFromUIPrintFinishError(){
+//    bedError();
+//}
 
 void PrintScheduler::receiveFromUISetHeightOffset(int value)
 {
     _printerSetting.heightOffset = value;
     _printerSetting.save();
+    return;
 }
 
 void PrintScheduler::receiveFromUISetLedOffset(double value)
 {
     _printerSetting.ledOffset = value;
     _printerSetting.save();
+    return;
 }
 
 void PrintScheduler::receiveFromUIGetMaterialList(){
     auto &a = _printerSetting.materialList;
-    QVariant var = QVariant::fromValue(a);
-    emit sendToUIMaterialList(QVariantList::fromVector(var.value<QVector<QVariant>>())); // it can work?????
+    QVariantList list;
+    for(auto& i : a){
+        list.push_back(i);
+    }
+    emit sendToUIMaterialList(list);
+    return;
 }
 
 void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
@@ -736,6 +713,7 @@ void PrintScheduler::receiveFromUIGetPrintInfoToWeb()
     }
 
     emit sendToUIPrintInfo(_printState, _materialName, _printName, _layerHeight, eT, _totalPrintTime, _progress,_enableTimer);
+    return;
 }
 
 int PrintScheduler::receiveFromUIGetHeightOffset()
@@ -750,33 +728,33 @@ double PrintScheduler::receiveFromUIGetLedOffset()
     return _printerSetting.ledOffset;
 }
 
-QString PrintScheduler::receiveFromUIGetMaterialOption(QString material){
-    if(material == "Custom"){
-        QFile file;
-        QString val;
+//QString PrintScheduler::receiveFromUIGetMaterialOption(QString material){
+//    if(material == "Custom"){
+//        QFile file;
+//        QString val;
 
-        file.setFileName(printFilePath + QStringLiteral("/resin.json"));
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            qDebug() << "info file open error";
-            qDebug() << file.fileName();
-            Logger::GetInstance()->write(file.fileName() + " file open error");
-        }else{
-            qDebug() << "resin file open sucess";
-            Logger::GetInstance()->write(file.fileName() + " file open sucess");
-        }
-        val = file.readAll();
-        file.close();
+//        file.setFileName(printFilePath + QStringLiteral("/resin.json"));
+//        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+//            qDebug() << "info file open error";
+//            qDebug() << file.fileName();
+//            Logger::GetInstance()->write(file.fileName() + " file open error");
+//        }else{
+//            qDebug() << "resin file open sucess";
+//            Logger::GetInstance()->write(file.fileName() + " file open sucess");
+//        }
+//        val = file.readAll();
+//        file.close();
 
-        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+//        QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
-        emit sendToUIMaterialOption(material,d.toJson());
-        return d.toJson();
-    }else{
-        ResinSetting rs(material);
-        emit sendToUIMaterialOption(material,rs.serialize());
-        return rs.serialize();
-    }
-}
+//        emit sendToUIMaterialOption(material,d.toJson());
+//        return d.toJson();
+//    }else{
+//        ResinSetting rs(material);
+//        emit sendToUIMaterialOption(material,rs.serialize());
+//        return rs.serialize();
+//    }
+//}
 
 QString PrintScheduler::receiveFromUIGetPrintOption()
 {
@@ -799,6 +777,7 @@ QString PrintScheduler::receiveFromUIGetInfoSetting(QString path)
         return val;
 
     } catch (std::exception& e) {
+        qDebug() << e.what();
         emit sendToUIGetInfoSetting(path,"");
         return "";
     }
@@ -810,39 +789,33 @@ void PrintScheduler::receiveFromUISetTotalPrintTime(int time)
     emit sendToUISetTotalTime(time);
 }
 
-void PrintScheduler::receiveFromUIGoHome(){
-    bedSerialPort->sendCommand("G02 A-15000 M1");
-}
-void PrintScheduler::receiveFromUIAutoHome(){
-    bedSerialPort->sendCommand("G28 A225");
-}
-void PrintScheduler::receiveFromUIMoveMicro(int micro){
-    char buffer[50] = {0};
-
-    sprintf(buffer,"G01 A%d M0",-micro);
-    bedSerialPort->sendCommand(buffer);
-}
-void PrintScheduler::receiveFromUIMoveMaxHeight(){
-    char buffer[50] = {0};
-
-    sprintf(buffer,"G01 A%d M0",-(_printerSetting.defaultHeight + _printerSetting.heightOffset));
-    bedSerialPort->sendCommand(buffer);
-}
-
-void PrintScheduler::receiveFromUIGetVersion()
+void PrintScheduler::receiveFromUIMoveMotor(QString cmd, int micro)
 {
-    emit sendToUIVersion(Version::getInstance().version);
-    return;
+    if(cmd == "goHome"){
+        bedSerialPort->sendCommand("G02 A-15000 M1");
+    }else if(cmd == "autoHome"){
+        bedSerialPort->sendCommand("G28 A225");
+    }else if(cmd == "moveMaxHeight"){
+        char buffer[50] = {0};
+
+        sprintf(buffer,"G01 A%d M0",-(_printerSetting.defaultHeight + _printerSetting.heightOffset));
+        bedSerialPort->sendCommand(buffer);
+    }else if(cmd == "moveMicro"){
+        char buffer[50] = {0};
+
+        sprintf(buffer,"G01 A%d M0",-micro);
+        bedSerialPort->sendCommand(buffer);
+    }
 }
 
-void PrintScheduler::receiveFromUIGetModelNo()
+void PrintScheduler::receiveFromUIGetProductInfo()
 {
-//    {
-//        emit sendToUIModelNo(ModelNo::getInstance().modelNo);
-//    }
-//    return;
+    QJsonObject jo;
+    jo.insert("version",Version::getInstance().version);
+    jo.insert("modelNo",ModelNo::getInstance().modelNo);
+    QJsonDocument doc(jo);
+    emit sendToUIProductInfo(doc.toJson());
 }
-
 void PrintScheduler::receiveFromUISetPrintTime(int time)
 {
     _printTime = time;
