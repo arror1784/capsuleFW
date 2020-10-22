@@ -30,6 +30,7 @@
 #include "qmlconnecter.h"
 
 #include "kinetimecalc.h"
+#include "FilesystemModel.h"
 
 #include "wpa_ctrl/wpa_ctrl.h"
 
@@ -43,11 +44,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    QQmlContext* ctx = engine.rootContext();
-    qDebug() << "main" << QThread::currentThread();
+    //QQmlContext* ctx = engine.rootContext();
+    //qDebug() << "main" << QThread::currentThread();
 
-    QmlConnecter connecter;
-    SchedulerThread backThread(engine,connecter);
+    //QmlConnecter connecter;
+    //SchedulerThread backThread(engine,connecter);
 
     WPA wpa;
     ctx->setContextProperty("wifi",&wpa);

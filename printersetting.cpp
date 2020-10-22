@@ -67,5 +67,5 @@ void PrinterSetting::save()
 
 QString PrinterSetting::serialize()
 {
-
+    return "";
 }

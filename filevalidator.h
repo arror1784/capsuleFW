@@ -18,7 +18,6 @@
 #include <QObject>
 #include <QUrl>
 
-
 class FileValidator : public QObject
 {
     Q_OBJECT

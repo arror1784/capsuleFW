@@ -12,6 +12,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 LINK_LIBRARIES( -lpthread)
 
 # if (${Qt5_FOUND})
@@ -98,6 +102,10 @@ wpa_ctrl/wpa_debug.h
 wpa_ctrl/wpabuf.h
 ymodem.h
 zip/zip.h
+schedulerthread.h
+schedulerthread.cpp
+FilesystemModel.h
+FilesystemModel.cpp
 qml.qrc
 font.qrc
 image.qrc

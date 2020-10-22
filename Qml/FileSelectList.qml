@@ -8,8 +8,7 @@ Item {
     width: 480
     height: 320
 
-    property string currentPath
-    property string currentParentName
+    // property url currentPath
     property string selectedFileName : ""
     property string selectedFilePath : ""
     property string mediaURL: "file:///media/pi"
@@ -22,12 +21,19 @@ Item {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-    FolderListModel {
+    // FolderListModel {
+    //     id: folderModel
+    //     showDirs: true
+    //     showDirsFirst: true
+    //     sortReversed: true
+    //     nameFilters: ["*.zip"]
+    // }
+    HixFilesystemModel {
         id: folderModel
         showDirs: true
         showDirsFirst: true
         sortReversed: true
-        nameFilters: ["*.zip"]
+        nameFilters: [".zip"]
     }
     Text {
         id: selectText
@@ -80,8 +86,6 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if(folderModel.folder.toString() !== mediaURL){
-                        currentParentName = basename(folderModel.folder.toString())
-                        currentPath = ""
                         selectedFileName = ""
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
@@ -149,18 +153,20 @@ Item {
             model: folderModel
             delegate: FileListDelegate{
                 onDirClicked: {  
-                    changeFolderPath(path)
-                    currentParentName = basename(folderModel.folder.toString())
-                    currentPath = path
+                    // console.log("shit", this, "shit2", fileSelectList, path)
+                    folderModel.folder = path
+                    // changeFolderPath(path)
+                    // currentParentName = basename(folderModel.folder.toString())
+                    // currentPath = path
                     selectedFileName = ""
-                    fileSelectList.currentIndex=-1
-                    fileSelectList.update()
-                    parentDirText.text = basename(folderModel.folder.toString())
+                    parent.fileSelectList.currentIndex=-1
+                    parent.fileSelectList.update()
+                    parent.parentDirText.text = fileName
                 }
                 onFileClicked: {
                     fileSelectList.currentIndex = index
                     selectedFileName = name
-                    selectedFilePath = currentPath + "/" + name
+                    selectedFilePath = ""
                     fileSelectList.update()
                 }
             }
@@ -253,7 +259,7 @@ Item {
         }
     }
     Rectangle{
-        id: selectButtonfileSelectList
+        id: selectButton
 
         width: 215
         height: 40
@@ -286,15 +292,20 @@ Item {
         }
     }
     function resetPath(){
-        folderModel.folder = mediaURL
-        parentDirText.text = ""
+        // folderModel.folder = mediaURL
+        var test = "c:/Users/legok/source/repos/FW/capsuleFW/build/!@#$%ee"
+        console.log(test)
+        folderModel.folder = test
+        parentDirText.text = folderModel.parentFolder
         fileSelectList.update()
     }
     function resetCurrentIndex(){
         fileSelectList.currentIndex = -1
     }
     function changeFolderPath(path){
-        folderModel.folder = "file://" + path
+        // folderModel.folder = "file://" + path
+        folderModel.folder = path
+
     }
     function basename(str)
     {
