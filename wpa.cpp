@@ -23,14 +23,14 @@ WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 {
     ctrlConnect();
     runEvent();
-//    checkConnected();
+    checkConnected();
 }
 
 WPA::WPA(const char *ctrl_path) : _ctrlPath(ctrl_path)
 {
     ctrlConnect();
     runEvent();
-//    checkConnected();
+    checkConnected();
 }
 
 void WPA::runEvent()
@@ -279,13 +279,12 @@ void WPA::wpa_ctrl_event()
             emit networkListUpdate();
         }else if(std::string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             _connected = true;
-//            checkConnected();
+            checkConnected();
             emit currentStateChange();
-
 
         }else if(std::string(resBuff).find(WPA_EVENT_DISCONNECTED) != std::string::npos){
             _connected = false;
-//            checkConnected();
+            checkConnected();
             _currentSSID = "";
             _connected = false;
             for (int i = 0; i < _wifiList.size();i++) {
@@ -295,7 +294,7 @@ void WPA::wpa_ctrl_event()
             emit currentStateChange();
 
         }else if(std::string(resBuff).find(WPA_EVENT_SCAN_FAILED) != std::string::npos){
-//            checkConnected();
+            checkConnected();
             emit currentStateChange();
         }
     }
@@ -309,8 +308,6 @@ void WPA::clearList()
         _wifiList.removeAt(0);
     }
 }
-
-
 
 QString WPA::currentSSID() const
 {

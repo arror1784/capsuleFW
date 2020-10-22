@@ -8,7 +8,7 @@ constexpr auto _url = "/opt/capsuleFW/version.json";
 
 Version::Version() : Hix::Common::Json::JsonSetting (_url)
 {
-
+    parse();
 }
 
 Version::~Version()

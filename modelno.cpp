@@ -8,6 +8,7 @@ constexpr auto _url = "/opt/capsuleFW/modelNo.json";
 
 ModelNo::ModelNo() : Hix::Common::Json::JsonSetting (_url)
 {
+    parse();
 }
 ModelNo::~ModelNo(){
 }

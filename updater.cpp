@@ -20,8 +20,7 @@ Updater::Updater():
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
-
-//    checkUpdate();
+    checkUpdate();
 }
 
 void Updater::saveAsFile(QString name,QByteArray ba)

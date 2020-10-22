@@ -62,7 +62,7 @@ public:
     int setupForPrint(QString materialName);
     int unZipFiles(QString path);
 
-    int deletePrintFolder();
+    void deletePrintFolder();
     int sayHello();
 
     int donwloadFiles(QJsonObject byte);

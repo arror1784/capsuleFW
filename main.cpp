@@ -41,8 +41,6 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-//    PrintScheduler* printScheduler = new PrintScheduler();
-
     QQmlApplicationEngine engine;
 
     QQmlContext* ctx = engine.rootContext();
@@ -51,19 +49,20 @@ int main(int argc, char *argv[])
     QmlConnecter connecter;
     SchedulerThread backThread(engine,connecter);
 
+    WPA wpa;
+    ctx->setContextProperty("wifi",&wpa);
+
     backThread.start();
+
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
 
     ctx->setContextProperty("connection",&connecter);
-
-//    std::cout << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << std::endl;
+    ctx->setContextProperty("wifi",&wpa);
 
     engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
-
-//    printScheduler->start();
 
     return app.exec();
 }

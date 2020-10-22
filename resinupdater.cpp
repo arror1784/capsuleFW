@@ -21,7 +21,7 @@ ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
     updateVersionInFo();
-//    checkUpdate();
+    checkUpdate();
 }
 
 void ResinUpdater::checkUpdate()

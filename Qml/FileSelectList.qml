@@ -12,7 +12,7 @@ Item {
     property string currentParentName
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "file:///media/jsh"
+    property string mediaURL: "file:///media/pi"
 
     FontLoader{
         id: openSansSemibold

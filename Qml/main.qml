@@ -16,8 +16,6 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
-    objectName: "MyHomeObject"
-
     signal sendToBusySet(bool value)
     signal wifiConnectCheck()
 
@@ -70,7 +68,7 @@ Window {
 
 
         source: "qrc:/image/network.png"
-        visible: true
+        visible: false
 //        scale: 0.1
     }
     Connections{
@@ -111,15 +109,18 @@ Window {
             }
         }
     }
-    function wifiConnectedChange(connected){
-//        console.log("hello my world")
-//        if(connected){
-//            networkImage.visible = true;
-//        }else{
-//            networkImage.visible = false;
-//        }
+    Connections{
+        target: wifi
+
+        onConnectedChange:{
+            if(connected){
+                networkImage.visible = true;
+            }else{
+                networkImage.visible = false;
+            }
+        }
     }
     Component.onCompleted: {
-//        connection.
+        wifi.checkNetworkConnect()
     }
 }

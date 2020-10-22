@@ -153,7 +153,6 @@ Item {
     Connections{
         target: connection
         onSendToQmlMaterialList:function aa(name){
-            console.log("hello world", name)
             for(var i = 0; i < name.length; i++){
                 inserMaterialList(name[i])
             }
