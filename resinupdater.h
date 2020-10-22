@@ -23,21 +23,21 @@ class ResinUpdater : public QObject
 public:
     ResinUpdater(PrintScheduler *sched);
 
+signals:
+    void updateNotice(QString state);
+
+    void sendVersion(QString version);
+    void sendLastestVersion(QString version);
+
 public slots:
     void requestFinished(QNetworkReply* reply);
 
     void checkUpdate();
     void update();
 
+    void getVersion();
+    void getLastestVersion();
 
-    QString version();
-    QString lastestVersion();
-
-signals:
-    void updateAvailable();
-    void updateNotAvailable();
-    void updateFinished();
-    void updateError();
 
 private:
     void updateVersionInFo();

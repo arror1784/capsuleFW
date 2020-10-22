@@ -4,14 +4,13 @@ import QtQuick.Controls 2.5
 import App 1.0
 
 Item {
-
     width: 480
     height: 320
 
     // property url currentPath
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "file:///media/pi"
+    property string mediaURL: "/media/pi"
 
     FontLoader{
         id: openSansSemibold
@@ -21,13 +20,6 @@ Item {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-    // FolderListModel {
-    //     id: folderModel
-    //     showDirs: true
-    //     showDirsFirst: true
-    //     sortReversed: true
-    //     nameFilters: ["*.zip"]
-    // }
     HixFilesystemModel {
         id: folderModel
         showDirs: true
@@ -151,22 +143,27 @@ Item {
             highlight: Rectangle { color: "#B6CDDC"; height: 22; radius: 5;}
 
             model: folderModel
+
+
+
             delegate: FileListDelegate{
-                onDirClicked: {  
-                    // console.log("shit", this, "shit2", fileSelectList, path)
+                property var dirText: parentDirText
+                property var selectList: fileSelectList
+                onDirClicked: {
                     folderModel.folder = path
                     // changeFolderPath(path)
                     // currentParentName = basename(folderModel.folder.toString())
                     // currentPath = path
-                    selectedFileName = ""
-                    parent.fileSelectList.currentIndex=-1
-                    parent.fileSelectList.update()
-                    parent.parentDirText.text = fileName
+//                    selectedFileName = ""
+                    dirText.text = name
+                    selectList.currentIndex=-1
+                    selectList.update()
+
                 }
                 onFileClicked: {
                     fileSelectList.currentIndex = index
                     selectedFileName = name
-                    selectedFilePath = ""
+                    selectedFilePath = path
                     fileSelectList.update()
                 }
             }
@@ -292,11 +289,8 @@ Item {
         }
     }
     function resetPath(){
-        // folderModel.folder = mediaURL
-        var test = "c:/Users/legok/source/repos/FW/capsuleFW/build/!@#$%ee"
-        console.log(test)
-        folderModel.folder = test
-        parentDirText.text = folderModel.parentFolder
+        folderModel.folder = mediaURL
+        parentDirText.text = ""
         fileSelectList.update()
     }
     function resetCurrentIndex(){

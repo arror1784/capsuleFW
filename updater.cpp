@@ -127,34 +127,35 @@ void Updater::waitForMCUFirmwareUpdate()
     _MCUFirmwareUpdateFinished = false;
 }
 
-QString Updater::version()
+void Updater::getVersion()
 {
-    return Version::getInstance().version;
+    emit sendVersion(Version::getInstance().version);
 }
 
-QString Updater::lastestVersion()
+void Updater::getLastestVersion()
 {
-    return _lastestVersion;
+    emit sendLastestVersion(_lastestVersion);
 }
 
 void Updater::update()
 {
     qDebug() << "update start";
-//    _future = std::async([https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/this]() {
+    _future = std::async([this]() {
         downloadLIST();
+        qDebug() << "download List";
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         downloadVER();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         if(_MCUFirmwareUpdateAvailable){
             downloadBin();
             if(waitForRequest()){
-                emit updateError();
+                emit updateNotice("error");
                 return;
             }
             _MCUFirmwareUpdateFinished = false;
@@ -164,20 +165,20 @@ void Updater::update()
         //download new update.sh
         downloadSH();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         //download new update file - *.zip
         downloadZIP();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         //run update.sh with root
         QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
         QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
         QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
-//    });
+    });
 
     return;
 }
@@ -185,7 +186,7 @@ void Updater::update()
 void Updater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
-        emit updateError();
+        emit updateNotice("error");
         _networkError = true;
         _requestAvailable = true;
         _cv.notify_all();
@@ -207,9 +208,9 @@ void Updater::requestFinished(QNetworkReply* reply)
             jo = jd.object();
             _lastestVersion = jo["version"].toString();
             if(jo["version"].toString() != Version::getInstance().version){
-                emit updateAvailable();
+                emit updateNotice("available");
             }else{
-                emit updateNotAvailable();
+                emit updateNotice("notAvailable");
             }
             break;
         case SWRequestType::DOWNLOAD_LIST:

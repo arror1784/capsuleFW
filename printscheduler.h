@@ -108,7 +108,7 @@ signals:
 
     void sendToUISetTotalTime(int time); //set realty time
 
-    void sendToUIPortOpenError();
+    void sendToUIPortOpenError(bool error);
 
     void sendToUILCDState(bool state);
 
@@ -180,6 +180,8 @@ public slots:
 //    void receiveFromUIGetVersion();
 //    void receiveFromUIGetModelNo();
     void receiveFromUIGetProductInfo();
+
+    void receiveFromUIGetUsbPortError();
 
     void receiveFromUpdaterFirmUpdate(QString path);
 

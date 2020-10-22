@@ -59,8 +59,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                resinUpdater.checkUpdate()
-                resinUpdatePopup.open()
+
             }
         }
     }

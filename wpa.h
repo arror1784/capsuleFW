@@ -10,8 +10,8 @@
 
 #include "wifiinfo.h"
 
-#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlx88366cfb28d9"
-//#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlan0"
+//#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlx88366cfb28d9"
+#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlan0"
 
 
 enum class WIFIInfoType{

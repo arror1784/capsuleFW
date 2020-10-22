@@ -37,15 +37,14 @@ void ResinUpdater::update()
     request.setUrl(QUrl("https://services.hix.co.kr/resin/download/C10"));
     manager->get(request);
 }
-
-QString ResinUpdater::version()
+void ResinUpdater::getVersion()
 {
-    return _updateTime.toString("dd/MM/yyyy");
+    emit sendVersion(_updateTime.toString("dd/MM/yyyy"));
 }
 
-QString ResinUpdater::lastestVersion()
+void ResinUpdater::getLastestVersion()
 {
-    return _lastestUpdateTime.toString("dd/MM/yyyy");
+    emit sendLastestVersion(_lastestUpdateTime.toString("dd/MM/yyyy"));
 }
 
 void ResinUpdater::updateVersionInFo()
@@ -59,6 +58,7 @@ void ResinUpdater::updateVersionInFo()
     for(int i = 0;i < resinList.size();i++) {
         QString mID = resinList[i];
         ResinSetting rs(mID);
+        rs.parse();
 
         QDateTime last = QDateTime::fromString(rs.lastUpdate,"MM/dd/yyyy, hh:mm:ss");
         qDebug() << last << rs.lastUpdate;
@@ -71,7 +71,7 @@ void ResinUpdater::updateVersionInFo()
 void ResinUpdater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
-        emit updateError();
+        emit updateNotice("error");
         qDebug() << reply->errorString();
         return;
     }
@@ -105,6 +105,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                         upAvailable = true;
                     }else{
                         ResinSetting rs(mID);
+                        rs.parse();
                         if(rs.lastUpdate != lastUpdate){
                             upAvailable = true;
                         }
@@ -112,16 +113,10 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
 //                    qDebug() << ja[i];
                 }
                 if(upAvailable){
-                    emit updateAvailable();
+                    emit updateNotice("available");
                 }else{
-                    emit updateNotAvailable();
+                    emit updateNotice("notAvailable");
                 }
-                //    QJsonObject getJsonObject(){return setting;}
-                //    QJsonObject getJsonObjectLayerHeight(double layerHeight){
-                //        QString s;
-                //        s.setNum(layerHeight);
-                //        return setting[s].toObject();
-                //    }
             }
             break;
         case ResinRequestType::DOWNLOAD:
@@ -146,6 +141,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                     sl.append(mID);
                     //To do add resin create code
                     ResinSetting rs(mID);
+                    rs.createFile();
                     QJsonObject object = ja.value(key).toObject();
 
                     for(auto &i : object.keys()){
@@ -175,13 +171,14 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                             rs.resinList.insert(i,ri);
                         }
                     }
+                    rs.save();
                 }
 
                 _printScheduler->_printerSetting.materialList = sl;
                 _printScheduler->_printerSetting.save();
 
                 updateVersionInFo();
-                emit updateFinished();
+                emit updateNotice("finish");
             }
             break;
         case ResinRequestType::NONE:

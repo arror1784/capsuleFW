@@ -166,7 +166,7 @@ Item {
             anchors.fill: parent
             enabled: updateEnable
             onClicked: {
-                resinUpdater.update()
+                updater.receiveFromQmlResinUpdate()
                 resinUpdatePopup.open()
             }
         }
@@ -174,32 +174,41 @@ Item {
     ResinUpdatePopup{
         id:resinUpdatePopup
     }
-
     Connections{
         id: resinUpdaterConnection
-        target: resinUpdater
-        onUpdateAvailable:{
-            updateEnable = true
-            updateInfoText.text = "Update available"
-            latestVersionText.text = resinUpdater.lastestVersion()
+        target: updater
+
+        onSendToQmlResinUpdateNotice:{
+            console.log("update resin check",state)
+            if(state === "error"){
+                updateInfoText.text = "Network not connected"
+            }else if(state === "finish"){
+                updater.receiveFromQmlResinGetVersion()
+                updateInfoText.text = "Update finished"
+                resinUpdatePopup.close()
+            }else if(state === "available"){
+                updateEnable = true
+                updateInfoText.text = "Update available"
+            }else if(state === "notAvailable"){
+                updateEnable = false
+                updateInfoText.text = "Current version is the lastest"
+            }
         }
-        onUpdateNotAvailable:{
-            updateEnable = false
-            updateInfoText.text = "Current version is the lastest"
-            latestVersionText.text = resinUpdater.lastestVersion()
+        onSendToQmlResinSendVersion:{
+            console.log("get resin currentVersion",version)
+            currentVersionText.text = version
         }
-        onUpdateFinished:{
-            updateInfoText.text = "Update finished"
-            resinUpdatePopup.close()
-            currentVersionText.text = resinUpdater.version()
-        }
-        onUpdateError:{
-            updateInfoText.text = "Network not connected"
+        onSendToQmlResinSendLastestVersion:{
+            console.log("get resin lastestVersion",version)
+            latestVersionText.text = version
         }
     }
 
     Component.onCompleted: {
-        currentVersionText.text = resinUpdater.version()
-        resinUpdater.checkUpdate()
+        updater.receiveFromQmlResinCheckUpdate()
+
+        updater.receiveFromQmlResinGetVersion()
+        updater.receiveFromQmlResinGetLastestVersion()
+        updater.receiveFromQmlResinCheckUpdate()
     }
 }

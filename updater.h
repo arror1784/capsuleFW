@@ -40,9 +40,17 @@ public:
     int waitForRequest();
     void waitForMCUFirmwareUpdate();
 
+signals:
+    void updateNotice(QString state);
+
+    void sendVersion(QString version);
+    void sendLastestVersion(QString version);
+
+    void updateMCUFirmware(QString path);
+
 public slots:
-    QString version();
-    QString lastestVersion();
+    void getVersion();
+    void getLastestVersion();
 
     void requestFinished(QNetworkReply* reply);
     void MCUFirmwareUpdateFinished();
@@ -50,19 +58,13 @@ public slots:
     void checkUpdate();
     void update();
 
-signals:
-    void updateAvailable();
-    void updateNotAvailable();
-    void updateFinished();
-    void updateError();
 
-    void updateMCUFirmware(QString path);
 
 private:
     QString _url;
     QString _downloadUrl;
 
-    QString _lastestVersion;
+    QString _lastestVersion = "";
 
     const QString _binName = "KinematicFW.binary";
     const QString _shName = "update.sh";

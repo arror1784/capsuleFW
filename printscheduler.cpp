@@ -42,7 +42,7 @@ PrintScheduler::PrintScheduler() :
     if(addSerialPort()){
         _USBPortConnection = false;
         _printState = "USBCONNECTIONERROR";
-        emit sendToUIPortOpenError();
+        emit sendToUIPortOpenError(true);
         return;
     }else{
         _USBPortConnection = true;
@@ -141,8 +141,6 @@ void PrintScheduler::bedError(){
 
 void PrintScheduler::initPrint()
 {
-    ResinSetting rs("default");
-
     _bedControl->setBedCuringTime(3);
     _bedControl->setCuringTime(5000);
 
@@ -797,6 +795,16 @@ void PrintScheduler::receiveFromUIGetProductInfo()
     jo.insert("modelNo",ModelNo::getInstance().modelNo);
     QJsonDocument doc(jo);
     emit sendToUIProductInfo(doc.toJson());
+}
+
+void PrintScheduler::receiveFromUIGetUsbPortError()
+{
+    if(_printState == "USBCONNECTIONERROR"){
+        emit sendToUIPortOpenError(true);
+    }else{
+        emit sendToUIPortOpenError(false);
+    }
+
 }
 void PrintScheduler::receiveFromUISetPrintTime(int time)
 {

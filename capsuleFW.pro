@@ -20,6 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    FilesystemModel.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
     common/jsonreadsetting.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     resinsetting.cpp \
     resinupdater.cpp \
     schedulerthread.cpp \
+    updateconnector.cpp \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
@@ -67,6 +69,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    FilesystemModel.h \
     Singleton.h \
     bedcontrol.h \
     bedserialport.h \
@@ -87,6 +90,7 @@ HEADERS += \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
+    updateconnector.h \
     updater.h \
     version.h \
     websocketclient.h \

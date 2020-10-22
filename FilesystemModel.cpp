@@ -80,13 +80,13 @@ QVariant Hix::QML::FilesystemModel::data(const QModelIndex& index, int role) con
         rv = fromStdPath(e.extension());
         break;
     case FileSizeRole:
-        rv = std::filesystem::file_size(e, hiddenError);
+        rv= (uint)std::filesystem::file_size(e, hiddenError);
         break;
     case FileLastModifiedRole:
     {
         auto timePt = std::filesystem::last_write_time(e, hiddenError);
         auto microsecondsUTC = std::chrono::duration_cast<std::chrono::microseconds>(timePt.time_since_epoch()).count();
-        rv = microsecondsUTC;
+        rv = (uint)microsecondsUTC;
         break;
     }
     //case FileLastReadRole:
@@ -329,7 +329,7 @@ void Hix::QML::FilesystemModel::applyNameFilter()
     auto itr = _data.begin();
     while (itr != _data.end())
     {
-        if (std::filesystem::is_regular_file(*itr) && _nameFilters.find(itr->extension()) != _nameFilters.cend())
+        if (std::filesystem::is_regular_file(*itr) && _nameFilters.find(itr->extension()) == _nameFilters.cend())
             itr = _data.erase(itr);
         else
             ++itr;

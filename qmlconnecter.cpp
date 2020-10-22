@@ -28,6 +28,8 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(this,&QmlConnecter::sendToSchedShutdown,_sched,&PrintScheduler::receiveFromUIShutdown);
         QObject::connect(this,&QmlConnecter::sendToSchedMoveMotor,_sched,&PrintScheduler::receiveFromUIMoveMotor);
         QObject::connect(this,&QmlConnecter::sendToSchedGetProductInfo,_sched,&PrintScheduler::receiveFromUIGetProductInfo);
+        QObject::connect(this,&QmlConnecter::sendToSchedGetUsbPortError,_sched,&PrintScheduler::receiveFromUIGetUsbPortError);
+
 
         QObject::connect(_sched,&PrintScheduler::sendToLCDChangeImage,this,&QmlConnecter::receiveFromSchedChangeImage);
         QObject::connect(_sched,&PrintScheduler::sendToLCDSetImageScale,this,&QmlConnecter::receiveFromSchedSetImageScale);

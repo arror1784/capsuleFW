@@ -92,8 +92,10 @@ Window {
             }
         }
         onSendToQmlPortOpenError:{
-            if(stackView.currentItem.name !== "USBPortOpenError")
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+            if(value){
+                if(stackView.currentItem.name !== "USBPortOpenError")
+                    stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+            }
         }
         onSendToQmlChangeToPrint:{
             var it = stackView.find(function(item,index){return item.isPrinMenu})
@@ -121,6 +123,7 @@ Window {
         }
     }
     Component.onCompleted: {
+        connection.receiveFromQmlGetUsbPortError()
         wifi.checkNetworkConnect()
     }
 }

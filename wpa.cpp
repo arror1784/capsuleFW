@@ -275,7 +275,7 @@ void WPA::wpa_ctrl_event()
             clearList();
             parseWifiInfo();
             parseNetworkInfo();
-//            checkConnected();
+            checkConnected();
             emit networkListUpdate();
         }else if(std::string(resBuff).find(WPA_EVENT_CONNECTED) != std::string::npos){
             _connected = true;

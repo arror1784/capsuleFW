@@ -47,6 +47,7 @@ public:
     void save() override;
 
     bool removeFile();
+    bool createFile();
 
 };
 

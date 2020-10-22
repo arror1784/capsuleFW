@@ -146,6 +146,7 @@ Item {
             var arg = []
             arg.push(stackView.get(1).selectedFilePath)
             arg.push(materialSelectList.currentItem.metarialname)
+            console.log(arg)
             connection.receiveFromQmlPrintStart(arg)
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }

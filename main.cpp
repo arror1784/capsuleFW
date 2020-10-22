@@ -11,7 +11,6 @@
 
 #include <QThread>
 #include <QQmlContext>
-#include <QQuickView>
 
 #include <wpa.h>
 
@@ -28,6 +27,7 @@
 #include "updater.h"
 #include "version.h"
 #include "qmlconnecter.h"
+#include "updateconnector.h"
 
 #include "kinetimecalc.h"
 #include "FilesystemModel.h"
@@ -44,26 +44,29 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    //QQmlContext* ctx = engine.rootContext();
-    //qDebug() << "main" << QThread::currentThread();
-
-    //QmlConnecter connecter;
-    //SchedulerThread backThread(engine,connecter);
+    QQmlContext* ctx = engine.rootContext();
+    qDebug() << "main" << QThread::currentThread();
 
     WPA wpa;
-    ctx->setContextProperty("wifi",&wpa);
+    NetworkControl nc;
+    QmlConnecter connecter;
+    UpdateConnector up;
+    SchedulerThread backThread(engine,connecter,up);
 
     backThread.start();
 
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
+    qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
 
+    ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);
     ctx->setContextProperty("wifi",&wpa);
+    ctx->setContextProperty("updater",&up);
 
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+//    if (engine.rootObjects().isEmpty())
+//        return -1;
 
     return app.exec();
 }

@@ -30,6 +30,9 @@ signals:
     void sendToSchedShutdown();
     void sendToSchedMoveMotor(QString cmd,int micro);
     void sendToSchedGetProductInfo();
+    void sendToSchedGetUsbPortError();
+
+
 
     void sendToQmlChangeImage(QString imagePath);
     void sendToQmlSetImageScale(double value);
@@ -41,7 +44,7 @@ signals:
     void sendToQmlMaterialList(QVariantList name);
     void sendToQmlPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer);
     void sendToQmlSetTotalTime(int time);
-    void sendToQmlPortOpenError();
+    void sendToQmlPortOpenError(bool value);
     void sendToQmlLCDState(bool state);
     void sendToQmlExit(bool error);
     void sendToQmlMoveOk();
@@ -70,6 +73,8 @@ public slots:
     void receiveFromQmlShutdown(){emit sendToSchedShutdown();}
     void receiveFromQmlMoveMotor(QString cmd,int micro){emit sendToSchedMoveMotor(cmd,micro);}
     void receiveFromQmlGetProductInfo(){emit sendToSchedGetProductInfo();}
+    void receiveFromQmlGetUsbPortError(){emit sendToSchedGetUsbPortError();}
+
 
     void receiveFromSchedChangeImage(QString imagePath){emit sendToQmlChangeImage(imagePath);}
     void receiveFromSchedSetImageScale(double value){emit sendToQmlSetImageScale(value);}
@@ -82,7 +87,7 @@ public slots:
     void receiveFromSchedPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer)
     {emit sendToQmlPrintInfo(printerState,material,fileName,layerHeight,elapsedTime,totalTime,progress,enableTimer);}
     void receiveFromSchedSetTotalTime(int time){emit sendToQmlSetTotalTime(time);}
-    void receiveFromSchedPortOpenError(){emit sendToQmlPortOpenError();}
+    void receiveFromSchedPortOpenError(bool value){emit sendToQmlPortOpenError(value);}
     void receiveFromSchedLCDState(bool state){emit sendToQmlLCDState(state);}
     void receiveFromSchedExit(bool error){emit sendToQmlExit(error);}
     void receiveFromSchedMoveOk(){emit sendToQmlMoveOk();}

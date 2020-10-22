@@ -136,9 +136,9 @@ Item {
                 }
                 var data = wifi.getNetwork(wifiSelectList.currentIndex)
                 if(data.getConnected()){
-                    wifiDisconnectPopup.open(data.getSsid(),data.getBssid())
+                    wifiDisconnectPopup.open(data.ssid,data.bssid)
                 }else{
-                    wifiConnectPopup.open(data.getSsid(),data.getBssid(),data.getNetworkID(),data.getFlags())
+                    wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
                 }
             }
         }
@@ -147,7 +147,7 @@ Item {
         id:wifiConnectPopup
         onConnectButtonClicked: {
             wifi.networkConnect(ssid,bssid,pwd,id)
-//            wifi.networkScan()
+            wifi.networkScan()
 //            stackView.pop(it,StackView.Immediate)
         }
         onConnectButtonClickedWithoutPSWD: {
@@ -172,7 +172,14 @@ Item {
         onCurrentStateChange: {
             updateWIFIList()
         }
+        onConnectedChange:{
+            updateWIFIList()
+        }
     }
+    WifiInfo{
+        id:info
+    }
+
     function updateWIFIList(){
         wifiSelectList.currentIndex = -1
         wifiModel.clear()
@@ -180,7 +187,8 @@ Item {
 
         for(var i = 0; i < count; i++){
             var data = wifi.getNetwork(i)
-            inserWIFIList(data.getSsid(),data.getBssid(),data.getFlags(),data.getConnected(),data.getNetworkID())
+            console.log(data)
+            inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
         }
     }
     function inserWIFIList(ssid,bssid,flags,b,networkID){

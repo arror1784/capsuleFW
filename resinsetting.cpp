@@ -113,3 +113,15 @@ bool ResinSetting::removeFile()
         return false;
     }
 }
+
+bool ResinSetting::createFile()
+{
+    QFile loadFile(_path);
+    if(!loadFile.open(QIODevice::ReadWrite)){
+        qDebug() << "Could not open json file to ReadWrite " << _path;
+        qDebug() << loadFile.errorString();
+        return false;
+    }else{
+        return true;
+    }
+}

@@ -166,7 +166,7 @@ Item {
             anchors.fill: parent
             enabled: updateEnable
             onClicked: {
-                SWUpdater.update()
+                updater.receiveFromQmlSWUpdate()
                 swUpdatePopup.open()
             }
         }
@@ -178,30 +178,35 @@ Item {
 
     Connections{
         id: swUpdaterConnection
-        target: SWUpdater
-        onUpdateAvailable:{
-//            swUpdatePopup.updateAvailable()
-            updateEnable = true
-            updateInfoText.text = "Update available"
-            latestVersionText.text = SWUpdater.lastestVersion()
+        target: updater
+
+        onSendToQmlSWUpdateNotice:{
+            console.log("update SW check",state)
+            if(state === "error"){
+                updateInfoText.text = "Network not connected"
+            }else if(state === "finish"){
+                updater.receiveFromQmlSWGetVersion()
+                updateInfoText.text = "Update finished"
+            }else if(state === "available"){
+                updateEnable = true
+                updateInfoText.text = "Update available"
+            }else if(state === "notAvailable"){
+                updateEnable = false
+                updateInfoText.text = "Current version is the lastest"
+            }
         }
-        onUpdateNotAvailable:{
-//            swUpdatePopup.updateNotAvailable()
-            updateEnable = false
-            updateInfoText.text = "Current version is the lastest"
-            latestVersionText.textCurrent = SWUpdater.lastestVersion()
+        onSendToQmlSWSendVersion:{
+            console.log("get SW currentVersion",version)
+            currentVersionText.text = version
         }
-        onUpdateFinished:{
-//            swUpdatePopup.updateFinished()
-            updateInfoText.text = "Update finished"
-        }
-        onUpdateError:{
-//            swUpdatePopup.updateError()
-            updateInfoText.text = "Network not connected"
+        onSendToQmlSWSendLastestVersion:{
+            console.log("get SW lastestVersion",version)
+            latestVersionText.text = version
         }
     }
     Component.onCompleted: {
-        currentVersionText.text = SWUpdater.version()
-        SWUpdater.checkUpdate()
+        updater.receiveFromQmlSWGetVersion()
+        updater.receiveFromQmlSWGetLastestVersion()
+        updater.receiveFromQmlSWCheckUpdate()
     }
 }

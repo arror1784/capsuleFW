@@ -9,24 +9,28 @@
 #include "wpa.h"
 #include "websocketclient.h"
 
-SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn) : _engine(engine), _conn(conn)
+SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update) : _engine(engine), _conn(conn), _updater(update)
 {
 
 }
 
 void SchedulerThread::run()
 {
-
     qDebug() << "sched" << QThread::currentThread();
 
     _sched = new PrintScheduler();
-
-    _conn.schedConnect(_sched);
-
-    NetworkControl nc;
+    //    NetworkControl nc;
     ResinUpdater ru(_sched);
     Updater up;
-//    WPA wpa;
+
+    QObject::connect(&up,&Updater::updateMCUFirmware,_sched,&PrintScheduler::receiveFromUpdaterFirmUpdate);
+    QObject::connect(_sched,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
+
+    _conn.schedConnect(_sched);
+    _updater.swUpdaterConnect(&up);
+    _updater.resinUpdaterConnect(&ru);
+
+
 
     WebSocketClient wsClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
     QObject::connect(&wsClient,&WebSocketClient::startByWeb,_sched,&PrintScheduler::receiveFromUIPrintStart);
@@ -44,25 +48,16 @@ void SchedulerThread::run()
     QObject::connect(_sched,&PrintScheduler::sendToUIPrintInfo,&wsClient,&WebSocketClient::getPrintInfoToWeb);
     QObject::connect(_sched,&PrintScheduler::sendToUISetTotalTime,&wsClient,&WebSocketClient::setTotalTime);
 
-//    wsClient.open();
+    wsClient.open();
 
-//    std::function<void()> func = [this,&nc,&ru,&up/*,&wpa*/]() {
-//        qDebug() << "func" << QThread::currentThread();
-//        QQmlContext* ctx = _engine.rootContext();
+    std::function<void()> func = [this]() {
+        qDebug() << "func" << QThread::currentThread();
 
-//        ctx->setContextProperty("nc",&nc);
-//        ctx->setContextProperty("resinUpdater",&ru);
-//        ctx->setContextProperty("SWUpdater",&up);
-////        ctx->setContextProperty("wifi",&wpa);
+        _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+        _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+    };
 
-//        _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-////        _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-//    };
-
-//    QMetaObject::invokeMethod(this,func,Qt::QueuedConnection);
-
-    QObject::connect(&up,&Updater::updateMCUFirmware,_sched,&PrintScheduler::receiveFromUpdaterFirmUpdate);
-    QObject::connect(_sched,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
+    QMetaObject::invokeMethod(this,func,Qt::QueuedConnection);
 
     QThread::exec();
 }
