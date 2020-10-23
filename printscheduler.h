@@ -46,6 +46,7 @@ public:
     void bedError();
 
     void initPrint();
+    void initPrintinfo();
 
     void printLayer();
 
@@ -65,7 +66,7 @@ public:
     void deletePrintFolder();
     int sayHello();
 
-    int donwloadFiles(QJsonObject byte);
+    int donwloadFiles(QJsonObject& byte);
 
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
@@ -86,15 +87,6 @@ signals:
     void sendToUIFirstlayerFinish();        //For CAL PrintTime
 
     void sendToUIChangeToPrint();       //change ui Ready to Print
-
-//    void sendToUIChangeToPauseStart();             pauseStart      //chage ui print to Pause Start
-//    void sendToUIChangeToPauseFinish();            pauseFinish   //change ui Pause Start to Pause Finish
-//    void sendToUIChangeToResume();                 resume   //change ui Pause Finish to Print
-//    void sendToUIChangeToQuit();                   quit   //change ui all state to Quit
-
-//    void sendToUIChangeToPrintFinish();            printFinish           //chagne UI state Print To Ready
-//    void sendToUIChangeToPrintWorkError();         printError //Error when Printing
-//    void sendToUIChangeToPrintWorkErrorFinish();   printErrorFinish //change UI State Print To Ready By Error
 
     void sendToUIChangeState(QString state);
 
@@ -121,22 +113,13 @@ signals:
     void sendToUIHeightOffset(int offset);
     void sendToUILEDOffset(double offset);
 
- //    void sendToUIMaterialOption(QString material,QString option);
-
     void sendToUIGetPrintOption(QString option);
     void sendToUIGetInfoSetting(QString path,QString option);
 
     void sendToUIIsCustom(bool value);
-//    void sendToUIVersion(QString version);
-//    void sendToUIModelNo(QString modelNo);
     void sendToUIProductInfo(QString json);
 
 public slots:
-
-//    void receiveFromQMLPrintStart(QString path,QString materialName);
-//    void receiveFromUIPrintStart(QString fileName,QString materialName,QJsonObject byte);
-//    void receiveFromUIPrintAgain();
-
     void receiveFromUIPrintStart(QVariantList args);
 
     void receiveFromUIPrintStateChange(QString CMD);
@@ -147,11 +130,6 @@ public slots:
 
     int receiveFromUIGetHeightOffset();
     double receiveFromUIGetLedOffset();
-
-//    QString receiveFromUIGetMaterialOption(QString material);
-
-//    QVariant receiveFromUIGetPrintOption(QString key);
-//    QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
 
     QString receiveFromUIGetPrintOption();
     QString receiveFromUIGetInfoSetting(QString path);
@@ -170,15 +148,8 @@ public slots:
     void receiveFromUIBusySet(bool bs);
     void receiveFromUIShutdown();
 
-//    void receiveFromUIGoHome();
-//    void receiveFromUIAutoHome();
-//    void receiveFromUIMoveMaxHeight();
-//    void receiveFromUIMoveMicro(int micro);
-
     void receiveFromUIMoveMotor(QString cmd,int micro);
 
-//    void receiveFromUIGetVersion();
-//    void receiveFromUIGetModelNo();
     void receiveFromUIGetProductInfo();
 
     void receiveFromUIGetUsbPortError();

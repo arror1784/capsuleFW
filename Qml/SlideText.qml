@@ -28,8 +28,8 @@ Item{
         x:0
 
         NumberAnimation on x{
-            from: root.width
-            to: -1*movingText.width
+            from: 10
+            to: -1*(movingText.width - root.width + 20)
             loops: Animation.Infinite
             duration: 10000
             running: animateEnable

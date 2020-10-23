@@ -144,8 +144,6 @@ Item {
 
             model: folderModel
 
-
-
             delegate: FileListDelegate{
                 property var dirText: parentDirText
                 property var selectList: fileSelectList
@@ -288,6 +286,18 @@ Item {
             }
         }
     }
+    Timer{
+        id:timer
+        interval: 1000
+        running: fileSelectList.count == 0 ? true : false
+        repeat: true
+        onTriggered: {
+            console.log("hello world")
+            resetPath()
+//            fileSelectList.update()
+        }
+    }
+
     function resetPath(){
         folderModel.folder = mediaURL
         parentDirText.text = ""

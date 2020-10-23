@@ -23,7 +23,7 @@ Rectangle{
 
     Text {
         id: wifiNameText
-        text: current ?  "* " + ssid : ssid
+        text: current ?  "Current: " + ssid : ssid
         color: "#474747"
         font.pixelSize: 20
         font.family: openSansRegular.name

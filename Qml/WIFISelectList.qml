@@ -163,6 +163,10 @@ Item {
 //            stackView.pop(it,StackView.Immediate)
         }
     }
+    WIFINotice{
+        id: wifiNotice
+    }
+
     Connections{
         id: wifiConnection
         target: wifi
@@ -173,6 +177,12 @@ Item {
             updateWIFIList()
         }
         onConnectedChange:{
+            if(connected){
+                wifiNotice.setText("WIFI Connected")
+            }/*else{
+                wifiNotice.setText("WIFI Disconneced")
+            }*/
+            wifiNotice.open()
             updateWIFIList()
         }
     }
@@ -187,7 +197,6 @@ Item {
 
         for(var i = 0; i < count; i++){
             var data = wifi.getNetwork(i)
-            console.log(data)
             inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
         }
     }

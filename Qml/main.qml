@@ -54,22 +54,10 @@ Window {
     }
     ShutdownPopup{
         id: shutDownPopup
+        onSendToShutdown: {
+            connection.receiveFromQmlShutdown()
+        }
 
-    }
-    Image {
-        id: networkImage
-        width: 20
-        height: 20
-
-        anchors.right: parent.right
-        anchors.rightMargin: 5
-        anchors.top: parent.top
-        anchors.topMargin: 5
-
-
-        source: "qrc:/image/network.png"
-        visible: false
-//        scale: 0.1
     }
     Connections{
         target: connection
@@ -108,17 +96,6 @@ Window {
                     it.clear()
                     stackView.pop(it,StackView.Immediate)
                 }
-            }
-        }
-    }
-    Connections{
-        target: wifi
-
-        onConnectedChange:{
-            if(connected){
-                networkImage.visible = true;
-            }else{
-                networkImage.visible = false;
             }
         }
     }

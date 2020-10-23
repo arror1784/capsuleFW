@@ -174,6 +174,10 @@ Item {
     ResinUpdatePopup{
         id:resinUpdatePopup
     }
+    ResinUpdateNotice{
+        id:resinUpdateNotice
+    }
+
     Connections{
         id: resinUpdaterConnection
         target: updater
@@ -184,7 +188,9 @@ Item {
                 updateInfoText.text = "Network not connected"
             }else if(state === "finish"){
                 updater.receiveFromQmlResinGetVersion()
+                resinUpdateNotice.open()
                 updateInfoText.text = "Update finished"
+                updateEnable = false
                 resinUpdatePopup.close()
             }else if(state === "available"){
                 updateEnable = true

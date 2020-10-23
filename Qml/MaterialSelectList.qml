@@ -158,13 +158,12 @@ Item {
                 inserMaterialList(name[i])
             }
         }
-        onSendToQmlIsCustom:{
+        onSendToQmlIsCustom:function bb(value){
             if(value){
                 inserMaterialList("Custom")
             }
         }
         onSendToQmlGetInfoSetting:{
-            console.log(option)
             var JsonString = option
             var JsonObject = JSON.parse(JsonString)
 

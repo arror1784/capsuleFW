@@ -161,6 +161,16 @@ void PrintScheduler::initPrint()
     return;
 }
 
+void PrintScheduler::initPrintinfo()
+{
+    _progress = 0;
+    _lastStartTime = 0;
+    _elapsedTime = 0;
+    _layerHeight = 0.0;
+    _printState = "ready";
+    _totalPrintTime = 0;
+}
+
 void PrintScheduler::printLayer(){
 
     if(_bedWork == BED_WORK && _bedMoveFinished == PRINT_MOVE_LAYER_OK){
@@ -416,7 +426,7 @@ int PrintScheduler::copyProject(QString path)
     }
     return 0;
 }
-int PrintScheduler::donwloadFiles(QJsonObject byte)
+int PrintScheduler::donwloadFiles(QJsonObject& byte)
 {
 //    QJsonObject &ja = byte;
     //file save
@@ -470,13 +480,7 @@ int PrintScheduler::setupForPrint(QString materialName)
     QDir dir(filePath);
     dir.setFilter( QDir::AllEntries | QDir::NoDotAndDotDot );
 
-    _progress = 0;
-    _lastStartTime = 0;
-    _elapsedTime = 0;
-    _layerHeight = 0.0;
-    _printState = "ready";
-    _totalPrintTime = 0;
-
+    qDebug() << materialName;
 
     try {
         InfoSetting info(infoPath);
@@ -489,6 +493,7 @@ int PrintScheduler::setupForPrint(QString materialName)
         auto layer_height = round(info.layerHeight * 10000) / 10000;
 
         if(materialName == "Custom"){
+
             f.setFileName(filePath + QStringLiteral("/resin.json"));
             if(!f.open(QIODevice::ReadOnly | QIODevice::Text)){
                 qDebug() << "resin file open error";
@@ -503,7 +508,6 @@ int PrintScheduler::setupForPrint(QString materialName)
 
             materialSetting.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
             materialSetting.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
-            materialSetting.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
             materialSetting.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
             materialSetting.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
@@ -516,13 +520,16 @@ int PrintScheduler::setupForPrint(QString materialName)
             materialSetting.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
             materialSetting.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
             materialSetting.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
-            materialSetting.material = Hix::Common::Json::getValue<int>(jo,"material");
 
         }else{
-//            if(rs.getOpen())
+//          if(rs.getOpen())
+            if(rs.resinList.contains(QString::number(layer_height))){
                 materialSetting = rs.resinList[QString::number(layer_height)];
-//            else
-//                return -5;
+            }else{
+                return -6;
+            }
+            //          else
+//          return -5;
         }
 
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
@@ -551,15 +558,6 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
-
-        //    KineTimeCalc kinCalc(setting["total_layer"].toInt(), materialSetting["bed_curing_layer"].toInt(), materialSetting["layer_delay"].toInt(), setting["layer_height"].toDouble(),
-        //            materialSetting["z_hop_height"].toInt() / 1000,materialSetting["init_speed"].toInt(), materialSetting["max_speed"].toInt(), materialSetting["up_accel_speed"].toInt(),
-        //            materialSetting["up_decel_speed"].toInt(), materialSetting["down_accel_speed"].toInt(), materialSetting["down_decel_speed"].toInt(),
-        //                 materialSetting["bed_curing_time"].toInt(), materialSetting["curing_time"].toInt());
-
-        //    _totalPrintTime = kinCalc.layerPrintTime();
-
-
     } catch (std::exception &e) {
         return -3;
     }
@@ -613,6 +611,8 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
         emit sendToUIPrintSettingError(4);
         return;
     }
+
+    initPrintinfo();
 
     if(size == 0){
         printStart();

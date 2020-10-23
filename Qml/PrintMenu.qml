@@ -248,6 +248,9 @@ Item {
             eltime = elapsedTime;
             startTime = new Date().getTime()
         }
+        onSendToQmlChangeToPrint:{
+            clear()
+        }
 
     }
 
@@ -296,9 +299,6 @@ Item {
 
         fileInfoPopup.setPrintingTime("Calculating")
         //Todo To do
-        function setProgressValue(value){
-            progressBar.setCurrentValue(value)
-        }
     }
     function setProgressValue(value){
         progressBar.setCurrentValue(value)

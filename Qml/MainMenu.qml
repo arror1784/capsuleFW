@@ -163,6 +163,13 @@ Item {
         id:infoPopup
     }
     Connections{
+        target: wifi
+
+        onConnectedChange:{
+            infoPopup.setWifiConnectd(connected)
+        }
+    }
+    Connections{
         target: connection
         onSendToQmlProductInfo:{
             var JsonString = json

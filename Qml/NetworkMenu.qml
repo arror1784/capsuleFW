@@ -14,55 +14,6 @@ Item {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-
-    Rectangle{
-        id: resinUpdate
-        radius: 5
-        anchors.top: parent.top
-        anchors.topMargin: 20
-        color: "#DCEAF3"
-
-        width: 215
-        height: 110
-
-        anchors.left: parent.left
-        anchors.leftMargin: 15
-
-        Rectangle{
-            width: resinUpdateText.width
-            height: resinUpdateImage.height + resinUpdateText.height
-            anchors.centerIn: parent
-            color: "#00000000"
-            Image {
-                id: resinUpdateImage
-                source: "qrc:/image/fill.png"
-
-                height: 67
-                width: 67
-
-                scale: 0.9
-                anchors.horizontalCenter: resinUpdateText.horizontalCenter
-            }
-
-            Text {
-                id: resinUpdateText
-                text: qsTr("Ethernet")
-                color: "#666666"
-
-                anchors.top: resinUpdateImage.bottom
-
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-                font.bold: true
-            }
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-
-            }
-        }
-    }
     Rectangle {
         id: firmwareUpdate
         width: 215
@@ -74,8 +25,8 @@ Item {
 
         anchors.top: parent.top
         anchors.topMargin: 20
-        anchors.right: parent.right
-        anchors.rightMargin: 15
+        anchors.left: parent.left
+        anchors.leftMargin: 15
         Rectangle{
             width: firmwareUpdateText.width
             height: firmwareUpdateImage.height + firmwareUpdateText.height
@@ -123,10 +74,10 @@ Item {
 
         radius: 8
 
-        anchors.bottom: backButton.top
-        anchors.bottomMargin: 15
-        anchors.leftMargin: 15
-        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        anchors.right: parent.right
+        anchors.rightMargin: 15
         Rectangle{
             width: networkText.width
             height: networkImage.height + networkText.height
