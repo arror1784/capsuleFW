@@ -106,6 +106,8 @@ schedulerthread.h
 schedulerthread.cpp
 FilesystemModel.h
 FilesystemModel.cpp
+updateconnector.h
+updateconnector.cpp
 qml.qrc
 font.qrc
 image.qrc
