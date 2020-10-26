@@ -24,6 +24,8 @@ void BedControl::receiveFromBedSerialPort(){
         moveDownCommand();
         break;
     case PRINT_MOVE_DOWN:
+        _moveFinishTime = QDateTime::currentDateTime();
+        _sched->setTotaltime(_moveStartTime.msecsTo(_moveFinishTime));
         bedState = PRINT_MOVE_READY;
         _sched->receiveFromBedControl(PRINT_MOVE_LAYER_OK );
         break;
@@ -144,6 +146,8 @@ void BedControl::printDelay(){
 
         _sched->_printerSetting.UVTimeSpend = jo;
         _sched->_printerSetting.save();
+
+        _moveStartTime = QDateTime::currentDateTime();
         moveUpCommand();
     });
 }

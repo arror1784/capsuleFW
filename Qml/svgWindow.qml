@@ -49,23 +49,8 @@ Window {
         }
 
         onSendToQmlChangeState:{
-            if(state == "pauseStart"){
-                quitPopup.open()
-                quitPopup.setButtonEnabled(false)
-            }else if(state === "pauseFinish"){
-                quitPopup.setButtonEnabled(true)
-
-            }else if(state === "resume"){
-                quitPopup.close()
-            }else if(state == "quit"){
-                quitPopup.close()
-                waitPopup.open()
-                waitPopupOpened = true
-            }else if(state === "printFinish"){
+            if(state === "printFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
-            }else if(state === "printError"){
-                waitPopup.open()
-                waitPopupOpened = true
             }else if(state === "printErrorFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
             }

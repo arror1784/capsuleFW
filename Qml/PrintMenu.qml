@@ -11,11 +11,14 @@ Item {
     property double time: 0
     property double eltime: 0
 
-    property double firstLayerTimeStart: 0
+    property int totaltime: 0
+    property int curingTime: 0
+    property bool timerRunning: false
 
     property double startTime: 0
     property int ct: 0
     property bool waitPopupOpened: false
+
 
     property bool isPrinMenu: true
 
@@ -67,13 +70,13 @@ Item {
             anchors.top: fileName.bottom
             anchors.topMargin: 20
             Text {
-                text: qsTr("time")
+                text: qsTr("Remaing Time")
                 font.family: openSansRegular.name
                 font.pixelSize: 15
             }
             Text {
                 id: timeText
-                text: timemin + "min " + timesec + "sec"
+                text: ""
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true
@@ -169,7 +172,7 @@ Item {
 
     Timer{
         id: timeTimer
-        interval: 50; running: false; repeat: true
+        interval: 50; running: timerRunning; repeat: true
         onRunningChanged: {
            if(running){
                var date = new Date()
@@ -181,11 +184,28 @@ Item {
         onTriggered: {
             var date = new Date();
             var currentDuration = date.getTime() - startTime + eltime
-            var currentDate = new Date(currentDuration)
+            curingTime = currentDuration
+            var diffDuration = totaltime - currentDuration
+            var currentDate
+            if(totaltime === 0){
+                timeText.text = "Calculating"
+                return
+            }
 
-            time = currentDuration
-            timesec = currentDate.getSeconds()
-            timemin = currentDate.getMinutes()
+            if(diffDuration < 0){
+                currentDate = new Date(-diffDuration)
+
+                timesec = currentDate.getSeconds()
+                timemin = currentDate.getMinutes()
+                timeText.text = -timemin + "min " + -timesec + "sec"
+
+            }else{
+                currentDate = new Date(diffDuration)
+
+                timesec = currentDate.getSeconds()
+                timemin = currentDate.getMinutes()
+                timeText.text = timemin + "min " + timesec + "sec"
+            }
         }
     }
     Connections{
@@ -251,37 +271,18 @@ Item {
         onSendToQmlChangeToPrint:{
             clear()
         }
+        onSendToQmlSetTotalTime:{
+            totaltime = time
+            var currentDate = new Date(time)
+            var sec = currentDate.getSeconds()
+            var min = currentDate.getMinutes()
 
-    }
+            fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
+//            timeText.text = timemin + "min " + timesec + "sec"
 
-    function receiveFirstlayerStart(){
-        var currentDate = new Date()
-        firstLayerTimeStart = currentDate.getTime()
-    }
-    function receiveFirstlayerFinish(){
-        //To do Todo
+            timerRunning = true
+        }
 
-//            var JsonStringPrint = scheduler.receiveFromUIGetInfoSetting(stackView.get(1).selectedFilePath);
-//            var JsonObjectPrint = JSON.parse(JsonString);
-
-//            var JsonStringPrint = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName())
-//            var JsonObjectPrint = JSON.parse(JsonString);
-
-//            var total_layer = JsonObjectPrint.total_layer
-//            var bed_curting_layer = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName(),"bed_curing_layer")
-
-        var T = new Date()
-        var Tduration = T.getTime() - firstLayerTimeStart
-        var Tdate = new Date(Tduration)
-        var firstLayerTime = Tdate.getTime()
-
-
-        var currentDate = new Date(time + (firstLayerTime * ((total_layer - bed_curting_layer) - 1)))
-        var sec = currentDate.getSeconds()
-        var min = currentDate.getMinutes()
-
-        connection.receiveFromQmlSetTotalPrintTime(currentDate)
-        fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
     }
     function clear(){
         progressBar.setCurrentValue(0)
@@ -290,13 +291,15 @@ Item {
 
         time = 0
 
-        firstLayerTimeStart = 0
-
         startTime = 0
+        totaltime = 0
+        curingTime = 0
 
         ct = 0
         waitPopupOpened = false
 
+        timerRunning = false
+        timeText.text = "Calculating"
         fileInfoPopup.setPrintingTime("Calculating")
         //Todo To do
     }

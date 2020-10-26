@@ -100,6 +100,24 @@ QString PrintScheduler::materialName() const
     return _materialName;
 }
 
+void PrintScheduler::setTotaltime(uint64_t moveTime)
+{
+    int totalTime = 0;
+
+    totalTime += _bedCuringLayer * _bedCuringTime;
+    totalTime += (_bedMaxPrintNum - _bedCuringLayer) * _curingTime;
+
+    totalTime += moveTime * _bedMaxPrintNum;
+    totalTime += _printDelay * _bedMaxPrintNum;
+
+    _totalPrintTime = totalTime;
+
+    if(_totalTimeCalc){
+        _totalTimeCalc = false;
+        emit sendToUISetTotalTime(totalTime);
+    }
+}
+
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
@@ -169,6 +187,7 @@ void PrintScheduler::initPrintinfo()
     _layerHeight = 0.0;
     _printState = "ready";
     _totalPrintTime = 0;
+    _totalTimeCalc = true;
 }
 
 void PrintScheduler::printLayer(){
@@ -234,11 +253,6 @@ void PrintScheduler::receiveFromBedControl(int receive){
                 _bedWork = BED_PAUSE;
             }
             _bedMoveFinished = PRINT_MOVE_LAYER_OK;
-            if(_bedPrintImageNum == _bedCuringLayer){
-                emit sendToUIFirstlayerStart();
-            }else if(_bedPrintImageNum == (_bedCuringLayer + 1)){
-                emit sendToUIFirstlayerFinish();
-            }
 
             printLayer();
             break;
@@ -552,6 +566,10 @@ int PrintScheduler::setupForPrint(QString materialName)
         _bedControl->setBedCuringTime(materialSetting.bedCuringTime);
         _bedControl->layerDelay = materialSetting.layerDelay;
 
+        _bedCuringTime = materialSetting.bedCuringTime;
+        _curingTime = materialSetting.curingTime;
+        _printDelay = materialSetting.layerDelay;
+
         _bedControl->setUVtime(0);
 
         emit sendToLCDSetImageScale(materialSetting.contractionRatio);
@@ -763,11 +781,6 @@ QString PrintScheduler::receiveFromUIGetInfoSetting(QString path)
     }
 }
 
-void PrintScheduler::receiveFromUISetTotalPrintTime(int time)
-{
-    _totalPrintTime = time;
-    emit sendToUISetTotalTime(time);
-}
 
 void PrintScheduler::receiveFromUIMoveMotor(QString cmd, int micro)
 {

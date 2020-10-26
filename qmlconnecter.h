@@ -21,7 +21,6 @@ signals:
     double sendToSchedGetLedOffset();
     QString sendToSchedGetPrintOption();
     QString sendToSchedGetInfoSetting(QString path);
-    void sendToSchedSetTotalPrintTime(int time);
     void sendToSchedSetPrintTime(int time);
     void sendToSchedSetHeightOffset(int value);
     void sendToSchedSetLedOffset(double value);
@@ -64,7 +63,6 @@ public slots:
     void receiveFromQmlGetLedOffset(){emit sendToSchedGetLedOffset();}
     void receiveFromQmlGetPrintOption(){emit sendToSchedGetPrintOption();}
     void receiveFromQmlGetInfoSetting(QString path){emit sendToSchedGetInfoSetting(path);}
-    void receiveFromQmlSetTotalPrintTime(int time){emit sendToSchedSetTotalPrintTime(time);}
     void receiveFromQmlSetPrintTime(int time){emit sendToSchedSetPrintTime(time);}
     void receiveFromQmlSetHeightOffset(int value){emit sendToSchedSetHeightOffset(value);}
     void receiveFromQmlSetLedOffset(double value){emit sendToSchedSetLedOffset(value);}

@@ -47,14 +47,19 @@ void SchedulerThread::run()
     QObject::connect(_sched,&PrintScheduler::sendToUIEnableTimer,&wsClient,&WebSocketClient::enableTimer);
     QObject::connect(_sched,&PrintScheduler::sendToUIPrintInfo,&wsClient,&WebSocketClient::getPrintInfoToWeb);
     QObject::connect(_sched,&PrintScheduler::sendToUISetTotalTime,&wsClient,&WebSocketClient::setTotalTime);
-
+#ifdef __arm__
     wsClient.open();
+#endif
 
     std::function<void()> func = [this]() {
         qDebug() << "func" << QThread::currentThread();
 
+#ifdef __arm__
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+#else
+        _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+#endif
     };
 
     QMetaObject::invokeMethod(this,func,Qt::QueuedConnection);

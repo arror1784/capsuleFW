@@ -100,6 +100,8 @@ private:
 
 //    double currentPosition = 0.0;
 //    double pauseMoveMilli = 0.0;
+    QDateTime _moveStartTime;
+    QDateTime _moveFinishTime;
 
     QTimer m_timer;
     //int motor_accel;

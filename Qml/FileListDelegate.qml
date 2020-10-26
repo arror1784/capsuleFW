@@ -10,7 +10,6 @@ Rectangle{
 
     signal dirClicked(string path, string name,int index)
     signal fileClicked(string path, string name,int index)
-    signal fileDoubleClicked(url path, string name)
 
     FontLoader{
         id: openSansRegular
@@ -35,13 +34,6 @@ Rectangle{
                 dirClicked(filePath , fileName,index)
             }else{
                 fileClicked(filePath , fileName,index)
-            }
-        }
-        onDoubleClicked: {
-            if(fileIsDir === true){
-                dirClicked(filePath , fileName,index)
-            }else{
-                fileDoubleClicked(filePath , fileName)
             }
         }
     }

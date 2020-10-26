@@ -153,8 +153,11 @@ Item {
     }
     Component.onCompleted: {
         var it = stackView.find(function(item,index){return item.isPrinMenu})
-        timesec = it.timesec
-        timemin = it.timemin
+
         fileName.text = it.printName
+
+        var T = new Date(it.curingTime)
+        timesec = currentDate.getSeconds()
+        timemin = currentDate.getMinutes()
     }
 }

@@ -77,14 +77,13 @@ public:
     void setMotorSpendtime();
     QString materialName() const;
 
+    void setTotaltime(uint64_t moveTime);
+
 signals:
     void sendToLCDChangeImage(QString imagePath);   //only QML
     void sendToLCDSetImageScale(double value);      //only QML
 
     void sendToUIUpdateProgress(int progress); //update Progress
-
-    void sendToUIFirstlayerStart();         //For CAL PrintTime
-    void sendToUIFirstlayerFinish();        //For CAL PrintTime
 
     void sendToUIChangeToPrint();       //change ui Ready to Print
 
@@ -134,7 +133,6 @@ public slots:
     QString receiveFromUIGetPrintOption();
     QString receiveFromUIGetInfoSetting(QString path);
 
-    void receiveFromUISetTotalPrintTime(int time);
     void receiveFromUISetPrintTime(int time);       //for real time
     //use only qml or scheduler
 
@@ -184,13 +182,20 @@ private:
     int _bedMaxPrintNum;
 
 
-    int _bedCuringLayer = 5;
     int _progress = 0;
     long long _lastStartTime = 0;
     long long _elapsedTime = 0;
     double _layerHeight = 0.0;
     long long _totalPrintTime = 0;
     QString _printState = "ready";
+
+    int _bedCuringLayer = 5;
+    int _bedCuringTime = 0;
+    int _curingTime = 0;
+    int _printDelay = 0;
+
+    bool _totalTimeCalc = true;
+
 
     int _printTime = 0;
 

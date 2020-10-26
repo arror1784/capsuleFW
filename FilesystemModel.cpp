@@ -1,8 +1,14 @@
 #include "FilesystemModel.h"
 #include <chrono>
+#include <iostream>
+
 using namespace Hix;
 using namespace Hix::QML;
-
+#ifdef __arm__
+constexpr auto HOME = "/media/pi";
+#else
+constexpr auto HOME = "/media/jsh";
+#endif
 
 
 inline QString fromStdPath(const std::filesystem::path& path)
@@ -142,6 +148,7 @@ void Hix::QML::FilesystemModel::setFolder(const QString& folder)
         _data.clear();
         endResetModel();
         emit rowCountChanged();
+        emit folderChangeError();
     }
     else
     {
@@ -251,15 +258,32 @@ int Hix::QML::FilesystemModel::indexOf(const QString& file) const
     return  int();
 }
 
+QString FilesystemModel::getUSB() const
+{
+    std::filesystem::path home = HOME;
 
+    auto dirItr = std::filesystem::directory_iterator(home);
+    auto child = std::filesystem::begin(dirItr);
+
+//    for(auto e: child)
+//    {
+//        std::cout <<"whhhhh" << e << std::endl;
+//    }
+    if(child != std::filesystem::end(dirItr) && std::filesystem::is_directory(*child))
+    {
+        return fromStdPath(*child);
+    }
+    return "";
+
+}
 
 void updateSortingImpl(bool isDir, bool isReverse,
     FilesystemModel::SortField sort,  std::deque<std::filesystem::path>& paths)
 {
     switch (sort) {
     case FilesystemModel::SortField::Unsorted:
-        return;
         break;
+        return;
     case FilesystemModel::SortField::Name:
         std::sort(paths.begin(), paths.end(),
             [isReverse](const std::filesystem::path& a, const std::filesystem::path& b) ->bool {

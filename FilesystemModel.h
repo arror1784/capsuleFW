@@ -67,10 +67,12 @@ namespace Hix
             Q_INVOKABLE bool isFolder(int index) const;
             Q_INVOKABLE QVariant get(int idx, const QString& property) const;
             Q_INVOKABLE int indexOf(const QString& file) const;
+            Q_INVOKABLE QString getUSB() const;
 
         signals:
             void folderChanged();
             void rowCountChanged() const;
+            void folderChangeError();
 
         private:
             std::filesystem::path _current;

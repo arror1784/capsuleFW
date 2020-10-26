@@ -1,4 +1,4 @@
-import QtQuick 2.0
+ import QtQuick 2.0
 import Qt.labs.folderlistmodel 2.1
 import QtQuick.Controls 2.5
 import App 1.0
@@ -10,7 +10,9 @@ Item {
     // property url currentPath
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "/media/pi"
+    property string mediaURL: "/media/jsh"
+
+    property bool fileSearch: true
 
     FontLoader{
         id: openSansSemibold
@@ -78,18 +80,17 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if(folderModel.folder.toString() !== mediaURL){
-                        selectedFileName = ""
+//                        selectedFileName = ""
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
-                        fileSelectList.update()
+//                        fileSelectList.update()
 
                         if(folderModel.folder.toString() === mediaURL){
-                            parentDirText.text = " "
+                            parentDirText.text = ""
                         }
                         else{
                             parentDirText.text = basename(folderModel.folder.toString())
                         }
-//                        parentDirText.text = fileSelectList.indexAt(0).filename
                     }
                 }
             }
@@ -159,6 +160,11 @@ Item {
 
                 }
                 onFileClicked: {
+//                    var path = folderModel.getUSB()
+//                    if(path === ""){
+//                        stackView.pop(StackView.Immediate)
+//                        return
+//                    }
                     fileSelectList.currentIndex = index
                     selectedFileName = name
                     selectedFilePath = path
@@ -288,14 +294,22 @@ Item {
     }
     Timer{
         id:timer
-        interval: 1000
-        running: fileSelectList.count == 0 ? true : false
+        interval: 500
+        running: fileSearch
         repeat: true
         onTriggered: {
-            console.log("hello world")
-            resetPath()
-//            fileSelectList.update()
+            var path = folderModel.getUSB()
+            if(path !== ""){
+                fileSearch = false
+                mediaURL = path
+                setPath(path)
+            }
         }
+    }
+    function setPath(path){
+        folderModel.folder = path
+        parentDirText.text = ""
+        fileSelectList.update()
     }
 
     function resetPath(){
@@ -316,7 +330,7 @@ Item {
         return (str.slice(str.lastIndexOf("/")+1))
     }
     Component.onCompleted: {
-        resetPath()
+//        resetPath()
         resetCurrentIndex()
     }
 }
