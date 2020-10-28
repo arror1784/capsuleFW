@@ -15,21 +15,25 @@ PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (_filePath)
 
 void PrinterSetting::parse()
 {
-    QJsonObject UVTimeSpendObject = Json::getValue<QJsonObject>(_object,"UV_time_spend");
-    for(auto &i : UVTimeSpendObject.keys()){
-        UVTimeSpend.insert(i,Json::getValue<int>(UVTimeSpendObject,i));
-    }
-    QJsonObject motorTimeSpendObject = Json::getValue<QJsonObject>(_object,"motor_time_spend");
-    for(auto &i : motorTimeSpendObject.keys()){
-        UVTimeSpend.insert(i,Json::getValue<int>(motorTimeSpendObject,i));
-    }
+    try {
+        QJsonObject UVTimeSpendObject = Json::getValue<QJsonObject>(_object,"UV_time_spend");
+        for(auto &i : UVTimeSpendObject.keys()){
+            UVTimeSpend.insert(i,Json::getValue<int>(UVTimeSpendObject,i));
+        }
+        QJsonObject motorTimeSpendObject = Json::getValue<QJsonObject>(_object,"motor_time_spend");
+        for(auto &i : motorTimeSpendObject.keys()){
+            UVTimeSpend.insert(i,Json::getValue<int>(motorTimeSpendObject,i));
+        }
 
-    materialList = Json::getValueArray<QString>(_object,"material_list");
-    enableMaterialList = Json::getValueArray<QString>(_object,"enable_material_list");
+        materialList = Json::getValueArray<QString>(_object,"material_list");
+        enableMaterialList = Json::getValueArray<QString>(_object,"enable_material_list");
 
-    defaultHeight = Json::getValue<int>(_object,"default_height");
-    heightOffset = Json::getValue<int>(_object,"height_offset");
-    ledOffset = Json::getValue<double>(_object,"led_offset");
+        defaultHeight = Json::getValue<int>(_object,"default_height");
+        heightOffset = Json::getValue<int>(_object,"height_offset");
+        ledOffset = Json::getValue<double>(_object,"led_offset");
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
+    }
 }
 
 void PrinterSetting::save()

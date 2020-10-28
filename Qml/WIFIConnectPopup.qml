@@ -1,6 +1,5 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
-import QtQuick.VirtualKeyboard 2.1
 
 Rectangle {
 
@@ -27,15 +26,7 @@ Rectangle {
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
     }
-    InputPanel {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        width: parent.width
-        visible:  Qt.inputMethod.visible
-        parent: Overlay.overlay
-        z: 1
-        focus: true
-    }
+
     Popup{
         id: popup
         width: parent.width - 60

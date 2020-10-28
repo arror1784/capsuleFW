@@ -10,9 +10,12 @@ Item {
     // property url currentPath
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "/media/jsh"
+    property string mediaURL: ""
 
-    property bool fileSearch: true
+    property bool fileSearch: false
+    property bool fileCheckDisconnected: false
+
+    property bool isFileSelectList: true
 
     FontLoader{
         id: openSansSemibold
@@ -84,11 +87,9 @@ Item {
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
 //                        fileSelectList.update()
-
                         if(folderModel.folder.toString() === mediaURL){
                             parentDirText.text = ""
-                        }
-                        else{
+                        }else{
                             parentDirText.text = basename(folderModel.folder.toString())
                         }
                     }
@@ -149,6 +150,11 @@ Item {
                 property var dirText: parentDirText
                 property var selectList: fileSelectList
                 onDirClicked: {
+                    if(!folderModel.fileExists(path))
+                    {
+                        stackView.pop(StackView.Immediate)
+                        return
+                    }
                     folderModel.folder = path
                     // changeFolderPath(path)
                     // currentParentName = basename(folderModel.folder.toString())
@@ -160,11 +166,11 @@ Item {
 
                 }
                 onFileClicked: {
-//                    var path = folderModel.getUSB()
-//                    if(path === ""){
-//                        stackView.pop(StackView.Immediate)
-//                        return
-//                    }
+                    if(!folderModel.fileExists(path))
+                    {
+                        stackView.pop(StackView.Immediate)
+                        return
+                    }
                     fileSelectList.currentIndex = index
                     selectedFileName = name
                     selectedFilePath = path
@@ -287,22 +293,43 @@ Item {
             onClicked: {
 //                if(selectedFileName === "info.json"){
                 if(fileSelectList.currentIndex !== -1){
+//                    fileCheckDisconnected = false
                     stackView.push(Qt.resolvedUrl("qrc:/Qml/MaterialSelectList.qml"),StackView.Immediate)
                 }
             }
         }
     }
+    USBStorgeDisConnectedPopup{
+        id: usbStrogeDisConnectedPopup
+        onBack: {
+            stackView.pop(mainMenu,StackView.Immediate)
+        }
+    }
+
     Timer{
-        id:timer
-        interval: 500
+        id: timer
+        interval: 250
         running: fileSearch
         repeat: true
         onTriggered: {
             var path = folderModel.getUSB()
             if(path !== ""){
                 fileSearch = false
+                fileCheckDisconnected = true
                 mediaURL = path
                 setPath(path)
+            }
+        }
+    }
+    Timer{
+        id: chekcTimer
+        interval: 250
+        running: fileCheckDisconnected
+        repeat: true
+        onTriggered: {
+            if(!folderModel.fileExists(mediaURL)){
+                fileCheckDisconnected = false
+                usbStrogeDisConnectedPopup.open()
             }
         }
     }
@@ -329,8 +356,22 @@ Item {
     {
         return (str.slice(str.lastIndexOf("/")+1))
     }
+    function reset(){
+        if(folderModel.fileExists(mediaURL)){
+            fileSearch = false
+            fileCheckDisconnected = true
+        }else{
+            fileSearch = true
+            fileCheckDisconnected = false
+            resetCurrentIndex()
+            resetPath()
+        }
+    }
+
     Component.onCompleted: {
 //        resetPath()
+        reset()
+        usbStrogeDisConnectedPopup.close()
         resetCurrentIndex()
     }
 }

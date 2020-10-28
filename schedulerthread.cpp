@@ -19,7 +19,6 @@ void SchedulerThread::run()
     qDebug() << "sched" << QThread::currentThread();
 
     _sched = new PrintScheduler();
-    //    NetworkControl nc;
     ResinUpdater ru(_sched);
     Updater up;
 
@@ -62,7 +61,7 @@ void SchedulerThread::run()
 #endif
     };
 
-    QMetaObject::invokeMethod(this,func,Qt::QueuedConnection);
+    QMetaObject::invokeMethod(&_engine,func,Qt::QueuedConnection);
 
     QThread::exec();
 }

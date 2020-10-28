@@ -13,8 +13,13 @@ InfoSetting::InfoSetting(QString &path) : Hix::Common::Json::JsonSetting (path)
 
 void InfoSetting::parse()
 {
-    layerHeight = Hix::Common::Json::getValue<double>(_object,"layer_height");
-    totalLayer = Hix::Common::Json::getValue<int>(_object,"total_layer");
+    try {
+        layerHeight = Hix::Common::Json::getValue<double>(_object,"layer_height");
+        totalLayer = Hix::Common::Json::getValue<int>(_object,"total_layer");
+    } catch (std::runtime_error &e) {
+        return;
+    }
+
 }
 
 QString InfoSetting::serialize()

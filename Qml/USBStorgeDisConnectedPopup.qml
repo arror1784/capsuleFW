@@ -1,8 +1,7 @@
-import QtQuick 2.0
+import QtQuick 2.10
 import QtQuick.Controls 2.5
 
 Rectangle {
-
     id: popupBack
 
     width: 480
@@ -40,32 +39,33 @@ Rectangle {
         focus: true
 
         Text {
-            id: errorText
+            id: usbText
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: qsTr("print setting error")
-            font.family: openSansRegular.name
+            text: "USB Storage Disconnected"
+
+            font.family: openSansSemibold.name
             font.pixelSize: 20
             color: "#474747"
         }
 
         Rectangle{
-            id: backButton
+            id: closeButton
+
             width: 185
             height: 40
 
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
+            anchors.right: parent.right
+            anchors.rightMargin: 5
 
-            color: "#DCEAF3"
+            color: "#00C6EA"
 
-            radius:  8
+            radius: 8
 
             Text {
-                text: qsTr("Back")
-                color: "#666666"
+                text: qsTr("close")
+                color: "#FFFFFF"
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
 
@@ -74,8 +74,8 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    popup.close()
                     back()
-                    close()
                 }
             }
         }
@@ -86,26 +86,15 @@ Rectangle {
             popupBack.visible = false
         }
     }
-    function open(code){
-        if(code === 1){
-            errorText.text = "Error: LCD가 빠졌습니다"
-        }else if(code === 2){
-            errorText.text = "Error: 파일에 문제가 있습니다"
-        }else if(code === 3){
-            errorText.text = "Error: 세팅값에 문제가 있습니다"
-        }else if(code === 4){
-            errorText.text = "Error: 이미 프린트 중입니다"
-        }else if(code === 5){
-            errorText.text = "Error: USB 케이블이 연결되지 않았습니다"
-        }else if(code === 6){
-            errorText.text = "Error: 파일에 문제가 있습니다"
-        }else{
-            errorText.text = "Error: 오류가 발생했습니다"
-        }
+    function setText(text){
+        resinText.text = text
+    }
 
+    function open(){
         popup.open()
     }
     function close(){
         popup.close()
     }
 }
+

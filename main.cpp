@@ -36,8 +36,6 @@
 
 int main(int argc, char *argv[])
 {
-    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
@@ -47,7 +45,7 @@ int main(int argc, char *argv[])
     QQmlContext* ctx = engine.rootContext();
     qDebug() << "main" << QThread::currentThread();
 
-    WPA wpa;
+//    WPA wpa;
     NetworkControl nc;
     QmlConnecter connecter;
     UpdateConnector up;
@@ -60,7 +58,7 @@ int main(int argc, char *argv[])
 
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);
-    ctx->setContextProperty("wifi",&wpa);
+//    ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("updater",&up);
 
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));

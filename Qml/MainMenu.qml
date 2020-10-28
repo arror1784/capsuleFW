@@ -162,13 +162,13 @@ Item {
     InfoPopup{
         id:infoPopup
     }
-    Connections{
-        target: wifi
+//    Connections{
+//        target: wifi
 
-        onConnectedChange:{
-            infoPopup.setWifiConnectd(connected)
-        }
-    }
+//        onConnectedChange:{
+////            infoPopup.setWifiConnectd(connected)
+//        }
+//    }
     Connections{
         target: connection
         onSendToQmlProductInfo:{

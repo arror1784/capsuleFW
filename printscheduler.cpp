@@ -542,8 +542,6 @@ int PrintScheduler::setupForPrint(QString materialName)
             }else{
                 return -6;
             }
-            //          else
-//          return -5;
         }
 
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
@@ -662,7 +660,6 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
             emit sendToUIPrintSettingError(6);
             return;
         }
-
         if(setupForPrint(materialName)){
             emit sendToUIPrintSettingError(3);
             return;

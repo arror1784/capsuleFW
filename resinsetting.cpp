@@ -6,6 +6,7 @@
 #include <QJsonArray>
 
 #include <QDebug>
+#include <stdexcept>
 
 using namespace Hix::Common;
 
@@ -19,33 +20,38 @@ ResinSetting::ResinSetting(QString resin) : Json::JsonSetting(_resinPath + resin
 
 void ResinSetting::parse()
 {
-    for(auto &i : _object.keys()){
-        if(i == "last_update"){
-            lastUpdate = Hix::Common::Json::getValue<QString>(_object,"last_update");
-        }else{
-            resinInfo ri;
-            QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(_object,i);
+    try {
+        for(auto &i : _object.keys()){
+            if(i == "last_update"){
+                lastUpdate = Hix::Common::Json::getValue<QString>(_object,"last_update");
+            }else{
+                resinInfo ri;
+                QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(_object,i);
 
-            ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-            ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
-            ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
+                ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
+                ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
+                ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
-            ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
-            ri.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
-            ri.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
-            ri.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
-            ri.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
-            ri.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
-            ri.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
-            ri.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
-            ri.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
-            ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
-            ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
-            ri.material = Hix::Common::Json::getValue<int>(jo,"material");
+                ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
+                ri.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
+                ri.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
+                ri.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
+                ri.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
+                ri.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
+                ri.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
+                ri.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
+                ri.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
+                ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
+                ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
+                ri.material = Hix::Common::Json::getValue<int>(jo,"material");
 
-            resinList.insert(i,ri);
+                resinList.insert(i,ri);
+            }
         }
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
     }
+
 }
 
 QString ResinSetting::serialize()

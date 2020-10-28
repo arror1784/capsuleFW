@@ -39,5 +39,6 @@
         <file>Qml/SlideText.qml</file>
         <file>Qml/WIFINotice.qml</file>
         <file>Qml/ResinUpdateNotice.qml</file>
+        <file>Qml/USBStorgeDisConnectedPopup.qml</file>
     </qresource>
 </RCC>

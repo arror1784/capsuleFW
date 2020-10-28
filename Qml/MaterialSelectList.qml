@@ -102,6 +102,10 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                var it = stackView.find(function(item,index){return item.isFileSelectList})
+                if(it){
+                    it.reset()
+                }
                 stackView.pop(StackView.Immediate)
             }
         }

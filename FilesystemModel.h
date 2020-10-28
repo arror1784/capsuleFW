@@ -68,6 +68,7 @@ namespace Hix
             Q_INVOKABLE QVariant get(int idx, const QString& property) const;
             Q_INVOKABLE int indexOf(const QString& file) const;
             Q_INVOKABLE QString getUSB() const;
+            Q_INVOKABLE bool fileExists(const QString& target) const;
 
         signals:
             void folderChanged();

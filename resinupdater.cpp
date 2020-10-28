@@ -19,7 +19,7 @@ ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
 //    : _url("http://10.42.0.1:8000/resin/download/")
 {
     manager = new QNetworkAccessManager();
-    connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
+    QObject::connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
     updateVersionInFo();
     checkUpdate();
 }

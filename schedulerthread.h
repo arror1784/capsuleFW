@@ -18,7 +18,8 @@ public:
     PrintScheduler *sched() const;
 
 private:
-    virtual void run() override;
+    void run() override;
+
     QQmlApplicationEngine& _engine;
 
     PrintScheduler* _sched;

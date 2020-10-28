@@ -15,7 +15,11 @@ ModelNo::~ModelNo(){
 
 void ModelNo::parse()
 {
-    modelNo = Hix::Common::Json::getValue<QString>(_object,"modelNo");
+    try {
+        modelNo = Hix::Common::Json::getValue<QString>(_object,"modelNo");
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
+    }
 }
 
 QString ModelNo::serialize()

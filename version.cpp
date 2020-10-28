@@ -18,7 +18,11 @@ Version::~Version()
 
 void Version::parse()
 {
-    version = Hix::Common::Json::getValue<QString>(_object,"version");
+    try {
+        version = Hix::Common::Json::getValue<QString>(_object,"version");
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
+    }
 }
 
 QString Version::serialize()

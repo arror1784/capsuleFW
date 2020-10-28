@@ -50,7 +50,7 @@ private:
 
     QDateTime _updateTime;
     QDateTime _lastestUpdateTime;
-    PrintScheduler *_printScheduler;
+    PrintScheduler* _printScheduler;
 };
 
 #endif // RESINUPDATER_H

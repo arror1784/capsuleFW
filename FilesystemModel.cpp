@@ -1,7 +1,7 @@
 #include "FilesystemModel.h"
 #include <chrono>
 #include <iostream>
-
+#include <stdexcept>
 using namespace Hix;
 using namespace Hix::QML;
 #ifdef __arm__
@@ -140,37 +140,50 @@ QString Hix::QML::FilesystemModel::folder() const
 
 void Hix::QML::FilesystemModel::setFolder(const QString& folder)
 {
-    auto path = fromQtPath(folder);
-    beginResetModel();
-    _current = path;
-    if (!std::filesystem::exists(_current) || !std::filesystem::is_directory(_current))
+    try
     {
-        _data.clear();
-        endResetModel();
-        emit rowCountChanged();
-        emit folderChangeError();
-    }
-    else
-    {
-        _data.clear();
-        //populate file list
-        for (const auto& entry : std::filesystem::directory_iterator(path))
+    //    std::cout << "setFolder start" << folder.toStdString() << std::endl;
+        auto path = fromQtPath(folder);
+        beginResetModel();
+        _current = path;
+
+        if (!std::filesystem::exists(_current) || !std::filesystem::is_directory(_current))
         {
-            if (std::filesystem::is_regular_file(entry) && _showFiles)
-            {
-                _data.emplace_back(entry);
-            }
-            if (std::filesystem::is_directory(entry) && _showDirs)
-            {
-                _data.emplace_back(entry);
-            }
+            _data.clear();
+            endResetModel();
+            emit rowCountChanged();
+            emit folderChangeError();
         }
-        applyNameFilter();
-        updateSorting();
-        //signal end of change
-        endResetModel();
-        emit rowCountChanged();
-        emit folderChanged();
+        else
+        {
+            _data.clear();
+            //populate file list
+            for (const auto& entry : std::filesystem::directory_iterator(path))
+            {
+                if (std::filesystem::is_regular_file(entry) && _showFiles)
+                {
+                    _data.emplace_back(entry);
+                }
+                if (std::filesystem::is_directory(entry) && _showDirs)
+                {
+                    _data.emplace_back(entry);
+                }
+            }
+            applyNameFilter();
+            updateSorting();
+            //signal end of change
+            endResetModel();
+            emit rowCountChanged();
+            emit folderChanged();
+        }
+    }
+    catch (std::runtime_error& e)
+    {
+        std::cout << "error setFolder: " << e.what() << std::endl;;
+
+    } catch(...)
+    {
+        std::cout << "unknown except" << std::endl;
     }
 }
 
@@ -275,6 +288,12 @@ QString FilesystemModel::getUSB() const
     }
     return "";
 
+}
+
+bool FilesystemModel::fileExists(const QString& target) const
+{
+    std::filesystem::path path = fromQtPath(target);
+    return std::filesystem::exists(path);
 }
 
 void updateSortingImpl(bool isDir, bool isReverse,

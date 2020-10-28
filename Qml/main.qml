@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.0
 import QtQuick.LocalStorage 2.12
 import QtQuick.Window 2.11
-import QtQuick.VirtualKeyboard 2.1
 
 import App 1.0
 
@@ -17,7 +16,6 @@ Window {
     screen: Qt.application.screens[1]
 
     signal sendToBusySet(bool value)
-    signal wifiConnectCheck()
 
     StackView{
         id: stackView
@@ -86,6 +84,14 @@ Window {
             }
         }
         onSendToQmlChangeToPrint:{
+            var fileIt = stackView.find(function(item,index){return item.isFileSelectList})
+            if(fileIt){
+                fileIt.fileCheckDisconnected = false
+                console.log("there is fileSelectList")
+            }else{
+                console.log("there is not fileSelectList")
+            }
+
             var it = stackView.find(function(item,index){return item.isPrinMenu})
             if(stackView.currentItem.isPrinMenu){
                 console.debug("isPrintMenu")
@@ -101,6 +107,5 @@ Window {
     }
     Component.onCompleted: {
         connection.receiveFromQmlGetUsbPortError()
-        wifi.checkNetworkConnect()
     }
 }
