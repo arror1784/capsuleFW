@@ -136,7 +136,7 @@ public slots:
     void receiveFromUISetPrintTime(int time);       //for real time
     //use only qml or scheduler
 
-//    void receiveFromUIPrintFinishError();
+    void receiveFromUIPrintFinishError();
 
     void receiveFromUISetHeightOffset(int value);
     void receiveFromUISetLedOffset(double value);

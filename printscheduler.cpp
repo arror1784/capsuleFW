@@ -239,7 +239,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
             emit sendToUIEnableTimer(true);
         case PRINT_MOVE_LAYER_OK:
             if(_bedError){
-//                receiveFromUIPrintFinishError();
+                receiveFromUIPrintFinishError();
                 break;
             }
             if(_bedWork == BED_PAUSE_WORK){
@@ -479,7 +479,7 @@ int PrintScheduler::setupForPrint(QString materialName)
     QString val;
     QString filePath = printFilePath;
     QString infoPath = filePath + QStringLiteral("/info.json");
-    int error = 0;
+    QString resinPath = filePath + QStringLiteral("/resin.json");
 
     QJsonDocument d;
     ResinSetting::resinInfo materialSetting;
@@ -494,8 +494,6 @@ int PrintScheduler::setupForPrint(QString materialName)
     QDir dir(filePath);
     dir.setFilter( QDir::AllEntries | QDir::NoDotAndDotDot );
 
-    qDebug() << materialName;
-
     try {
         InfoSetting info(infoPath);
         info.parse();
@@ -508,7 +506,7 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         if(materialName == "Custom"){
 
-            f.setFileName(filePath + QStringLiteral("/resin.json"));
+            f.setFileName(resinPath);
             if(!f.open(QIODevice::ReadOnly | QIODevice::Text)){
                 qDebug() << "resin file open error";
                 Logger::GetInstance()->write(f.fileName() + " file open error");
@@ -536,7 +534,6 @@ int PrintScheduler::setupForPrint(QString materialName)
             materialSetting.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
 
         }else{
-//          if(rs.getOpen())
             if(rs.resinList.contains(QString::number(layer_height))){
                 materialSetting = rs.resinList[QString::number(layer_height)];
             }else{
@@ -544,13 +541,22 @@ int PrintScheduler::setupForPrint(QString materialName)
             }
         }
 
+        std::filesystem::path resinJson = resinPath.toStdString();
+        int dirCount = 0;
+        if(std::filesystem::exists(resinJson)){
+            dirCount = 2;
+        }else{
+            dirCount = 1;
+
+        }
+        if(_bedMaxPrintNum != (dir.count() - dirCount)){
+            return -4;
+        }
+
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
         _layerHeight = layer_height;
 
-        if(_bedMaxPrintNum > (dir.count() - 1)){
 
-            return -4;
-        }
 
         _bedCuringLayer = materialSetting.bedCuringLayer;
         _bedControl->setCuringTime(materialSetting.curingTime);
@@ -574,7 +580,8 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
-    } catch (std::exception &e) {
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
         return -3;
     }
 
@@ -600,9 +607,14 @@ void PrintScheduler::deletePrintFolder()
 int PrintScheduler::unZipFiles(QString path)
 {
     try {
-        miniz_cpp::zip_file file(path.toStdString());
+        std::string target = path.toStdString();
+
+        miniz_cpp::zip_file file(target);
 
         file.extractall(printFilePath.toStdString());
+
+        std::filesystem::remove(target);
+
     } catch (std::exception e) {
         return -1;
     }
@@ -699,9 +711,9 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
     }
     return;
 }
-//void PrintScheduler::receiveFromUIPrintFinishError(){
-//    bedError();
-//}
+void PrintScheduler::receiveFromUIPrintFinishError(){
+    bedError();
+}
 
 void PrintScheduler::receiveFromUISetHeightOffset(int value)
 {

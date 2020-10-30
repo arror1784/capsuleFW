@@ -157,7 +157,7 @@ Item {
         fileName.text = it.printName
 
         var T = new Date(it.curingTime)
-        timesec = currentDate.getSeconds()
-        timemin = currentDate.getMinutes()
+        timesec = T.getSeconds()
+        timemin = T.getMinutes()
     }
 }
