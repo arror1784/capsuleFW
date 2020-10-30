@@ -76,6 +76,9 @@ private:
     std::condition_variable _cv;
     std::mutex _cv_m;
 
+    std::condition_variable _cv_mcu;
+    std::mutex _cv_mcu_m;
+
     bool _requestAvailable = true;
     bool _MCUFirmwareUpdateAvailable = false;
 

@@ -123,8 +123,8 @@ int Updater::waitForRequest()
 
 void Updater::waitForMCUFirmwareUpdate()
 {
-    while(!_MCUFirmwareUpdateFinished);
-    _MCUFirmwareUpdateFinished = false;
+    std::unique_lock<std::mutex> lk(_cv_mcu_m);
+    _cv_mcu.wait(lk,[this]{return this->_MCUFirmwareUpdateFinished;});
 }
 
 void Updater::getVersion()
@@ -250,6 +250,7 @@ void Updater::requestFinished(QNetworkReply* reply)
 void Updater::MCUFirmwareUpdateFinished()
 {
     _MCUFirmwareUpdateFinished = true;
+    _cv_mcu.notify_all();
 }
 
 
