@@ -170,7 +170,7 @@ Item {
         color: "#dceaf3"
 
         radius: 8
-        anchors.verticalCenter: network.verticalCenter
+//        anchors.verticalCenter: network.verticalCenter
 
 //        anchors.right: parent.right
 //        anchors.rightMargin: 15
