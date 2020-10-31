@@ -613,8 +613,6 @@ int PrintScheduler::unZipFiles(QString path)
 
         file.extractall(printFilePath.toStdString());
 
-        std::filesystem::remove(target);
-
     } catch (std::exception e) {
         return -1;
     }
@@ -672,6 +670,10 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
             emit sendToUIPrintSettingError(6);
             return;
         }
+
+        std::filesystem::path target = printFilePath.toStdString() + "/" + fileName.toStdString();
+        std::filesystem::remove(target);
+
         if(setupForPrint(materialName)){
             emit sendToUIPrintSettingError(3);
             return;
