@@ -12,7 +12,6 @@ Item {
     property double eltime: 0
 
     property int totaltime: 0
-    property int curingTime: 0
     property bool timerRunning: false
 
     property double startTime: 0
@@ -184,7 +183,7 @@ Item {
         onTriggered: {
             var date = new Date();
             var currentDuration = date.getTime() - startTime + eltime
-            curingTime = currentDuration
+            time = currentDuration
             var diffDuration = totaltime - currentDuration
             var currentDate
             if(totaltime === 0){
@@ -293,7 +292,6 @@ Item {
 
         startTime = 0
         totaltime = 0
-        curingTime = 0
 
         ct = 0
         waitPopupOpened = false
