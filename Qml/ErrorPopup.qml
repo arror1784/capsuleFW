@@ -90,7 +90,7 @@ Rectangle {
         if(code === 1){
             errorText.text = "Error: LCD가 빠졌습니다"
         }else if(code === 2){
-            errorText.text = "Error: 파일에 문제가 있습니다`"
+            errorText.text = "Error: 파일에 문제가 있습니다"
         }else if(code === 3){
             errorText.text = "Error: 세팅값에 문제가 있습니다"
         }else if(code === 4){
