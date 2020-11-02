@@ -10,6 +10,7 @@ class InfoSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::J
 {
 public:
     InfoSetting(QString& path);
+    ~InfoSetting();
 
     void parse() override;
     QString serialize() override;

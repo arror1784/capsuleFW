@@ -216,7 +216,6 @@ void PrintScheduler::printLayer(){
             _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
         }
     }
-    return;
 }
 int PrintScheduler::imageChange(){
 
@@ -334,7 +333,6 @@ void PrintScheduler::printStart()
     _bedMoveFinished = PRINT_MOVE_NULL;
     _bedPrintImageNum = 0;
     initBed();
-    return;
 }
 
 void PrintScheduler::printResume()
@@ -343,13 +341,11 @@ void PrintScheduler::printResume()
     _printState = "print";
     _bedWork = BED_WORK;
     printLayer();
-    return;
 }
 
 void PrintScheduler::receiveFromUIBusySet(bool bs)
 {
     _isBusy = bs;
-    return;
 }
 
 void PrintScheduler::receiveFromUpdaterFirmUpdate(QString path)

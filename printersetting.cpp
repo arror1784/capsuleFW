@@ -13,6 +13,11 @@ PrinterSetting::PrinterSetting() : Hix::Common::Json::JsonSetting (_filePath)
 
 }
 
+PrinterSetting::~PrinterSetting()
+{
+
+}
+
 void PrinterSetting::parse()
 {
     try {

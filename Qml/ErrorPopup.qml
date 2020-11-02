@@ -88,7 +88,7 @@ Rectangle {
     }
     function open(code){
         if(code === 1){
-            errorText.text = "Error: LCD가 빠졌습니다"
+            errorText.text = "Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요"
         }else if(code === 2){
             errorText.text = "Error: 파일에 문제가 있습니다"
         }else if(code === 3){

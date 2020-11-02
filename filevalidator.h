@@ -40,8 +40,6 @@ public:
     bool treatAsImage() const;
     void setTreatAsImage(bool treatAsImage);
 
-    Q_INVOKABLE void hello();
-
 signals:
     void urlChanged();
     void fileValidChanged();

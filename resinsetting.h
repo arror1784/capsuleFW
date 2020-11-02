@@ -20,6 +20,7 @@ private:
 
 public:
     ResinSetting(QString resin/*,QString layerHeight*/);
+    ~ResinSetting() override;
 
     struct resinInfo{
         double resinLedOffset;

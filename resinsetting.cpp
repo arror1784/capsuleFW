@@ -18,6 +18,11 @@ ResinSetting::ResinSetting(QString resin) : Json::JsonSetting(_resinPath + resin
 
 }
 
+ResinSetting::~ResinSetting()
+{
+
+}
+
 void ResinSetting::parse()
 {
     try {

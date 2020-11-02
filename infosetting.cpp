@@ -11,6 +11,11 @@ InfoSetting::InfoSetting(QString &path) : Hix::Common::Json::JsonSetting (path)
 
 }
 
+InfoSetting::~InfoSetting()
+{
+
+}
+
 void InfoSetting::parse()
 {
     try {

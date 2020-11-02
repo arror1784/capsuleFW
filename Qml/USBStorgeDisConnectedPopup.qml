@@ -41,7 +41,7 @@ Rectangle {
         Text {
             id: usbText
             anchors.centerIn: parent
-            text: "USB Storage Disconnected"
+            text: "USB가 없습니다"
 
             font.family: openSansSemibold.name
             font.pixelSize: 20

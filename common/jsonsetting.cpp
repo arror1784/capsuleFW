@@ -21,3 +21,8 @@ Hix::Common::Json::JsonSetting::JsonSetting(const QString& path) : _path(path)
     QJsonDocument loadDoc(QJsonDocument::fromJson(loadData));
     _object = loadDoc.object();
 }
+
+Hix::Common::Json::JsonSetting::~JsonSetting()
+{
+
+}

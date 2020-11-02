@@ -23,6 +23,7 @@ private:
 
 public:
     PrinterSetting();
+    ~PrinterSetting();
 
     void parse() override;
     void save() override;

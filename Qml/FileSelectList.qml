@@ -156,9 +156,6 @@ Item {
                         return
                     }
                     folderModel.folder = path
-                    // changeFolderPath(path)
-                    // currentParentName = basename(folderModel.folder.toString())
-                    // currentPath = path
 //                    selectedFileName = ""
                     dirText.text = name
                     selectList.currentIndex=-1

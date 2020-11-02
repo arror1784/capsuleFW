@@ -4,3 +4,8 @@
 //{
 
 //}
+
+Hix::Common::Json::JsonWriteSetting::~JsonWriteSetting()
+{
+
+}

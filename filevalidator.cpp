@@ -104,10 +104,6 @@ void FileValidator::setTreatAsImage(bool treatAsImage)
     emit treatAsImageChanged();
 }
 
-void FileValidator::hello()
-{
-
-}
 
 void FileValidator::validate()
 {

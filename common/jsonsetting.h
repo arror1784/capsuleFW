@@ -14,6 +14,7 @@ namespace Hix {
             public:
                 JsonSetting();
                 JsonSetting(const QString& path);
+                virtual ~JsonSetting();
             protected:
                 QJsonObject _object;
                 QString _path;
