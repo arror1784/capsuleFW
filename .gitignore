@@ -2,6 +2,7 @@
 .vscode
 /build
 vc140.pdb
+*.pro.user*
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake

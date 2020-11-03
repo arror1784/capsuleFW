@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.9.0, 2020-11-02T15:30:44. -->
+<!-- Written by QtCreator 4.9.0, 2020-11-03T16:32:18. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -297,16 +297,16 @@
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedLocalTimes">
-       <value type="QDateTime">2020-11-01T00:19:38.349</value>
+       <value type="QDateTime">2020-11-02T19:55:33.451</value>
        <value type="QDateTime">2020-10-26T15:17:23.183</value>
        <value type="QDateTime">2020-10-28T21:22:45.040</value>
-       <value type="QDateTime">2020-10-28T16:07:43.207</value>
+       <value type="QDateTime">2020-11-02T15:40:45.752</value>
       </valuelist>
       <valuelist type="QVariantList" key="RemoteLinux.LastDeployedRemoteTimes">
-       <value type="QDateTime">2020-11-01T00:18:49.000</value>
+       <value type="QDateTime">2020-11-02T19:55:42.000</value>
        <value type="QDateTime">2020-10-26T15:17:29.000</value>
        <value type="QDateTime">2020-10-28T21:22:48.000</value>
-       <value type="QDateTime">2020-10-28T16:07:47.000</value>
+       <value type="QDateTime">2020-11-02T15:40:47.000</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
@@ -1399,7 +1399,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/jsh/workspace/build-capsuleFW-Desktop_Qt_5_12_3_GCC_64bit-Release</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

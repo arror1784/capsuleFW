@@ -92,7 +92,7 @@ Item {
 
             Text {
                 id: settingText
-                text: qsTr("Setting")
+                text: qsTr("Settings")
                 color: "#666666"
 
                 anchors.top: settingImage.bottom

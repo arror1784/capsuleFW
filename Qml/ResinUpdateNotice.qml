@@ -39,7 +39,7 @@ Rectangle {
         Text {
             id: resinText
             anchors.centerIn: parent
-            text: qsTr("Resin Update Finish")
+            text: qsTr("Resin Update Finished")
             font.family: openSansSemibold.name
             font.pixelSize: 20
             color: "#474747"

@@ -74,7 +74,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 13
 
-            text: qsTr("Lastest version")
+            text: qsTr("Latest version")
             font.family: openSansRegular.name
             font.pixelSize: 23
             color: "#474747"
@@ -192,7 +192,7 @@ Item {
                 updateInfoText.text = "Update available"
             }else if(state === "notAvailable"){
                 updateEnable = false
-                updateInfoText.text = "Current version is the lastest"
+                updateInfoText.text = "Current version is the latest"
             }
         }
         onSendToQmlSWSendVersion:{
@@ -200,7 +200,7 @@ Item {
             currentVersionText.text = version
         }
         onSendToQmlSWSendLastestVersion:{
-            console.log("get SW lastestVersion",version)
+            console.log("get SW latestVersion",version)
             latestVersionText.text = version
         }
     }
