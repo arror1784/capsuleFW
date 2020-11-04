@@ -4,31 +4,29 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-Version* Version::_ins = nullptr;
+constexpr auto _url = "/opt/capsuleFW/version.json";
 
-Version::Version()
+Version::Version() : Hix::Common::Json::JsonSetting (_url)
 {
-    QFile loadFile(_url);
+    parse();
+}
 
-    if(!loadFile.open(QIODevice::ReadOnly)){
-        qWarning("Could not open json file to read");
-        _opend = false;
-        return;
+Version::~Version()
+{
+
+}
+
+void Version::parse()
+{
+    try {
+        version = Hix::Common::Json::getValue<QString>(_object,"version");
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
     }
-
-    QByteArray loadData = loadFile.readAll();
-    QJsonDocument loadDoc(QJsonDocument::fromJson(loadData));
-    _setting = loadDoc.object();
-
-    _opend = true;
 }
-Version::~Version(){
-//    delete _setting;
-}
-QString Version::getVersion()
+
+QString Version::serialize()
 {
-    if(_opend)
-        return _setting["version"].toString();
-    else
-        return "";
+    QJsonDocument doc(_object);
+    return doc.toJson();
 }

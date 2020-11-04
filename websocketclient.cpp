@@ -60,29 +60,28 @@ void WebSocketClient::onTextMessageReceived(QString message)
 
     }else if(obj["method"].toString() == "print"){
         args = obj["arg"].toObject();
-        emit startByWeb(args["selectedFilename"].toString(),args["selectedMaterial"].toString(),args["printFiles"].toObject());
-
+        QVariantList arg;
+        arg.push_back(args["selectedFilename"].toString());
+        arg.push_back(args["selectedMaterial"].toString());
+        arg.push_back(args["printFiles"].toObject());
+        emit startByWeb(arg);
     }else if(obj["method"].toString() == "printInfo"){
         emit getPrintInfoByWeb();
 
     }else if(obj["method"].toString() == "changeState"){
         QString state = obj["arg"].toString();
         if(state == "pause"){
-            emit pauseByWeb();
+//            emit pauseByWeb();
+            emit changeStateByWeb("pause");
         }else if(state == "resume"){
-            emit resumeByWeb();
+//            emit resumeByWeb();
+            emit changeStateByWeb("resume");
         }else if(state == "quit"){
-            emit finishByWeb();
+//            emit finishByWeb();
+            emit changeStateByWeb("finish");
         }
 
     }
-//    else if(obj["type"].toString() == "stateChangeCommand"){
-//        if(obj["command"] == "start"){
-//            emit startByWeb(obj["printing_folder_name"].toString(),obj["material"].toString());
-//        }
-//    }else if(obj["type"].toString() == "uploadFiles"){
-//        emit downloadFiles(obj["files"].toString());
-//    }
 }
 
 void WebSocketClient::error(QAbstractSocket::SocketError error){
@@ -102,11 +101,7 @@ void WebSocketClient::updateProgressToWeb(int progress){
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 void WebSocketClient::changeToPrintToWeb()
 {
@@ -122,13 +117,10 @@ void WebSocketClient::changeToPrintToWeb()
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
-void WebSocketClient::changeToPauseStartToWeb()
+
+void WebSocketClient::changeToStateToWeb(QString state)
 {
     QJsonObject aaa;
 
@@ -136,131 +128,64 @@ void WebSocketClient::changeToPauseStartToWeb()
         return;
 
     aaa.insert("method","changeState");
-    aaa.insert("arg","pauseStart");
 
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if(state == "pauseStart"){
+        aaa.insert("arg","pauseStart");
 
-    std::function<void()> func = [this,strJson]() {
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-void WebSocketClient::changeToPauseFinishToWeb()
-{
-    QJsonObject aaa;
+    }else if(state == "pauseFinish"){
+        aaa.insert("arg","pause");
 
-    if(!_connected)
-        return;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    aaa.insert("method","changeState");
-    aaa.insert("arg","pause");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-void WebSocketClient::changeToResumeToWeb()
-{
-    QJsonObject aaa;
+    }else if(state == "resume"){
+        aaa.insert("arg","resume");
 
-    if(!_connected)
-        return;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    aaa.insert("method","changeState");
-    aaa.insert("arg","resume");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-void WebSocketClient::changeToQuitToWeb()
-{
-    QJsonObject aaa;
+    }else if(state == "quit"){
+        aaa.insert("arg","quit");
 
-    if(!_connected)
-        return;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    aaa.insert("method","changeState");
-    aaa.insert("arg","quit");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-void WebSocketClient::changeToPrintFinishToWeb()
-{
-    QJsonObject aaa;
+    }else if(state == "printFinish"){
+        aaa.insert("arg","finish");
 
-    if(!_connected)
-        return;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    aaa.insert("method","changeState");
-    aaa.insert("arg","finish");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
-void WebSocketClient::changeToPrintWorkErrorToWeb()
-{
-    QJsonObject aaa;
+    }else if(state == "printError"){
+        aaa.insert("arg","error");
 
-    if(!_connected)
-        return;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    aaa.insert("method","changeState");
-    aaa.insert("arg","error");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
-}
+    }else if(state == "printErrorFinish"){
+        aaa.insert("arg","errorFinish");
 
-void WebSocketClient::changeToPrintWorkErrorFinishToWeb()
-{
-    QJsonObject aaa;
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    if(!_connected)
-        return;
-
-    aaa.insert("method","changeState");
-    aaa.insert("arg","errorFinish");
-
-    QJsonDocument doc(aaa);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    std::function<void()> func = [this,strJson]() {
         _webSocket->sendTextMessage(strJson);
-    };
 
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    }
 }
 
 void WebSocketClient::changeToPrintSettingErrorToWeb(int code)
@@ -276,11 +201,7 @@ void WebSocketClient::changeToPrintSettingErrorToWeb(int code)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 
 void WebSocketClient::enableTimer(bool enable)
@@ -296,11 +217,7 @@ void WebSocketClient::enableTimer(bool enable)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 
 void WebSocketClient::setTotalTime(int time)
@@ -316,11 +233,7 @@ void WebSocketClient::setTotalTime(int time)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 void WebSocketClient::materialListToWeb(QVariantList name)
 {
@@ -335,11 +248,7 @@ void WebSocketClient::materialListToWeb(QVariantList name)
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 
 void WebSocketClient::getPrintInfoToWeb(QString printerState, QString material, QString fileName, double layerHeight, int elapsedTime, int totalTime, int progress,bool enableTimer)
@@ -366,10 +275,6 @@ void WebSocketClient::getPrintInfoToWeb(QString printerState, QString material, 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
 
-    std::function<void()> func = [this,strJson]() {
-        _webSocket->sendTextMessage(strJson);
-    };
-
-    QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
+    _webSocket->sendTextMessage(strJson);
 }
 

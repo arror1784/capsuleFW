@@ -153,13 +153,16 @@ Rectangle {
     function open(){
         popup.open()
     }
-    function setText(fileName, printingTime, material, layerHeight){
+    function setFilename(fileName){
         fileNameText.text = fileName
-        printingTimeText.text = printingTime
-        materialText.text = material
-        layerHeightText.text = Math.round(layerHeight * 1000) / 1000 + "mm/layer"
     }
-    function setPrintingTime(printingTime){
-        printingTimeText.text = printingTime
+    function setPrintingTime(time){
+        printingTimeText.text = time
+    }
+    function setMaterial(material){
+        materialText.text = material
+    }
+    function setLayerHeight(height){
+        layerHeightText.text = Math.round(height * 1000) / 1000 + "mm/layer"
     }
 }

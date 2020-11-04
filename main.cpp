@@ -11,12 +11,14 @@
 
 #include <QThread>
 #include <QQmlContext>
-#include <QQuickView>
+
+#include <wpa.h>
 
 #include "bedserialport.h"
 #include "bedcontrol.h"
 #include "printscheduler.h"
-#include "printsetting.h"
+#include "schedulerthread.h"
+#include "printersetting.h"
 #include "logger.h"
 #include "networkcontrol.h"
 #include "websocketclient.h"
@@ -24,10 +26,13 @@
 #include "filevalidator.h"
 #include "updater.h"
 #include "version.h"
-
-#include "zip/zip.h"
+#include "qmlconnecter.h"
+#include "updateconnector.h"
 
 #include "kinetimecalc.h"
+#include "FilesystemModel.h"
+
+#include "wpa_ctrl/wpa_ctrl.h"
 
 int main(int argc, char *argv[])
 {
@@ -35,34 +40,31 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    PrintScheduler* printScheduler = new PrintScheduler();
-
     QQmlApplicationEngine engine;
+
     QQmlContext* ctx = engine.rootContext();
+    qDebug() << "main" << QThread::currentThread();
 
+//    WPA wpa;
     NetworkControl nc;
-    ResinUpdater ru;
-    Updater up;
+    QmlConnecter connecter;
+    UpdateConnector up;
+    SchedulerThread backThread(engine,connecter,up);
 
-    QObject::connect(&up,&Updater::updateMCUFirmware,printScheduler,&PrintScheduler::receiveFromUpdaterFirmUpdate);
-    QObject::connect(printScheduler,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
+    backThread.start();
 
-    qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
+    qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
+    qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
 
-    ctx->setContextProperty("scheduler",printScheduler);
     ctx->setContextProperty("nc",&nc);
-    ctx->setContextProperty("resinUpdater",&ru);
-    ctx->setContextProperty("SWUpdater",&up);
+    ctx->setContextProperty("connection",&connecter);
+//    ctx->setContextProperty("wifi",&wpa);
+    ctx->setContextProperty("updater",&up);
 
-//    qDebug() << "KineCalc : " << KineTimeCalc::calcTRMoveTime(500,0,500,-500,5);
-//    qDebug() << "verion " << Version::getInstance().getVersion();
-
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
-
-    printScheduler->start();
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
+//    if (engine.rootObjects().isEmpty())
+//        return -1;
 
     return app.exec();
 }

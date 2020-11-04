@@ -7,6 +7,8 @@ Item {
     width: 480
     height: 320
 //    property alias rectangleWidth: rectangle.width
+    property string version: ""
+    property string modelNo: ""
 
     FontLoader{
         id: openSansSemibold
@@ -90,7 +92,7 @@ Item {
 
             Text {
                 id: settingText
-                text: qsTr("Setting")
+                text: qsTr("Settings")
                 color: "#666666"
 
                 anchors.top: settingImage.bottom
@@ -151,19 +153,30 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                var version = scheduler.receiveFromUIGetVersion()
-                var modelNo = scheduler.receiveFromUIGetModelNo()
+                connection.receiveFromQmlGetProductInfo()
                 infoPopup.open()
-                infoPopup.setText(version,modelNo)
+//                infoPopup.setText(version,modelNo)
             }
         }
     }
     InfoPopup{
         id:infoPopup
     }
+//    Connections{
+//        target: wifi
 
+//        onConnectedChange:{
+////            infoPopup.setWifiConnectd(connected)
+//        }
+//    }
     Connections{
-        id: schedulerConnection
-        target: scheduler
+        target: connection
+        onSendToQmlProductInfo:{
+            var JsonString = json
+            var JsonObject = JSON.parse(JsonString);
+            version = JsonObject.version
+            modelNo = JsonObject.modelNo
+            infoPopup.setText(version,modelNo)
+        }
     }
 }

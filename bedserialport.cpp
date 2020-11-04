@@ -214,6 +214,7 @@ QByteArray BedSerialport::transData(commandFormat_t command){
     buf[24] = 0x03;
 
     qDebug() << "BedSerialPort send massage - G: " << command.G << " H: " << command.H << " A: " << command.A.int32 << " B: " << command.B.int32 << " C: " << command.C.int32 << " M: " << command.M.int32;
+//    QThread::sleep(1);
     QByteArray data((char*)buf,25);
     return data;
 }

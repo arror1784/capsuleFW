@@ -88,19 +88,19 @@ Rectangle {
     }
     function open(code){
         if(code === 1){
-            errorText.text = "LCD OFF: lcd reconnect and reboot"
+            errorText.text = "Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요"
         }else if(code === 2){
-            errorText.text = "File Error: Project crash"
+            errorText.text = "Error: 파일에 문제가 있습니다"
         }else if(code === 3){
-            errorText.text = "Setting Error: Project crash"
+            errorText.text = "Error: 세팅값에 문제가 있습니다"
         }else if(code === 4){
-            errorText.text = "print already print"
+            errorText.text = "Error: 이미 프린트 중입니다"
         }else if(code === 5){
-            errorText.text = "USB Connection error"
+            errorText.text = "Error: USB 케이블이 연결되지 않았습니다"
         }else if(code === 6){
-            errorText.text = "File Extract Error"
+            errorText.text = "Error: 파일에 문제가 있습니다"
         }else{
-            errorText.text = "Print Setting Error"
+            errorText.text = "Error: 오류가 발생했습니다"
         }
 
         popup.open()

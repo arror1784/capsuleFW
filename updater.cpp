@@ -9,7 +9,7 @@
 #include <chrono>
 #include <thread>
 
-#include "printsetting.h"
+#include "printersetting.h"
 #include "resinsetting.h"
 #include "version.h"
 
@@ -20,6 +20,7 @@ Updater::Updater():
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
+    checkUpdate();
 }
 
 void Updater::saveAsFile(QString name,QByteArray ba)
@@ -122,27 +123,39 @@ int Updater::waitForRequest()
 
 void Updater::waitForMCUFirmwareUpdate()
 {
-    while(!_MCUFirmwareUpdateFinished);
-    _MCUFirmwareUpdateFinished = false;
+    std::unique_lock<std::mutex> lk(_cv_mcu_m);
+    _cv_mcu.wait(lk,[this]{return this->_MCUFirmwareUpdateFinished;});
+}
+
+void Updater::getVersion()
+{
+    emit sendVersion(Version::getInstance().version);
+}
+
+void Updater::getLastestVersion()
+{
+    emit sendLastestVersion(_lastestVersion);
 }
 
 void Updater::update()
 {
+    qDebug() << "update start";
     _future = std::async([this]() {
         downloadLIST();
+        qDebug() << "download List";
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         downloadVER();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         if(_MCUFirmwareUpdateAvailable){
             downloadBin();
             if(waitForRequest()){
-                emit updateError();
+                emit updateNotice("error");
                 return;
             }
             _MCUFirmwareUpdateFinished = false;
@@ -152,19 +165,19 @@ void Updater::update()
         //download new update.sh
         downloadSH();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         //download new update file - *.zip
         downloadZIP();
         if(waitForRequest()){
-            emit updateError();
+            emit updateNotice("error");
             return;
         }
         //run update.sh with root
         QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
         QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
-//        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
+        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
     });
 
     return;
@@ -173,7 +186,7 @@ void Updater::update()
 void Updater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
-        emit updateError();
+        emit updateNotice("error");
         _networkError = true;
         _requestAvailable = true;
         _cv.notify_all();
@@ -187,14 +200,17 @@ void Updater::requestFinished(QNetworkReply* reply)
     QJsonArray ja;
     QByteArray loadData;
 
+    qDebug() << reply->url();
+
     switch (_requestType) {
         case SWRequestType::UPDATE_CHECK:
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
-            if(jo["version"].toString() != Version::getInstance().getVersion()){
-                emit updateAvailable();
+            _lastestVersion = jo["version"].toString();
+            if(jo["version"].toString() != Version::getInstance().version){
+                emit updateNotice("available");
             }else{
-                emit updateNotAvailable();
+                emit updateNotice("notAvailable");
             }
             break;
         case SWRequestType::DOWNLOAD_LIST:
@@ -234,6 +250,7 @@ void Updater::requestFinished(QNetworkReply* reply)
 void Updater::MCUFirmwareUpdateFinished()
 {
     _MCUFirmwareUpdateFinished = true;
+    _cv_mcu.notify_all();
 }
 
 

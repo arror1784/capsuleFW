@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Controls 2.5
 
 Rectangle {
@@ -13,12 +13,7 @@ Rectangle {
 
     visible: false
 
-    signal cancel()
-    signal resinUpdate()
-
-    property bool cancelButtonEnbled: false
-    property bool updateButtonEnbled: false
-//    property bool updateProgressEnbled: false
+    property var exText: "updating"
 
     FontLoader{
         id: openSansSemibold
@@ -50,7 +45,7 @@ Rectangle {
             id: updateText
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
-            text: qsTr("resin update check")
+            text: exText
             font.family: openSansRegular.name
             font.pixelSize: 20
 
@@ -59,83 +54,12 @@ Rectangle {
 
             color: "#474747"
         }
-//        ProgressBar {
-//            id: progressBar
+        ProgressBar {
+            id: progressBar
 
-//            anchors.top: updateText.bottom
-//            anchors.horizontalCenter: updateText.horizontalCenter
-//            indeterminate: true
-
-//            visible: updateProgressEnbled
-//        }
-
-        Rectangle{
-            id: cancelButton
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-
-            color: "#DCEAF3"
-
-            radius:  8
-            opacity: cancelButtonEnbled ? 1 : 0.7
-            Text {
-                text: qsTr("cancel")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                enabled: cancelButtonEnbled
-                onClicked: {
-                   cancel()
-                }
-            }
-        }
-        Rectangle{
-            id: updateButton
-
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-
-            color: "#00C6EA"
-
-            radius: 8
-            opacity: updateButtonEnbled ? 1 : 0.5
-            Text {
-                text: qsTr("update")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                enabled: updateButtonEnbled
-                onClicked: {
-
-                    updateText.text = "Updating Resin\r\n"
-
-//                    updateProgressEnbled = true
-                    cancelButtonEnbled = false
-                    updateButtonEnbled = false
-
-                    resinUpdate()
-                }
-            }
+            anchors.top: updateText.bottom
+            anchors.horizontalCenter: updateText.horizontalCenter
+            indeterminate: true
         }
         onOpened: {
             popupBack.visible = true
@@ -150,29 +74,5 @@ Rectangle {
     function close(){
         popup.close()
     }
-    function updateNotAvailable(){
-        cancelButtonEnbled = true
-        updateButtonEnbled = false
-//        updateProgressEnbled = false
-
-        updateText.text = "resin update not available"
-    }
-    function updateAvailable(){
-        cancelButtonEnbled = true
-        updateButtonEnbled = true
-
-        updateText.text = "resin update available"
-    }
-    function updateFinished(){
-        cancelButtonEnbled = true
-//        updateProgressEnbled = false
-
-        updateText.text = "resin update finished"
-    }
-    function updateError(){
-        cancelButtonEnbled = true
-//        updateProgressEnbled = false
-
-        updateText.text = "resin update error"
-    }
 }
+

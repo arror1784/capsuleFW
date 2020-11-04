@@ -45,7 +45,7 @@ Rectangle {
 
         Text {
             anchors.centerIn: parent
-            text: qsTr("LCD OFF: lcd reconnect and reboot")
+            text: qsTr("Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요")
             font.family: openSansSemibold.name
             font.pixelSize: 20
             color: "#474747"

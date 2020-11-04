@@ -39,20 +39,23 @@ Window {
         cursorShape: Qt.BlankCursor
     }
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToLCDChangeImage: {
+        target: connection
+        onSendToQmlChangeImage:{
             console.log(imagePath)
             printImage.source = imagePath
         }
-        onSendToLCDSetImageScale: {
+        onSendToQmlSetImageScale:{
             printImage.scale = value
         }
-        onSendToUIChangeToPrintWorkErrorFinish:{
-            printImage.source = "qrc:/image/defaultBlackImage.png"
+
+        onSendToQmlChangeState:{
+            if(state === "printFinish"){
+                printImage.source = "qrc:/image/defaultBlackImage.png"
+            }else if(state === "printErrorFinish"){
+                printImage.source = "qrc:/image/defaultBlackImage.png"
+            }
         }
-        onSendToUIChangeToPrintFinish:{
-            printImage.source = "qrc:/image/defaultBlackImage.png"
-        }
+    }
+    Component.onCompleted: {
     }
 }

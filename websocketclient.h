@@ -35,16 +35,17 @@ public:
 signals:
     void downloadFiles(QString byte);
 
-    void startByWeb(QString filePath,QString material,QJsonObject byte);
-    void pauseByWeb();
-    void resumeByWeb();
-    void finishByWeb();
+    void startByWeb(QVariantList args);
+
+    void changeStateByWeb(QString state);
+
+//    void pauseByWeb();
+//    void resumeByWeb();
+//    void finishByWeb();
 
     void getMaterialListbyWeb();
 
     void getPrintInfoByWeb();
-
-
 
 public slots:
     void updateProgressToWeb(int progress); //update Progress
@@ -54,14 +55,8 @@ public slots:
 
     void changeToPrintToWeb();       //change ui Ready to Print
 
-    void changeToPauseStartToWeb();      //chage ui print to Pause Start
-    void changeToPauseFinishToWeb();     //change ui Pause Start to Pause Finish
-    void changeToResumeToWeb();          //change ui Pause Finish to Print
-    void changeToQuitToWeb();            //change ui all state to Quit
+    void changeToStateToWeb(QString state);
 
-    void changeToPrintFinishToWeb();             //chagne UI state Print To Ready
-    void changeToPrintWorkErrorToWeb();          //Error when Printing
-    void changeToPrintWorkErrorFinishToWeb();    //change UI State Print To Ready By Error
     void changeToPrintSettingErrorToWeb(int code);       //print setting Error when received print start from UI
 
     void enableTimer(bool enable);      //for enabel Timer

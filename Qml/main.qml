@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.0
+import QtQuick.LocalStorage 2.12
 import QtQuick.Window 2.11
 import App 1.0
 
@@ -13,6 +14,8 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
+    signal sendToBusySet(bool value)
+
     StackView{
         id: stackView
         anchors.fill: parent
@@ -23,11 +26,11 @@ Window {
         onCurrentItemChanged: {
 
             if(currentItem.name === "mainMenu"){
-                scheduler.receiveFromUIBusySet(false)
+                sendToBusySet(false)
             }else if(currentItem.name === "usbPortOpenError"){
-                scheduler.receiveFromUIBusySet(true)
+                sendToBusySet(true)
             }else{
-                scheduler.receiveFromUIBusySet(true)
+                sendToBusySet(true)
             }
         }
     }
@@ -48,34 +51,46 @@ Window {
     }
     ShutdownPopup{
         id: shutDownPopup
-    }
+        onSendToShutdown: {
+            connection.receiveFromQmlShutdown()
+        }
 
+    }
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIPrintSettingError :{
-//            stackView.pop(mainMenu,StackView.Immediate)
+        target: connection
+        onSendToQmlPrintSettingError:{
             errorPopup.open(code)
         }
-        onSendToUIExitError :{
-            busyErrorPopup.open()
-        }
-        onSendToUIExit:{
-            shutDownPopup.open()
-        }
-        onSendToUILCDState:{
+        onSendToQmlExit:{
+            if(error){
+                shutDownPopup.open()
+            }else{
+                busyErrorPopup.open()
+            }
 
+        }
+        onSendToQmlLCDState:{
             if(state){
                 lcdOff.close()
             }else{
                 lcdOff.open()
             }
         }
-        onSendToUIPortOpenError:{
-            if(stackView.currentItem.name !== "USBPortOpenError")
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+        onSendToQmlPortOpenError:{
+            if(value){
+                if(stackView.currentItem.name !== "USBPortOpenError")
+                    stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+            }
         }
-        onSendToUIChangeToPrint: {
+        onSendToQmlChangeToPrint:{
+            var fileIt = stackView.find(function(item,index){return item.isFileSelectList})
+            if(fileIt){
+                fileIt.fileCheckDisconnected = false
+                console.log("there is fileSelectList")
+            }else{
+                console.log("there is not fileSelectList")
+            }
+
             var it = stackView.find(function(item,index){return item.isPrinMenu})
             if(stackView.currentItem.isPrinMenu){
                 console.debug("isPrintMenu")
@@ -88,5 +103,8 @@ Window {
                 }
             }
         }
+    }
+    Component.onCompleted: {
+        connection.receiveFromQmlGetUsbPortError()
     }
 }

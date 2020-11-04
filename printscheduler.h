@@ -1,4 +1,4 @@
-
+﻿
 #ifndef PRINTSCHEDULER_H
 #define PRINTSCHEDULER_H
 
@@ -20,25 +20,33 @@
 
 #include <mutex>
 
+#include <QDebug>
+
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
+#include "version.h"
+#include "printersetting.h"
 
 class WebSocketClient;
 class BedControl;
 class BedSerialport;
-class PrintScheduler : public QThread
+class ResinUpdater;
+class PrintScheduler : public QObject
 {
     Q_OBJECT
-
 public:
     PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
+
+    friend class BedControl;
+    friend class ResinUpdater;
 
     void initBed();
     void bedFinish();
     void bedError();
 
     void initPrint();
+    void initPrintinfo();
 
     void printLayer();
 
@@ -51,11 +59,14 @@ public:
 
     int copyProject(QString path);
     int copyFilesPath(QString src, QString dst);
+
     int setupForPrint(QString materialName);
     int unZipFiles(QString path);
-    int deletePrintFolder();
 
-    int donwloadFiles(QJsonObject byte);
+    void deletePrintFolder();
+    int sayHello();
+
+    int donwloadFiles(QJsonObject& byte);
 
     void receiveFromBedControl(int state);
     void receiveFromSerialPort(int state);
@@ -63,25 +74,20 @@ public:
     void printStart();
     void printResume();
 
+    void setMotorSpendtime();
+    QString materialName() const;
+
+    void setTotaltime(uint64_t moveTime);
+
 signals:
     void sendToLCDChangeImage(QString imagePath);   //only QML
     void sendToLCDSetImageScale(double value);      //only QML
 
     void sendToUIUpdateProgress(int progress); //update Progress
 
-    void sendToUIFirstlayerStart();         //For CAL PrintTime
-    void sendToUIFirstlayerFinish();        //For CAL PrintTime
-
     void sendToUIChangeToPrint();       //change ui Ready to Print
 
-    void sendToUIChangeToPauseStart();      //chage ui print to Pause Start
-    void sendToUIChangeToPauseFinish();     //change ui Pause Start to Pause Finish
-    void sendToUIChangeToResume();          //change ui Pause Finish to Print
-    void sendToUIChangeToQuit();            //change ui all state to Quit
-
-    void sendToUIChangeToPrintFinish();             //chagne UI state Print To Ready
-    void sendToUIChangeToPrintWorkError();          //Error when Printing
-    void sendToUIChangeToPrintWorkErrorFinish();    //change UI State Print To Ready By Error
+    void sendToUIChangeState(QString state);
 
     void sendToUIPrintSettingError(int code);       //print setting Error when received print start from UI
 
@@ -91,93 +97,73 @@ signals:
 
     void sendToUIPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer);
 
-    void sendToUISetTotalTime(int time);
+    void sendToUISetTotalTime(int time); //set realty time
 
-    void sendToUIPortOpenError();
+    void sendToUIPortOpenError(bool error);
 
     void sendToUILCDState(bool state);
 
-    void sendToUIExitError();               //only QML
-    void sendToUIExit();                    //only QML
+    void sendToUIExit(bool error);
 
     void sendToUIMoveOk();                  //only QML
 
     void MCUFirmwareUpdateFinished();       //only QML
 
-    void sendToUISWUpdateAvailable();       //only QML
-    void sendToUISWUpdateNotAvailable();    //only QML
-    void sendToUISWUpdateFinished();        //only QML
-    void sendToUISWUpdateError();           //only QML
+    void sendToUIHeightOffset(int offset);
+    void sendToUILEDOffset(double offset);
+
+    void sendToUIGetPrintOption(QString option);
+    void sendToUIGetInfoSetting(QString path,QString option);
+
+    void sendToUIIsCustom(bool value);
+    void sendToUIProductInfo(QString json);
 
 public slots:
-    void receiveFromUIConnected();
+    void receiveFromUIPrintStart(QVariantList args);
 
-    void receiveFromQMLPrintStart(QString path,QString materialName);
-    void receiveFromUIPrintStart(QString fileName,QString materialName,QJsonObject byte);
-    void receiveFromUIPrintAgain();
-
-    void receiveFromUIPrintResume();
-    void receiveFromUIPrintPause();
-    void receiveFromUIPrintFinish();
+    void receiveFromUIPrintStateChange(QString CMD);
 
     void receiveFromUIGetMaterialList();
 
-    void receiveFromUIGetPrintInfoToWeb();
+    void receiveFromUIGetPrintInfoToWeb();                    // when print time calc finish, send to web info
 
-    QString receiveFromUIGetPrintName(){return _printName;}
-    QString receiveFromUIGetMaterialName(){return _materialName;}
+    int receiveFromUIGetHeightOffset();
+    double receiveFromUIGetLedOffset();
 
-    QVariant receiveFromUIGetPrinterOption(QString key);
+    QString receiveFromUIGetPrintOption();
+    QString receiveFromUIGetInfoSetting(QString path);
 
-    QVariant receiveFromUIGetPrintOption(QString key);
-    QVariant receiveFromUIGetPrintOptionFromPath(QString key, QString path);    //from path
-
-    void receiveFromUISetTotalPrintTime(int time);
+    void receiveFromUISetPrintTime(int time);       //for real time
     //use only qml or scheduler
 
     void receiveFromUIPrintFinishError();
 
-    void receiveFromUISetPrinterOption(QString key,double value);   //only QML
-    void receiveFromUISetPrinterOption(QString key,int value);      //only QML
-    void receiveFromUISetPrinterOption(QString key,QString value);  //only QML
-
-    QVariant receiveFromUIGetMaterialOptionFromPath(QString path,QString key);
-    QVariant receiveFromUIGetMaterialOption(QString material,QString key);
+    void receiveFromUISetHeightOffset(int value);
+    void receiveFromUISetLedOffset(double value);
 
     bool isCustom(QString path);
 
     void receiveFromUIBusySet(bool bs);
     void receiveFromUIShutdown();
 
-    void receiveFromUIGoHome();
-    void receiveFromUIAutoHome();
-    void receiveFromUIMoveMicro(int micro);
-    void receiveFromUIMoveMaxHeight();
+    void receiveFromUIMoveMotor(QString cmd,int micro);
 
-    QString receiveFromUIGetVersion();
-    QString receiveFromUIGetModelNo();
+    void receiveFromUIGetProductInfo();
 
-    void receiveFromUISetPrintTime(int time);       //for real time
+    void receiveFromUIGetUsbPortError();
 
     void receiveFromUpdaterFirmUpdate(QString path);
+
 
 public:
     BedSerialport* bedSerialPort = nullptr;
 
-    QString materialName() const;
-
-    void setMotorSpendtime();
-
-protected:
-    void run()override;
-
 private:
+    PrinterSetting _printerSetting;
+    Version _version;
+
     BedControl* _bedControl;
     WebSocketClient *_wsClient;
-
-    std::mutex _mPrint;
-
-    int bedCuringLayer = 5;
 
     const QString _fileExtension = ".png";
 
@@ -188,20 +174,32 @@ private:
 
     QString _portPath;
 
+    QDate _printStartTime;
+
     int _bedPrintImageNum;
     int _bedWork;
     int _bedMoveFinished;
     int _bedMaxPrintNum;
 
+
     int _progress = 0;
     long long _lastStartTime = 0;
     long long _elapsedTime = 0;
-    bool _enableTimer = false;
     double _layerHeight = 0.0;
-    QString _printState = "ready";
     long long _totalPrintTime = 0;
+    QString _printState = "ready";
+
+    int _bedCuringLayer = 5;
+    int _bedCuringTime = 0;
+    int _curingTime = 0;
+    int _printDelay = 0;
+
+    bool _totalTimeCalc = true;
+
 
     int _printTime = 0;
+
+    bool _enableTimer = false;
 
     bool _bedError = false;
 

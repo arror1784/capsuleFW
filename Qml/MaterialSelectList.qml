@@ -9,6 +9,11 @@ Item {
 
     property string materialName
 
+    signal sendToPrintStart(string path,string material)
+    signal sendToGetMaterialList()
+    signal sendToIsCustom(string path)
+    signal sendToInfoSetting(string path)
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -97,6 +102,10 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                var it = stackView.find(function(item,index){return item.isFileSelectList})
+                if(it){
+                    it.reset()
+                }
                 stackView.pop(StackView.Immediate)
             }
         }
@@ -128,11 +137,9 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if(materialSelectList.currentIndex !== -1){
-                    materialName = materialSelectList.currentItem.metarialname
+                    connection.receiveFromQmlGetInfoSetting(stackView.get(1).selectedFilePath)
                     printingPopup.open()
-                    printingPopup.setText(stackView.get(1).selectedFileName,
-                                          materialName,
-                                          scheduler.receiveFromUIGetPrintOptionFromPath("layer_height",stackView.get(1).selectedFilePath))
+                    //To do Todo
                 }
             }
         }
@@ -140,25 +147,42 @@ Item {
     PrintingPopup{
         id: printingPopup
         onStartPrintingButtonClicked:{
-            scheduler.receiveFromQMLPrintStart(stackView.get(1).selectedFilePath,materialSelectList.currentItem.metarialname)
+            var arg = []
+            arg.push(stackView.get(1).selectedFilePath)
+            arg.push(materialSelectList.currentItem.metarialname)
+            console.log(arg)
+            connection.receiveFromQmlPrintStart(arg)
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIMaterialList: {
-            for(var i = 0; i < name.length; i++)
+        target: connection
+        onSendToQmlMaterialList:function aa(name){
+            for(var i = 0; i < name.length; i++){
                 inserMaterialList(name[i])
+            }
+        }
+        onSendToQmlIsCustom:function bb(value){
+            if(value){
+                inserMaterialList("Custom")
+            }
+        }
+        onSendToQmlGetInfoSetting:{
+            var JsonString = option
+            var JsonObject = JSON.parse(JsonString)
+
+            materialName = materialSelectList.currentItem.metarialname
+
+            printingPopup.setText(stackView.get(1).selectedFileName,
+                                  materialName,
+                                  JsonObject.layer_height)
         }
     }
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
-        if(scheduler.isCustom(stackView.get(1).selectedFilePath)){
-            inserMaterialList("Custom")
-        }
 
-        scheduler.receiveFromUIGetMaterialList()
+        connection.receiveFromQmlisCustom(stackView.get(1).selectedFilePath)
+        connection.receiveFromQmlGetMaterialList()
     }
     function inserMaterialList(name){
         materialModel.append({"name":name})

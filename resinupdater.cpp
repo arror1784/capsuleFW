@@ -1,4 +1,4 @@
-#include "resinupdater.h"
+﻿#include "resinupdater.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -7,16 +7,21 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QVector>
+
 #include <QByteArray>
 
-#include "printsetting.h"
+#include "printersetting.h"
 #include "resinsetting.h"
+#include "common/jsonutil.h"
 
-ResinUpdater::ResinUpdater()
+ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
 //    : _url("http://10.42.0.1:8000/resin/download/")
 {
     manager = new QNetworkAccessManager();
-    connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
+    QObject::connect(manager, &QNetworkAccessManager::finished,this, &ResinUpdater::requestFinished);
+    updateVersionInFo();
+    checkUpdate();
 }
 
 void ResinUpdater::checkUpdate()
@@ -32,11 +37,41 @@ void ResinUpdater::update()
     request.setUrl(QUrl("https://services.hix.co.kr/resin/download/C10"));
     manager->get(request);
 }
+void ResinUpdater::getVersion()
+{
+    emit sendVersion(_updateTime.toString("dd/MM/yyyy"));
+}
+
+void ResinUpdater::getLastestVersion()
+{
+    emit sendLastestVersion(_lastestUpdateTime.toString("dd/MM/yyyy"));
+}
+
+void ResinUpdater::updateVersionInFo()
+{
+    QVector<QString>& resinList = _printScheduler->_printerSetting.enableMaterialList;
+
+    if(resinList.empty()){
+        resinList = _printScheduler->_printerSetting.materialList;
+    }
+
+    for(int i = 0;i < resinList.size();i++) {
+        QString mID = resinList[i];
+        ResinSetting rs(mID);
+        rs.parse();
+
+        QDateTime last = QDateTime::fromString(rs.lastUpdate,"MM/dd/yyyy, hh:mm:ss");
+        qDebug() << last << rs.lastUpdate;
+        if(last > _updateTime){
+            _updateTime = last;
+        }
+    }
+}
 
 void ResinUpdater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
-        emit updateError();
+        emit updateNotice("error");
         qDebug() << reply->errorString();
         return;
     }
@@ -49,32 +84,39 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
             {
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonArray ja = jd.array();
-                QJsonArray resinList = PrintSetting::getInstance().getResinList();
+                QVector<QString> resinList = _printScheduler->_printerSetting.materialList;
+                bool upAvailable = false;
 
                 if(resinList.size() != ja.size()){
-                    emit updateAvailable();
-                    return;
+                    upAvailable = true;
                 }
 
                 for(int i = 0;i < ja.size();i++) {
                     QJsonObject jo = ja[i].toObject();
                     QString mID = jo.keys()[0];
-                    QString lastUpdate = jo.value(mID).toString();;
+                    QString lastUpdate = jo.value(mID).toString();
 
-                    if(!resinList.contains(mID)){
-                        emit updateAvailable();
-                        return;
+                    QDateTime last = QDateTime::fromString(lastUpdate,"MM/dd/yyyy, hh:mm:ss");
+                    if(last > _lastestUpdateTime){
+                        _lastestUpdateTime = last;
                     }
 
-                    ResinSetting rs(mID);
-                    if(rs.getResinSetting("last_update").toString() != lastUpdate){
-                        emit updateAvailable();
-                        return;
+                    if(!resinList.contains(mID)){
+                        upAvailable = true;
+                    }else{
+                        ResinSetting rs(mID);
+                        rs.parse();
+                        if(rs.lastUpdate != lastUpdate){
+                            upAvailable = true;
+                        }
                     }
 //                    qDebug() << ja[i];
                 }
-                emit updateNotAvailable();
-//                update();
+                if(upAvailable){
+                    emit updateNotice("available");
+                }else{
+                    emit updateNotice("notAvailable");
+                }
             }
             break;
         case ResinRequestType::DOWNLOAD:
@@ -84,26 +126,59 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 QJsonDocument jd = QJsonDocument::fromJson(answer);
                 QJsonObject ja = jd.object();
 
-                QJsonArray sl;
+                QVector<QString> sl;
 
-                QJsonArray resinList = PrintSetting::getInstance().getResinList();
+                QVector<QString> resinList = _printScheduler->_printerSetting.materialList;
 
+                //resin remove code
                 for (int i = 0; i < resinList.size();i++) {
-                    ResinSetting rs(resinList[i].toString());
+                    ResinSetting rs(resinList[i]);
                     rs.removeFile();
                 }
 
                 foreach(const QString& key, ja.keys()){
                     QString mID = key;
                     sl.append(mID);
-
+                    //To do add resin create code
                     ResinSetting rs(mID);
-                    rs.setResinSetting(ja.value(key).toObject());
+                    rs.createFile();
+                    QJsonObject object = ja.value(key).toObject();
+
+                    for(auto &i : object.keys()){
+                        if(i == "last_update"){
+                            rs.lastUpdate = Hix::Common::Json::getValue<QString>(object,"last_update");
+                        }else{
+                            ResinSetting::resinInfo ri;
+                            QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(object,i);
+
+                            ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
+                            ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
+                            ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
+
+                            ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
+                            ri.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
+                            ri.zHopHeight = Hix::Common::Json::getValue<int>(jo,"z_hop_height");
+                            ri.maxSpeed = Hix::Common::Json::getValue<int>(jo,"max_speed");
+                            ri.initSpeed = Hix::Common::Json::getValue<int>(jo,"init_speed");
+                            ri.upAccelSpeed = Hix::Common::Json::getValue<int>(jo,"up_accel_speed");
+                            ri.upDecelSpeed = Hix::Common::Json::getValue<int>(jo,"up_decel_speed");
+                            ri.downAccelSpeed = Hix::Common::Json::getValue<int>(jo,"down_accel_speed");
+                            ri.downDecelSpeed = Hix::Common::Json::getValue<int>(jo,"down_decel_speed");
+                            ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
+                            ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
+                            ri.material = Hix::Common::Json::getValue<int>(jo,"material");
+
+                            rs.resinList.insert(i,ri);
+                        }
+                    }
+                    rs.save();
                 }
 
+                _printScheduler->_printerSetting.materialList = sl;
+                _printScheduler->_printerSetting.save();
 
-                PrintSetting::getInstance().setResinList(sl);
-                emit updateFinished();
+                updateVersionInFo();
+                emit updateNotice("finish");
             }
             break;
         case ResinRequestType::NONE:

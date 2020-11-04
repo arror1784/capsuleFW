@@ -1,18 +1,21 @@
-import QtQuick 2.0
+ import QtQuick 2.0
 import Qt.labs.folderlistmodel 2.1
 import QtQuick.Controls 2.5
 import App 1.0
 
 Item {
-
     width: 480
     height: 320
 
-    property string currentPath
-    property string currentParentName
+    // property url currentPath
     property string selectedFileName : ""
     property string selectedFilePath : ""
-    property string mediaURL: "file:///media/pi"
+    property string mediaURL: ""
+
+    property bool fileSearch: false
+    property bool fileCheckDisconnected: false
+
+    property bool isFileSelectList: true
 
     FontLoader{
         id: openSansSemibold
@@ -22,12 +25,12 @@ Item {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-    FolderListModel {
+    HixFilesystemModel {
         id: folderModel
         showDirs: true
         showDirsFirst: true
         sortReversed: true
-        nameFilters: ["*.zip"]
+        nameFilters: [".zip"]
     }
     Text {
         id: selectText
@@ -80,20 +83,15 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if(folderModel.folder.toString() !== mediaURL){
-                        currentParentName = basename(folderModel.folder.toString())
-                        currentPath = ""
-                        selectedFileName = ""
+//                        selectedFileName = ""
                         folderModel.folder=folderModel.parentFolder
                         fileSelectList.currentIndex=-1
-                        fileSelectList.update()
-
+//                        fileSelectList.update()
                         if(folderModel.folder.toString() === mediaURL){
-                            parentDirText.text = " "
-                        }
-                        else{
+                            parentDirText.text = ""
+                        }else{
                             parentDirText.text = basename(folderModel.folder.toString())
                         }
-//                        parentDirText.text = fileSelectList.indexAt(0).filename
                     }
                 }
             }
@@ -147,20 +145,32 @@ Item {
             highlight: Rectangle { color: "#B6CDDC"; height: 22; radius: 5;}
 
             model: folderModel
+
             delegate: FileListDelegate{
-                onDirClicked: {  
-                    changeFolderPath(path)
-                    currentParentName = basename(folderModel.folder.toString())
-                    currentPath = path
-                    selectedFileName = ""
-                    fileSelectList.currentIndex=-1
-                    fileSelectList.update()
-                    parentDirText.text = basename(folderModel.folder.toString())
+                property var dirText: parentDirText
+                property var selectList: fileSelectList
+                onDirClicked: {
+                    if(!folderModel.fileExists(path))
+                    {
+                        stackView.pop(StackView.Immediate)
+                        return
+                    }
+                    folderModel.folder = path
+//                    selectedFileName = ""
+                    dirText.text = name
+                    selectList.currentIndex=-1
+                    selectList.update()
+
                 }
                 onFileClicked: {
+                    if(!folderModel.fileExists(path))
+                    {
+                        stackView.pop(StackView.Immediate)
+                        return
+                    }
                     fileSelectList.currentIndex = index
                     selectedFileName = name
-                    selectedFilePath = currentPath + "/" + name
+                    selectedFilePath = path
                     fileSelectList.update()
                 }
             }
@@ -253,7 +263,7 @@ Item {
         }
     }
     Rectangle{
-        id: selectButtonfileSelectList
+        id: selectButton
 
         width: 215
         height: 40
@@ -280,11 +290,52 @@ Item {
             onClicked: {
 //                if(selectedFileName === "info.json"){
                 if(fileSelectList.currentIndex !== -1){
+//                    fileCheckDisconnected = false
                     stackView.push(Qt.resolvedUrl("qrc:/Qml/MaterialSelectList.qml"),StackView.Immediate)
                 }
             }
         }
     }
+    USBStorgeDisConnectedPopup{
+        id: usbStrogeDisConnectedPopup
+        onBack: {
+            stackView.pop(mainMenu,StackView.Immediate)
+        }
+    }
+
+    Timer{
+        id: timer
+        interval: 250
+        running: fileSearch
+        repeat: true
+        onTriggered: {
+            var path = folderModel.getUSB()
+            if(path !== ""){
+                fileSearch = false
+                fileCheckDisconnected = true
+                mediaURL = path
+                setPath(path)
+            }
+        }
+    }
+    Timer{
+        id: chekcTimer
+        interval: 250
+        running: fileCheckDisconnected
+        repeat: true
+        onTriggered: {
+            if(!folderModel.fileExists(mediaURL)){
+                fileCheckDisconnected = false
+                usbStrogeDisConnectedPopup.open()
+            }
+        }
+    }
+    function setPath(path){
+        folderModel.folder = path
+        parentDirText.text = ""
+        fileSelectList.update()
+    }
+
     function resetPath(){
         folderModel.folder = mediaURL
         parentDirText.text = ""
@@ -294,14 +345,30 @@ Item {
         fileSelectList.currentIndex = -1
     }
     function changeFolderPath(path){
-        folderModel.folder = "file://" + path
+        // folderModel.folder = "file://" + path
+        folderModel.folder = path
+
     }
     function basename(str)
     {
         return (str.slice(str.lastIndexOf("/")+1))
     }
+    function reset(){
+        if(folderModel.fileExists(mediaURL)){
+            fileSearch = false
+            fileCheckDisconnected = true
+        }else{
+            fileSearch = true
+            fileCheckDisconnected = false
+            resetCurrentIndex()
+            resetPath()
+        }
+    }
+
     Component.onCompleted: {
-        resetPath()
+//        resetPath()
+        reset()
+        usbStrogeDisConnectedPopup.close()
         resetCurrentIndex()
     }
 }

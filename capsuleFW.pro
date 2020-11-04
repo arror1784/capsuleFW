@@ -5,8 +5,8 @@ QT += svg
 QT += network
 QT += websockets
 
-CONFIG += c++11
-#CONFIG += c++1z
+#CONFIG += c++11
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -20,21 +20,36 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    FilesystemModel.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
+    common/jsonreadsetting.cpp \
+    common/jsonsetting.cpp \
+    common/jsonutil.cpp \
+    common/jsonwritesetting.cpp \
     filevalidator.cpp \
+    infosetting.cpp \
     kinetimecalc.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
     networkcontrol.cpp \
+    printersetting.cpp \
     printscheduler.cpp \
-    printsetting.cpp \
+    qmlconnecter.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
+    schedulerthread.cpp \
+    updateconnector.cpp \
     updater.cpp \
     version.cpp \
     websocketclient.cpp \
+    wifiinfo.cpp \
+    wpa.cpp \
+    wpa_ctrl/common.c \
+    wpa_ctrl/os_unix.c \
+    wpa_ctrl/wpa_ctrl.c \
+    wpa_ctrl/wpa_debug.c \
     ymodem.cpp \
     zip/zip.cpp
 
@@ -54,23 +69,42 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    FilesystemModel.h \
     Singleton.h \
     bedcontrol.h \
     bedserialport.h \
     common.h \
+    common/jsonreadsetting.h \
+    common/jsonsetting.h \
+    common/jsonutil.h \
+    common/jsonwritesetting.h \
     filevalidator.h \
+    infosetting.h \
     kinetimecalc.h \
     logger.h \
     modelno.h \
     networkcontrol.h \
+    printersetting.h \
     printscheduler.h \
-    printsetting.h \
+    qmlconnecter.h \
     resinsetting.h \
     resinupdater.h \
-    slate-global.h \
+    schedulerthread.h \
+    updateconnector.h \
     updater.h \
     version.h \
     websocketclient.h \
+    wifiinfo.h \
+    wpa.h \
+    wpa_ctrl/build_config.h \
+    wpa_ctrl/common.h \
+    wpa_ctrl/ieee802_11_defs.h \
+    wpa_ctrl/includes.h \
+    wpa_ctrl/os.h \
+    wpa_ctrl/os.h \
+    wpa_ctrl/wpa_ctrl.h \
+    wpa_ctrl/wpa_debug.h \
+    wpa_ctrl/wpabuf.h \
     ymodem.h \
     zip/zip.h
 #    zip/zip_file.hpp

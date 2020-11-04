@@ -11,15 +11,19 @@ Item {
     property double time: 0
     property double eltime: 0
 
-    property double firstLayerTimeStart: 0
+    property int totaltime: 0
+    property bool timerRunning: false
 
     property double startTime: 0
     property int ct: 0
     property bool waitPopupOpened: false
 
+
     property bool isPrinMenu: true
 
-    signal printStart()
+    property string printName
+    property string materialName
+
 
     FontLoader{
         id: openSansSemibold
@@ -46,29 +50,32 @@ Item {
                 font.family: openSansRegular.name
                 font.pixelSize: 15
             }
-            Text {
+
+            SlideText{
                 id: fileNameText
                 width: 200
+
+//                anchors.top: fileName.bottom
                 text: ""
+
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true
-
-                elide: Text.ElideRight
             }
+
         }
         Column{
             id: remainingTime
             anchors.top: fileName.bottom
             anchors.topMargin: 20
             Text {
-                text: qsTr("time")
+                text: qsTr("Remaing Time")
                 font.family: openSansRegular.name
                 font.pixelSize: 15
             }
             Text {
                 id: timeText
-                text: timemin + "min " + timesec + "sec"
+                text: ""
                 font.family: openSansSemibold.name
                 font.pixelSize: 27
                 font.bold: true
@@ -142,7 +149,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromUIPrintPause()
+                connection.receiveFromQmlPrintStateChange("pause")
             }
         }
     }
@@ -155,16 +162,16 @@ Item {
     QuitPopup{
         id: quitPopup
         onPrintResume: {
-            scheduler.receiveFromUIPrintResume()
+            connection.receiveFromQmlPrintStateChange("resume")
         }
         onPrintStop: {
-            scheduler.receiveFromUIPrintFinish()
+            connection.receiveFromQmlPrintStateChange("finish")
         }
     }
 
     Timer{
         id: timeTimer
-        interval: 50; running: false; repeat: true
+        interval: 50; running: timerRunning; repeat: true
         onRunningChanged: {
            if(running){
                var date = new Date()
@@ -176,100 +183,105 @@ Item {
         onTriggered: {
             var date = new Date();
             var currentDuration = date.getTime() - startTime + eltime
-            var currentDate = new Date(currentDuration)
-
             time = currentDuration
-            timesec = currentDate.getSeconds()
-            timemin = currentDate.getMinutes()
+            var diffDuration = totaltime - currentDuration
+            var currentDate
+            if(totaltime === 0){
+                timeText.text = "Calculating"
+                return
+            }
+
+            if(diffDuration < 0){
+                currentDate = new Date(-diffDuration)
+
+                timesec = currentDate.getSeconds()
+                timemin = currentDate.getMinutes()
+                timeText.text = -timemin + "min " + -timesec + "sec"
+
+            }else{
+                currentDate = new Date(diffDuration)
+
+                timesec = currentDate.getSeconds()
+                timemin = currentDate.getMinutes()
+                timeText.text = timemin + "min " + timesec + "sec"
+            }
         }
     }
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIUpdateProgress : {
+        target: connection
+        onSendToQmlUpdateProgress: {
             setProgressValue(progress)
         }
-        onSendToUIEnableTimer :{
+        onSendToQmlEnableTimer:{
             if(enable){
                 timeTimer.start()
             }else{
                 timeTimer.stop()
-                scheduler.receiveFromUISetPrintTime(time)
+                connection.receiveFromQmlSetPrintTime(time)
             }
         }
-        onSendToUIChangeToPauseStart :{
-            quitPopup.open()
-            quitPopup.setButtonEnabled(false)
-        }
-        onSendToUIChangeToPauseFinish :{
+        onSendToQmlChangeState:{
+            if(state == "pauseStart"){
+                quitPopup.open()
+                quitPopup.setButtonEnabled(false)
+            }else if(state === "pauseFinish"){
+                quitPopup.setButtonEnabled(true)
 
-            quitPopup.setButtonEnabled(true)
+            }else if(state === "resume"){
+                quitPopup.close()
+            }else if(state == "quit"){
+                quitPopup.close()
+                waitPopup.open()
+                waitPopupOpened = true
+            }else if(state === "printFinish"){
+                if(waitPopupOpened === true){
+                    waitPopupOpened = false
+                    waitPopup.close()
+                }
+                quitPopup.close()
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
+            }else if(state === "printError"){
+                waitPopup.open()
+                waitPopupOpened = true
+            }else if(state === "printErrorFinish"){
+                if(waitPopupOpened === true){
+                    waitPopupOpened = false
+                    waitPopup.close()
+                }
+        //            quitPopup.close()
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingError.qml"),StackView.Immediate)
+            }
         }
-        onSendToUIChangeToResume:{
-            quitPopup.close()
+        onSendToQmlPrintInfo:{
+            progressBar.setCurrentValue(progress)
 
-        }
-        onSendToUIChangeToQuit:{
-            quitPopup.close()
-            waitPopup.open()
-            waitPopupOpened = true
-        }
-        onSendToUIChangeToPrintFinish :{
-            if(waitPopupOpened === true){
-                waitPopupOpened = false
-                waitPopup.close()
-            }
-            quitPopup.close()
-            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingCompleted.qml"),StackView.Immediate)
-        }
-        onSendToUIChangeToPrintWorkErrorFinish:{
-            if(waitPopupOpened === true){
-                waitPopupOpened = false
-                waitPopup.close()
-            }
-//            quitPopup.close()
-            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintingError.qml"),StackView.Immediate)
-        }
-        onSendToUIChangeToPrintWorkError:{
-            waitPopup.open()
-            waitPopupOpened = true
-        }
-        onSendToUIPrintInfo:{
+            printName = fileName
+            fileNameText.text = fileName
+            fileInfoPopup.setFilename(fileName)
+
+            materialName = material
+            fileInfoPopup.setMaterial(material)
+
+            fileInfoPopup.setLayerHeight(layerHeight)
+
             eltime = elapsedTime;
             startTime = new Date().getTime()
         }
-
-
-//      sendToUIPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress)
-
-        onSendToUIFirstlayerStart:{
-            var currentDate = new Date()
-            firstLayerTimeStart = currentDate.getTime()
+        onSendToQmlChangeToPrint:{
+            clear()
         }
-        onSendToUIFirstlayerFinish:{
-            var total_layer = scheduler.receiveFromUIGetPrintOption("total_layer")
-            var bed_curting_layer = scheduler.receiveFromUIGetMaterialOption(scheduler.receiveFromUIGetMaterialName(),"bed_curing_layer")
-
-            var T = new Date()
-            var Tduration = T.getTime() - firstLayerTimeStart
-            var Tdate = new Date(Tduration)
-            var firstLayerTime = Tdate.getTime()
-
-
-            var currentDate = new Date(time + (firstLayerTime * ((total_layer - bed_curting_layer) - 1)))
+        onSendToQmlSetTotalTime:{
+            totaltime = time
+            var currentDate = new Date(time)
             var sec = currentDate.getSeconds()
             var min = currentDate.getMinutes()
 
-            scheduler.receiveFromUISetTotalPrintTime(currentDate)
             fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
+//            timeText.text = timemin + "min " + timesec + "sec"
+
+            timerRunning = true
         }
-    }
-    Component.onCompleted: {
-        scheduler.receiveFromUIGetPrintInfoToWeb();
-        clear()
-    }
-    function setProgressValue(value){
-        progressBar.setCurrentValue(value)
+
     }
     function clear(){
         progressBar.setCurrentValue(0)
@@ -278,18 +290,23 @@ Item {
 
         time = 0
 
-        firstLayerTimeStart = 0
-
         startTime = 0
+        totaltime = 0
 
         ct = 0
         waitPopupOpened = false
 
-        fileNameText.text = scheduler.receiveFromUIGetPrintName()
-        fileInfoPopup.setText(scheduler.receiveFromUIGetPrintName(),
-                              "Calculating",
-                              scheduler.receiveFromUIGetMaterialName(),
-                              scheduler.receiveFromUIGetPrintOption("layer_height"))
+        timerRunning = false
+        timeText.text = "Calculating"
+        fileInfoPopup.setPrintingTime("Calculating")
+        //Todo To do
     }
+    function setProgressValue(value){
+        progressBar.setCurrentValue(value)
+    }
+    Component.onCompleted: {
+        connection.receiveFromQmlGetPrintInfoToWeb();
 
+        clear()
+    }
 }

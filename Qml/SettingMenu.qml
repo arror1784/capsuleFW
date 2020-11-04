@@ -111,56 +111,56 @@ Item {
             }
         }
     }
-    Rectangle {
-        id: network
+//    Rectangle {
+//        id: network
 
-        width: 215
-        height: 110
+//        width: 215
+//        height: 110
 
-        color: "#dceaf3"
+//        color: "#dceaf3"
 
-        radius: 8
+//        radius: 8
 
-        anchors.bottom: backButton.top
-        anchors.bottomMargin: 15
-        anchors.leftMargin: 15
-        anchors.left: parent.left
-        Rectangle{
-            width: networkText.width
-            height: networkImage.height + networkText.height
-            anchors.centerIn: parent
-            color: "#00000000"
-            Image {
-                id: networkImage
-                source: "qrc:/image/network.png"
+//        anchors.bottom: backButton.top
+//        anchors.bottomMargin: 15
+//        anchors.leftMargin: 15
+//        anchors.left: parent.left
+//        Rectangle{
+//            width: networkText.width
+//            height: networkImage.height + networkText.height
+//            anchors.centerIn: parent
+//            color: "#00000000"
+//            Image {
+//                id: networkImage
+//                source: "qrc:/image/network.png"
 
-                height: 67
-                width: 67
+//                height: 67
+//                width: 67
 
-                scale: 0.57
+//                scale: 0.57
 
-                anchors.horizontalCenter: networkText.horizontalCenter
-            }
+//                anchors.horizontalCenter: networkText.horizontalCenter
+//            }
 
-            Text {
-                id: networkText
-                text: qsTr("Network")
-                color: "#666666"
+//            Text {
+//                id: networkText
+//                text: qsTr("Network")
+//                color: "#666666"
 
-                anchors.top: networkImage.bottom
+//                anchors.top: networkImage.bottom
 
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-                font.bold: true
-            }
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                ipPopup.open()
-            }
-        }
-    }
+//                font.family: openSansSemibold.name
+//                font.pixelSize: 20
+//                font.bold: true
+//            }
+//        }
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                stackView.push(Qt.resolvedUrl("qrc:/Qml/NetworkMenu.qml"),StackView.Immediate)
+//            }
+//        }
+//    }
     Rectangle {
         id: update
 
@@ -170,10 +170,14 @@ Item {
         color: "#dceaf3"
 
         radius: 8
-        anchors.verticalCenter: network.verticalCenter
+//        anchors.verticalCenter: network.verticalCenter
 
-        anchors.right: parent.right
-        anchors.rightMargin: 15
+//        anchors.right: parent.right
+//        anchors.rightMargin: 15
+        anchors.bottom: backButton.top
+        anchors.bottomMargin: 15
+        anchors.leftMargin: 15
+        anchors.left: parent.left
         Rectangle{
             width: updateText.width
             height: updateImage.height + updateText.height
@@ -240,9 +244,5 @@ Item {
     }
     IpPopup{
         id: ipPopup
-    }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
     }
 }

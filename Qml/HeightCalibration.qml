@@ -101,7 +101,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(-100)
+                connection.receiveFromQmlMoveMotor("moveMicro",-100)
                 maxHightOffset += -100
             }
         }
@@ -142,7 +142,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(100)
+                connection.receiveFromQmlMoveMotor("moveMicro",100)
                 maxHightOffset += 100
             }
         }
@@ -171,7 +171,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(-10)
+                connection.receiveFromQmlMoveMotor("moveMicro",-10)
                 maxHightOffset += -10
             }
         }
@@ -212,7 +212,7 @@ Item {
             onClicked: {
                 buttonEnabled = false
                 goMicro = true
-                scheduler.receiveFromUIMoveMicro(10)
+                connection.receiveFromQmlMoveMotor("moveMicro",10)
                 maxHightOffset += 10
             }
         }
@@ -246,7 +246,7 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromUIGoHome()
+                connection.receiveFromQmlMoveMotor("goHome",0)
             }
         }
     }
@@ -280,8 +280,8 @@ Item {
             onClicked: {
                 goHome = true
                 waitPopup.open()
-                scheduler.receiveFromUIGoHome()
-                scheduler.receiveFromUISetPrinterOption("height_offset",maxHightOffset)
+                connection.receiveFromQmlMoveMotor("goHome",0)
+                connection.receiveFromQmlSetHeightOffset(maxHightOffset)
             }
         }
     }
@@ -289,9 +289,8 @@ Item {
         id: waitPopup
     }
     Connections{
-        id: schedulerConnection
-        target: scheduler
-        onSendToUIMoveOk:{
+        target: connection
+        onSendToQmlMoveOk:{
             if(goHome){
                 goHome = false
                 waitPopup.close()
@@ -306,21 +305,24 @@ Item {
             }else if(goAutoHome){
                 goAutoHome = false
                 goMaxheight = true
-                scheduler.receiveFromUIMoveMaxHeight()
+                connection.receiveFromQmlMoveMotor("moveMaxHeight",0)
             }
         }
+        onSendToQmlHeightOffset:{
+            maxHightOffset = offset
+        }
     }
-    Component.onCompleted: {
 
+    Component.onCompleted: {
         buttonEnabled = false
         goHome = false
         goMaxheight = false
         goMicro = false
         goAutoHome = true
 
+        connection.receiveFromQmlMoveMotor("autoHome",0)
+        connection.receiveFromQmlGetHeightOffset()
+
         waitPopup.open()
-        scheduler.receiveFromUIAutoHome()
-//        scheduler.receiveFromUIMoveMaxHeight()
-        maxHightOffset = scheduler.receiveFromUIGetPrinterOption("height_offset")
     }
 }

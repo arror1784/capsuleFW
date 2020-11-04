@@ -114,7 +114,8 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                scheduler.receiveFromUIPrintAgain()
+                var arg = []
+                connection.receiveFromQmlPrintStart(arg)
             }
         }
     }
@@ -148,15 +149,15 @@ Item {
             }
         }
     }
-    Connections{
-        id: schedulerConnection
-        target: scheduler
-    }
 
     Component.onCompleted: {
-        fileName.text = scheduler.receiveFromUIGetPrintName()
         var it = stackView.find(function(item,index){return item.isPrinMenu})
-        timesec = it.timesec
-        timemin = it.timemin
+
+        fileName.text = it.printName
+
+        var T = new Date(it.time)
+        timesec = T.getSeconds()
+        timemin = T.getMinutes()
+
     }
 }

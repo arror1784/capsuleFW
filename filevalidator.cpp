@@ -14,6 +14,7 @@
 */
 
 #include "filevalidator.h"
+#include <QtGlobal>
 
 #include <QFile>
 #include <QImage>
@@ -102,6 +103,7 @@ void FileValidator::setTreatAsImage(bool treatAsImage)
     mTreatAsImage = treatAsImage;
     emit treatAsImageChanged();
 }
+
 
 void FileValidator::validate()
 {

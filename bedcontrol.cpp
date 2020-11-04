@@ -1,8 +1,8 @@
-#include "bedcontrol.h"
+﻿#include "bedcontrol.h"
 
 #include "bedserialport.h"
 #include "printscheduler.h"
-#include "printsetting.h"
+#include "printersetting.h"
 
 #include <QtConcurrent/QtConcurrentRun>
 
@@ -24,6 +24,8 @@ void BedControl::receiveFromBedSerialPort(){
         moveDownCommand();
         break;
     case PRINT_MOVE_DOWN:
+        _moveFinishTime = QDateTime::currentDateTime();
+        _sched->setTotaltime(_moveStartTime.msecsTo(_moveFinishTime));
         bedState = PRINT_MOVE_READY;
         _sched->receiveFromBedControl(PRINT_MOVE_LAYER_OK );
         break;
@@ -112,37 +114,39 @@ void BedControl::printDelay(){
     future = QtConcurrent::run([this](){
         //    qDebug() << "layer delay : " << QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss,zzz");
         QString material = _sched->materialName();
-        QJsonObject jo = PrintSetting::getInstance().getPrintSetting("UV_time_spend").toObject();
+        uint32_t curing;
+
+        if(bedState == PRINT_MOVE_BEDCURRENT){
+            curing = bedCuringTime;
+        }else if(bedState == PRINT_DLP_WORKING){
+            curing = curingTime;
+        }
+
+        auto jo = _sched->_printerSetting.UVTimeSpend;
         int time;
 
-        if(jo[material].isNull()){
+        if(jo.contains(material)){
             time = 0;
             jo.insert(material,0);
         }else{
-            time = jo[material].toInt();
+            time = jo[material];
         }
         _delayTime += layerDelay;
         QThread::msleep(layerDelay);
 
-//        qDebug() << "before delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
-        _bedSerialPort->sendCommand("H11");
-        if(bedState == PRINT_MOVE_BEDCURRENT){
-            QThread::msleep((unsigned int)bedCuringTime);
-        }else if(bedState == PRINT_DLP_WORKING){
-            QThread::msleep((unsigned int)curingTime);
-        }
-        _bedSerialPort->sendCommand("H10");
-//        qDebug() << "after delay : " << QDateTime::currentDateTime().toString("hh:mm:ss,zzz");
-
-        if(bedState == PRINT_MOVE_BEDCURRENT){
-            jo[material] = time + bedCuringTime;
-            _UVtime += bedCuringTime;
-        }else if(bedState == PRINT_DLP_WORKING){
-            jo[material] = time + curingTime;
-            _UVtime += curingTime;
+        if(curing != 0){
+            _bedSerialPort->sendCommand("H11");
+            QThread::msleep(curing);
+            _bedSerialPort->sendCommand("H10");
         }
 
-        PrintSetting::getInstance().setPrintSetting("UV_time_spend",jo);
+        jo[material] = time + curing;
+        _UVtime += curing;
+
+        _sched->_printerSetting.UVTimeSpend = jo;
+        _sched->_printerSetting.save();
+
+        _moveStartTime = QDateTime::currentDateTime();
         moveUpCommand();
     });
 }
