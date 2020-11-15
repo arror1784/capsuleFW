@@ -277,23 +277,17 @@ QString FilesystemModel::getUSB() const
     std::filesystem::path home = HOME;
 
     auto dirItr = std::filesystem::directory_iterator(home);
-//    auto child = std::filesystem::begin(dirItr);
 
     for(auto& e: dirItr)
     {
         auto path = e.path();
         std::regex re("recoveryfs[0-9]*");
-        std::cout << e.path().u8string() << std::regex_search(path.u8string(),re) <<std::endl;
+
         if(std::filesystem::is_directory(path) && !std::regex_search(path.u8string(),re))
         {
-            std::cout << "find folder" << std::endl;
             return fromStdPath(path);
         }
     }
-//    if(child != std::filesystem::end(dirItr) && std::filesystem::is_directory(*child))
-//    {
-//        return fromStdPath(*child);
-//    }
     return "";
 
 }
