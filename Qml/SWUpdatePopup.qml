@@ -68,6 +68,10 @@ Rectangle {
             popupBack.visible = false
         }
     }
+    function autoReboot(){
+        exText="업데이트가 종료된 후 자동으로 부팅됩니다.\r\n전원을 제거하지 말아주세요."
+    }
+
     function open(){
         popup.open()
     }

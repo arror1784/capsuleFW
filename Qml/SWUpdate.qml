@@ -166,6 +166,7 @@ Item {
             anchors.fill: parent
             enabled: updateEnable
             onClicked: {
+                connection.receiveFromQmlAutoReboot()
                 updater.receiveFromQmlSWUpdate()
                 swUpdatePopup.open()
             }
@@ -175,7 +176,12 @@ Item {
         id: swUpdatePopup
 
     }
-
+    Connections{
+        target: connection
+        onSendToQmlAutoReboot:{
+            swUpdatePopup.autoReboot()
+        }
+    }
     Connections{
         id: swUpdaterConnection
         target: updater

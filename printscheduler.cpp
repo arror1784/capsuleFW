@@ -118,6 +118,11 @@ void PrintScheduler::setTotaltime(uint64_t moveTime)
     }
 }
 
+void PrintScheduler::sendAutoReboot(bool value)
+{
+    emit sendToUIAutoReboot(value);
+}
+
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
@@ -387,6 +392,11 @@ void PrintScheduler::receiveFromUpdaterFirmUpdate(QString path)
     };
     QMetaObject::invokeMethod(bedSerialPort,f,Qt::AutoConnection);
     return;
+}
+
+void PrintScheduler::receiveFromUIAutoReboot()
+{
+    bedSerialPort->sendCommand("H111");
 }
 
 void PrintScheduler::receiveFromUIShutdown()

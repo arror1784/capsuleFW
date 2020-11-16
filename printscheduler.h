@@ -79,6 +79,8 @@ public:
 
     void setTotaltime(uint64_t moveTime);
 
+    void sendAutoReboot(bool value);
+
 signals:
     void sendToLCDChangeImage(QString imagePath);   //only QML
     void sendToLCDSetImageScale(double value);      //only QML
@@ -118,6 +120,8 @@ signals:
     void sendToUIIsCustom(bool value);
     void sendToUIProductInfo(QString json);
 
+    void sendToUIAutoReboot(bool value);
+
 public slots:
     void receiveFromUIPrintStart(QVariantList args);
 
@@ -153,6 +157,8 @@ public slots:
     void receiveFromUIGetUsbPortError();
 
     void receiveFromUpdaterFirmUpdate(QString path);
+
+    void receiveFromUIAutoReboot();
 
 
 public:

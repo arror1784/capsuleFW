@@ -28,7 +28,7 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(this,&QmlConnecter::sendToSchedMoveMotor,_sched,&PrintScheduler::receiveFromUIMoveMotor);
         QObject::connect(this,&QmlConnecter::sendToSchedGetProductInfo,_sched,&PrintScheduler::receiveFromUIGetProductInfo);
         QObject::connect(this,&QmlConnecter::sendToSchedGetUsbPortError,_sched,&PrintScheduler::receiveFromUIGetUsbPortError);
-
+        QObject::connect(this,&QmlConnecter::sendToSchedAutoReboot,_sched,&PrintScheduler::receiveFromUIAutoReboot);
 
         QObject::connect(_sched,&PrintScheduler::sendToLCDChangeImage,this,&QmlConnecter::receiveFromSchedChangeImage);
         QObject::connect(_sched,&PrintScheduler::sendToLCDSetImageScale,this,&QmlConnecter::receiveFromSchedSetImageScale);
@@ -50,5 +50,7 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(_sched,&PrintScheduler::sendToUIGetInfoSetting,this,&QmlConnecter::receiveFromSchedGetInfoSetting);
         QObject::connect(_sched,&PrintScheduler::sendToUIIsCustom,this,&QmlConnecter::receiveFromSchedIsCustom);
         QObject::connect(_sched,&PrintScheduler::sendToUIProductInfo,this,&QmlConnecter::receiveFromSchedProductInfo);
+        QObject::connect(_sched,&PrintScheduler::sendToUIAutoReboot,this,&QmlConnecter::receiveFromSchedAutoReboot);
+
     }
 }
