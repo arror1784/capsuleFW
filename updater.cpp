@@ -127,6 +127,16 @@ void Updater::waitForMCUFirmwareUpdate()
     _cv_mcu.wait(lk,[this]{return this->_MCUFirmwareUpdateFinished;});
 }
 
+#ifdef MCU_UPDATE_TEST
+void Updater::MCUUpdate(QString path)
+{
+    _MCUFirmwareUpdateFinished = false;
+    emit updateMCUFirmware(path);
+    waitForMCUFirmwareUpdate();
+}
+#endif
+
+
 void Updater::getVersion()
 {
     emit sendVersion(Version::getInstance().version);

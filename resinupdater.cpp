@@ -49,11 +49,11 @@ void ResinUpdater::getLastestVersion()
 
 void ResinUpdater::updateVersionInFo()
 {
-    QVector<QString>& resinList = _printScheduler->_printerSetting.enableMaterialList;
+//    QVector<QString>& resinList = _printScheduler->_printerSetting.enableMaterialList;
 
-    if(resinList.empty()){
-        resinList = _printScheduler->_printerSetting.materialList;
-    }
+//    if(resinList.empty()){
+        QVector<QString> resinList = _printScheduler->_printerSetting.materialList;
+//    }
 
     for(int i = 0;i < resinList.size();i++) {
         QString mID = resinList[i];
