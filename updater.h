@@ -9,6 +9,7 @@
 #include <future>
 #include <condition_variable>
 #include <thread>
+#include "common.h"
 
 enum class SWRequestType
 {
@@ -59,6 +60,9 @@ public slots:
     void update();
 
 
+#ifdef MCU_UPDATE_TEST
+    void MCUUpdate(QString path);
+#endif
 
 private:
     QString _url;

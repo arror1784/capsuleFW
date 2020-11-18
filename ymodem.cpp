@@ -106,8 +106,8 @@ void YMODEM::yTransmitWrite(const QByteArray &ba )
 void YMODEM::yTransmitWrite( int c )
 {
 	QByteArray ba;
-    ba.append(QChar(c));
-    qDebug() << ba.toHex() << "first";
+    ba.append(QString(c).toUtf8());
+    qDebug() << ba << "first";
     m_serialPort->write(ba);
 	m_serialPort->waitForBytesWritten(1000);
 }
@@ -172,9 +172,9 @@ int YMODEM::yTransmit( QString filePath )
 			}
 		}
 	}
-	yTransmitWrite(CAN);
-	yTransmitWrite(CAN);
-	yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
 	yTransmitFlush();
 	file.close();
 	if (m_cancel)
@@ -185,7 +185,7 @@ int YMODEM::yTransmit( QString filePath )
 	else
 	{
 		qDebug() << "XMODEM::yTransmit - no sync";
-		return MODEM_NO_SYNC;	
+        return MODEM_NO_SYNC;
 	}
 }
 
@@ -196,7 +196,11 @@ int YMODEM::yTransmitPacket(const QFileInfo &fileInfo, QIODevice &dev, const qui
 	if (dev.atEnd())
 	{
         for (int retry = 0; /*retry < 10*/; ++retry) {
-			yTransmitWrite(EOT);
+            QByteArray packet;
+            packet.append(QString(EOT).toUtf8());
+            packet.append(QString(EOT).toUtf8());
+            yTransmitWrite(packet);
+            qDebug() << "send EOT";
             if ((res = yTransmitRead((DLY_1S)<<1)) == ACK) break;
 		}
 		return (res == ACK)?MODEM_SUCCESS:MODEM_EOT_ERROR;
@@ -204,7 +208,9 @@ int YMODEM::yTransmitPacket(const QFileInfo &fileInfo, QIODevice &dev, const qui
 	if (firstPacket)
 	{		
 		payload += fileInfo.fileName().toUtf8();
-		payload += (quint32) fileInfo.size();
+        payload.append('\0');
+        payload += QString::number(fileInfo.size()).toUtf8();
+        payload.append(' ');
 		payload += (quint32) fileInfo.created().toTime_t();		
 	}
 	else
@@ -261,9 +267,9 @@ int YMODEM::yTransmitPacket(const QFileInfo &fileInfo, QIODevice &dev, const qui
 			}
 		}
 	}
-	yTransmitWrite(CAN);
-	yTransmitWrite(CAN);
-	yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
+    yTransmitWrite(CAN);
 	yTransmitFlush();
 	if (m_cancel)
 		return MODEM_LOCAL_CANCEL;

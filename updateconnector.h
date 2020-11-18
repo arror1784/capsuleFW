@@ -19,6 +19,10 @@ signals:
     void sendToSWCheckUpdate();
     void sendToSWUpdate();
 
+#ifdef MCU_UPDATE_TEST
+    void sendToSWMCUUpdate(QString path);
+#endif
+
     void sendToQmlSWUpdateNotice(QString state);
     void sendToQmlSWSendVersion(QString version);
     void sendToQmlSWSendLastestVersion(QString version);

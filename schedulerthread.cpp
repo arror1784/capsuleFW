@@ -59,6 +59,11 @@ void SchedulerThread::run()
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 #else
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+
+#ifdef MCU_UPDATE_TEST
+        _updater.sendToSWMCUUpdate("/home/jsh/KinematicFW_F446.binary");
+#endif
+
 #endif
     };
 

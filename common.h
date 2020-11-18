@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+//#define MCU_UPDATE_TEST
+
 #define PRINT_MOVE_NULL             -1
 #define PRINT_MOVE_WAIT             0
 #define PRINT_MOVE_UP               1

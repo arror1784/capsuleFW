@@ -76,6 +76,10 @@ void BedSerialport::handleReadyRead()
             _bedControl->receiveFromBedSerialPort();
             _sched->receiveFromSerialPort(MOVE_OK);
             break;
+        case 111:
+            qDebug() << "receive Data : auto reboot";
+            _sched->sendAutoReboot(true);
+            break;
         case 200:
             qDebug() << "receive Data : shutdown";
             _sched->receiveFromSerialPort(SHUTDOWN);

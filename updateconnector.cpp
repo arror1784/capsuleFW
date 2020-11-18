@@ -18,6 +18,9 @@ void UpdateConnector::swUpdaterConnect(Updater *swUpdater)
     QObject::connect(_swUpdater,&Updater::sendVersion,this,&UpdateConnector::receiveFromSWSendVersion);
     QObject::connect(_swUpdater,&Updater::sendLastestVersion,this,&UpdateConnector::receiveFromSWSendLastestVersion);
 
+#ifdef MCU_UPDATE_TEST
+    QObject::connect(this,&UpdateConnector::sendToSWMCUUpdate,_swUpdater,&Updater::MCUUpdate);
+#endif
 
 }
 

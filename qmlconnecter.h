@@ -31,6 +31,7 @@ signals:
     void sendToSchedGetProductInfo();
     void sendToSchedGetUsbPortError();
 
+    void sendToSchedAutoReboot();
 
 
     void sendToQmlChangeImage(QString imagePath);
@@ -54,6 +55,9 @@ signals:
     void sendToQmlIsCustom(bool value);
     void sendToQmlProductInfo(QString json);
 
+    void sendToQmlAutoReboot(bool value);
+
+
 public slots:
     void receiveFromQmlPrintStart(QVariantList args){emit sendToSchedPrintStart(args);}
     void receiveFromQmlPrintStateChange(QString CMD){emit sendToSchedPrintStateChange(CMD);}
@@ -73,6 +77,7 @@ public slots:
     void receiveFromQmlGetProductInfo(){emit sendToSchedGetProductInfo();}
     void receiveFromQmlGetUsbPortError(){emit sendToSchedGetUsbPortError();}
 
+    void receiveFromQmlAutoReboot(){emit sendToSchedAutoReboot();}
 
     void receiveFromSchedChangeImage(QString imagePath){emit sendToQmlChangeImage(imagePath);}
     void receiveFromSchedSetImageScale(double value){emit sendToQmlSetImageScale(value);}
@@ -95,6 +100,9 @@ public slots:
     void receiveFromSchedGetInfoSetting(QString path,QString option){emit sendToQmlGetInfoSetting(path,option);}
     void receiveFromSchedIsCustom(bool value){emit sendToQmlIsCustom(value);}
     void receiveFromSchedProductInfo(QString json){emit sendToQmlProductInfo(json);}
+
+    void receiveFromSchedAutoReboot(bool value){emit sendToQmlAutoReboot(value);}
+
 private:
     PrintScheduler* _sched;
 

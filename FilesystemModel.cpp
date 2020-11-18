@@ -2,6 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <stdexcept>
+#include <regex>
 using namespace Hix;
 using namespace Hix::QML;
 #ifdef __arm__
@@ -276,15 +277,16 @@ QString FilesystemModel::getUSB() const
     std::filesystem::path home = HOME;
 
     auto dirItr = std::filesystem::directory_iterator(home);
-    auto child = std::filesystem::begin(dirItr);
 
-//    for(auto e: child)
-//    {
-//        std::cout <<"whhhhh" << e << std::endl;
-//    }
-    if(child != std::filesystem::end(dirItr) && std::filesystem::is_directory(*child))
+    for(auto& e: dirItr)
     {
-        return fromStdPath(*child);
+        auto path = e.path();
+        std::regex re("recoveryfs[0-9]*");
+
+        if(std::filesystem::is_directory(path) && !std::regex_search(path.u8string(),re))
+        {
+            return fromStdPath(path);
+        }
     }
     return "";
 
