@@ -82,6 +82,12 @@ else
 	echo "redis-server install"
 	apt-get install redis-server -y
 fi
+
+dpkg -l | grep exfat-fuse || apt-get install exfat-fuse -y
+dpkg -l | grep exfat-utils || apt-get install exfat-utils -y
+dpkg -l | grep ntfs-3g || apt-get install ntfs-3g -y
+
+
 pip3 install -r /opt/capsuleFW_react/backend/requirements.txt
 
 python3 /opt/capsuleFW_react/backend/manage.py makemigrations
