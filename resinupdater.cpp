@@ -117,6 +117,7 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                 }else{
                     emit updateNotice("notAvailable");
                 }
+                emit sendLastestVersion(_lastestUpdateTime.toString("dd/MM/yyyy"));
             }
             break;
         case ResinRequestType::DOWNLOAD:
