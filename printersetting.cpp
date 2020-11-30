@@ -61,9 +61,9 @@ void PrinterSetting::save()
     Json::setValueArray<QString>(jo,"material_list",materialList);
     Json::setValueArray<QString>(jo,"enable_material_list",enableMaterialList);
 
-    Json::setValue<int>(jo,"default_height",defaultHeight);
-    Json::setValue<int>(jo,"height_offset",heightOffset);
-    Json::setValue<int>(jo,"led_offset",ledOffset);
+    Json::setValue(jo,"default_height",defaultHeight);
+    Json::setValue(jo,"height_offset",heightOffset);
+    Json::setValue(jo,"led_offset",ledOffset);
 
     if(!saveFile.open(QIODevice::WriteOnly)){
         qDebug() << "save file open error";
