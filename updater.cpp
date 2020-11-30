@@ -222,6 +222,7 @@ void Updater::requestFinished(QNetworkReply* reply)
             }else{
                 emit updateNotice("notAvailable");
             }
+            emit sendLastestVersion(_lastestVersion);
             break;
         case SWRequestType::DOWNLOAD_LIST:
             jd = QJsonDocument::fromJson(answer);
