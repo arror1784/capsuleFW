@@ -5,8 +5,8 @@ Item {
     width: 480
     height: 320
 
-    property var maxLEDBrightness: 120.0
-    property var minLEDBrightness: 80.0
+    property var maxLEDBrightness: 150.0
+    property var minLEDBrightness: 50.0
     property var currentLEDBrightness: 0.0
 
     FontLoader{
@@ -97,6 +97,8 @@ Item {
             onClicked: {
                 if(currentLEDBrightness < maxLEDBrightness){
                     currentLEDBrightness += 1
+                    if(currentLEDBrightness > maxLEDBrightness)
+                        currentLEDBrightness = maxLEDBrightness
                 }
             }
         }
@@ -134,7 +136,9 @@ Item {
             }
             onClicked: {
                 if(currentLEDBrightness > minLEDBrightness){
-                    currentLEDBrightness += -1
+                    currentLEDBrightness -= 1
+                    if(currentLEDBrightness < minLEDBrightness)
+                        currentLEDBrightness = minLEDBrightness
                 }
             }
         }
@@ -162,6 +166,8 @@ Item {
                 if(currentLEDBrightness < maxLEDBrightness){
                     currentLEDBrightness += 0.1
                     currentLEDBrightness = Math.round(currentLEDBrightness * 10) / 10
+                    if(currentLEDBrightness > maxLEDBrightness)
+                        currentLEDBrightness = maxLEDBrightness
                 }
             }
         }
@@ -200,8 +206,10 @@ Item {
             }
             onClicked: {
                 if(currentLEDBrightness < maxLEDBrightness){
-                    currentLEDBrightness += -0.1
+                    currentLEDBrightness -= 0.1
                     currentLEDBrightness = Math.round(currentLEDBrightness * 10) / 10
+                    if(currentLEDBrightness < minLEDBrightness)
+                        currentLEDBrightness = minLEDBrightness
                 }
             }
         }
