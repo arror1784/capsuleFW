@@ -212,7 +212,7 @@ Item {
                 }
             }else{
                 if(state === "error"){
-                    updateInfoText.text = "Cannot support the file"
+                    updateInfoText.text = "Wrong file"
                     swUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlSWGetVersion()

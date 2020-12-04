@@ -211,7 +211,7 @@ Item {
                 }
             }else{
                 if(state === "error"){
-                    updateInfoText.text = "Cannot support the file"
+                    updateInfoText.text = "Wrong file"
                     resinUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlResinGetVersion()
