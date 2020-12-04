@@ -9,11 +9,6 @@ Item {
 
     property string materialName
 
-    signal sendToPrintStart(string path,string material)
-    signal sendToGetMaterialList()
-    signal sendToIsCustom(string path)
-    signal sendToInfoSetting(string path)
-
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -155,16 +150,15 @@ Item {
 //            stackView.push(Qt.resolvedUrl("qrc:/Qml/PrintMenu.qml"),StackView.Immediate)
         }
     }
+    ZipControl{
+        id:zipControl
+    }
+
     Connections{
         target: connection
         onSendToQmlMaterialList:function aa(name){
             for(var i = 0; i < name.length; i++){
                 inserMaterialList(name[i])
-            }
-        }
-        onSendToQmlIsCustom:function bb(value){
-            if(value){
-                inserMaterialList("Custom")
             }
         }
         onSendToQmlGetInfoSetting:{
@@ -181,7 +175,11 @@ Item {
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
 
-        connection.receiveFromQmlisCustom(stackView.get(1).selectedFilePath)
+        zipControl.path = stackView.get(1).selectedFilePath
+        if(zipControl.hasFile("resin.json")){
+            inserMaterialList("Custom")
+        }
+
         connection.receiveFromQmlGetMaterialList()
     }
     function inserMaterialList(name){

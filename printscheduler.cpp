@@ -459,26 +459,6 @@ int PrintScheduler::donwloadFiles(QJsonObject& byte)
     return 0;
 }
 
-bool PrintScheduler::isCustom(QString path)
-{
-    QString val;
-    try {
-
-        miniz_cpp::zip_file file(path.toStdString());
-        if(file.has_file("resin.json")){
-            emit sendToUIIsCustom(true);
-            return true;
-        }else{
-            emit sendToUIIsCustom(false);
-            return false;
-        }
-
-    } catch (std::exception e) {
-        emit sendToUIIsCustom(false);
-        return false;
-    }
-}
-
 int PrintScheduler::setupForPrint(QString materialName)
 {
     QFile file;

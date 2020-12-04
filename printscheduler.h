@@ -117,7 +117,6 @@ signals:
     void sendToUIGetPrintOption(QString option);
     void sendToUIGetInfoSetting(QString path,QString option);
 
-    void sendToUIIsCustom(bool value);
     void sendToUIProductInfo(QString json);
 
     void sendToUIAutoReboot(bool value);
@@ -144,8 +143,6 @@ public slots:
 
     void receiveFromUISetHeightOffset(int value);
     void receiveFromUISetLedOffset(double value);
-
-    bool isCustom(QString path);
 
     void receiveFromUIBusySet(bool bs);
     void receiveFromUIShutdown();
