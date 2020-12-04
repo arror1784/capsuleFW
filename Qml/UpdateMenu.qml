@@ -6,6 +6,9 @@ Item {
     width: 480
     height: 320
 
+    property string updateTarget
+    property bool isUpdateMenu: true
+
     FontLoader{
         id: openSansSemibold
         source: "qrc:/fonts/OpenSans-SemiBold.ttf"
@@ -18,15 +21,16 @@ Item {
     Rectangle{
         id: resinUpdate
         radius: 5
+
         anchors.top: parent.top
         anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
         color: "#DCEAF3"
 
         width: 215
         height: 110
-
-        anchors.left: parent.left
-        anchors.leftMargin: 15
 
         Rectangle{
             width: resinUpdateText.width
@@ -59,7 +63,9 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
+                updateTarget = "resin"
+//                stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
             }
         }
     }
@@ -107,8 +113,11 @@ Item {
         }
         MouseArea{
             anchors.fill: parent
-            onClicked: {11
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
+            onClicked: {
+                updateTarget = "software"
+//                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
+
             }
         }
     }
