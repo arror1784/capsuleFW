@@ -15,36 +15,39 @@ public:
     void resinUpdaterConnect(ResinUpdater* resinUpdater);
 signals:
     void sendToSWGetVersion();
-    void sendToSWGetLastestVersion();
     void sendToSWCheckUpdate();
     void sendToSWUpdate();
+    void sendToSWCheckUpdateUSB(QString path);
+    void sendToSWUpdateUSB(QString path);
 
 #ifdef MCU_UPDATE_TEST
     void sendToSWMCUUpdate(QString path);
 #endif
 
-    void sendToQmlSWUpdateNotice(QString state);
+    void sendToQmlSWUpdateNotice(QString state,QString mode);
     void sendToQmlSWSendVersion(QString version);
     void sendToQmlSWSendLastestVersion(QString version);
 
 
     void sendToResinGetVersion();
-    void sendToResinGetLastestVersion();
     void sendToResinCheckUpdate();
     void sendToResinUpdate();
+    void sendToResinCheckUpdateUSB(QString path);
+    void sendToResinUpdateUSB(QString path);
 
-    void sendToQmlResinUpdateNotice(QString state);
+    void sendToQmlResinUpdateNotice(QString state,QString mode);
     void sendToQmlResinSendVersion(QString version);
     void sendToQmlResinSendLastestVersion(QString version);
 
 
 public slots:
     void receiveFromQmlSWGetVersion(){emit sendToSWGetVersion();}
-    void receiveFromQmlSWGetLastestVersion(){emit sendToSWGetLastestVersion();}
     void receiveFromQmlSWCheckUpdate(){emit sendToSWCheckUpdate();}
     void receiveFromQmlSWUpdate(){emit sendToSWUpdate();}
+    void receiveFromQmlSWCheckUpdateUSB(QString path){emit sendToSWCheckUpdateUSB(path);}
+    void receiveFromQmlSWUpdateUSB(QString path){emit sendToSWUpdateUSB(path);}
 
-    void receiveFromSWUpdateNotice(QString state){emit sendToQmlSWUpdateNotice(state);}
+    void receiveFromSWUpdateNotice(QString state,QString mode){emit sendToQmlSWUpdateNotice(state,mode);}
     void receiveFromSWSendVersion(QString version){emit sendToQmlSWSendVersion(version);}
     void receiveFromSWSendLastestVersion(QString version){emit sendToQmlSWSendLastestVersion(version);}
 
@@ -52,11 +55,12 @@ public slots:
 
 
     void receiveFromQmlResinGetVersion(){emit sendToResinGetVersion();}
-    void receiveFromQmlResinGetLastestVersion(){emit sendToResinGetLastestVersion();}
     void receiveFromQmlResinCheckUpdate(){emit sendToResinCheckUpdate();}
     void receiveFromQmlResinUpdate(){emit sendToResinUpdate();}
+    void receiveFromQmlResinCheckUpdateUSB(QString path){emit sendToResinCheckUpdateUSB(path);}
+    void receiveFromQmlResinUpdateUSB(QString path){emit sendToResinUpdateUSB(path);}
 
-    void receiveFromResinUpdateNotice(QString state){emit sendToQmlResinUpdateNotice(state);}
+    void receiveFromResinUpdateNotice(QString state,QString mode){emit sendToQmlResinUpdateNotice(state,mode);}
     void receiveFromResinSendVersion(QString version){emit sendToQmlResinSendVersion(version);}
     void receiveFromResinSendLastestVersion(QString version){emit sendToQmlResinSendLastestVersion(version);}
 
