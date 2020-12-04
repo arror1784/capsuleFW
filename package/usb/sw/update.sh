@@ -32,15 +32,17 @@ for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
 	systemctl stop ${SERVICES[$i]}
 done
 
-echo "1.1.1 libstdc++.so.6 wpa_supplicant"	
-cp -rf "${TARGET_FOLDER_NAME}/libstdc++.so.6.0.26" "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6"
-cp -rf ${TARGET_FOLDER_NAME}/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-while read path
-do
-	echo "remove ${path}"
-	rm -rf ${path}
-done < $RMLIBLIST
+if [ "$CURRENT_VERSION" == "1.1.1" ]; then
+	echo "1.1.1 libstdc++.so.6 wpa_supplicant"	
+	cp -rf "${TARGET_FOLDER_NAME}/libstdc++.so.6.0.26" "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6"
+	cp -rf ${TARGET_FOLDER_NAME}/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
+	
+	while read path
+	do
+		echo "remove ${path}"
+		rm -rf ${path}
+	done < $RMLIBLIST
+fi
 
 cp -rf ${TARGET_FOLDER_NAME}/react.service /etc/systemd/system/react.service
 cp -rf ${TARGET_FOLDER_NAME}/C10.service /etc/avahi/services/C10.service
@@ -68,4 +70,11 @@ for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
 	systemctl start ${SERVICES[$i]}
 done
 
+sleep 1
+
+chmod +x ${TARGET_FOLDER_NAME}/HGCommandSender
+${TARGET_FOLDER_NAME}/HGCommandSender "H201"
+
 rm -rf $2/*
+
+shutdown -h now
