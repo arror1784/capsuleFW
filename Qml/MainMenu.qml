@@ -84,9 +84,9 @@ Item {
                 sourceSize.height: 60
                 sourceSize.width: 65
                 anchors.horizontalCenterOffset: 0
-                source: "qrc:/image/settings.svg"
+                source: "qrc:/image/settings.png"
 
-                scale: 0.85
+                scale: 0.9
                 anchors.horizontalCenter: settingText.horizontalCenter
             }
 

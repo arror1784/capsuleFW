@@ -100,12 +100,14 @@ Item {
             color: "#00000000"
             Image {
                 id: usbImage
-                source: "qrc:/image/network.png"
+                source: "qrc:/image/USB.png"
 
                 height: 67
+                sourceSize.height: 67
+                sourceSize.width: 67
                 width: 67
 
-                scale: 0.57
+                scale: 0.85
 
                 anchors.horizontalCenter: usbText.horizontalCenter
             }
