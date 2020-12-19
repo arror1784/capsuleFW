@@ -7,19 +7,9 @@ ZipControl::ZipControl(QObject *parent) : QObject(parent)
 
 }
 
-QString ZipControl::path()
+bool ZipControl::hasFile(QString path, QString target) const
 {
-    return _path;
-}
-
-void ZipControl::setPath(QString path)
-{
-    _path = path;
-}
-
-bool ZipControl::hasFile(QString target) const
-{
-    auto val = _path.toUtf8().toStdString();
+    auto val = path.toUtf8().toStdString();
     try {
 
         miniz_cpp::zip_file file(val);
@@ -34,9 +24,9 @@ bool ZipControl::hasFile(QString target) const
     }
 }
 
-QString ZipControl::getFileString(QString target) const
+QString ZipControl::getFileString(QString path, QString target) const
 {
-    auto val = _path.toUtf8().toStdString();
+    auto val = path.toUtf8().toStdString();
     auto member = target.toStdString();
     try {
         miniz_cpp::zip_file file(val);

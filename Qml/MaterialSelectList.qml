@@ -175,8 +175,7 @@ Item {
     Component.onCompleted: {
         materialSelectList.currentIndex = -1
 
-        zipControl.path = stackView.get(1).selectedFilePath
-        if(zipControl.hasFile("resin.json")){
+        if(zipControl.hasFile(stackView.get(1).selectedFilePath,"resin.json")){
             inserMaterialList("Custom")
         }
 
