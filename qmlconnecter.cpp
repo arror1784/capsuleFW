@@ -22,7 +22,6 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(this,&QmlConnecter::sendToSchedSetPrintTime,_sched,&PrintScheduler::receiveFromUISetPrintTime);
         QObject::connect(this,&QmlConnecter::sendToSchedSetHeightOffset,_sched,&PrintScheduler::receiveFromUISetHeightOffset);
         QObject::connect(this,&QmlConnecter::sendToSchedSetLedOffset,_sched,&PrintScheduler::receiveFromUISetLedOffset);
-        QObject::connect(this,&QmlConnecter::sendToSchedisCustom,_sched,&PrintScheduler::isCustom);
         QObject::connect(this,&QmlConnecter::sendToSchedBusySet,_sched,&PrintScheduler::receiveFromUIBusySet);
         QObject::connect(this,&QmlConnecter::sendToSchedShutdown,_sched,&PrintScheduler::receiveFromUIShutdown);
         QObject::connect(this,&QmlConnecter::sendToSchedMoveMotor,_sched,&PrintScheduler::receiveFromUIMoveMotor);
@@ -48,7 +47,6 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(_sched,&PrintScheduler::sendToUILEDOffset,this,&QmlConnecter::receiveFromSchedLEDOffset);
         QObject::connect(_sched,&PrintScheduler::sendToUIGetPrintOption,this,&QmlConnecter::receiveFromSchedGetPrintOption);
         QObject::connect(_sched,&PrintScheduler::sendToUIGetInfoSetting,this,&QmlConnecter::receiveFromSchedGetInfoSetting);
-        QObject::connect(_sched,&PrintScheduler::sendToUIIsCustom,this,&QmlConnecter::receiveFromSchedIsCustom);
         QObject::connect(_sched,&PrintScheduler::sendToUIProductInfo,this,&QmlConnecter::receiveFromSchedProductInfo);
         QObject::connect(_sched,&PrintScheduler::sendToUIAutoReboot,this,&QmlConnecter::receiveFromSchedAutoReboot);
 

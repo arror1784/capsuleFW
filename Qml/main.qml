@@ -14,8 +14,6 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
-    signal sendToBusySet(bool value)
-
     StackView{
         id: stackView
         anchors.fill: parent
@@ -26,11 +24,11 @@ Window {
         onCurrentItemChanged: {
 
             if(currentItem.name === "mainMenu"){
-                sendToBusySet(false)
+                connection.receiveFromQmlBusySet(false)
             }else if(currentItem.name === "usbPortOpenError"){
-                sendToBusySet(true)
+                connection.receiveFromQmlBusySet(true)
             }else{
-                sendToBusySet(true)
+                connection.receiveFromQmlBusySet(true)
             }
         }
     }

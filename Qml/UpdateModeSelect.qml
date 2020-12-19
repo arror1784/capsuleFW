@@ -6,8 +6,8 @@ Item {
     width: 480
     height: 320
 
-    property string updateTarget
-    property bool isUpdateMenu: true
+    property string updateMode
+    property bool isUpdateModeSelect: true
 
     FontLoader{
         id: openSansSemibold
@@ -18,42 +18,44 @@ Item {
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
 
-    Rectangle{
-        id: resinUpdate
-        radius: 5
+    Rectangle {
+        id: network
+
+        width: 215
+        height: 110
+
+        color: "#dceaf3"
+
+        radius: 8
 
         anchors.top: parent.top
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 15
 
-        color: "#DCEAF3"
-
-        width: 215
-        height: 110
-
         Rectangle{
-            width: resinUpdateText.width
-            height: resinUpdateImage.height + resinUpdateText.height
+            width: networkText.width
+            height: networkImage.height + networkText.height
             anchors.centerIn: parent
             color: "#00000000"
             Image {
-                id: resinUpdateImage
-                source: "qrc:/image/fill.png"
+                id: networkImage
+                source: "qrc:/image/network.png"
 
                 height: 67
                 width: 67
 
-                scale: 0.9
-                anchors.horizontalCenter: resinUpdateText.horizontalCenter
+                scale: 0.57
+
+                anchors.horizontalCenter: networkText.horizontalCenter
             }
 
             Text {
-                id: resinUpdateText
-                text: qsTr("Resin Update")
+                id: networkText
+                text: qsTr("Network")
                 color: "#666666"
 
-                anchors.top: resinUpdateImage.bottom
+                anchors.top: networkImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -63,14 +65,22 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                updateTarget = "resin"
-//                stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
+                updateMode = "network"
+                var it = stackView.find(function(item,index){return item.isUpdateMenu})
+
+                if(it !== null){
+                    if(it.updateTarget === "resin"){
+                        stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
+                    }else{
+                        stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
+                    }
+                }
             }
         }
     }
     Rectangle {
-        id: softwareUpdate
+        id: usb
+
         width: 215
         height: 110
 
@@ -82,29 +92,32 @@ Item {
         anchors.topMargin: 20
         anchors.right: parent.right
         anchors.rightMargin: 15
+
         Rectangle{
-            width: firmwareUpdateText.width
-            height: firmwareUpdateImage.height + firmwareUpdateText.height
+            width: usbText.width
+            height: usbImage.height + usbText.height
             anchors.centerIn: parent
             color: "#00000000"
             Image {
-                id: firmwareUpdateImage
+                id: usbImage
+                source: "qrc:/image/USB.png"
 
-                width: 67
                 height: 67
+                sourceSize.height: 67
+                sourceSize.width: 67
+                width: 67
 
-                source: "qrc:/image/download.png"
+                scale: 0.85
 
-                scale: 0.8
-                anchors.horizontalCenter: firmwareUpdateText.horizontalCenter
+                anchors.horizontalCenter: usbText.horizontalCenter
             }
 
             Text {
-                id: firmwareUpdateText
-                text: qsTr("Software Update")
+                id: usbText
+                text: qsTr("USB")
                 color: "#666666"
 
-                anchors.top: firmwareUpdateImage.bottom
+                anchors.top: usbImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -114,10 +127,17 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                updateTarget = "software"
-//                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
+                updateMode = "usb"
 
+                var it = stackView.find(function(item,index){return item.isUpdateMenu})
+
+                if(it !== null){
+                    if(it.updateTarget === "resin"){
+                        stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdateSelectFile.qml"),StackView.Immediate)
+                    }else{
+                        stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdateSelectFile.qml"),StackView.Immediate)
+                    }
+                }
             }
         }
     }

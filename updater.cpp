@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QProcess>
 #include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include <QtConcurrent/QtConcurrentRun>
 
 #include <chrono>
@@ -12,6 +14,7 @@
 #include "printersetting.h"
 #include "resinsetting.h"
 #include "version.h"
+#include "zip/zip.h"
 
 Updater::Updater():
     _url("https://services.hix.co.kr/setup")
@@ -110,6 +113,124 @@ void Updater::checkUpdate()
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
 }
 
+void Updater::checkUpdateUSB(QString path)
+{
+    auto spath = path.toStdString();
+
+    try {
+
+        miniz_cpp::zip_file file(spath);
+        auto testValue = file.testzip();
+        if(!testValue.first){
+            emit updateNotice("error","usb");
+            return;
+        }
+        if(!file.has_file("USB")){
+            emit updateNotice("error","usb");
+        }
+        if(!file.has_file("SW")){
+            emit updateNotice("error","usb");
+        }
+        QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(file.read("version.json")));
+        QJsonObject object = doc.object();
+
+        auto lastestVersion = object["version"].toString();
+
+        if(lastestVersion != Version::getInstance().version){
+            emit updateNotice("available","usb");;
+        }else{
+            emit updateNotice("notAvailable","usb");
+        }
+        emit sendLastestVersion(lastestVersion);
+
+    } catch (std::exception e) {
+        emit updateNotice("error","usb");
+    }
+}
+
+void Updater::update()
+{
+    qDebug() << "update start";
+    _future = std::async([this]() {
+        downloadLIST();
+        qDebug() << "download List";
+        if(waitForRequest()){
+            emit updateNotice("error","network");
+            return;
+        }
+        downloadVER();
+        if(waitForRequest()){
+            emit updateNotice("error","network");
+            return;
+        }
+        if(_MCUFirmwareUpdateAvailable){
+            downloadBin();
+            if(waitForRequest()){
+                emit updateNotice("error","network");
+                return;
+            }
+            _MCUFirmwareUpdateFinished = false;
+            emit updateMCUFirmware(_downloadUrl + "/" + _binName);
+            waitForMCUFirmwareUpdate();
+        }
+        //download new update.sh
+        downloadSH();
+        if(waitForRequest()){
+            emit updateNotice("error","network");
+            return;
+        }
+        //download new update file - *.zip
+        downloadZIP();
+        if(waitForRequest()){
+            emit updateNotice("error","network");
+            return;
+        }
+        //run update.sh with root
+#ifdef __arm__
+        updateCommandExcute();
+#else
+        emit updateNotice("finish","network");
+#endif
+    });
+
+    return;
+}
+
+void Updater::updateUSB(QString path)
+{
+    auto spath = path.toStdString();
+
+    try {
+
+        miniz_cpp::zip_file file(spath);
+        auto testValue = file.testzip();
+        if(!testValue.first){
+            emit updateNotice("error","usb");
+            return;
+        }
+
+        file.extractall(_downloadUrl.toStdString());
+
+#ifdef __arm__
+        updateCommandExcute();
+#else
+        emit updateNotice("finish","network");
+#endif
+    } catch (std::exception e) {
+        emit updateNotice("error","usb");
+    }
+    //testzip
+    //check version
+    //update by USB
+}
+
+void Updater::updateCommandExcute()
+{
+    QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
+    QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
+    QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
+}
+
 int Updater::waitForRequest()
 {
     std::unique_lock<std::mutex> lk(_cv_m);
@@ -136,67 +257,15 @@ void Updater::MCUUpdate(QString path)
 }
 #endif
 
-
 void Updater::getVersion()
 {
     emit sendVersion(Version::getInstance().version);
 }
 
-void Updater::getLastestVersion()
-{
-    emit sendLastestVersion(_lastestVersion);
-}
-
-void Updater::update()
-{
-    qDebug() << "update start";
-    _future = std::async([this]() {
-        downloadLIST();
-        qDebug() << "download List";
-        if(waitForRequest()){
-            emit updateNotice("error");
-            return;
-        }
-        downloadVER();
-        if(waitForRequest()){
-            emit updateNotice("error");
-            return;
-        }
-        if(_MCUFirmwareUpdateAvailable){
-            downloadBin();
-            if(waitForRequest()){
-                emit updateNotice("error");
-                return;
-            }
-            _MCUFirmwareUpdateFinished = false;
-            emit updateMCUFirmware(_downloadUrl + "/" + _binName);
-            waitForMCUFirmwareUpdate();
-        }
-        //download new update.sh
-        downloadSH();
-        if(waitForRequest()){
-            emit updateNotice("error");
-            return;
-        }
-        //download new update file - *.zip
-        downloadZIP();
-        if(waitForRequest()){
-            emit updateNotice("error");
-            return;
-        }
-        //run update.sh with root
-        QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
-        QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
-        QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
-    });
-
-    return;
-}
-
 void Updater::requestFinished(QNetworkReply* reply)
 {
     if (reply->error()) {
-        emit updateNotice("error");
+        emit updateNotice("error","network");
         _networkError = true;
         _requestAvailable = true;
         _cv.notify_all();
@@ -209,20 +278,20 @@ void Updater::requestFinished(QNetworkReply* reply)
     QJsonObject jo;
     QJsonArray ja;
     QByteArray loadData;
-
+    QString lastestVersion;
     qDebug() << reply->url();
 
     switch (_requestType) {
         case SWRequestType::UPDATE_CHECK:
             jd = QJsonDocument::fromJson(answer);
             jo = jd.object();
-            _lastestVersion = jo["version"].toString();
+            lastestVersion = jo["version"].toString();
             if(jo["version"].toString() != Version::getInstance().version){
-                emit updateNotice("available");
+                emit updateNotice("available","network");;
             }else{
-                emit updateNotice("notAvailable");
+                emit updateNotice("notAvailable","network");
             }
-            emit sendLastestVersion(_lastestVersion);
+            emit sendLastestVersion(lastestVersion);
             break;
         case SWRequestType::DOWNLOAD_LIST:
             jd = QJsonDocument::fromJson(answer);

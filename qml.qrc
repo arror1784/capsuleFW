@@ -40,5 +40,8 @@
         <file>Qml/WIFINotice.qml</file>
         <file>Qml/ResinUpdateNotice.qml</file>
         <file>Qml/USBStorgeDisConnectedPopup.qml</file>
+        <file>Qml/UpdateModeSelect.qml</file>
+        <file>Qml/ResinUpdateSelectFile.qml</file>
+        <file>Qml/SWUpdateSelectFile.qml</file>
     </qresource>
 </RCC>

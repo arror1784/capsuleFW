@@ -24,7 +24,6 @@ signals:
     void sendToSchedSetPrintTime(int time);
     void sendToSchedSetHeightOffset(int value);
     void sendToSchedSetLedOffset(double value);
-    bool sendToSchedisCustom(QString path);
     void sendToSchedBusySet(bool bs);
     void sendToSchedShutdown();
     void sendToSchedMoveMotor(QString cmd,int micro);
@@ -52,7 +51,6 @@ signals:
     void sendToQmlLEDOffset(double offset);
     void sendToQmlGetPrintOption(QString option);
     void sendToQmlGetInfoSetting(QString path,QString option);
-    void sendToQmlIsCustom(bool value);
     void sendToQmlProductInfo(QString json);
 
     void sendToQmlAutoReboot(bool value);
@@ -70,7 +68,6 @@ public slots:
     void receiveFromQmlSetPrintTime(int time){emit sendToSchedSetPrintTime(time);}
     void receiveFromQmlSetHeightOffset(int value){emit sendToSchedSetHeightOffset(value);}
     void receiveFromQmlSetLedOffset(double value){emit sendToSchedSetLedOffset(value);}
-    void receiveFromQmlisCustom(QString path){emit sendToSchedisCustom(path);}
     void receiveFromQmlBusySet(bool bs){emit sendToSchedBusySet(bs);}
     void receiveFromQmlShutdown(){emit sendToSchedShutdown();}
     void receiveFromQmlMoveMotor(QString cmd,int micro){emit sendToSchedMoveMotor(cmd,micro);}
@@ -98,7 +95,6 @@ public slots:
     void receiveFromSchedLEDOffset(double offset){emit sendToQmlLEDOffset(offset);}
     void receiveFromSchedGetPrintOption(QString option){emit sendToQmlGetPrintOption(option);}
     void receiveFromSchedGetInfoSetting(QString path,QString option){emit sendToQmlGetInfoSetting(path,option);}
-    void receiveFromSchedIsCustom(bool value){emit sendToQmlIsCustom(value);}
     void receiveFromSchedProductInfo(QString json){emit sendToQmlProductInfo(json);}
 
     void receiveFromSchedAutoReboot(bool value){emit sendToQmlAutoReboot(value);}

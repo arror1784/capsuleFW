@@ -68,9 +68,4 @@ for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
 	systemctl start ${SERVICES[$i]}
 done
 
-chmod +x ${TARGET_FOLDER_NAME}/HGCommandSender
-${TARGET_FOLDER_NAME}/HGCommandSender "H201"
-
 rm -rf $2/*
-
-shutdown -h now

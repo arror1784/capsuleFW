@@ -24,7 +24,7 @@ public:
     ResinUpdater(PrintScheduler *sched);
 
 signals:
-    void updateNotice(QString state);
+    void updateNotice(QString state,QString mode);
 
     void sendVersion(QString version);
     void sendLastestVersion(QString version);
@@ -33,11 +33,11 @@ public slots:
     void requestFinished(QNetworkReply* reply);
 
     void checkUpdate();
+    void checkUpdateUSB(QString path);
     void update();
+    void updateUSB(QString path);
 
     void getVersion();
-    void getLastestVersion();
-
 
 private:
     void updateVersionInFo();
@@ -49,8 +49,8 @@ private:
     QUrl _url;
 
     QDateTime _updateTime;
-    QDateTime _lastestUpdateTime;
     PrintScheduler* _printScheduler;
+
 };
 
 #endif // RESINUPDATER_H

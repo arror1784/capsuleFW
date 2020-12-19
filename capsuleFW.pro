@@ -51,7 +51,8 @@ SOURCES += \
     wpa_ctrl/wpa_ctrl.c \
     wpa_ctrl/wpa_debug.c \
     ymodem.cpp \
-    zip/zip.cpp
+    zip/zip.cpp \
+    zipcontrol.cpp
 
 RESOURCES += qml.qrc \
     font.qrc \
@@ -106,5 +107,6 @@ HEADERS += \
     wpa_ctrl/wpa_debug.h \
     wpa_ctrl/wpabuf.h \
     ymodem.h \
-    zip/zip.h
+    zip/zip.h \
+    zipcontrol.h
 #    zip/zip_file.hpp

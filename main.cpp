@@ -31,6 +31,7 @@
 
 #include "kinetimecalc.h"
 #include "FilesystemModel.h"
+#include "zipcontrol.h"
 
 #include "wpa_ctrl/wpa_ctrl.h"
 
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
     qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
+    qmlRegisterType<ZipControl>("App", 1, 0, "ZipControl");
 
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);

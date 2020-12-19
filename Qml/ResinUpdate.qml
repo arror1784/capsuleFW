@@ -8,6 +8,10 @@ Item {
     height: 320
 
     property var updateEnable: false
+    property string updateMode
+    property string updateTitle
+
+    property string usbUpdatePath
 
     FontLoader{
         id: openSansSemibold
@@ -20,7 +24,7 @@ Item {
 
     Text {
         id: selectText
-        text: qsTr("Resin update")
+        text: updateTitle
 
         font.pixelSize: 23
         font.family: openSansSemibold.name
@@ -166,8 +170,13 @@ Item {
             anchors.fill: parent
             enabled: updateEnable
             onClicked: {
-                updater.receiveFromQmlResinUpdate()
-                resinUpdatePopup.open()
+                if(updateMode === "network"){
+                    updater.receiveFromQmlResinUpdate()
+                    resinUpdatePopup.open()
+                }else{
+                    updater.receiveFromQmlResinUpdateUSB(usbUpdatePath)
+                    resinUpdatePopup.open()
+                }
             }
         }
     }
@@ -182,39 +191,76 @@ Item {
         id: resinUpdaterConnection
         target: updater
 
-        onSendToQmlResinUpdateNotice:{
-            console.log("update resin check",state)
-            if(state === "error"){
-                updateInfoText.text = "Network not connected"
-            }else if(state === "finish"){
-                updater.receiveFromQmlResinGetVersion()
-                resinUpdateNotice.open()
-                updateInfoText.text = "Update finished"
-                updateEnable = false
-                resinUpdatePopup.close()
-            }else if(state === "available"){
-                updateEnable = true
-                updateInfoText.text = "Update available"
-            }else if(state === "notAvailable"){
-                updateEnable = false
-                updateInfoText.text = "Current version is the latest"
+        onSendToQmlResinUpdateNotice:(state,mode) => {
+            if(mode === "network"){
+                if(state === "error"){
+                    updateInfoText.text = "Network not connected"
+                    resinUpdatePopup.close()
+                }else if(state === "finish"){
+                    updater.receiveFromQmlResinGetVersion()
+                    resinUpdateNotice.open()
+                    updateInfoText.text = "Update finished"
+                    updateEnable = false
+                    resinUpdatePopup.close()
+                }else if(state === "available"){
+                    updateEnable = true
+                    updateInfoText.text = "Update available"
+                }else if(state === "notAvailable"){
+                    updateEnable = false
+                    updateInfoText.text = "Current version is the latest"
+                }
+            }else{
+                if(state === "error"){
+                    updateInfoText.text = "Wrong file"
+                    resinUpdatePopup.close()
+                }else if(state === "finish"){
+                    updater.receiveFromQmlResinGetVersion()
+                    resinUpdateNotice.open()
+                    updateInfoText.text = "Update finished"
+                    updateEnable = false
+                    resinUpdatePopup.close()
+                    updater.receiveFromQmlSWGetVersion()
+                }else if(state === "available"){
+                    updateEnable = true
+                    updateInfoText.text = "Update available"
+                }else if(state === "notAvailable"){
+                    updateEnable = false
+                    updateInfoText.text = "Current version is the latest"
+                }
             }
         }
         onSendToQmlResinSendVersion:{
-            console.log("get resin currentVersion",version)
             currentVersionText.text = version
         }
-        onSendToQmlResinSendLastestVersion:{
-            console.log("get resin latestVersion",version)
+        onSendToQmlResinSendLastestVersion:(version) => {
             latestVersionText.text = version
         }
     }
 
     Component.onCompleted: {
-        updater.receiveFromQmlResinCheckUpdate()
+        var it = stackView.find(function(item,index){return item.isUpdateModeSelect})
 
-        updater.receiveFromQmlResinGetVersion()
-        updater.receiveFromQmlResinGetLastestVersion()
-        updater.receiveFromQmlResinCheckUpdate()
+        if(it !== null){
+            if(it.updateMode === "network"){
+                updateTitle = "Resin update - Network"
+                updateMode = "network"
+                updater.receiveFromQmlResinGetVersion()
+                updater.receiveFromQmlResinCheckUpdate()
+
+            }else{
+                updateTitle = "Resin update - USB"
+                updateMode = "usb"
+
+                updater.receiveFromQmlResinGetVersion()
+
+                var selectFile = stackView.find(function(item,index){return item.isResinUpdateSelectFile})
+                if(selectFile !== null){
+                    usbUpdatePath = selectFile.selectedFilePath
+                    updater.receiveFromQmlResinCheckUpdateUSB(usbUpdatePath)
+                }else{
+                    // ! error
+                }
+            }
+        }
     }
 }
