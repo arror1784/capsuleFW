@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QString>
 
-#include <digitsframe.h>
+#include <VKeyboard/digitsframe.h>
 #include <QtQml/qtqml-config.h>
 #include "keyboardsymbols.h"
 

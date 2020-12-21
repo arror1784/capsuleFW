@@ -12,6 +12,9 @@
 #include <QThread>
 #include <QQmlContext>
 
+#include <QApplication>
+#include <QDesktopWidget>
+
 #include <wpa.h>
 
 #include "bedserialport.h"
@@ -34,12 +37,14 @@
 #include "zipcontrol.h"
 
 #include "wpa_ctrl/wpa_ctrl.h"
+#include "VKeyboard/keyboardwidget.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    QApplication application ( argc, argv );
+//    QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
 
@@ -47,6 +52,7 @@ int main(int argc, char *argv[])
     qDebug() << "main" << QThread::currentThread();
 
 //    WPA wpa;
+    KeyboardWidget keyboardWidget;
     NetworkControl nc;
     QmlConnecter connecter;
     UpdateConnector up;
@@ -62,11 +68,13 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("connection",&connecter);
 //    ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("updater",&up);
+    ctx->setContextProperty("keyboardWidget",&keyboardWidget);
 
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 //    if (engine.rootObjects().isEmpty())
 //        return -1;
 
-    return app.exec();
+    return application.exec();
+//    return app.exec();
 }

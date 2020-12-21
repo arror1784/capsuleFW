@@ -21,6 +21,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     FilesystemModel.cpp \
+    VKeyboard/basekeyboard.cpp \
+    VKeyboard/digitsframe.cpp \
+    VKeyboard/engkeyboard.cpp \
+    VKeyboard/keyboardsymbols.cpp \
+    VKeyboard/keyboardtextcorrector.cpp \
+    VKeyboard/keyboardwidget.cpp \
+    VKeyboard/ruskeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
     common/jsonreadsetting.cpp \
@@ -72,6 +79,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     FilesystemModel.h \
     Singleton.h \
+    VKeyboard/basekeyboard.h \
+    VKeyboard/digitsframe.h \
+    VKeyboard/engkeyboard.h \
+    VKeyboard/keyboardsymbols.h \
+    VKeyboard/keyboardtextcorrector.h \
+    VKeyboard/keyboardwidget.h \
+    VKeyboard/ruskeyboard.h \
     bedcontrol.h \
     bedserialport.h \
     common.h \
@@ -110,3 +124,9 @@ HEADERS += \
     zip/zip.h \
     zipcontrol.h
 #    zip/zip_file.hpp
+
+FORMS += \
+    VKeyboard/digitsframe.ui \
+    VKeyboard/engkeyboard.ui \
+    VKeyboard/keyboardwidget.ui \
+    VKeyboard/ruskeyboard.ui
