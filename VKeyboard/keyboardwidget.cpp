@@ -12,7 +12,7 @@
 #include <QDebug>
 
 static constexpr short keyboard_width = 500;
-static constexpr short keyboard_height = 180;
+static constexpr short keyboard_height = 150;
 
 static constexpr short last_char = 1;
 
@@ -77,7 +77,7 @@ void KeyboardWidget::setDefaultKeyboard()
     m_pVLayout->addWidget ( m_pDigitsFrame );
     m_pVLayout->addWidget ( m_pEngKeyboard );
     m_pVLayout->addWidget ( m_pRusKeyboard );
-    m_pVLayout->setContentsMargins ( 2, 2, 2, 2 );
+    m_pVLayout->setContentsMargins ( 0, 0, 0, 0 );
     setLayout ( m_pVLayout );
 }
 

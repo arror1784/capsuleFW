@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>144</height>
+    <height>126</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -84,14 +84,14 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -103,14 +103,14 @@
       <widget class="QPushButton" name="btn_q">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -122,14 +122,14 @@
       <widget class="QPushButton" name="btn_w">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -141,14 +141,14 @@
       <widget class="QPushButton" name="btn_e">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -160,14 +160,14 @@
       <widget class="QPushButton" name="btn_r">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -179,14 +179,14 @@
       <widget class="QPushButton" name="btn_t">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -198,14 +198,14 @@
       <widget class="QPushButton" name="btn_y">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -217,14 +217,14 @@
       <widget class="QPushButton" name="btn_u">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -236,14 +236,14 @@
       <widget class="QPushButton" name="btn_i">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -255,14 +255,14 @@
       <widget class="QPushButton" name="btn_o">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -274,14 +274,14 @@
       <widget class="QPushButton" name="btn_p">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -335,14 +335,14 @@
       <widget class="QPushButton" name="btn_caps">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -354,14 +354,14 @@
       <widget class="QPushButton" name="btn_a">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -373,14 +373,14 @@
       <widget class="QPushButton" name="btn_s">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -392,14 +392,14 @@
       <widget class="QPushButton" name="btn_d">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -411,14 +411,14 @@
       <widget class="QPushButton" name="btn_f">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -430,14 +430,14 @@
       <widget class="QPushButton" name="btn_g">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -449,14 +449,14 @@
       <widget class="QPushButton" name="btn_h">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -468,14 +468,14 @@
       <widget class="QPushButton" name="btn_j">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -487,14 +487,14 @@
       <widget class="QPushButton" name="btn_k">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -506,14 +506,14 @@
       <widget class="QPushButton" name="btn_l">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -567,14 +567,14 @@
       <widget class="QPushButton" name="btn_z">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -586,14 +586,14 @@
       <widget class="QPushButton" name="btn_x">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -605,14 +605,14 @@
       <widget class="QPushButton" name="btn_c">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -624,14 +624,14 @@
       <widget class="QPushButton" name="btn_v">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -643,14 +643,14 @@
       <widget class="QPushButton" name="btn_b">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -663,13 +663,13 @@
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>40</height>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>80</width>
-         <height>40</height>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -681,14 +681,14 @@
       <widget class="QPushButton" name="btn_n">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -700,14 +700,14 @@
       <widget class="QPushButton" name="btn_m">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -719,14 +719,14 @@
       <widget class="QPushButton" name="btn_m_2">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
@@ -738,14 +738,14 @@
       <widget class="QPushButton" name="btn_m_3">
        <property name="minimumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
-         <height>40</height>
+         <width>37</width>
+         <height>37</height>
         </size>
        </property>
        <property name="text">
