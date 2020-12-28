@@ -6,7 +6,7 @@ Item {
 
     width: 480
     height: 320
-//    property alias rectangleWidth: rectangle.width
+
     property string version: ""
     property string modelNo: ""
 
@@ -162,13 +162,12 @@ Item {
     InfoPopup{
         id:infoPopup
     }
-//    Connections{
-//        target: wifi
-
-//        onConnectedChange:{
-////            infoPopup.setWifiConnectd(connected)
-//        }
-//    }
+    Connections{
+        target: wifi
+        onConnectedChange:{
+            infoPopup.setWifiConnectd(connected)
+        }
+    }
     Connections{
         target: connection
         onSendToQmlProductInfo:{
