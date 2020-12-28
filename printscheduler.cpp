@@ -38,7 +38,7 @@ PrintScheduler::PrintScheduler() :
 {
     _printerSetting.parse();
     _version.parse();
-
+#ifndef TEST_WITHOUT_SERIAL
     if(addSerialPort()){
         _USBPortConnection = false;
         _printState = "USBCONNECTIONERROR";
@@ -47,6 +47,10 @@ PrintScheduler::PrintScheduler() :
     }else{
         _USBPortConnection = true;
     }
+#else
+    bedSerialPort = new BedSerialport(this);
+    _USBPortConnection = true;
+#endif
 
     addPrintingBed('A');
 
