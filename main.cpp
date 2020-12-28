@@ -1,4 +1,4 @@
-﻿#include <QGuiApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     QQmlContext* ctx = engine.rootContext();
     qDebug() << "main" << QThread::currentThread();
 
-//    WPA wpa;
+    WPA wpa;
     KeyboardWidget keyboardWidget;
     NetworkControl nc;
     QmlConnecter connecter;
@@ -64,9 +64,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
     qmlRegisterType<ZipControl>("App", 1, 0, "ZipControl");
 
+    ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);
-//    ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
 
