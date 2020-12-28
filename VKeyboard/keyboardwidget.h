@@ -38,8 +38,7 @@ private slots:
     void deleteKey();
 
 public slots:
-    void attachScreen(QObject* object);
-    void showKeyboard(QString text);
+    void showKeyboard(QObject* ob);
     void closeKeyboard();
 
 private:
@@ -54,9 +53,8 @@ private:
     BaseKeyboard * m_pEngKeyboard = Q_NULLPTR;
     BaseKeyboard * m_pRusKeyboard = Q_NULLPTR;
     DigitsFrame * m_pDigitsFrame = Q_NULLPTR;
-    QLineEdit * m_pTextReceiver = Q_NULLPTR;
 
-    QString _receiveText;
+    QObject* _attachedObject;
 };
 
 #endif // KEYBOARD_WIDGET_H

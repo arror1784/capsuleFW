@@ -31,16 +31,6 @@ KeyboardWidget::~KeyboardWidget()
     delete ui;
 }
 
-void KeyboardWidget::attachTo ( QLineEdit * pTextReceiver )
-{
-    m_pTextReceiver = pTextReceiver;
-}
-
-void KeyboardWidget::detachReceiver()
-{
-    m_pTextReceiver = Q_NULLPTR;
-}
-
 void KeyboardWidget::switchKeyboard()
 {
     m_pDigitsFrame->setFrameType ( Digits );
@@ -105,11 +95,6 @@ void KeyboardWidget::setConnections()
               SLOT ( deleteKey() ) );
 }
 
-bool KeyboardWidget::isTextReceiverReady() const
-{
-    return m_pTextReceiver != Q_NULLPTR;
-}
-
 void KeyboardWidget::switchDigitsFrame ( DigitsFrameType digitsFrameType )
 {
     DigitsFrameType frameType = m_pDigitsFrame->getFrameType();
@@ -125,42 +110,28 @@ void KeyboardWidget::switchDigitsFrame ( DigitsFrameType digitsFrameType )
 
 void KeyboardWidget::keyboardCharKeyPressed ( const QString & keyText )
 {
-    _receiveText.append(KeyboardTextCorrector::performKeyboardTextCorrection(keyText));
-    emit setText(_receiveText);
+    QKeySequence keySequence = keyText;
+    QString key = KeyboardTextCorrector::performKeyboardTextCorrection(keyText);
 
-    if ( isTextReceiverReady() ) {
-        QString temp = m_pTextReceiver->text();
-        temp.append ( KeyboardTextCorrector::performKeyboardTextCorrection(keyText) );
-        m_pTextReceiver->setText ( temp );
-    }
+    QKeyEvent keyPressEvent = QKeyEvent(QEvent::Type::KeyPress, keySequence[0], Qt::NoModifier,key);
+    QCoreApplication::sendEvent(_attachedObject, &keyPressEvent);
 }
 
 void KeyboardWidget::deleteKey()
 {
-    _receiveText.chop(last_char);
-    emit setText(_receiveText);
+    QKeyEvent keyPressEvent = QKeyEvent(QEvent::Type::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
+    QCoreApplication::sendEvent(_attachedObject, &keyPressEvent);
+}
 
-    if ( isTextReceiverReady() ) {
-        QString receiverString = m_pTextReceiver->text();
-        receiverString.chop ( last_char );
-        m_pTextReceiver->setText ( receiverString );
-    }
-}
-#include <QWindow>
-void KeyboardWidget::attachScreen(QObject *object)
-{
-    qDebug() << "sgdfsDf:";
-    auto window = dynamic_cast<QWindow*>(object);
-    windowHandle()->setScreen(window->screen());
-    showFullScreen();
-}
 #include <QApplication>
 #include <QDesktopWidget>
-void KeyboardWidget::showKeyboard(QString text)
-{
-    QRect screenres = QApplication::desktop()->screenGeometry(1/*screenNumber*/);
+#include <QWindow>
 
-    _receiveText = text;
+void KeyboardWidget::showKeyboard(QObject* ob)
+{
+    QRect screenres = QApplication::desktop()->screenGeometry(1);
+    _attachedObject = ob;
+
     show();
     windowHandle()->setScreen(qApp->screens()[1]);
 //    move(screenres.bottomLeft());
@@ -170,6 +141,6 @@ void KeyboardWidget::showKeyboard(QString text)
 
 void KeyboardWidget::closeKeyboard()
 {
-    _receiveText.clear();
+    _attachedObject = Q_NULLPTR;
     close();
 }
