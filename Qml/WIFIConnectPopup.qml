@@ -43,7 +43,10 @@ Rectangle {
         focus: true
 
         closePolicy: Popup.NoAutoClose
-
+        Pane{
+            anchors.fill: parent
+            focusPolicy: Qt.ClickFocus
+        }
         Rectangle{
             width: optionText.width + valueText.width + 15
             height: optionText.height
@@ -87,6 +90,13 @@ Rectangle {
                     placeholderText: "Password"
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
                     visible: wpaEnable
+                    onFocusChanged: {
+                        if(focus){
+                            keyboardWidget.showKeyboard(passwordField)
+                        }else{
+                            keyboardWidget.closeKeyboard()
+                        }
+                    }
                 }
             }
         }
@@ -176,7 +186,13 @@ Rectangle {
             popupBack.visible = false
         }
     }
-
+    Connections{
+        id:kWidgetConntion
+        target: keyboardWidget
+        onSetText:{
+            passwordField.text = text
+        }
+    }
     function open(ssid,bssid,id,wpa){
         setSSID(ssid)
         setBSSID(bssid)

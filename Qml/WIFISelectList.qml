@@ -148,10 +148,9 @@ Item {
         onConnectButtonClicked: {
             wifi.networkConnect(ssid,bssid,pwd,id)
             wifi.networkScan()
-//            stackView.pop(it,StackView.Immediate)
         }
         onConnectButtonClickedWithoutPSWD: {
-            wifi.networkConnect(ssid,bssid,id)
+            wifi.networkConnect(ssid,bssid,"",id)
 //            wifi.networkScan()
         }
     }
@@ -179,15 +178,16 @@ Item {
         onConnectedChange:{
             if(connected){
                 wifiNotice.setText("WIFI Connected")
-            }/*else{
+            }else{
                 wifiNotice.setText("WIFI Disconneced")
-            }*/
+            }
             wifiNotice.open()
-            updateWIFIList()
         }
-    }
-    WifiInfo{
-        id:info
+        onWifiConnectError:{
+            console.log("asdasdasdasdasd")
+            wifiNotice.setText("문제가 발생하였습니다. 재부팅이 필요합니다.")
+            wifiNotice.open()
+        }
     }
 
     function updateWIFIList(){
@@ -203,7 +203,11 @@ Item {
     function inserWIFIList(ssid,bssid,flags,b,networkID){
         wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
     }
+
     function networkScan(){
+        wifi.networkScan()
+    }
+    Component.onCompleted: {
         wifi.networkScan()
     }
 }

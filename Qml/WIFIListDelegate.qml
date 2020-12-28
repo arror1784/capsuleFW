@@ -27,6 +27,7 @@ Rectangle{
         color: "#474747"
         font.pixelSize: 20
         font.family: openSansRegular.name
+        font.bold: current
     }
     MouseArea{
         anchors.fill: parent
