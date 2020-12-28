@@ -59,7 +59,6 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                wifi.networkScan()
                 stackView.push(Qt.resolvedUrl("qrc:/Qml/WIFISelectList.qml"),StackView.Immediate)
             }
         }
@@ -147,9 +146,5 @@ Item {
     }
     IpPopup{
         id: ipPopup
-    }
-    Connections{
-        id: wifiConnection
-        target: wifi
     }
 }
