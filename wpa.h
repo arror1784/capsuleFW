@@ -13,7 +13,7 @@
 #ifdef __arm__
 #define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlan0"
 #else
-#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlx88366cfb28d9"
+#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlp3s0"
 #endif
 
 
@@ -53,6 +53,8 @@ signals:
 
     void refreshAvailable();
 
+    void wifiConnectError();
+
 public slots:
     void networkScan();
 
@@ -60,14 +62,9 @@ public slots:
     WifiInfo* getNetwork(int index);
 
     bool networkConnect(QString ssid,QString bssid,QString passwd,int networkID);
-    bool networkConnect(QString ssid,QString bssid,QString passwd);
     bool networkConnect(int id);
 
-    bool networkConnect(QString ssid,QString bssid,int networkID);
-    bool networkConnect(QString ssid,QString bssid);
-
     bool networkDisconnect();
-    void networkDelete(QString ssid);
     void networkDelete(int id);
 
     void checkNetworkConnect();
@@ -85,7 +82,12 @@ private:
 
     void checkConnected();
 
-    int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf);
+    int networkAdd();
+    void networkSelect(int id);
+    void networkSaveConfig();
+    void networkSet(int id,std::string key,std::string value);
+
+    int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf);
 
     QList<WifiInfo*> _wifiList;
 
