@@ -91,11 +91,13 @@ Rectangle {
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
                     visible: wpaEnable
                     onFocusChanged: {
-                        if(focus){
-                            keyboardWidget.showKeyboard(passwordField)
-                        }else{
+                        if(!focus){
+                            passwordField.activeFocusOnPress = true
                             keyboardWidget.closeKeyboard()
                         }
+                    }
+                    onPressed: {
+                        keyboardWidget.showKeyboard(passwordField)
                     }
                 }
             }
@@ -189,9 +191,6 @@ Rectangle {
     Connections{
         id:kWidgetConntion
         target: keyboardWidget
-        onSetText:{
-            passwordField.text = text
-        }
     }
     function open(ssid,bssid,id,wpa){
         setSSID(ssid)

@@ -19,6 +19,7 @@ signals:
 
     void capsKeyPressed();
     void switchLangPressed();
+    void closeKeyPressed();
 
 
 public slots:

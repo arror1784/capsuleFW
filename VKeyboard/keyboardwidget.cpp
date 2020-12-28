@@ -81,6 +81,12 @@ void KeyboardWidget::setConnections()
     [&]() {
         switchDigitsFrame ( RusSpecialSymbols );
     } );
+    connect ( m_pEngKeyboard, &EngKeyboard::closeKeyPressed, this,
+    [&]() {
+//        QFocusEvent focusEvent = QFocusEvent(QEvent::Type::FocusOut,Qt::FocusReason::MouseFocusReason);
+//        QCoreApplication::sendEvent(_attachedObject, &focusEvent);
+        closeKeyboard();
+    } );
     connect ( m_pEngKeyboard, SIGNAL ( switchLangPressed() ),
               SLOT ( switchKeyboard() ) );
     connect ( m_pRusKeyboard, SIGNAL ( switchLangPressed() ),
