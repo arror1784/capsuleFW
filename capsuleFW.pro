@@ -22,12 +22,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     FilesystemModel.cpp \
     VKeyboard/basekeyboard.cpp \
-    VKeyboard/digitsframe.cpp \
     VKeyboard/engkeyboard.cpp \
+    VKeyboard/extrakeyboard.cpp \
     VKeyboard/keyboardsymbols.cpp \
     VKeyboard/keyboardtextcorrector.cpp \
     VKeyboard/keyboardwidget.cpp \
-    VKeyboard/ruskeyboard.cpp \
+    VKeyboard/specialchkeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
     common/jsonreadsetting.cpp \
@@ -80,12 +80,12 @@ HEADERS += \
     FilesystemModel.h \
     Singleton.h \
     VKeyboard/basekeyboard.h \
-    VKeyboard/digitsframe.h \
     VKeyboard/engkeyboard.h \
+    VKeyboard/extrakeyboard.h \
     VKeyboard/keyboardsymbols.h \
     VKeyboard/keyboardtextcorrector.h \
     VKeyboard/keyboardwidget.h \
-    VKeyboard/ruskeyboard.h \
+    VKeyboard/specialchkeyboard.h \
     bedcontrol.h \
     bedserialport.h \
     common.h \
@@ -126,7 +126,7 @@ HEADERS += \
 #    zip/zip_file.hpp
 
 FORMS += \
-    VKeyboard/digitsframe.ui \
     VKeyboard/engkeyboard.ui \
+    VKeyboard/extrakeyboard.ui \
     VKeyboard/keyboardwidget.ui \
-    VKeyboard/ruskeyboard.ui
+    VKeyboard/specialchkeyboard.ui
