@@ -7,7 +7,7 @@
 #include <QtQml/qtqml-config.h>
 #include "keyboardsymbols.h"
 
-class BaseKeyboard;
+class EngKeyboard;
 class QVBoxLayout;
 class QHBoxLayout;
 class ExtraKeyboard;
@@ -48,11 +48,15 @@ private:
     void setConnections();
     bool isTextReceiverReady() const;
 
+    void setKeyboardLower();
+    void setKeyboardUpper();
+    void setKeyboardSpecial();
+
     Ui::KeyboardWidget* ui = Q_NULLPTR;
 
     QHBoxLayout* m_pHLayout = Q_NULLPTR;
 
-    BaseKeyboard* m_pEngKeyboard = Q_NULLPTR;
+    EngKeyboard* m_pEngKeyboard = Q_NULLPTR;
     SpecialChKeyboard* _spChKeyboard = Q_NULLPTR;
     ExtraKeyboard* _exKeyboard = Q_NULLPTR;
 

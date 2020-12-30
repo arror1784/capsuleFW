@@ -25,11 +25,11 @@ void BaseKeyboard::keyPressed ( const QString & text )
     }
 }
 
-void BaseKeyboard::invertCaps()
+void BaseKeyboard::invertCaps(bool val)
 {
-    invertLetters();
+    invertLetters(val);
 //    invertAlphabetEnding();
-    m_isUpper = !m_isUpper;
+    m_isUpper = val;
 }
 
 void BaseKeyboard::setButtonList ( const QList<QPushButton *> & pButtonList )
@@ -51,16 +51,16 @@ void BaseKeyboard::setConnections()
         } );
     }
 
-    connect ( this, SIGNAL ( capsKeyPressed() ), SLOT ( invertCaps() ) );
+//    connect ( this, SIGNAL ( capsKeyPressed() ), SLOT ( invertCaps() ) );
 }
 
-void BaseKeyboard::invertLetters()
+void BaseKeyboard::invertLetters(bool val)
 {
     QString text;
 
     for ( auto i = 0; i < m_buttonList.size(); ++i ) {
         if ( m_buttonList.at ( i )->text().length() == CHAR ) {
-            if ( m_isUpper ) {
+            if (!val) {
                 text = m_buttonList[i]->text().toLower();
                 m_buttonList[i]->setText ( text );
             } else {

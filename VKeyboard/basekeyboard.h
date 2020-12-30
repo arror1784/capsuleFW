@@ -25,7 +25,7 @@ signals:
 
 public slots:
     void keyPressed(const QString & text );
-    void invertCaps();
+    void invertCaps(bool val);
 
 protected:
     void setButtonList ( const QList<QPushButton *> & pButtonList );
@@ -33,7 +33,7 @@ protected:
 
 private:
     void setConnections();
-    void invertLetters();
+    void invertLetters(bool val);
     void invertAlphabetEnding();
     QList<QPushButton *> m_buttonList;
     bool m_isUpper = false;

@@ -32,19 +32,12 @@ KeyboardWidget::~KeyboardWidget()
 
 void KeyboardWidget::switchKeyboard()
 {
-    if(_mode == KeyboardMode::SPECIAL) {
-        _mode = KeyboardMode::LOWER;
-        m_pEngKeyboard->invertCaps();
-        _spChKeyboard->hide();
-        m_pEngKeyboard->show();
-    } else if(_mode == KeyboardMode::UPPER) {
-        _mode = KeyboardMode::SPECIAL;
-
-        m_pEngKeyboard->hide();
-        _spChKeyboard->show();
-    }else{
-        _mode = KeyboardMode::UPPER;
-        m_pEngKeyboard->invertCaps();
+    if(_mode == KeyboardMode::SPECIAL){
+        setKeyboardLower();
+    }else if(_mode == KeyboardMode::UPPER){
+        setKeyboardSpecial();
+    }else if(_mode == KeyboardMode::LOWER){
+        setKeyboardUpper();
     }
 }
 
@@ -78,13 +71,35 @@ void KeyboardWidget::setDefaultKeyboard()
 
 void KeyboardWidget::setConnections()
 {
-    connect ( m_pEngKeyboard, &EngKeyboard::charKeyPressed, this, &KeyboardWidget::keyboardCharKeyPressed);
-    connect ( _exKeyboard, &ExtraKeyboard::deleteKeyPressed,this, &KeyboardWidget::deleteKey);
-    connect ( _exKeyboard, &ExtraKeyboard::charKeyPressed,this, &KeyboardWidget::keyboardCharKeyPressed);
-    connect ( _exKeyboard, &ExtraKeyboard::switchLangPressed,this, &KeyboardWidget::switchKeyboard);
-    connect ( _exKeyboard, &ExtraKeyboard::closeKeyPressed,this, &KeyboardWidget::closeKeyboard);
-    connect ( _exKeyboard, &ExtraKeyboard::modeKeyPressed,this, &KeyboardWidget::switchKeyboard);
+    connect(m_pEngKeyboard, &EngKeyboard::charKeyPressed, this, &KeyboardWidget::keyboardCharKeyPressed);
+    connect(_spChKeyboard, &SpecialChKeyboard::charKeyPressed,this, &KeyboardWidget::keyboardCharKeyPressed);
+    connect(_exKeyboard, &ExtraKeyboard::deleteKeyPressed,this, &KeyboardWidget::deleteKey);
+    connect(_exKeyboard, &ExtraKeyboard::charKeyPressed,this, &KeyboardWidget::keyboardCharKeyPressed);
+    connect(_exKeyboard, &ExtraKeyboard::switchLangPressed,this, &KeyboardWidget::switchKeyboard);
+    connect(_exKeyboard, &ExtraKeyboard::closeKeyPressed,this, &KeyboardWidget::closeKeyboard);
+    connect(_exKeyboard, &ExtraKeyboard::modeKeyPressed,this, &KeyboardWidget::switchKeyboard);
 
+}
+
+void KeyboardWidget::setKeyboardLower()
+{
+    _mode = KeyboardMode::LOWER;
+    m_pEngKeyboard->invertCaps(false);
+    _spChKeyboard->hide();
+    m_pEngKeyboard->show();
+}
+
+void KeyboardWidget::setKeyboardUpper()
+{
+    _mode = KeyboardMode::UPPER;
+    m_pEngKeyboard->invertCaps(true);
+}
+
+void KeyboardWidget::setKeyboardSpecial()
+{
+    _mode = KeyboardMode::SPECIAL;
+    m_pEngKeyboard->hide();
+    _spChKeyboard->show();
 }
 
 void KeyboardWidget::keyboardCharKeyPressed ( const QString & keyText )
@@ -109,6 +124,7 @@ void KeyboardWidget::deleteKey()
 void KeyboardWidget::showKeyboard(QObject* ob)
 {
     _attachedObject = ob;
+    setKeyboardLower();
 
     show();
 #ifdef __arm__
