@@ -3,18 +3,18 @@
 
 #include <QFrame>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLineEdit>
 
 #include "engkeyboard.h"
-#include "ruskeyboard.h"
+#include "specialchkeyboard.h"
+#include "extrakeyboard.h"
 #include "keyboardtextcorrector.h"
 
 #include <QDebug>
 
-static constexpr short keyboard_width = 500;
-static constexpr short keyboard_height = 150;
-
-static constexpr short last_char = 1;
+static constexpr short keyboard_width = 480;
+static constexpr short keyboard_height = 160;
 
 KeyboardWidget::KeyboardWidget ( QWidget * parent ) :
     QWidget ( parent ),
@@ -23,7 +23,6 @@ KeyboardWidget::KeyboardWidget ( QWidget * parent ) :
     setInitialSettings();
     setDefaultKeyboard();
     setConnections();
-
 }
 
 KeyboardWidget::~KeyboardWidget()
@@ -33,17 +32,19 @@ KeyboardWidget::~KeyboardWidget()
 
 void KeyboardWidget::switchKeyboard()
 {
-    m_pDigitsFrame->setFrameType ( Digits );
-    m_pDigitsFrame->switchFrame();
-
-    if ( m_pEngKeyboard->isHidden() ) {
-        m_pRusKeyboard->hide();
-        setFixedWidth ( m_pEngKeyboard->getOptimalParentWidgetWidth() );
+    if(_mode == KeyboardMode::SPECIAL) {
+        _mode = KeyboardMode::LOWER;
+        m_pEngKeyboard->invertCaps();
+        _spChKeyboard->hide();
         m_pEngKeyboard->show();
-    } else {
+    } else if(_mode == KeyboardMode::UPPER) {
+        _mode = KeyboardMode::SPECIAL;
+
         m_pEngKeyboard->hide();
-        setFixedWidth ( m_pRusKeyboard->getOptimalParentWidgetWidth() );
-        m_pRusKeyboard->show();
+        _spChKeyboard->show();
+    }else{
+        _mode = KeyboardMode::UPPER;
+        m_pEngKeyboard->invertCaps();
     }
 }
 
@@ -55,63 +56,35 @@ void KeyboardWidget::setInitialSettings()
                      Qt::FramelessWindowHint |
                      Qt::WindowStaysOnTopHint );
     setFixedSize ( keyboard_width, keyboard_height );
+    _mode = KeyboardMode::LOWER;
 }
 
 void KeyboardWidget::setDefaultKeyboard()
 {
-    m_pVLayout = new QVBoxLayout;
-    m_pDigitsFrame = new DigitsFrame;
+    m_pHLayout = new QHBoxLayout;
+    _spChKeyboard = new SpecialChKeyboard;
     m_pEngKeyboard = new EngKeyboard;
-    m_pRusKeyboard = new RusKeyboard;
-    m_pRusKeyboard->hide();
-    m_pVLayout->addWidget ( m_pDigitsFrame );
-    m_pVLayout->addWidget ( m_pEngKeyboard );
-    m_pVLayout->addWidget ( m_pRusKeyboard );
-    m_pVLayout->setContentsMargins ( 0, 0, 0, 0 );
-    setLayout ( m_pVLayout );
+    _exKeyboard = new ExtraKeyboard;
+
+//    m_pHLayout->addWidget ( m_pDigitsFrame );
+    m_pHLayout->addWidget ( m_pEngKeyboard );
+    m_pHLayout->addWidget ( _spChKeyboard);
+    m_pHLayout->addWidget ( _exKeyboard );
+    _spChKeyboard->hide();
+
+    m_pHLayout->setContentsMargins ( 0, 0, 0, 0 );
+    setLayout ( m_pHLayout );
 }
 
 void KeyboardWidget::setConnections()
 {
-    connect ( m_pEngKeyboard, &EngKeyboard::capsKeyPressed, this,
-    [&]() {
-        switchDigitsFrame ( EngSpecialSymbols );
-    } );
-    connect ( m_pRusKeyboard, &EngKeyboard::capsKeyPressed, this,
-    [&]() {
-        switchDigitsFrame ( RusSpecialSymbols );
-    } );
-    connect ( m_pEngKeyboard, &EngKeyboard::closeKeyPressed, this,
-    [&]() {
-//        QFocusEvent focusEvent = QFocusEvent(QEvent::Type::FocusOut,Qt::FocusReason::MouseFocusReason);
-//        QCoreApplication::sendEvent(_attachedObject, &focusEvent);
-        closeKeyboard();
-    } );
-    connect ( m_pEngKeyboard, SIGNAL ( switchLangPressed() ),
-              SLOT ( switchKeyboard() ) );
-    connect ( m_pRusKeyboard, SIGNAL ( switchLangPressed() ),
-              SLOT ( switchKeyboard() ) );
-    connect ( m_pEngKeyboard, SIGNAL ( charKeyPressed ( QString ) ),
-              SLOT ( keyboardCharKeyPressed ( QString ) ) );
-    connect ( m_pRusKeyboard, SIGNAL ( charKeyPressed ( QString ) ),
-              SLOT ( keyboardCharKeyPressed ( QString ) ) );
-    connect ( m_pDigitsFrame, SIGNAL ( digitKeyPressed ( QString ) ),
-              SLOT ( keyboardCharKeyPressed ( QString ) ) );
-    connect ( m_pDigitsFrame, SIGNAL ( deleteSymbol() ),
-              SLOT ( deleteKey() ) );
-}
+    connect ( m_pEngKeyboard, &EngKeyboard::charKeyPressed, this, &KeyboardWidget::keyboardCharKeyPressed);
+    connect ( _exKeyboard, &ExtraKeyboard::deleteKeyPressed,this, &KeyboardWidget::deleteKey);
+    connect ( _exKeyboard, &ExtraKeyboard::charKeyPressed,this, &KeyboardWidget::keyboardCharKeyPressed);
+    connect ( _exKeyboard, &ExtraKeyboard::switchLangPressed,this, &KeyboardWidget::switchKeyboard);
+    connect ( _exKeyboard, &ExtraKeyboard::closeKeyPressed,this, &KeyboardWidget::closeKeyboard);
+    connect ( _exKeyboard, &ExtraKeyboard::modeKeyPressed,this, &KeyboardWidget::switchKeyboard);
 
-void KeyboardWidget::switchDigitsFrame ( DigitsFrameType digitsFrameType )
-{
-    DigitsFrameType frameType = m_pDigitsFrame->getFrameType();
-
-    if ( frameType != Digits ) {
-        m_pDigitsFrame->setFrameType ( Digits );
-    } else {
-        m_pDigitsFrame->setFrameType ( digitsFrameType );
-    }
-
-    m_pDigitsFrame->switchFrame();
 }
 
 void KeyboardWidget::keyboardCharKeyPressed ( const QString & keyText )
@@ -135,18 +108,25 @@ void KeyboardWidget::deleteKey()
 
 void KeyboardWidget::showKeyboard(QObject* ob)
 {
-    QRect screenres = QApplication::desktop()->screenGeometry(1);
     _attachedObject = ob;
 
     show();
+#ifdef __arm__
+    QRect screenres = QApplication::desktop()->screenGeometry(1);
+
     windowHandle()->setScreen(qApp->screens()[1]);
-//    move(screenres.bottomLeft());
     move(0,screenres.height() - height());
     show();
+#else
+    move(0, windowHandle()->geometry().height()- height());
+    show();
+#endif
 }
 
 void KeyboardWidget::closeKeyboard()
 {
+    //        QFocusEvent focusEvent = QFocusEvent(QEvent::Type::FocusOut,Qt::FocusReason::MouseFocusReason);
+    //        QCoreApplication::sendEvent(_attachedObject, &focusEvent);
     _attachedObject = Q_NULLPTR;
     close();
 }
