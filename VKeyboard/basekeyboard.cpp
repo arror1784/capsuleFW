@@ -14,23 +14,21 @@ BaseKeyboard::~BaseKeyboard()
 
 void BaseKeyboard::keyPressed ( const QString & text )
 {
-    if ( text.length() == CHAR ) {
-        emit charKeyPressed ( text );
-    } else if ( text.length() == CAPS ) {
-        emit capsKeyPressed();
-    } else if ( text.length() == LANG ) {
-        emit switchLangPressed();
-    } else if ( text == "Close") {
+    if ( text == "Close" ) {
         emit closeKeyPressed();
+    } else if ( text == "Mode" ) {
+        emit modeKeyPressed();
+    } else if ( text == "Del" ) {
+        emit deleteKeyPressed();
     } else {
-        emit charKeyPressed ( text );
+        emit charKeyPressed(text);
     }
 }
 
 void BaseKeyboard::invertCaps()
 {
     invertLetters();
-    invertAlphabetEnding();
+//    invertAlphabetEnding();
     m_isUpper = !m_isUpper;
 }
 

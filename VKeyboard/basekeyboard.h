@@ -20,10 +20,11 @@ signals:
     void capsKeyPressed();
     void switchLangPressed();
     void closeKeyPressed();
-
+    void deleteKeyPressed();
+    void modeKeyPressed();
 
 public slots:
-    void keyPressed ( const QString & text );
+    void keyPressed(const QString & text );
     void invertCaps();
 
 protected:
