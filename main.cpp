@@ -1,34 +1,20 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
 #include <QString>
-#include <QJsonArray>
-#include <QTextCodec>
 
 #include <QNetworkInterface>
-#include <QList>
 
-#include <QThread>
 #include <QQmlContext>
 
 #include <QApplication>
 #include <QDesktopWidget>
 
-#include <wpa.h>
+#include "wpa.h"
 
-#include "bedserialport.h"
-#include "bedcontrol.h"
-#include "printscheduler.h"
 #include "schedulerthread.h"
-#include "printersetting.h"
 #include "logger.h"
 #include "networkcontrol.h"
-#include "websocketclient.h"
-#include "resinupdater.h"
 #include "filevalidator.h"
-#include "updater.h"
-#include "version.h"
 #include "qmlconnecter.h"
 #include "updateconnector.h"
 
@@ -43,7 +29,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QApplication application ( argc, argv );
+    QApplication application (argc, argv);
 //    QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
