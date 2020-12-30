@@ -8,6 +8,7 @@ SpecialChKeyboard::SpecialChKeyboard(BaseKeyboard *parent) :
     ui(new Ui::SpecialChKeyboard)
 {
     ui->setupUi(this);
+    setButtonList(findChildren<QPushButton *>());
 }
 
 SpecialChKeyboard::~SpecialChKeyboard()
