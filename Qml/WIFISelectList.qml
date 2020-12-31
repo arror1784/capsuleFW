@@ -135,8 +135,8 @@ Item {
                 if(wifiSelectList.currentIndex === -1){
                     return
                 }
-                var data = wifi.getNetwork(wifiSelectList.currentIndex)
-                if(data.getConnected()){
+                var data = wifiModel.get(wifiSelectList.currentIndex)
+                if(data.current){
                     wifiDisconnectPopup.open(data.ssid,data.bssid)
                 }else{
                     wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
