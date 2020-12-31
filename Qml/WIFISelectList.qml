@@ -9,6 +9,7 @@ Item {
     property string ssidName
     property string currentssidName
     property int currentIndex: -1
+    property bool scanFail: false
 
     property var networkList
 
@@ -151,7 +152,7 @@ Item {
         }
         onConnectButtonClickedWithoutPSWD: {
             wifi.networkConnect(ssid,bssid,"",id)
-//            wifi.networkScan()
+            wifi.networkScan()
         }
     }
     WIFIDisconnectPopup{
@@ -184,9 +185,11 @@ Item {
             wifiNotice.open()
         }
         onWifiConnectError:{
-            console.log("asdasdasdasdasd")
-            wifiNotice.setText("문제가 발생하였습니다. 재부팅이 필요합니다.")
-            wifiNotice.open()
+            if(!scanFail){
+                scanFail = true
+                wifiNotice.setText("문제가 발생하였습니다. 재부팅이 필요합니다.")
+                wifiNotice.open()
+            }
         }
     }
 
@@ -201,7 +204,11 @@ Item {
         }
     }
     function inserWIFIList(ssid,bssid,flags,b,networkID){
-        wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        if(b){
+            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        }else{
+            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        }
     }
 
     function networkScan(){
