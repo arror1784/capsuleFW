@@ -112,8 +112,7 @@ Item {
         }
     }
     Rectangle {
-        id: network
-
+        id: firmwareUpdate
         width: 215
         height: 110
 
@@ -126,28 +125,27 @@ Item {
         anchors.rightMargin: 15
         anchors.right: parent.right
         Rectangle{
-            width: networkText.width
-            height: networkImage.height + networkText.height
+            width: firmwareUpdateText.width
+            height: firmwareUpdateImage.height + firmwareUpdateText.height
             anchors.centerIn: parent
             color: "#00000000"
             Image {
-                id: networkImage
-                source: "qrc:/image/network.png"
+                id: firmwareUpdateImage
 
-                height: 67
                 width: 67
+                height: 67
 
-                scale: 0.57
+                source: "qrc:/image/wifi.png"
 
-                anchors.horizontalCenter: networkText.horizontalCenter
+                scale: 0.8
+                anchors.horizontalCenter: firmwareUpdateText.horizontalCenter
             }
-
             Text {
-                id: networkText
-                text: qsTr("Network")
+                id: firmwareUpdateText
+                text: qsTr("WIFI")
                 color: "#666666"
 
-                anchors.top: networkImage.bottom
+                anchors.top: firmwareUpdateImage.bottom
 
                 font.family: openSansSemibold.name
                 font.pixelSize: 20
@@ -157,7 +155,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                stackView.push(Qt.resolvedUrl("qrc:/Qml/NetworkMenu.qml"),StackView.Immediate)
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/WIFISelectList.qml"),StackView.Immediate)
             }
         }
     }
@@ -170,10 +168,7 @@ Item {
         color: "#dceaf3"
 
         radius: 8
-//        anchors.verticalCenter: network.verticalCenter
 
-//        anchors.right: parent.right
-//        anchors.rightMargin: 15
         anchors.bottom: backButton.top
         anchors.bottomMargin: 15
         anchors.leftMargin: 15
@@ -186,7 +181,6 @@ Item {
             Image {
                 id: updateImage
                 source: "qrc:/image/update.png"
-
 
                 scale: 0.7
                 anchors.horizontalCenter: updateText.horizontalCenter
