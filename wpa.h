@@ -84,6 +84,8 @@ private:
 
     int networkAdd();
     void networkSelect(int id);
+    void networkEnable(int id);
+    void networkDisable(int id);
     void networkSaveConfig();
     void networkSet(int id,std::string key,std::string value);
 
@@ -100,6 +102,7 @@ private:
     QString _ctrlPath;
 
     bool _connected = false;
+    int _connectID = -1;
 };
 
 
