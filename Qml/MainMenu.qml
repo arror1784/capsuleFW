@@ -178,4 +178,7 @@ Item {
             infoPopup.setText(version,modelNo)
         }
     }
+    Component.onCompleted: {
+        wifi.checkNetworkConnect()
+    }
 }

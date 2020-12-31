@@ -113,7 +113,7 @@ void WPA::networkDelete(int id)
 
 void WPA::checkNetworkConnect()
 {
-    checkConnected();
+    emit connectedChange(checkConnected());
 }
 
 void WPA::ctrlConnect()
@@ -297,7 +297,7 @@ void WPA::parseNetworkInfo()
 //    return vvs;
 }
 
-void WPA::checkConnected()
+bool WPA::checkConnected()
 {
     char buff[4096] = {0};
     char resBuff[4096] = {0};
@@ -326,13 +326,14 @@ void WPA::checkConnected()
             }
         }
         _connected = true;
+        return true;
 //        emit connectedChange(true);
     }else{
         _currentSSID = "";
         _connected = false;
+        return false;
 //        emit connectedChange(false);
     }
-    return;
 }
 
 int WPA::networkAdd()

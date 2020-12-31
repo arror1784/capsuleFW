@@ -80,7 +80,7 @@ private:
     void parseWifiInfo(); //scan_result
     void parseNetworkInfo(); //saved_network_list
 
-    void checkConnected();
+    bool checkConnected();
 
     int networkAdd();
     void networkSelect(int id);
