@@ -145,6 +145,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                connection.receiveFromQmlUnlock();
                 stackView.pop(mainMenu,StackView.Immediate)
             }
         }
