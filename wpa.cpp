@@ -21,6 +21,9 @@
 
 WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 {
+    if(!checkFileExists()){
+        return;
+    }
     ctrlConnect();
     runEvent();
     checkConnected();
@@ -28,6 +31,9 @@ WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 
 WPA::WPA(const char *ctrl_path) : _ctrlPath(ctrl_path)
 {
+    if(!checkFileExists()){
+        return;
+    }
     ctrlConnect();
     runEvent();
     checkConnected();
@@ -203,12 +209,23 @@ QString WPA::currentSSID() const
     return _currentSSID;
 }
 
+#include <filesystem>
+bool WPA::checkFileExists()
+{
+    auto target = std::filesystem::u8path(_ctrlPath.toUtf8().toStdString());
+    return std::filesystem::exists(target);
+}
+
 int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf)
 {
 #ifndef _MSC_VER
 
     int ret;
     size_t len = 4096;
+
+    if(!checkFileExists()){
+        return -3;
+    }
 
     ret = wpa_ctrl_request(ctrl, cmd, strlen(cmd), buf, &len, NULL);
     if (ret == -2) {

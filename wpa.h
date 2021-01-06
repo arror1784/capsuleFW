@@ -72,6 +72,8 @@ public slots:
     QString currentSSID() const;
 
 private:
+    bool checkFileExists();
+
     void ctrlConnect();
     void wpa_ctrl_event();
 
