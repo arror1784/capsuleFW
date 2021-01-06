@@ -29,6 +29,7 @@ signals:
     void sendToSchedMoveMotor(QString cmd,int micro);
     void sendToSchedGetProductInfo();
     void sendToSchedGetUsbPortError();
+    void sendToSchedUnlock();
 
     void sendToSchedAutoReboot();
 
@@ -73,7 +74,7 @@ public slots:
     void receiveFromQmlMoveMotor(QString cmd,int micro){emit sendToSchedMoveMotor(cmd,micro);}
     void receiveFromQmlGetProductInfo(){emit sendToSchedGetProductInfo();}
     void receiveFromQmlGetUsbPortError(){emit sendToSchedGetUsbPortError();}
-
+    void receiveFromQmlUnlock(){emit sendToSchedUnlock();}
     void receiveFromQmlAutoReboot(){emit sendToSchedAutoReboot();}
 
     void receiveFromSchedChangeImage(QString imagePath){emit sendToQmlChangeImage(imagePath);}

@@ -185,6 +185,13 @@ void WebSocketClient::changeToStateToWeb(QString state)
 
         _webSocket->sendTextMessage(strJson);
 
+    }else if(state == "unlock"){
+        aaa.insert("arg","unlock");
+
+        QJsonDocument doc(aaa);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
+        _webSocket->sendTextMessage(strJson);
     }
 }
 
