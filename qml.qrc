@@ -42,5 +42,6 @@
         <file>Qml/UpdateModeSelect.qml</file>
         <file>Qml/ResinUpdateSelectFile.qml</file>
         <file>Qml/SWUpdateSelectFile.qml</file>
+        <file>Qml/WIFITryConnect.qml</file>
     </qresource>
 </RCC>
