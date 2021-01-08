@@ -30,6 +30,8 @@ Rectangle {
         height: parent.height - 60
         anchors.centerIn: Overlay.overlay
 
+        closePolicy: Popup.NoAutoClose
+
         background: Rectangle{
             id: backgroundPopUp
             anchors.fill: parent
@@ -100,7 +102,7 @@ Rectangle {
         }else if(code === 6){
             errorText.text = "Error: 파일에 문제가 있습니다."
         }else if(code === 7){
-            errorText.text = "Error: 프린트 종료된 후 잠겨 있습니다.\n프린터에 Close 버튼을 눌러주세요."
+            errorText.text = "출력완료 후 확인이 필요합니다.\n제품에서 close버튼을 눌러주세요."
         }else{
             errorText.text = "Error: 오류가 발생했습니다."
         }
