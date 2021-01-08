@@ -48,7 +48,7 @@ Item {
         color: "#ffffff"
         ListView{
             id: materialSelectList
-            width: 432
+            width: 375
             height: 200
             anchors.left: parent.left
             anchors.leftMargin: 10
