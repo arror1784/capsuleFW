@@ -117,6 +117,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 var arg = []
+                connection.receiveFromQmlUnlock();
                 connection.receiveFromQmlPrintStart(arg)
             }
         }
