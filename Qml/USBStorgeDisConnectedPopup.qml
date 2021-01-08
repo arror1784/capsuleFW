@@ -28,6 +28,7 @@ Rectangle {
         width: parent.width - 60
         height: parent.height - 60
         anchors.centerIn: Overlay.overlay
+        closePolicy: Popup.NoAutoClose
 
         background: Rectangle{
             id: backgroundPopUp
