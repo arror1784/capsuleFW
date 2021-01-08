@@ -167,7 +167,7 @@ Rectangle {
         if(b){
             wifiText.text = "Connected"
         }else{
-            wifiText.text = "DisConnected"
+            wifiText.text = "Disconnected"
         }
     }
     function setIPAddress(address){
