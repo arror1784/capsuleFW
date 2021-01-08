@@ -53,7 +53,8 @@ signals:
 
     void refreshAvailable();
 
-    void wifiConnectError();
+    void wifiScanFail(int value);
+    void wifiAssocFailed(int value);
 
 public slots:
     void networkScan();
@@ -65,7 +66,6 @@ public slots:
     bool networkConnect(int id);
 
     bool networkDisconnect();
-    void networkDelete(int id);
 
     void checkNetworkConnect();
 
@@ -73,6 +73,7 @@ public slots:
 
 private:
     bool checkFileExists();
+    bool checkCommandSucess(char*);
 
     void ctrlConnect();
     void wpa_ctrl_event();
@@ -88,6 +89,7 @@ private:
     void networkSelect(int id);
     void networkEnable(int id);
     void networkDisable(int id);
+    void networkDelete(int id);
     void networkSaveConfig();
     void networkSet(int id,std::string key,std::string value);
 
@@ -104,7 +106,6 @@ private:
     QString _ctrlPath;
 
     bool _connected = false;
-    int _connectID = -1;
 };
 
 
