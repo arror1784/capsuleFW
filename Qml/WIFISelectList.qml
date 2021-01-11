@@ -220,10 +220,10 @@ Item {
     function updateWIFIList(){
         wifiSelectList.currentIndex = -1
         wifiModel.clear()
-        var count = wifi.networkCount()
+        var wifiList = wifi.getWifiList()
 
-        for(var i = 0; i < count; i++){
-            var data = wifi.getNetwork(i)
+        for(var i = 0; i < wifiList.length; i++){
+            var data = wifiList[i]
             inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
         }
     }
