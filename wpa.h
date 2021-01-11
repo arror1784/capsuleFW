@@ -7,7 +7,9 @@
 #include <QList>
 #include <QMap>
 #include <thread>
+#include <mutex>
 
+#include "wpa_ctrl/wpa_ctrl.h"
 #include "wifiinfo.h"
 
 #ifdef __arm__
@@ -85,17 +87,19 @@ private:
 
     bool checkConnected();
 
-    int networkAdd();
-    void networkSelect(int id);
-    void networkEnable(int id);
-    void networkDisable(int id);
-    void networkDelete(int id);
-    void networkSaveConfig();
-    void networkSet(int id,std::string key,std::string value);
+    int networkAdd(struct wpa_ctrl *ctrl);
+    void networkSelect(struct wpa_ctrl *ctrl,int id);
+    void networkEnable(struct wpa_ctrl *ctrl,int id);
+    void networkDisable(struct wpa_ctrl *ctrl,int id);
+    void networkDelete(struct wpa_ctrl *ctrl,int id);
+    void networkSaveConfig(struct wpa_ctrl *ctrl);
+    void networkSet(struct wpa_ctrl *ctrl,int id,std::string key,std::string value);
 
     int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf);
 
     QList<WifiInfo*> _wifiList;
+
+    std::mutex _commandMutex;
 
     std::thread th;
 
@@ -105,8 +109,4 @@ private:
     QString _currentSSID;
     QString _ctrlPath;
 
-    bool _connected = false;
 };
-
-
-

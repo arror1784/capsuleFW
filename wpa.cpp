@@ -1,4 +1,4 @@
-﻿#include "wpa.h"
+#include "wpa.h"
 
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,6 @@
 #include <QDebug>
 #include <QThread>
 #ifndef _MSC_VER
-#include "wpa_ctrl/wpa_ctrl.h"
 #include <unistd.h>
 
 #include <error.h>
@@ -68,26 +67,27 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
     int id;
 
     if(networkID == -1){
-        id = networkAdd();
+        id = networkAdd(_ctrl);
     }else{
         id = networkID;
-    }
+    }    std::thread th;
 
-    networkSet(id,"ssid",ssid.toStdString());
-    networkSet(id,"bssid",bssid.toStdString());
+
+    networkSet(_ctrl,id,"ssid",ssid.toStdString());
+    networkSet(_ctrl,id,"bssid",bssid.toStdString());
 
     if(passwd.isEmpty()){
-        networkSet(id,"key_mgmt","NONE");
+        networkSet(_ctrl,id,"key_mgmt","NONE");
     }else{
-        if(passwd.length() < 8){
+        if(passwd.length() < 8 || passwd.length() > 63){
             emit wifiAssocFailed(1);
             return false;
         }
-        networkSet(id,"psk",passwd.toStdString());
+        networkSet(_ctrl,id,"psk",passwd.toStdString());
     }
 
-    networkSelect(id);
-    networkEnable(id);
+    networkSelect(_ctrl,id);
+    networkEnable(_ctrl,id);
 
     return true;
 }
@@ -95,8 +95,8 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
 bool WPA::networkConnect(int id)
 {
 
-    networkSelect(id);
-    networkEnable(id);
+    networkSelect(_ctrl,id);
+    networkEnable(_ctrl,id);
 
     return true;
 }
@@ -132,20 +132,21 @@ void WPA::wpa_ctrl_event()
     int a;
 
     if(wpa_ctrl_attach(_ctrl_event)){
-        std::cout << "wpa attack error" << _ctrlPath.toStdString() << endl;
+        std::cout << "wpa attack error" << _ctrlPath.toStdString() << std::endl;
         return;
     }else{
-        std::cout << "wpa attack sucess" << _ctrlPath.toStdString() << endl;
+        std::cout << "wpa attack sucess" << _ctrlPath.toStdString() << std::endl;
     }
 
     while (1) {
-        memset(resBuff,'\0',size);
         size = 4096;
+        memset(resBuff,'\0',size);
 
         wpa_ctrl_pending_blocking(_ctrl_event);
         wpa_ctrl_recv(_ctrl_event,resBuff,&size);
-        qDebug() << resBuff;
-        std::string stdResBuff = resBuff;
+
+        std::string stdResBuff(resBuff);
+        qDebug() << QString::fromStdString(stdResBuff) << "event";
         if(stdResBuff.find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
             clearList();
 
@@ -154,17 +155,14 @@ void WPA::wpa_ctrl_event()
             checkConnected();
 
             emit networkListUpdate();
-        }else if(stdResBuff.find(WPA_EVENT_CONNECTED) != std::string::npos){
 
-            networkSaveConfig();
+        }else if(stdResBuff.find(WPA_EVENT_CONNECTED) != std::string::npos){
+            networkSaveConfig(_ctrl);
             checkConnected();
             emit networkListUpdate();
             emit connectedChange(true);
 
         }else if(stdResBuff.find(WPA_EVENT_DISCONNECTED) != std::string::npos){
-            networkDisable(-1);
-            networkSaveConfig();
-
             checkConnected();
             emit networkListUpdate();
             emit connectedChange(false);
@@ -172,9 +170,9 @@ void WPA::wpa_ctrl_event()
         }else if(stdResBuff.find(WPA_EVENT_SCAN_FAILED) != std::string::npos){
             clearList();
             emit networkListUpdate();
-            networkDisable(-1);
-            networkDelete(-1);
-            networkSaveConfig();
+            networkDisable(_ctrl,-1);
+            networkDelete(_ctrl,-1);
+            networkSaveConfig(_ctrl);
 
             checkConnected();
 
@@ -189,9 +187,10 @@ void WPA::wpa_ctrl_event()
             }else{
                 emit wifiScanFail(0);
             }
+
         }else if(stdResBuff.find(WPA_EVENT_ASSOC_REJECT) != std::string::npos){
-            networkDisable(-1);
-            networkSaveConfig();
+            networkDisable(_ctrl,-1);
+            networkSaveConfig(_ctrl);
             emit wifiAssocFailed(0);
         }
     }
@@ -205,7 +204,6 @@ void WPA::clearList()
         _wifiList.removeAt(0);
     }
 }
-
 QString WPA::currentSSID() const
 {
     return _currentSSID;
@@ -224,6 +222,8 @@ bool WPA::checkCommandSucess(char *buf)
 
     if(stdBuf == "FAIL"){
         return false;
+    }else if(stdBuf == "OK"){
+        return true;
     }else{
         return true;
     }
@@ -266,7 +266,6 @@ void WPA::parseWifiInfo()
 }
 void WPA::parseNetworkInfo()
 {
-    int r_size = 0;
     bool first = true;
 
     int ret;
@@ -304,13 +303,11 @@ void WPA::parseNetworkInfo()
 
 bool WPA::checkConnected()
 {
-    char buff[4096] = {0};
-    char resBuff[4096] = {0};
     int tryCount = 3;
 
     while (tryCount){
         tryCount -= 1;
-
+        char resBuff[4096] = {0};
         wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
         std::string myStr(resBuff), val, line;
@@ -332,34 +329,30 @@ bool WPA::checkConnected()
             _currentSSID = mp["ssid"];
 
             for (int i = 0; i < _wifiList.size();i++) {
-                if(_wifiList[i]->getSsid() == mp["ssid"] && _wifiList[i]->getBssid() == mp["bssid"]){
-                    qDebug() << "asdasdasdasdasd";
+                if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
                     _wifiList[i]->setConnected(true);
                 }
             }
-            _connected = true;
             return true;
         }else{
             for (int i = 0; i < _wifiList.size();i++) {
                 _wifiList[i]->setConnected(false);
             }
             _currentSSID = "";
-            _connected = false;
             return false;
         }
-
     }
 }
-int WPA::networkAdd()
+int WPA::networkAdd(struct wpa_ctrl *ctrl)
 {
     char resBuff[4096] = {0};
 
-    wpa_ctrl_cmd(_ctrl,"ADD_NETWORK",resBuff);
+    wpa_ctrl_cmd(ctrl,"ADD_NETWORK",resBuff);
 
     return atoi(resBuff);
 }
 
-void WPA::networkSelect(int id)
+void WPA::networkSelect(struct wpa_ctrl *ctrl,int id)
 {
     char resBuff[4096] = {0};
 
@@ -367,10 +360,10 @@ void WPA::networkSelect(int id)
     buf = "SELECT_NETWORK ";
     buf += std::to_string(id);
 
-    wpa_ctrl_cmd(_ctrl,buf.c_str(),resBuff);
+    wpa_ctrl_cmd(ctrl,buf.c_str(),resBuff);
 }
 
-void WPA::networkEnable(int id)
+void WPA::networkEnable(struct wpa_ctrl *ctrl,int id)
 {
     char resBuff[4096] = {0};
 
@@ -378,10 +371,10 @@ void WPA::networkEnable(int id)
     buf = "ENABLE_NETWORK ";
     buf += std::to_string(id);
 
-    wpa_ctrl_cmd(_ctrl,buf.c_str(),resBuff);
+    wpa_ctrl_cmd(ctrl,buf.c_str(),resBuff);
 }
 
-void WPA::networkDisable(int id)
+void WPA::networkDisable(struct wpa_ctrl *ctrl,int id)
 {
     char resBuff[4096] = {0};
     std::string buf;
@@ -392,10 +385,10 @@ void WPA::networkDisable(int id)
         buf = "DISABLE_NETWORK ";
         buf += std::to_string(id);
     }
-    wpa_ctrl_cmd(_ctrl,buf.c_str(),resBuff);
+    wpa_ctrl_cmd(ctrl,buf.c_str(),resBuff);
 }
 
-void WPA::networkDelete(int id)
+void WPA::networkDelete(struct wpa_ctrl *ctrl,int id)
 {
     char resBuff[4096] = {0};
     std::string buf;
@@ -406,18 +399,16 @@ void WPA::networkDelete(int id)
         buf = "REMOVE_NETWORK ";
         buf += std::to_string(id);
     }
-    wpa_ctrl_cmd(_ctrl,buf.c_str(),resBuff);
+    wpa_ctrl_cmd(ctrl,buf.c_str(),resBuff);
 }
-void WPA::networkSaveConfig()
+void WPA::networkSaveConfig(struct wpa_ctrl *ctrl)
 {
     char resBuff[4096] = {0};
-//    do{
-        wpa_ctrl_cmd(_ctrl,"SAVE_CONFIG",resBuff);
-//    }while (!checkCommandSucess(resBuff));
-
+    wpa_ctrl_cmd(ctrl,"SAVE_CONFIG",resBuff);
 }
 
-void WPA::networkSet(int id, std::string key, std::string value)
+
+void WPA::networkSet(struct wpa_ctrl *ctrl,int id, std::string key, std::string value)
 {
     char resBuff[4096] = {0};
 
@@ -435,12 +426,13 @@ void WPA::networkSet(int id, std::string key, std::string value)
     }else
         buf += value;
 
-    wpa_ctrl_cmd(_ctrl,buf.c_str(),resBuff);
+    wpa_ctrl_cmd(ctrl,buf.c_str(),resBuff);
 }
 
 int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf)
 {
 #ifndef _MSC_VER
+    std::lock_guard<std::mutex> commandLock(_commandMutex);
 
     int ret;
     size_t len = 4096;
@@ -457,6 +449,7 @@ int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf)
         printf("'%s' command failed.\n", cmd);
         return -1;
     }
+
     buf[len -1] = '\0';
     qDebug() << cmd;
     qDebug() << buf;
