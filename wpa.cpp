@@ -63,11 +63,6 @@ QList<QObject*> WPA::getWifiList()
 //    return _wifiList;
 }
 
-WifiInfo *WPA::getNetwork(int index)
-{
-    return _wifiList[index];
-}
-
 bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkID)
 {
     int id;
