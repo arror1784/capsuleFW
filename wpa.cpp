@@ -25,7 +25,6 @@ WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
     }
     ctrlConnect();
     runEvent();
-    checkConnected();
 }
 
 WPA::WPA(const char *ctrl_path) : _ctrlPath(ctrl_path)
@@ -35,7 +34,6 @@ WPA::WPA(const char *ctrl_path) : _ctrlPath(ctrl_path)
     }
     ctrlConnect();
     runEvent();
-    checkConnected();
 }
 
 void WPA::runEvent()
@@ -49,12 +47,20 @@ void WPA::networkScan()
     char resBuff[4096] = {0};
 
     ret = wpa_ctrl_cmd(_ctrl, "SCAN", resBuff);
-
 }
 
-int WPA::networkCount()
+QList<QObject*> WPA::getWifiList()
 {
-    return _wifiList.size();
+    std::lock_guard<std::mutex> listLock(_listMutex);
+
+    if(_wifiList.empty()){
+        return QList<QObject*>();
+    }
+    Q_ASSERT(sizeof(QObject*) == sizeof(WifiInfo*));               // check pointers are the same size
+    Q_ASSERT(sizeof(QList<QObject*>) == sizeof(QList<WifiInfo*>)); // check lists are the same size
+    Q_ASSERT(qobject_cast<WifiInfo*>((QObject*)_wifiList.at(0)));        // check Bar is derived from QObject
+    return *reinterpret_cast<const QList<QObject *>*>(&_wifiList);  // now cast the list
+//    return _wifiList;
 }
 
 WifiInfo *WPA::getNetwork(int index)
@@ -152,18 +158,20 @@ void WPA::wpa_ctrl_event()
 
             parseWifiInfo();
             parseNetworkInfo();
-            checkConnected();
+            parseConnectedWifi();
 
             emit networkListUpdate();
 
         }else if(stdResBuff.find(WPA_EVENT_CONNECTED) != std::string::npos){
+
             networkSaveConfig(_ctrl);
-            checkConnected();
+            parseConnectedWifi();
             emit networkListUpdate();
             emit connectedChange(true);
 
         }else if(stdResBuff.find(WPA_EVENT_DISCONNECTED) != std::string::npos){
-            checkConnected();
+
+            parseConnectedWifi();
             emit networkListUpdate();
             emit connectedChange(false);
 
@@ -173,8 +181,6 @@ void WPA::wpa_ctrl_event()
             networkDisable(_ctrl,-1);
             networkDelete(_ctrl,-1);
             networkSaveConfig(_ctrl);
-
-            checkConnected();
 
             auto pos = stdResBuff.find("ret=");
             if(pos != std::string::npos){
@@ -199,14 +205,12 @@ void WPA::wpa_ctrl_event()
 
 void WPA::clearList()
 {
+    std::lock_guard<std::mutex> listLock(_listMutex);
+
     while(_wifiList.size() > 0){
         delete _wifiList[0];
         _wifiList.removeAt(0);
     }
-}
-QString WPA::currentSSID() const
-{
-    return _currentSSID;
 }
 
 #include <filesystem>
@@ -231,6 +235,8 @@ bool WPA::checkCommandSucess(char *buf)
 
 void WPA::parseWifiInfo()
 {
+    std::lock_guard<std::mutex> listLock(_listMutex);
+
     int r_size = 0;
     bool first = true;
 
@@ -266,6 +272,8 @@ void WPA::parseWifiInfo()
 }
 void WPA::parseNetworkInfo()
 {
+    std::lock_guard<std::mutex> listLock(_listMutex);
+
     bool first = true;
 
     int ret;
@@ -298,7 +306,47 @@ void WPA::parseNetworkInfo()
         }
 //        }
     }
-//    return vvs;
+    //    return vvs;
+}
+
+void WPA::parseConnectedWifi()
+{
+    std::lock_guard<std::mutex> listLock(_listMutex);
+
+    int tryCount = 3;
+
+    while (tryCount){
+        tryCount -= 1;
+        char resBuff[4096] = {0};
+        wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
+
+        std::string myStr(resBuff), val, line;
+        std::stringstream ss(myStr);
+        QStringList array;
+        QMap<QString,QString> mp;
+
+        while (getline(ss, line, '\n')) {
+            std::vector<std::string> row;
+            std::stringstream s(line);
+            while (getline(s, val, '=')) {
+                row.push_back (val);
+            }
+            if(row.size() == 2){
+                mp.insert(QString::fromStdString(row[0]),QString::fromStdString(row[1]));
+            }
+        }
+        if(mp["wpa_state"] == "COMPLETED"){
+            for (int i = 0; i < _wifiList.size();i++) {
+                if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
+                    _wifiList[i]->setConnected(true);
+                }
+            }
+        }else{
+            for (int i = 0; i < _wifiList.size();i++) {
+                _wifiList[i]->setConnected(false);
+            }
+        }
+    }
 }
 
 bool WPA::checkConnected()
@@ -326,22 +374,12 @@ bool WPA::checkConnected()
             }
         }
         if(mp["wpa_state"] == "COMPLETED"){
-            _currentSSID = mp["ssid"];
-
-            for (int i = 0; i < _wifiList.size();i++) {
-                if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
-                    _wifiList[i]->setConnected(true);
-                }
-            }
             return true;
         }else{
-            for (int i = 0; i < _wifiList.size();i++) {
-                _wifiList[i]->setConnected(false);
-            }
-            _currentSSID = "";
             return false;
         }
     }
+    return false;
 }
 int WPA::networkAdd(struct wpa_ctrl *ctrl)
 {

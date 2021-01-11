@@ -61,8 +61,7 @@ signals:
 public slots:
     void networkScan();
 
-    int networkCount();
-    WifiInfo* getNetwork(int index);
+    QList<QObject*> getWifiList();
 
     bool networkConnect(QString ssid,QString bssid,QString passwd,int networkID);
     bool networkConnect(int id);
@@ -70,8 +69,6 @@ public slots:
     bool networkDisconnect();
 
     void checkNetworkConnect();
-
-    QString currentSSID() const;
 
 private:
     bool checkFileExists();
@@ -84,6 +81,7 @@ private:
 
     void parseWifiInfo(); //scan_result
     void parseNetworkInfo(); //saved_network_list
+    void parseConnectedWifi();
 
     bool checkConnected();
 
@@ -100,13 +98,13 @@ private:
     QList<WifiInfo*> _wifiList;
 
     std::mutex _commandMutex;
+    std::mutex _listMutex;
 
     std::thread th;
 
     wpa_ctrl* _ctrl;
     wpa_ctrl* _ctrl_event;
     
-    QString _currentSSID;
     QString _ctrlPath;
 
 };
