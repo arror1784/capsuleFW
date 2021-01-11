@@ -171,6 +171,9 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if(passwordField.text.length === 0){
+                        return;
+                    }
                     if(wpaEnable){
                         connectButtonClicked(ssid,bssid,passwordField.text,networkID)
                     }else{
