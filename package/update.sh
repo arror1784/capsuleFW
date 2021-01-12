@@ -34,24 +34,22 @@ for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
 done
 
 if [ "$CURRENT_VERSION" == "1.1.1" ]; then
-	echo "1.1.1 libstdc++.so.6 wpa_supplicant"	
-	cp -rf "${TARGET_FOLDER_NAME}/libstdc++.so.6.0.26" "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6"
+	echo "1.1.1 wpa_supplicant"	
 	cp -rf ${TARGET_FOLDER_NAME}/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-	while read path
-	do
-		echo "remove ${path}"
-		rm -rf ${path}
-	done < $RMLIBLIST
-
 fi
+
+echo "libstdc++.so.6"
+cp -rf "${TARGET_FOLDER_NAME}/libstdc++.so.6.0.26" "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6"
+
+while read path
+do
+	echo "remove ${path}"
+	rm -rf ${path}
+done < $RMLIBLIST
 
 cp -rf ${TARGET_FOLDER_NAME}/react.service /etc/systemd/system/react.service
 cp -rf ${TARGET_FOLDER_NAME}/C10.service /etc/avahi/services/C10.service
 service avahi-daemon restart
-
-rm -rf /opt/capsuleFW/version.json
-cp -rf $3 /opt/capsuleFW/
 
 mv /opt/capsuleFW_react/backend/db.sqlite3 /opt/capsuleFW/
 
@@ -83,6 +81,7 @@ else
 	apt-get install redis-server -y
 fi
 
+
 dpkg -l | grep exfat-fuse || apt-get install exfat-fuse -y
 dpkg -l | grep exfat-utils || apt-get install exfat-utils -y
 dpkg -l | grep ntfs-3g || apt-get install ntfs-3g -y
@@ -93,16 +92,21 @@ pip3 install -r /opt/capsuleFW_react/backend/requirements.txt
 python3 /opt/capsuleFW_react/backend/manage.py makemigrations
 python3 /opt/capsuleFW_react/backend/manage.py migrate
 
+for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
+	systemctl enable ${SERVICES[$i]}
+	systemctl start ${SERVICES[$i]}
+done
+
 pkill capsuleFW
 
 rm -rf /opt/capsuleFW/bin/capsuleFW
 cp -rf ${TARGET_FOLDER_NAME}/capsuleFW /opt/capsuleFW/bin/capsuleFW
 chmod 755 /opt/capsuleFW/bin/capsuleFW
 
-for (( i = 0 ; i < ${#SERVICES[@]} ; i++ )) ; do
-	systemctl enable ${SERVICES[$i]}
-	systemctl start ${SERVICES[$i]}
-done
+rm -rf /opt/capsuleFW/version.json
+cp -rf $3 /opt/capsuleFW/
+
+sleep 1
 
 chmod +x ${TARGET_FOLDER_NAME}/HGCommandSender
 ${TARGET_FOLDER_NAME}/HGCommandSender "H201"
