@@ -71,7 +71,7 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
         id = networkAdd(_ctrl);
     }else{
         id = networkID;
-    }    std::thread th;
+    }
 
 
     networkSet(_ctrl,id,"ssid",ssid.toStdString());
@@ -87,8 +87,7 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
         networkSet(_ctrl,id,"psk",passwd.toStdString());
     }
 
-    networkSelect(_ctrl,id);
-    networkEnable(_ctrl,id);
+    networkConnect(id);
 
     return true;
 }
@@ -167,6 +166,8 @@ void WPA::wpa_ctrl_event()
         }else if(stdResBuff.find(WPA_EVENT_DISCONNECTED) != std::string::npos){
 
             parseConnectedWifi();
+            networkScan();
+
             emit networkListUpdate();
             emit connectedChange(false);
 
@@ -193,6 +194,8 @@ void WPA::wpa_ctrl_event()
             networkDisable(_ctrl,-1);
             networkSaveConfig(_ctrl);
             emit wifiAssocFailed(0);
+        }else if(stdResBuff.find(TRY_ASSOCIATE) != std::string::npos){
+            emit wifiTryAssociate();
         }
     }
 #endif
@@ -310,8 +313,6 @@ void WPA::parseConnectedWifi()
 
     int tryCount = 3;
 
-    while (tryCount){
-        tryCount -= 1;
         char resBuff[4096] = {0};
         wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
@@ -334,6 +335,8 @@ void WPA::parseConnectedWifi()
             for (int i = 0; i < _wifiList.size();i++) {
                 if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
                     _wifiList[i]->setConnected(true);
+            }else{
+                _wifiList[i]->setConnected(false);
                 }
             }
         }else{
@@ -342,14 +345,10 @@ void WPA::parseConnectedWifi()
             }
         }
     }
-}
 
 bool WPA::checkConnected()
 {
-    int tryCount = 3;
 
-    while (tryCount){
-        tryCount -= 1;
         char resBuff[4096] = {0};
         wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
@@ -374,8 +373,6 @@ bool WPA::checkConnected()
             return false;
         }
     }
-    return false;
-}
 int WPA::networkAdd(struct wpa_ctrl *ctrl)
 {
     char resBuff[4096] = {0};

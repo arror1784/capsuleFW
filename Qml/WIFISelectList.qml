@@ -151,12 +151,10 @@ Item {
     WIFIConnectPopup{
         id:wifiConnectPopup
         onConnectButtonClicked: {
-            wifiTryConnect.open()
             wifi.networkConnect(ssid,bssid,pwd,id)
             wifi.networkScan()
         }
         onConnectButtonClickedWithoutPSWD: {
-            wifiTryConnect.open()
             wifi.networkConnect(ssid,bssid,"",id)
             wifi.networkScan()
         }
@@ -193,6 +191,7 @@ Item {
         }
         onWifiScanFail:{
             if(!scanFail){
+                scanFail = true;
                 if(value === -52){
                     wifiTryConnect.close()
                     wifiNotice.setText("지원하지 않은 공유기입니다.\n재부팅이 필요합니다.")
@@ -214,6 +213,9 @@ Item {
                 wifiNotice.setText("비밀번호 길이가 짧습니다.")
                 wifiNotice.open()
             }
+        }
+        onWifiTryAssociate:{
+            wifiTryConnect.open()
         }
     }
 

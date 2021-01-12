@@ -18,7 +18,7 @@
 #define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlp3s0"
 #endif
 
-
+#define TRY_ASSOCIATE "Trying to associate"
 
 enum class WIFIInfoType{
     BSSID=0,
@@ -54,6 +54,7 @@ signals:
     void connectedChange(bool connected);
 
     void refreshAvailable();
+    void wifiTryAssociate();
 
     void wifiScanFail(int value);
     void wifiAssocFailed(int value);
