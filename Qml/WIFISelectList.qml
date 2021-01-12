@@ -183,9 +183,9 @@ Item {
         onConnectedChange:{
             if(connected){
                 wifiTryConnect.close()
-                wifiNotice.setText("WIFI Connected")
+                wifiNotice.setText("WiFi가 연결되었습니다.")
             }else{
-                wifiNotice.setText("WIFI Disconnected")
+                wifiNotice.setText("WiFi 연결이 해제되었습니다.")
             }
             wifiNotice.open()
         }
@@ -198,7 +198,7 @@ Item {
                     wifiNotice.open()
                 }else{
                     wifiTryConnect.close()
-                    wifiNotice.setText("문제가 발생하였습니다. " + value)
+                    wifiNotice.setText("문제가 발생하였습니다." + value)
                     wifiNotice.open()
                 }
             }
@@ -210,7 +210,11 @@ Item {
                 wifiNotice.open()
             }else if(value === 1){
                 wifiTryConnect.close()
-                wifiNotice.setText("비밀번호 길이가 짧습니다.")
+                wifiNotice.setText("비밀번호 길이가 너무 짧습니다.")
+                wifiNotice.open()
+            }else if(value === 2){
+                wifiTryConnect.close()
+                wifiNotice.setText("비밀번호 길이가 너무 깁니다.")
                 wifiNotice.open()
             }
         }

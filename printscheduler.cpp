@@ -644,8 +644,12 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
             emit sendToUIPrintSettingError(6);
             return;
         }
-
-        if(setupForPrint(materialName)){
+        int ret = setupForPrint(materialName);
+        if(ret == -6){
+            emit sendToUIPrintSettingError(8);
+            return;
+        }
+        if(ret){
             emit sendToUIPrintSettingError(3);
             return;
         }
@@ -663,7 +667,12 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
         std::filesystem::path target = printFilePath.toStdString() + "/" + fileName.toStdString();
         std::filesystem::remove(target);
 
-        if(setupForPrint(materialName)){
+        int ret = setupForPrint(materialName);
+        if(ret == -6){
+            emit sendToUIPrintSettingError(8);
+            return;
+        }
+        if(ret){
             emit sendToUIPrintSettingError(3);
             return;
         }
