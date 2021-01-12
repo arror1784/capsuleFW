@@ -80,8 +80,11 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
     if(passwd.isEmpty()){
         networkSet(_ctrl,id,"key_mgmt","NONE");
     }else{
-        if(passwd.length() < 8 || passwd.length() > 63){
+        if(passwd.length() < 8){
             emit wifiAssocFailed(1);
+            return false;
+        }else if(passwd.length() > 63){
+            emit wifiAssocFailed(2);
             return false;
         }
         networkSet(_ctrl,id,"psk",passwd.toStdString());
@@ -313,66 +316,66 @@ void WPA::parseConnectedWifi()
 
     int tryCount = 3;
 
-        char resBuff[4096] = {0};
-        wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
+    char resBuff[4096] = {0};
+    wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
-        std::string myStr(resBuff), val, line;
-        std::stringstream ss(myStr);
-        QStringList array;
-        QMap<QString,QString> mp;
+    std::string myStr(resBuff), val, line;
+    std::stringstream ss(myStr);
+    QStringList array;
+    QMap<QString,QString> mp;
 
-        while (getline(ss, line, '\n')) {
-            std::vector<std::string> row;
-            std::stringstream s(line);
-            while (getline(s, val, '=')) {
-                row.push_back (val);
-            }
-            if(row.size() == 2){
-                mp.insert(QString::fromStdString(row[0]),QString::fromStdString(row[1]));
-            }
+    while (getline(ss, line, '\n')) {
+        std::vector<std::string> row;
+        std::stringstream s(line);
+        while (getline(s, val, '=')) {
+            row.push_back (val);
         }
-        if(mp["wpa_state"] == "COMPLETED"){
-            for (int i = 0; i < _wifiList.size();i++) {
-                if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
-                    _wifiList[i]->setConnected(true);
-            }else{
-                _wifiList[i]->setConnected(false);
-                }
-            }
-        }else{
-            for (int i = 0; i < _wifiList.size();i++) {
-                _wifiList[i]->setConnected(false);
-            }
+        if(row.size() == 2){
+            mp.insert(QString::fromStdString(row[0]),QString::fromStdString(row[1]));
         }
     }
+    if(mp["wpa_state"] == "COMPLETED"){
+        for (int i = 0; i < _wifiList.size();i++) {
+            if(_wifiList[i]->getSsid() == mp["ssid"] && (_wifiList[i]->getBssid() == mp["bssid"] || mp["bssid"] == "00:00:00:00:00:00")){
+                _wifiList[i]->setConnected(true);
+            }else{
+                _wifiList[i]->setConnected(false);
+            }
+        }
+    }else{
+        for (int i = 0; i < _wifiList.size();i++) {
+            _wifiList[i]->setConnected(false);
+        }
+    }
+}
 
 bool WPA::checkConnected()
 {
 
-        char resBuff[4096] = {0};
-        wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
+    char resBuff[4096] = {0};
+    wpa_ctrl_cmd(_ctrl,"STATUS",resBuff);
 
-        std::string myStr(resBuff), val, line;
-        std::stringstream ss(myStr);
-        QStringList array;
-        QMap<QString,QString> mp;
+    std::string myStr(resBuff), val, line;
+    std::stringstream ss(myStr);
+    QStringList array;
+    QMap<QString,QString> mp;
 
-        while (getline(ss, line, '\n')) {
-            std::vector<std::string> row;
-            std::stringstream s(line);
-            while (getline(s, val, '=')) {
-                row.push_back (val);
-            }
-            if(row.size() == 2){
-                mp.insert(QString::fromStdString(row[0]),QString::fromStdString(row[1]));
-            }
+    while (getline(ss, line, '\n')) {
+        std::vector<std::string> row;
+        std::stringstream s(line);
+        while (getline(s, val, '=')) {
+            row.push_back (val);
         }
-        if(mp["wpa_state"] == "COMPLETED"){
-            return true;
-        }else{
-            return false;
+        if(row.size() == 2){
+            mp.insert(QString::fromStdString(row[0]),QString::fromStdString(row[1]));
         }
     }
+    if(mp["wpa_state"] == "COMPLETED"){
+        return true;
+    }else{
+        return false;
+    }
+}
 int WPA::networkAdd(struct wpa_ctrl *ctrl)
 {
     char resBuff[4096] = {0};
@@ -481,8 +484,7 @@ int WPA::wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf)
     }
 
     buf[len -1] = '\0';
-    qDebug() << cmd;
-    qDebug() << buf;
+
 #endif
     return 0;
 
