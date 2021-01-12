@@ -49,7 +49,7 @@ void SchedulerThread::run()
 #ifdef __arm__
     wsClient.open();
 #endif
-//    wsClient.open();
+    wsClient.open();
 
     std::function<void()> func = [this]() {
         qDebug() << "func" << QThread::currentThread();
