@@ -104,7 +104,7 @@ Rectangle {
         }else if(code === 7){
             errorText.text = "출력완료 후 확인이 필요합니다.\n제품에서 close버튼을 눌러주세요."
         }else if(code === 8){
-            errorText.text = "Error: 지원하지 않은 layer height입니다."
+            errorText.text = "Error: 지원하지 않는 layer height입니다."
         }else{
             errorText.text = "Error: 오류가 발생했습니다."
         }

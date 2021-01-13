@@ -194,7 +194,7 @@ Item {
                 scanFail = true;
                 if(value === -52){
                     wifiTryConnect.close()
-                    wifiNotice.setText("지원하지 않은 공유기입니다.\n재부팅이 필요합니다.")
+                    wifiNotice.setText("지원하지 않는 공유기입니다.\n재부팅이 필요합니다.")
                     wifiNotice.open()
                 }else{
                     wifiTryConnect.close()
