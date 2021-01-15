@@ -306,7 +306,6 @@ Item {
     }
     Component.onCompleted: {
         connection.receiveFromQmlGetPrintInfoToWeb();
-
         clear()
     }
 }

@@ -117,6 +117,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 var arg = []
+                connection.receiveFromQmlUnlock();
                 connection.receiveFromQmlPrintStart(arg)
             }
         }
@@ -147,6 +148,7 @@ Item {
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                connection.receiveFromQmlUnlock();
                 stackView.pop(mainMenu,StackView.Immediate)
             }
         }

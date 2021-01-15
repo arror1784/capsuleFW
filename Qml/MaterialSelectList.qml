@@ -48,7 +48,7 @@ Item {
         color: "#ffffff"
         ListView{
             id: materialSelectList
-            width: 432
+            width: 375
             height: 200
             anchors.left: parent.left
             anchors.leftMargin: 10
@@ -68,6 +68,63 @@ Item {
                 onMaterialClicked: {
                     materialSelectList.currentIndex = index
                     materialSelectList.update()
+                }
+            }
+        }
+        Rectangle{
+            id: up
+
+            width: 50
+            height: 70
+
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+
+            color: "#B6CDDC"
+
+            radius: 8
+
+            Image {
+                id: upImage
+                anchors.centerIn: parent
+
+                scale: 0.7
+                source: "qrc:/image/arrow-up.png"
+            }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    materialSelectList.flick(0,500)
+                }
+            }
+        }
+        Rectangle{
+            id: down
+
+            width: 50
+            height: 70
+
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+
+            color: "#B6CDDC"
+
+            radius: 8
+            Image {
+                id: downImage
+
+                scale: 0.7
+                anchors.centerIn: parent
+                source: "qrc:/image/arrow-down.png"
+            }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    materialSelectList.flick(0,-500)
                 }
             }
         }

@@ -47,6 +47,9 @@ class BedSerialport : public QObject
 {
     Q_OBJECT
 public:
+#ifdef TEST_WITHOUT_SERIAL
+    BedSerialport(PrintScheduler *sched);
+#endif
     BedSerialport(QString portPath, PrintScheduler* sched);
 
     void setBedControl(BedControl* ctrl);

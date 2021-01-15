@@ -122,6 +122,7 @@ signals:
     void sendToUIAutoReboot(bool value);
 
 public slots:
+    void receiveFromUIPrintUnlock();
     void receiveFromUIPrintStart(QVariantList args);
 
     void receiveFromUIPrintStateChange(QString CMD);
@@ -166,7 +167,6 @@ private:
     Version _version;
 
     BedControl* _bedControl;
-    WebSocketClient *_wsClient;
 
     const QString _fileExtension = ".png";
 
@@ -190,7 +190,7 @@ private:
     long long _elapsedTime = 0;
     double _layerHeight = 0.0;
     long long _totalPrintTime = 0;
-    QString _printState = "ready";
+    QString _printState = "ready"; //ready, error, print, lock
 
     int _bedCuringLayer = 5;
     int _bedCuringTime = 0;

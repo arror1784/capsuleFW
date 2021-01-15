@@ -50,7 +50,7 @@ Item {
 
         Text {
             id: bedHeightText
-            text: qsTr("Bed height offset (micro)")
+            text: qsTr("Bed height offset (㎛)")
             color: "#666666"
             font.pixelSize: 20
             font.family: openSansRegular.name

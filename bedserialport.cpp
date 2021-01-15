@@ -2,6 +2,14 @@
 #include "bedcontrol.h"
 #include "printscheduler.h"
 
+#ifdef TEST_WITHOUT_SERIAL
+BedSerialport::BedSerialport(PrintScheduler *sched):
+    _sched(sched)
+{
+
+}
+#endif
+
 BedSerialport::BedSerialport(QString portPath, PrintScheduler *sched):
 m_standardOutput(stdout), _sched(sched)
 {
@@ -144,7 +152,7 @@ void BedSerialport::sendByteCommand(QByteArray buffer){
     return;
 }
 void BedSerialport::sendCommand(QString command){
-
+#ifndef TEST_WITHOUT_SERIAL
     QString buff(command);
     QStringList parts = buff.split(' ');
     commandFormat_t data = {0};
@@ -176,6 +184,7 @@ void BedSerialport::sendCommand(QString command){
     Logger::GetInstance()->write("send command : " + buff);
 //    qDebug() << "send command : " + buff;
     sendByteCommand(transData(data));
+#endif
 }
 QByteArray BedSerialport::transData(commandFormat_t command){
     uint8_t buf[50] = {0};

@@ -111,56 +111,54 @@ Item {
             }
         }
     }
-//    Rectangle {
-//        id: network
+    Rectangle {
+        id: firmwareUpdate
+        width: 215
+        height: 110
 
-//        width: 215
-//        height: 110
+        color: "#dceaf3"
 
-//        color: "#dceaf3"
+        radius: 8
 
-//        radius: 8
+        anchors.bottom: backButton.top
+        anchors.bottomMargin: 15
+        anchors.rightMargin: 15
+        anchors.right: parent.right
+        Rectangle{
+            width: firmwareUpdateText.width
+            height: firmwareUpdateImage.height + firmwareUpdateText.height
+            anchors.centerIn: parent
+            color: "#00000000"
+            Image {
+                id: firmwareUpdateImage
 
-//        anchors.bottom: backButton.top
-//        anchors.bottomMargin: 15
-//        anchors.leftMargin: 15
-//        anchors.left: parent.left
-//        Rectangle{
-//            width: networkText.width
-//            height: networkImage.height + networkText.height
-//            anchors.centerIn: parent
-//            color: "#00000000"
-//            Image {
-//                id: networkImage
-//                source: "qrc:/image/network.png"
+                width: 67
+                height: 67
 
-//                height: 67
-//                width: 67
+                source: "qrc:/image/wifi.png"
 
-//                scale: 0.57
+                scale: 0.8
+                anchors.horizontalCenter: firmwareUpdateText.horizontalCenter
+            }
+            Text {
+                id: firmwareUpdateText
+                text: qsTr("WIFI")
+                color: "#666666"
 
-//                anchors.horizontalCenter: networkText.horizontalCenter
-//            }
+                anchors.top: firmwareUpdateImage.bottom
 
-//            Text {
-//                id: networkText
-//                text: qsTr("Network")
-//                color: "#666666"
-
-//                anchors.top: networkImage.bottom
-
-//                font.family: openSansSemibold.name
-//                font.pixelSize: 20
-//                font.bold: true
-//            }
-//        }
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                stackView.push(Qt.resolvedUrl("qrc:/Qml/NetworkMenu.qml"),StackView.Immediate)
-//            }
-//        }
-//    }
+                font.family: openSansSemibold.name
+                font.pixelSize: 20
+                font.bold: true
+            }
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/WIFISelectList.qml"),StackView.Immediate)
+            }
+        }
+    }
     Rectangle {
         id: update
 
@@ -170,10 +168,7 @@ Item {
         color: "#dceaf3"
 
         radius: 8
-//        anchors.verticalCenter: network.verticalCenter
 
-//        anchors.right: parent.right
-//        anchors.rightMargin: 15
         anchors.bottom: backButton.top
         anchors.bottomMargin: 15
         anchors.leftMargin: 15
@@ -186,7 +181,6 @@ Item {
             Image {
                 id: updateImage
                 source: "qrc:/image/update.png"
-
 
                 scale: 0.7
                 anchors.horizontalCenter: updateText.horizontalCenter

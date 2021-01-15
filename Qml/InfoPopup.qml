@@ -41,7 +41,7 @@ Rectangle {
             width: optionText.width + valueText.width + 15
             height: optionText.height
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -10
+            anchors.verticalCenterOffset: -40
             Column{
                 id: optionText
                 Text {
@@ -52,6 +52,12 @@ Rectangle {
                 }
                 Text {
                     text: qsTr("Serial")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    color: "#474747"
+                }
+                Text {
+                    text: qsTr("WIFI")
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     color: "#474747"
@@ -82,6 +88,17 @@ Rectangle {
                 Text {
                     id: modelNoText
                     text: qsTr("15min")
+                    font.family: openSansSemibold.name
+                    font.pixelSize: 23
+                    font.bold: true
+                    color: "#474747"
+
+                    width: 230
+                    elide: Text.ElideRight
+                }
+                Text {
+                    id: wifiText
+                    text: ""
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     font.bold: true
@@ -146,13 +163,13 @@ Rectangle {
         verText.text = version
         modelNoText.text = modelNo
     }
-//    function setWifiConnectd(b){
-//        if(b){
-//            wifiText.text = "Connected"
-//        }else{
-//            wifiText.text = "DisConnected"
-//        }
-//    }
+    function setWifiConnectd(b){
+        if(b){
+            wifiText.text = "Connected"
+        }else{
+            wifiText.text = "Disconnected"
+        }
+    }
     function setIPAddress(address){
         ipText.text = address
     }

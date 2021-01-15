@@ -9,6 +9,7 @@ Item {
     property string ssidName
     property string currentssidName
     property int currentIndex: -1
+    property bool scanFail: false
 
     property var networkList
 
@@ -134,8 +135,8 @@ Item {
                 if(wifiSelectList.currentIndex === -1){
                     return
                 }
-                var data = wifi.getNetwork(wifiSelectList.currentIndex)
-                if(data.getConnected()){
+                var data = wifiModel.get(wifiSelectList.currentIndex)
+                if(data.current){
                     wifiDisconnectPopup.open(data.ssid,data.bssid)
                 }else{
                     wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
@@ -143,16 +144,19 @@ Item {
             }
         }
     }
+    WIFITryConnect{
+        id: wifiTryConnect
+    }
+
     WIFIConnectPopup{
         id:wifiConnectPopup
         onConnectButtonClicked: {
             wifi.networkConnect(ssid,bssid,pwd,id)
             wifi.networkScan()
-//            stackView.pop(it,StackView.Immediate)
         }
         onConnectButtonClickedWithoutPSWD: {
-            wifi.networkConnect(ssid,bssid,id)
-//            wifi.networkScan()
+            wifi.networkConnect(ssid,bssid,"",id)
+            wifi.networkScan()
         }
     }
     WIFIDisconnectPopup{
@@ -178,32 +182,69 @@ Item {
         }
         onConnectedChange:{
             if(connected){
-                wifiNotice.setText("WIFI Connected")
-            }/*else{
-                wifiNotice.setText("WIFI Disconneced")
-            }*/
+                wifiTryConnect.close()
+                wifiNotice.setText("WiFi가 연결되었습니다.")
+            }else{
+                wifiNotice.setText("WiFi 연결이 해제되었습니다.")
+            }
             wifiNotice.open()
-            updateWIFIList()
         }
-    }
-    WifiInfo{
-        id:info
+        onWifiScanFail:{
+            if(!scanFail){
+                scanFail = true;
+                if(value === -52){
+                    wifiTryConnect.close()
+                    wifiNotice.setText("지원하지 않는 공유기입니다.\n재부팅이 필요합니다.")
+                    wifiNotice.open()
+                }else{
+                    wifiTryConnect.close()
+                    wifiNotice.setText("문제가 발생하였습니다." + value)
+                    wifiNotice.open()
+                }
+            }
+        }
+        onWifiAssocFailed:{
+            if(value === 0){
+                wifiTryConnect.close()
+                wifiNotice.setText("인증에 실패하였습니다.")
+                wifiNotice.open()
+            }else if(value === 1){
+                wifiTryConnect.close()
+                wifiNotice.setText("비밀번호 길이가 너무 짧습니다.")
+                wifiNotice.open()
+            }else if(value === 2){
+                wifiTryConnect.close()
+                wifiNotice.setText("비밀번호 길이가 너무 깁니다.")
+                wifiNotice.open()
+            }
+        }
+        onWifiTryAssociate:{
+            wifiTryConnect.open()
+        }
     }
 
     function updateWIFIList(){
         wifiSelectList.currentIndex = -1
         wifiModel.clear()
-        var count = wifi.networkCount()
+        var wifiList = wifi.getWifiList()
 
-        for(var i = 0; i < count; i++){
-            var data = wifi.getNetwork(i)
+        for(var i = 0; i < wifiList.length; i++){
+            var data = wifiList[i]
             inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
         }
     }
     function inserWIFIList(ssid,bssid,flags,b,networkID){
-        wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        if(b){
+            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        }else{
+            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+        }
     }
+
     function networkScan(){
+        wifi.networkScan()
+    }
+    Component.onCompleted: {
         wifi.networkScan()
     }
 }

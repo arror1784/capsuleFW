@@ -38,7 +38,7 @@ PrintScheduler::PrintScheduler() :
 {
     _printerSetting.parse();
     _version.parse();
-
+#ifndef TEST_WITHOUT_SERIAL
     if(addSerialPort()){
         _USBPortConnection = false;
         _printState = "USBCONNECTIONERROR";
@@ -47,6 +47,10 @@ PrintScheduler::PrintScheduler() :
     }else{
         _USBPortConnection = true;
     }
+#else
+    bedSerialPort = new BedSerialport(this);
+    _USBPortConnection = true;
+#endif
 
     addPrintingBed('A');
 
@@ -123,6 +127,12 @@ void PrintScheduler::sendAutoReboot(bool value)
     emit sendToUIAutoReboot(value);
 }
 
+void PrintScheduler::receiveFromUIPrintUnlock()
+{
+    emit sendToUIChangeState("unlock");
+    _printState = "ready";
+}
+
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
@@ -138,11 +148,10 @@ void PrintScheduler::bedFinish(){
     _bedMoveFinished = PRINT_MOVE_NULL;
     _bedPrintImageNum = 0;
 
-    _printState = "ready";
+    _printState = "quit";
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
-//    _wsClient->sendEnableTimer(false);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -156,7 +165,6 @@ void PrintScheduler::bedError(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
-//    _wsClient->sendEnableTimer(false);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -213,7 +221,6 @@ void PrintScheduler::printLayer(){
 
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
-//        _wsClient->sendProgreeUpdate(((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100);
 
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
@@ -237,8 +244,6 @@ void PrintScheduler::receiveFromBedControl(int receive){
             imageChange();
             break;
         case PRINT_MOVE_INIT_OK:
-//            _wsClient->sendEnableTimer(true);
-//            _wsClient->sendSetTimerTime();
             _enableTimer = true;
             emit sendToUIEnableTimer(true);
         case PRINT_MOVE_LAYER_OK:
@@ -253,7 +258,6 @@ void PrintScheduler::receiveFromBedControl(int receive){
                 _enableTimer = false;
                 emit sendToUIEnableTimer(false);
                 emit sendToUIChangeState("pauseFinish");
-//                _wsClient->sendPauseFinish();
                 _bedWork = BED_PAUSE;
             }
             _bedMoveFinished = PRINT_MOVE_LAYER_OK;
@@ -268,13 +272,11 @@ void PrintScheduler::receiveFromBedControl(int receive){
             _bedMoveFinished = PRINT_MOVE_NULL;
             if(_bedError){
                 emit sendToUIChangeState("printErrorFinish");
-//                _wsClient->sendFinish();
-                _printState = "ready";
+                _printState = "lock";
                 _bedError = false;
             }else{
                 emit sendToUIChangeState("printFinish");
-                _printState = "ready";
-//                _wsClient->sendFinish();
+                _printState = "lock";
             }
             setMotorSpendtime();
             break;
@@ -330,7 +332,6 @@ void PrintScheduler::receiveFromSerialPort(int state){
 
 void PrintScheduler::printStart()
 {
-//    _wsClient->sendStart();
     _printState = "print";
     _lastStartTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
     emit sendToUIChangeToPrint();
@@ -342,7 +343,6 @@ void PrintScheduler::printStart()
 
 void PrintScheduler::printResume()
 {
-//    _wsClient->sendResume();
     _printState = "print";
     _bedWork = BED_WORK;
     printLayer();
@@ -619,7 +619,10 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
         emit sendToUIPrintSettingError(5);
         return;
     }
-    if(_printState != "ready"){
+    if(_printState == "lock"){
+        emit sendToUIPrintSettingError(7);
+        return;
+    }else if(_printState != "ready"){
         emit sendToUIPrintSettingError(4);
         return;
     }
@@ -641,8 +644,12 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
             emit sendToUIPrintSettingError(6);
             return;
         }
-
-        if(setupForPrint(materialName)){
+        int ret = setupForPrint(materialName);
+        if(ret == -6){
+            emit sendToUIPrintSettingError(8);
+            return;
+        }
+        if(ret){
             emit sendToUIPrintSettingError(3);
             return;
         }
@@ -660,7 +667,12 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
         std::filesystem::path target = printFilePath.toStdString() + "/" + fileName.toStdString();
         std::filesystem::remove(target);
 
-        if(setupForPrint(materialName)){
+        int ret = setupForPrint(materialName);
+        if(ret == -6){
+            emit sendToUIPrintSettingError(8);
+            return;
+        }
+        if(ret){
             emit sendToUIPrintSettingError(3);
             return;
         }
@@ -677,7 +689,6 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
 void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
 {
     if(CMD == "pause"){
-    //    _wsClient->sendPauseStart();
         _bedWork = BED_PAUSE_WORK;
         _printState = "pauseStart";
         emit sendToUIChangeState("pauseStart");
@@ -694,7 +705,6 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
         }*/
     }else if(CMD == "finish"){
         bedFinish();
-        _printState = "quit";
         emit sendToUIChangeState("quit");
     }
     return;

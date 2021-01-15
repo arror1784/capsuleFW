@@ -7,16 +7,18 @@
 #include <QList>
 #include <QMap>
 #include <thread>
+#include <mutex>
 
+#include "wpa_ctrl/wpa_ctrl.h"
 #include "wifiinfo.h"
 
 #ifdef __arm__
 #define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlan0"
 #else
-#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlx88366cfb28d9"
+#define WPA_CTRL_INTERFACE "/var/run/wpa_supplicant/wlp3s0"
 #endif
 
-
+#define TRY_ASSOCIATE "Trying to associate"
 
 enum class WIFIInfoType{
     BSSID=0,
@@ -52,29 +54,27 @@ signals:
     void connectedChange(bool connected);
 
     void refreshAvailable();
+    void wifiTryAssociate();
+
+    void wifiScanFail(int value);
+    void wifiAssocFailed(int value);
 
 public slots:
     void networkScan();
 
-    int networkCount();
-    WifiInfo* getNetwork(int index);
+    QList<QObject*> getWifiList();
 
     bool networkConnect(QString ssid,QString bssid,QString passwd,int networkID);
-    bool networkConnect(QString ssid,QString bssid,QString passwd);
     bool networkConnect(int id);
 
-    bool networkConnect(QString ssid,QString bssid,int networkID);
-    bool networkConnect(QString ssid,QString bssid);
-
     bool networkDisconnect();
-    void networkDelete(QString ssid);
-    void networkDelete(int id);
 
     void checkNetworkConnect();
 
-    QString currentSSID() const;
-
 private:
+    bool checkFileExists();
+    bool checkCommandSucess(char*);
+
     void ctrlConnect();
     void wpa_ctrl_event();
 
@@ -82,23 +82,30 @@ private:
 
     void parseWifiInfo(); //scan_result
     void parseNetworkInfo(); //saved_network_list
+    void parseConnectedWifi();
 
-    void checkConnected();
+    bool checkConnected();
 
-    int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, char *cmd, char *buf);
+    int networkAdd(struct wpa_ctrl *ctrl);
+    void networkSelect(struct wpa_ctrl *ctrl,int id);
+    void networkEnable(struct wpa_ctrl *ctrl,int id);
+    void networkDisable(struct wpa_ctrl *ctrl,int id);
+    void networkDelete(struct wpa_ctrl *ctrl,int id);
+    void networkSaveConfig(struct wpa_ctrl *ctrl);
+    void networkSet(struct wpa_ctrl *ctrl,int id,std::string key,std::string value);
+
+    int wpa_ctrl_cmd(struct wpa_ctrl *ctrl, const char *cmd, char *buf);
 
     QList<WifiInfo*> _wifiList;
+
+    std::mutex _commandMutex;
+    std::mutex _listMutex;
 
     std::thread th;
 
     wpa_ctrl* _ctrl;
     wpa_ctrl* _ctrl_event;
     
-    QString _currentSSID;
     QString _ctrlPath;
 
-    bool _connected = false;
 };
-
-
-

@@ -43,12 +43,15 @@ Rectangle {
         focus: true
 
         closePolicy: Popup.NoAutoClose
-
+        Pane{
+            anchors.fill: parent
+            focusPolicy: Qt.ClickFocus
+        }
         Rectangle{
             width: optionText.width + valueText.width + 15
             height: optionText.height
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -22
+            anchors.verticalCenterOffset: -32
             Column{
                 id: optionText
                 Text {
@@ -87,6 +90,15 @@ Rectangle {
                     placeholderText: "Password"
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
                     visible: wpaEnable
+                    onFocusChanged: {
+                        if(!focus){
+                            passwordField.activeFocusOnPress = true
+                            keyboardWidget.closeKeyboard()
+                        }
+                    }
+                    onPressed: {
+                        keyboardWidget.showKeyboard(passwordField)
+                    }
                 }
             }
         }
@@ -159,6 +171,9 @@ Rectangle {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if(passwordField.text.length === 0){
+                        return;
+                    }
                     if(wpaEnable){
                         connectButtonClicked(ssid,bssid,passwordField.text,networkID)
                     }else{
@@ -176,7 +191,10 @@ Rectangle {
             popupBack.visible = false
         }
     }
-
+    Connections{
+        id:kWidgetConntion
+        target: keyboardWidget
+    }
     function open(ssid,bssid,id,wpa){
         setSSID(ssid)
         setBSSID(bssid)
