@@ -8,7 +8,9 @@ class TransImageRGB
 public:
     TransImageRGB();
 
-    static bool transImage(std::string target, std::string path,int rotate = 0);
+    static bool transImage(std::string target, std::string path, int width, int height, int rotate = 0);
+    static bool L10transImage(std::string target, std::string path);
+
 };
 
 #endif // TRANSIMAGERGB_H
