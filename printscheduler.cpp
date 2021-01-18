@@ -22,6 +22,7 @@
 #include "modelno.h"
 #include "kinetimecalc.h"
 #include "infosetting.h"
+#include "transimagergb.h"
 
 #include "zip/zip.h"
 
@@ -232,7 +233,10 @@ void PrintScheduler::printLayer(){
 int PrintScheduler::imageChange(){
 
     QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
+
     Logger::GetInstance()->write("print image path : " + fullPath);
+
+//    TransImageRGB::transImage(fullPath.toStdString().substr(6),fullPath.toStdString().substr(6),270);
 
     emit sendToLCDChangeImage(fullPath);
 
@@ -575,8 +579,6 @@ int PrintScheduler::setupForPrint(QString materialName)
     return 0;
 }
 
-
-
 void PrintScheduler::deletePrintFolder()
 {
     std::filesystem::path dir(printFilePath.toStdString());
@@ -599,6 +601,12 @@ int PrintScheduler::unZipFiles(QString path)
 
         file.extractall(printFilePath.toStdString());
 
+        for (const auto & file : std::filesystem::directory_iterator(printFilePath.toStdString())){
+            if(file.path().string().find(_fileExtension.toStdString()) != std::string::npos){
+                qDebug() << QString(file.path().string().data());
+                TransImageRGB::transImage(file.path().string(),file.path().string(),270);
+            }
+        }
     } catch (std::exception e) {
         return -1;
     }

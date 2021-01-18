@@ -6,8 +6,10 @@ Window {
     id: lcdWindow
     visible: true
     visibility: Window.FullScreen
-//    width: 1440
-//    height: 2560
+
+    width: 540
+    height: 2560
+
     title: qsTr("Hello World")
     color: "#000000"
     screen: Qt.application.screens[0]
@@ -17,11 +19,10 @@ Window {
 
     Image{
         id: printImage
-        width: 2560
-        height: 1440
 //        asynchronous: true
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
+        anchors.fill: parent
         anchors.centerIn: parent
 //            anchors.fill: parent
 
@@ -29,7 +30,7 @@ Window {
 
         fillMode: Image.PreserveAspectCrop
         source: "qrc:/image/defaultBlackImage.png"
-        rotation: 90
+//        rotation: 90
         onStatusChanged: {
 //            if (printImage.status === Image.Ready) console.log('Loaded')
         }
