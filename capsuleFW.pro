@@ -47,6 +47,7 @@ SOURCES += \
     resinsetting.cpp \
     resinupdater.cpp \
     schedulerthread.cpp \
+    transimagergb.cpp \
     updateconnector.cpp \
     updater.cpp \
     version.cpp \
@@ -105,6 +106,7 @@ HEADERS += \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
+    transimagergb.h \
     updateconnector.h \
     updater.h \
     version.h \
