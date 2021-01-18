@@ -90,8 +90,8 @@ bool TransImageRGB::L10transImage(std::string target, std::string path)
                 if(i + j > sourceWidth){
                     break;
                 }
-                auto col = oriImg.pixelColor(x,i + j);
-                int total = col.red();
+                auto col = oriImg.pixel(x,i + j);
+                int total = col & 0x000000ff;
                 if(j == 0){
                     transRed = total;
                 }else if(j == 1){
