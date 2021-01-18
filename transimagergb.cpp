@@ -82,16 +82,16 @@ bool TransImageRGB::L10transImage(std::string target, std::string path)
         int y = 0;
         for(int i = 0; i < sourceHeight;i+=3){
 
-            int transRed = 0;
-            int transGreen = 0;
-            int transBlue = 0;
+            uint32_t transRed = 0;
+            uint32_t transGreen = 0;
+            uint32_t transBlue = 0;
 
             for(int j = 0; j < 3; j++){
                 if(i + j > sourceWidth){
                     break;
                 }
                 auto col = oriImg.pixel(x,i + j);
-                int total = col & 0x000000ff;
+                uint32_t total = col & 0x000000ff;
                 if(j == 0){
                     transRed = total;
                 }else if(j == 1){
@@ -100,7 +100,8 @@ bool TransImageRGB::L10transImage(std::string target, std::string path)
                     transBlue = total;
                 }
             }
-            saveImage.setPixel(y++,(sourceWidth - 1) - x, QColor(transRed,transGreen,transBlue).rgb());
+            QRgb rgb = RGB_MASK & (transRed << 16 | transGreen << 8 | transBlue);
+            saveImage.setPixel(y++,(sourceWidth - 1) - x, rgb);
         }
     }
     QImageWriter iw(path.data());
