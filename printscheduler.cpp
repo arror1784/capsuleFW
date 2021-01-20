@@ -604,7 +604,7 @@ int PrintScheduler::unZipFiles(QString path)
         for (const auto & file : std::filesystem::directory_iterator(printFilePath.toStdString())){
             if(file.path().string().find(_fileExtension.toStdString()) != std::string::npos){
                 qDebug() << QString(file.path().string().data());
-                TransImageRGB::L10transImage(file.path().string(),file.path().string());
+//                TransImageRGB::L10transImage(file.path().string(),file.path().string());
             }
         }
     } catch (std::exception e) {
