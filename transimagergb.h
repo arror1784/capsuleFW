@@ -3,14 +3,12 @@
 
 #include <string>
 
-class TransImageRGB
+#include <optional>
+#include <QImage>
+namespace  TransImageRGB
 {
-public:
-    TransImageRGB();
-
-    static bool transImage(std::string target, std::string path, int width, int height, int rotate = 0);
-    static bool L10transImage(std::string target, std::string path);
-
+    bool transImage(std::string target, std::string path, int width, int height, int rotate = 30);
+    std::optional<QImage> L10transImage(std::string target);
 };
 
 #endif // TRANSIMAGERGB_H

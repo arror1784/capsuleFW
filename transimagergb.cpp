@@ -5,13 +5,10 @@
 #include <QImage>
 #include <QColor>
 #include <QMatrix>
-
-TransImageRGB::TransImageRGB()
-{
-
-}
-
 #include <QDebug>
+
+using namespace TransImageRGB;
+
 bool TransImageRGB::transImage(std::string target, std::string path, int width, int height,int rotate)
 {
     QImageReader ir(target.data());
@@ -66,15 +63,21 @@ bool TransImageRGB::transImage(std::string target, std::string path, int width, 
     return true;
 }
 
-bool TransImageRGB::L10transImage(std::string target, std::string path)
+std::optional<QImage> TransImageRGB::L10transImage(std::string target)
 {
+    std::optional<QImage> img;
+
     QImageReader ir(target.data());
     auto oriImg = ir.read();
-    QImage saveImage(540, 2560, QImage::Format_RGB32);
 
     if(oriImg.width() != 2560 || oriImg.height() != 1620){
-        return false;
+        return img;
     }
+    img.emplace(540, 2560, QImage::Format_RGB32);
+//    QImage saveImage(540, 2560, QImage::Format_RGB32);
+
+    auto imgE = img.value();
+
     int sourceWidth = oriImg.width();
     int sourceHeight = oriImg.height();
 
@@ -101,11 +104,9 @@ bool TransImageRGB::L10transImage(std::string target, std::string path)
                 }
             }
             QRgb rgb = RGB_MASK & (transRed << 16 | transGreen << 8 | transBlue);
-            saveImage.setPixel(y++,(sourceWidth - 1) - x, rgb);
+            imgE.setPixel(y++,(sourceWidth - 1) - x, rgb);
         }
     }
-    QImageWriter iw(path.data());
-    iw.write(saveImage);
 
-    return true;
+    return img;
 }
