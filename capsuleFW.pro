@@ -37,6 +37,7 @@ SOURCES += \
     filevalidator.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
+    l10imageprovider.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
@@ -97,6 +98,7 @@ HEADERS += \
     filevalidator.h \
     infosetting.h \
     kinetimecalc.h \
+    l10imageprovider.h \
     logger.h \
     modelno.h \
     networkcontrol.h \

@@ -232,7 +232,7 @@ void PrintScheduler::printLayer(){
 }
 int PrintScheduler::imageChange(){
 
-    QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
+    QString fullPath = QStringLiteral("image://L10/") + QString::number(_bedPrintImageNum);
 
     Logger::GetInstance()->write("print image path : " + fullPath);
 

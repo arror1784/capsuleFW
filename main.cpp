@@ -25,6 +25,7 @@
 #include "wpa_ctrl/wpa_ctrl.h"
 #include "VKeyboard/keyboardwidget.h"
 
+#include "l10imageprovider.h"
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -55,6 +56,8 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("connection",&connecter);
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
+
+    engine.addImageProvider(QLatin1String("L10"), new L10ImageProvider);
 
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
