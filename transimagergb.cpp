@@ -63,17 +63,17 @@ bool TransImageRGB::transImage(std::string target, std::string path, int width, 
     return true;
 }
 
-QImage TransImageRGB::L10transImage(std::string target)
+std::optional<QImage> TransImageRGB::L10transImage(std::string target)
 {
-//    std::optional<QImage> img;
+    std::optional<QImage> img;
 
     QImageReader ir(target.data());
     auto oriImg = ir.read();
 
-//    img.emplace(540, 2560, QImage::Format_RGB32);
-    QImage saveImage(540, 2560, QImage::Format_RGB32);
+    img.emplace(540, 2560, QImage::Format_RGB32);
+//    QImage saveImage(540, 2560, QImage::Format_RGB32);
 
-//    auto imgE = img.value();
+    auto imgE = img.value();
 
     int sourceWidth = oriImg.width();
     int sourceHeight = oriImg.height();
@@ -101,9 +101,9 @@ QImage TransImageRGB::L10transImage(std::string target)
                 }
             }
             QRgb rgb = RGB_MASK & (transRed << 16 | transGreen << 8 | transBlue);
-            saveImage.setPixel(y++,(sourceWidth - 1) - x, rgb);
+            imgE.setPixel(y++,(sourceWidth - 1) - x, rgb);
         }
     }
 
-    return saveImage;
+    return imgE;
 }

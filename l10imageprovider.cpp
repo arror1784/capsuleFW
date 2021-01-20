@@ -14,6 +14,8 @@ QImage L10ImageProvider::requestImage(const QString &id, QSize *size, const QSiz
     QString path = printFilePath + "/" + id + ".png";
     if (size)
        *size = QSize(width, height);
-    return TransImageRGB::L10transImage(path.toStdString());
-//    return img;
+    auto img = TransImageRGB::L10transImage(path.toStdString());
+    if(!img)
+        return QImage();
+    return img.value();
 }
