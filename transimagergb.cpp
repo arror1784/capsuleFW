@@ -1,4 +1,4 @@
-#include "transimagergb.h"
+﻿#include "transimagergb.h"
 
 #include <QImageReader>
 #include <QImageWriter>
@@ -63,20 +63,17 @@ bool TransImageRGB::transImage(std::string target, std::string path, int width, 
     return true;
 }
 
-std::optional<QImage> TransImageRGB::L10transImage(std::string target)
+QImage TransImageRGB::L10transImage(std::string target)
 {
-    std::optional<QImage> img;
+//    std::optional<QImage> img;
 
     QImageReader ir(target.data());
     auto oriImg = ir.read();
 
-    if(oriImg.width() != 2560 || oriImg.height() != 1620){
-        return img;
-    }
-    img.emplace(540, 2560, QImage::Format_RGB32);
-//    QImage saveImage(540, 2560, QImage::Format_RGB32);
+//    img.emplace(540, 2560, QImage::Format_RGB32);
+    QImage saveImage(540, 2560, QImage::Format_RGB32);
 
-    auto imgE = img.value();
+//    auto imgE = img.value();
 
     int sourceWidth = oriImg.width();
     int sourceHeight = oriImg.height();
@@ -104,9 +101,9 @@ std::optional<QImage> TransImageRGB::L10transImage(std::string target)
                 }
             }
             QRgb rgb = RGB_MASK & (transRed << 16 | transGreen << 8 | transBlue);
-            imgE.setPixel(y++,(sourceWidth - 1) - x, rgb);
+            saveImage.setPixel(y++,(sourceWidth - 1) - x, rgb);
         }
     }
 
-    return img;
+    return saveImage;
 }
