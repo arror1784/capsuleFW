@@ -7,9 +7,6 @@ Window {
     visible: true
     visibility: Window.FullScreen
 
-    width: 540
-    height: 2560
-
     title: qsTr("Hello World")
     color: "#000000"
     screen: Qt.application.screens[0]
@@ -58,7 +55,10 @@ Window {
             img.source = path
         }
         onSendToQmlImageScale:{
-            img.scale = value
+            img.scale = scale
+        }
+        onSendToQmlImageRotate:{
+            img.rotation = rotate
         }
     }
     Component.onCompleted: {
