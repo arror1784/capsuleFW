@@ -9,6 +9,9 @@
 #include "wpa.h"
 #include "websocketclient.h"
 
+#include "l10imageprovider.h"
+#include "printimage.h"
+
 SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update) : _engine(engine), _conn(conn), _updater(update)
 {
 
@@ -16,11 +19,11 @@ SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &co
 
 void SchedulerThread::run()
 {
-    qDebug() << "sched" << QThread::currentThread();
-
-    _sched = new PrintScheduler();
     ResinUpdater ru(_sched);
     Updater up;
+    L10ImageProvider l10ImageProvider;
+    PrintImage printImage;
+    _sched = new PrintScheduler(&l10ImageProvider,&printImage);
 
     QObject::connect(&up,&Updater::updateMCUFirmware,_sched,&PrintScheduler::receiveFromUpdaterFirmUpdate);
     QObject::connect(_sched,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
@@ -28,8 +31,6 @@ void SchedulerThread::run()
     _conn.schedConnect(_sched);
     _updater.swUpdaterConnect(&up);
     _updater.resinUpdaterConnect(&ru);
-
-
 
     WebSocketClient wsClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
     QObject::connect(&wsClient,&WebSocketClient::startByWeb,_sched,&PrintScheduler::receiveFromUIPrintStart);
@@ -49,16 +50,20 @@ void SchedulerThread::run()
 #ifdef __arm__
     wsClient.open();
 #endif
-    wsClient.open();
+//    wsClient.open();
 
-    std::function<void()> func = [this]() {
-        qDebug() << "func" << QThread::currentThread();
+    std::function<void()> func = [this,&l10ImageProvider,&printImage]() {
+
+        _engine.addImageProvider(QLatin1String("L10"), &l10ImageProvider);
+        QQmlContext* ctx = _engine.rootContext();
+        ctx->setContextProperty("printImage",&printImage);
 
 #ifdef __arm__
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 #else
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+        _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 
 #ifdef MCU_UPDATE_TEST
         _updater.sendToSWMCUUpdate("/home/jsh/KinematicFW_F446.binary");
