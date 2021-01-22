@@ -17,9 +17,14 @@ void PrintImage::imageChange(QString path)
     emit sendToQmlChangeImage(path);
 }
 
-void PrintImage::imageScale(double value)
+void PrintImage::imageScale(double scale)
 {
-    emit sendToQmlImageScale(value);
+    emit sendToQmlImageScale(scale);
+}
+
+void PrintImage::imageRotate(int rotate)
+{
+    emit sendToQmlImageRotate(rotate);
 }
 void PrintImage::waitImageWrote()
 {
