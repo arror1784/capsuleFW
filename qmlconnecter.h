@@ -34,8 +34,6 @@ signals:
     void sendToSchedAutoReboot();
 
 
-    void sendToQmlChangeImage(QString imagePath);
-    void sendToQmlSetImageScale(double value);
     void sendToQmlUpdateProgress(int progress);
     void sendToQmlChangeToPrint();
     void sendToQmlChangeState(QString state);
@@ -77,8 +75,6 @@ public slots:
     void receiveFromQmlUnlock(){emit sendToSchedUnlock();}
     void receiveFromQmlAutoReboot(){emit sendToSchedAutoReboot();}
 
-    void receiveFromSchedChangeImage(QString imagePath){emit sendToQmlChangeImage(imagePath);}
-    void receiveFromSchedSetImageScale(double value){emit sendToQmlSetImageScale(value);}
     void receiveFromSchedUpdateProgress(int progress){emit sendToQmlUpdateProgress(progress);}
     void receiveFromSchedChangeToPrint(){emit sendToQmlChangeToPrint();}
     void receiveFromSchedChangeState(QString state){emit sendToQmlChangeState(state);}
