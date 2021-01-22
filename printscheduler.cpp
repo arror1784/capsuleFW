@@ -234,10 +234,7 @@ void PrintScheduler::printLayer(){
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
 
-
-
-
-        _printImage->waitImageWrited();
+        _printImage->waitImageWrote();
 
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);

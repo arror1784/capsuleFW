@@ -33,7 +33,7 @@ Window {
 //        rotation: 90
         onStatusChanged: {
             if (img.status === Image.Ready) {
-                printImage.imageWrited()
+                printImage.imageWrote()
             }
         }
     }

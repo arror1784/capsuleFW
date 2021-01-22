@@ -15,16 +15,16 @@ signals:
     void sendToQmlChangeImage(QString path);
     void sendToQmlImageScale(double value);
 public slots:
-    void imageWrited();
+    void imageWrote();
 public:
     void imageChange(QString path);
     void imageScale(double value);
-    void waitImageWrited();
+    void waitImageWrote();
 
 private:
     std::condition_variable _cv_image;
     std::mutex _cv_image_m;
-    bool _imageWrited = true;
+    bool _imageWrote = true;
 };
 
 #endif // PRINTIMAGE_H
