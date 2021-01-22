@@ -43,6 +43,7 @@ SOURCES += \
     modelno.cpp \
     networkcontrol.cpp \
     printersetting.cpp \
+    printimage.cpp \
     printscheduler.cpp \
     qmlconnecter.cpp \
     resinsetting.cpp \
@@ -103,6 +104,7 @@ HEADERS += \
     modelno.h \
     networkcontrol.h \
     printersetting.h \
+    printimage.h \
     printscheduler.h \
     qmlconnecter.h \
     resinsetting.h \
