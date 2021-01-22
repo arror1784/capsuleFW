@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+﻿#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QString>
 
@@ -24,8 +24,8 @@
 
 #include "wpa_ctrl/wpa_ctrl.h"
 #include "VKeyboard/keyboardwidget.h"
+#include "printimage.h"
 
-#include "l10imageprovider.h"
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -43,7 +43,8 @@ int main(int argc, char *argv[])
     NetworkControl nc;
     QmlConnecter connecter;
     UpdateConnector up;
-    SchedulerThread backThread(engine,connecter,up);
+    PrintImage printImage;
+    SchedulerThread backThread(engine,connecter,up,&printImage);
 
     backThread.start();
 
@@ -56,9 +57,7 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("connection",&connecter);
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
-
-    engine.addImageProvider(QLatin1String("L10"), new L10ImageProvider);
-
+    ctx->setContextProperty("printImage",&printImage);
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 //    if (engine.rootObjects().isEmpty())

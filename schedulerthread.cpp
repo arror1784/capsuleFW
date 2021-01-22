@@ -12,18 +12,18 @@
 #include "l10imageprovider.h"
 #include "printimage.h"
 
-SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update) : _engine(engine), _conn(conn), _updater(update)
+SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImage* printImage)
+    : _engine(engine), _conn(conn), _updater(update), _printImage(printImage)
 {
 
 }
 
 void SchedulerThread::run()
 {
+    L10ImageProvider l10ImageProvider;
+    _sched = new PrintScheduler(&l10ImageProvider,_printImage);
     ResinUpdater ru(_sched);
     Updater up;
-    L10ImageProvider l10ImageProvider;
-    PrintImage printImage;
-    _sched = new PrintScheduler(&l10ImageProvider,&printImage);
 
     QObject::connect(&up,&Updater::updateMCUFirmware,_sched,&PrintScheduler::receiveFromUpdaterFirmUpdate);
     QObject::connect(_sched,&PrintScheduler::MCUFirmwareUpdateFinished,&up,&Updater::MCUFirmwareUpdateFinished);
@@ -33,6 +33,7 @@ void SchedulerThread::run()
     _updater.resinUpdaterConnect(&ru);
 
     WebSocketClient wsClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+
     QObject::connect(&wsClient,&WebSocketClient::startByWeb,_sched,&PrintScheduler::receiveFromUIPrintStart);
     QObject::connect(&wsClient,&WebSocketClient::changeStateByWeb,_sched,&PrintScheduler::receiveFromUIPrintStateChange);
     QObject::connect(&wsClient,&WebSocketClient::getMaterialListbyWeb,_sched,&PrintScheduler::receiveFromUIGetMaterialList);
@@ -52,11 +53,10 @@ void SchedulerThread::run()
 #endif
 //    wsClient.open();
 
-    std::function<void()> func = [this,&l10ImageProvider,&printImage]() {
+    std::function<void()> func = [this,&l10ImageProvider]() {
 
         _engine.addImageProvider(QLatin1String("L10"), &l10ImageProvider);
-        QQmlContext* ctx = _engine.rootContext();
-        ctx->setContextProperty("printImage",&printImage);
+
 
 #ifdef __arm__
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
