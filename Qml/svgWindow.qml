@@ -18,7 +18,7 @@ Window {
 //    flags: Qt.WindowStaysOnTopHint
 
     Image{
-        id: printImage
+        id: img
 //        asynchronous: true
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
@@ -32,7 +32,9 @@ Window {
         source: "qrc:/image/defaultBlackImage.png"
 //        rotation: 90
         onStatusChanged: {
-//            if (printImage.status === Image.Ready) console.log('Loaded')
+            if (img.status === Image.Ready) {
+                printImage.imageWrited()
+            }
         }
     }
     MouseArea{
@@ -41,20 +43,22 @@ Window {
     }
     Connections{
         target: connection
-        onSendToQmlChangeImage:{
-            console.log(imagePath)
-            printImage.source = imagePath
-        }
-        onSendToQmlSetImageScale:{
-            printImage.scale = value
-        }
-
         onSendToQmlChangeState:{
             if(state === "printFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
             }else if(state === "printErrorFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
             }
+        }
+    }
+    Connections{
+        target: printImage
+        onSendToQmlChangeImage:(path) => {
+            console.log(path)
+            img.source = path
+        }
+        onSendToQmlImageScale:{
+            img.scale = value
         }
     }
     Component.onCompleted: {

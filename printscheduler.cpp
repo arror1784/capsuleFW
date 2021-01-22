@@ -27,6 +27,8 @@
 #include "zip/zip.h"
 
 #include "ymodem.h"
+#include "l10imageprovider.h"
+#include "printimage.h"
 
 #include <filesystem>
 
@@ -34,9 +36,12 @@ const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
-PrintScheduler::PrintScheduler() :
+PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImage* pi) :
     _LCDState(true)
 {
+    _l10imageProvider = provider;
+    _printImage = pi;
+
     _printerSetting.parse();
     _version.parse();
 #ifndef TEST_WITHOUT_SERIAL
@@ -136,9 +141,15 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
+
+    requestChangeImage(0);
+    _printImage->imageChange(_imageTransfuture.get());
+    requestChangeImage(1);
+//    waitImageWrited();
+    _bedPrintImageNum++;
+
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
-    imageChange();
     return;
 }
 
@@ -223,29 +234,37 @@ void PrintScheduler::printLayer(){
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
 
+
+
+
+        _printImage->waitImageWrited();
+
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
         }else{
             _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
         }
+
     }
 }
-int PrintScheduler::imageChange(){
+void PrintScheduler::requestChangeImage(int id){
 
-    QString fullPath = QStringLiteral("image://L10/") + QString::number(_bedPrintImageNum);
+    _imageTransfuture = std::async([this](int id) {
+        QString imagePath = QStringLiteral("image://L10/") + QString::number(id);
+        QString path = printFilePath + "/" + QString::number(id) + ".png";
 
-    Logger::GetInstance()->write("print image path : " + fullPath);
+        Logger::GetInstance()->write("print image path : " + imagePath);
 
-//    TransImageRGB::transImage(fullPath.toStdString().substr(6),fullPath.toStdString().substr(6),270);
+        _l10imageProvider->transImage(path,_bedPrintImageNum);
+        return imagePath;
+    },id);
 
-    emit sendToLCDChangeImage(fullPath);
-
-    return 0;
 }
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            imageChange();
+            _printImage->imageChange(_imageTransfuture.get());
+            requestChangeImage(_bedPrintImageNum);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -566,7 +585,7 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _bedControl->setUVtime(0);
 
-        emit sendToLCDSetImageScale(materialSetting.contractionRatio);
+        _printImage->imageScale(materialSetting.contractionRatio);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
@@ -600,13 +619,6 @@ int PrintScheduler::unZipFiles(QString path)
         miniz_cpp::zip_file file(target);
 
         file.extractall(printFilePath.toStdString());
-
-        for (const auto & file : std::filesystem::directory_iterator(printFilePath.toStdString())){
-            if(file.path().string().find(_fileExtension.toStdString()) != std::string::npos){
-                qDebug() << QString(file.path().string().data());
-//                TransImageRGB::L10transImage(file.path().string(),file.path().string());
-            }
-        }
     } catch (std::exception e) {
         return -1;
     }
