@@ -66,14 +66,16 @@ bool TransImageRGB::transImage(std::string target, std::string path, int width, 
 std::optional<QImage> TransImageRGB::L10transImage(std::string target)
 {
     std::optional<QImage> img;
+    img.emplace(540, 2560, QImage::Format_RGB32);
 
     QImageReader ir(target.data());
     if(!ir.canRead()){
         return img;
     }
     auto oriImg = ir.read();
-
-    img.emplace(540, 2560, QImage::Format_RGB32);
+    if(oriImg.width() != 2560 || oriImg.height() != 1620){
+        return img;
+    }
     auto imgE = img.value();
 
     int sourceWidth = oriImg.width();
