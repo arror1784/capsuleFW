@@ -57,7 +57,8 @@ PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImage* pi) :
     bedSerialPort = new BedSerialport(this);
     _USBPortConnection = true;
 #endif
-
+    //check product
+    _printImage->imageRotate(0);
     addPrintingBed('A');
 
 }
@@ -142,10 +143,10 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    requestChangeImage(0);
+    requestTransImage(0);
     _printImage->imageChange(_imageTransfuture.get());
-    requestChangeImage(1);
-//    waitImageWrited();
+    requestTransImage(1);
+    _printImage->waitImageWrote();
     _bedPrintImageNum++;
 
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
@@ -164,6 +165,7 @@ void PrintScheduler::bedFinish(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
+    _printImage->imageChange("qrc:/image/defaultBlackImage.png");
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -244,7 +246,7 @@ void PrintScheduler::printLayer(){
 
     }
 }
-void PrintScheduler::requestChangeImage(int id){
+void PrintScheduler::requestTransImage(int id){
 
     _imageTransfuture = std::async([this](int id) {
         QString imagePath = QStringLiteral("image://L10/") + QString::number(id);
@@ -261,7 +263,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
             _printImage->imageChange(_imageTransfuture.get());
-            requestChangeImage(_bedPrintImageNum);
+            requestTransImage(_bedPrintImageNum);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;

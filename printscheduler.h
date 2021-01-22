@@ -54,7 +54,7 @@ public:
 
     void printLayer();
 
-    void requestChangeImage(int id);
+    void requestTransImage(int id);
     void printBed();
     void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
