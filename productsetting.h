@@ -1,6 +1,7 @@
 #ifndef PRODUCTSETTING_H
 #define PRODUCTSETTING_H
 
+#include "Singleton.h"
 #include "common/jsonreadsetting.h"
 #include "common/jsonsetting.h"
 
@@ -9,7 +10,7 @@ enum class ProductType{
     L10
 };
 
-class ProductSetting : public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting
+class ProductSetting : public Hix::Common::Singleton<ProductSetting>, public Hix::Common::Json::JsonSetting, public Hix::Common::Json::JsonReadSetting
 {
 public:
     ProductSetting();

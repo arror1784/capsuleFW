@@ -142,10 +142,10 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    if(_product.product == ProductType::C10){
+    if(ProductSetting::getInstance().product == ProductType::C10){
         _printImage->imageChange(QStringLiteral("file:/") + printFilePath + "/0" + _fileExtension);
         _printImage->waitImageWrote();
-    }else if (_product.product == ProductType::L10){
+    }else if(ProductSetting::getInstance().product == ProductType::L10){
         requestTransImage(0);
         _printImage->imageChange(_imageTransfuture.get());
         requestTransImage(1);
@@ -262,10 +262,10 @@ void PrintScheduler::requestTransImage(int id){
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            if(_product.product == ProductType::C10){
+            if(ProductSetting::getInstance().product == ProductType::C10){
                 QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
                 _printImage->imageChange(fullPath);
-            }else if (_product.product == ProductType::L10){
+            }else if (ProductSetting::getInstance().product == ProductType::L10){
                 _printImage->imageChange(_imageTransfuture.get());
                 requestTransImage(_bedPrintImageNum + 1);
             }
@@ -594,10 +594,10 @@ int PrintScheduler::setupForPrint(QString materialName)
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
 
-        if(_product.product == ProductType::C10){
+        if(ProductSetting::getInstance().product == ProductType::C10){
             qDebug() << "C10";
             _printImage->imageRotate(90);
-        }else if(_product.product == ProductType::L10){
+        }else if(ProductSetting::getInstance().product == ProductType::L10){
             qDebug() << "L10";
             _printImage->imageRotate(0);
         }

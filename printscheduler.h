@@ -168,7 +168,6 @@ public:
 private:
     PrinterSetting _printerSetting;
     Version _version;
-    ProductSetting _product;
 
     BedControl* _bedControl;
 
