@@ -29,6 +29,7 @@
 #include "updater.h"
 #include "version.h"
 #include "printersetting.h"
+#include "productsetting.h"
 
 class WebSocketClient;
 class BedControl;
@@ -167,6 +168,7 @@ public:
 private:
     PrinterSetting _printerSetting;
     Version _version;
+    ProductSetting _product;
 
     BedControl* _bedControl;
 

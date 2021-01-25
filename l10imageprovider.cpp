@@ -1,7 +1,7 @@
 #include "l10imageprovider.h"
 #include "transimagergb.h"
 #include <QDebug>
-const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
+
 L10ImageProvider::L10ImageProvider() : QQuickImageProvider(QQuickImageProvider::Image)
 {
 

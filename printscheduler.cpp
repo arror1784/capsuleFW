@@ -1,4 +1,4 @@
-#include "printscheduler.h"
+﻿#include "printscheduler.h"
 #include "bedcontrol.h"
 #include "bedserialport.h"
 
@@ -60,7 +60,6 @@ PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImage* pi) :
     //check product
     _printImage->imageRotate(0);
     addPrintingBed('A');
-
 }
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
@@ -143,19 +142,20 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    requestTransImage(0);
-    _printImage->imageChange(_imageTransfuture.get());
-    requestTransImage(1);
-    _printImage->waitImageWrote();
-    _bedPrintImageNum++;
-
+    if(_product.product == ProductType::C10){
+        _printImage->imageChange(QStringLiteral("file:/") + printFilePath + "/0" + _fileExtension);
+        _printImage->waitImageWrote();
+    }else if (_product.product == ProductType::L10){
+        requestTransImage(0);
+        _printImage->imageChange(_imageTransfuture.get());
+        requestTransImage(1);
+    }
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
     return;
 }
 
 void PrintScheduler::bedFinish(){
-
 
     _bedWork = BED_FINISH_WORK;
     _bedMoveFinished = PRINT_MOVE_NULL;
@@ -262,8 +262,13 @@ void PrintScheduler::requestTransImage(int id){
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            _printImage->imageChange(_imageTransfuture.get());
-            requestTransImage(_bedPrintImageNum);
+            if(_product.product == ProductType::C10){
+                QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
+                _printImage->imageChange(fullPath);
+            }else if (_product.product == ProductType::L10){
+                _printImage->imageChange(_imageTransfuture.get());
+                requestTransImage(_bedPrintImageNum + 1);
+            }
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -588,6 +593,14 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
+
+        if(_product.product == ProductType::C10){
+            qDebug() << "C10";
+            _printImage->imageRotate(90);
+        }else if(_product.product == ProductType::L10){
+            qDebug() << "L10";
+            _printImage->imageRotate(0);
+        }
     } catch (std::runtime_error &e) {
         qDebug() << e.what();
         return -3;

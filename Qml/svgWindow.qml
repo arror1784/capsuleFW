@@ -50,7 +50,7 @@ Window {
     }
     Connections{
         target: printImage
-        onSendToQmlChangeImage:(path) => {
+        onSendToQmlChangeImage:{
             console.log(path)
             img.source = path
         }
