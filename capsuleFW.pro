@@ -45,6 +45,7 @@ SOURCES += \
     printersetting.cpp \
     printimage.cpp \
     printscheduler.cpp \
+    productsetting.cpp \
     qmlconnecter.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
@@ -106,6 +107,7 @@ HEADERS += \
     printersetting.h \
     printimage.h \
     printscheduler.h \
+    productsetting.h \
     qmlconnecter.h \
     resinsetting.h \
     resinupdater.h \
