@@ -12,16 +12,17 @@ ProductSetting::ProductSetting() : Hix::Common::Json::JsonSetting (_url)
 
 void ProductSetting::parse()
 {
-    QString productTypeString;
-    if(Hix::Common::Json::tryGetValue(_object,"product",productTypeString)){
-        if(productTypeString == "C10"){
+    if(Hix::Common::Json::tryGetValue(_object,"product",productStr)){
+        if(productStr == "C10"){
             product = ProductType::C10;
-        }else if(productTypeString == "L10"){
+        }else if(productStr == "L10"){
             product = ProductType::L10;
         }else{
+            productStr = "C10";
             product = ProductType::C10;
         }
     }else{
+        productStr = "C10";
         product = ProductType::C10;
     }
 }

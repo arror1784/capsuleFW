@@ -19,6 +19,7 @@ public:
     QString serialize() override;
 
     ProductType product;
+    QString productStr;
 };
 
 #endif // PRODUCTSETTING_H
