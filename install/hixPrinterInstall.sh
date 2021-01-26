@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ "$#" -ne 2 ]
 	then
 	echo "usage: " $0 "[product_name]"
@@ -32,6 +34,7 @@ cp ./config/C10.service /etc/avahi/services/C10.service
 cp ./config/libstdc++.so.6.0.26 /usr/lib/arm-linux-gnueabihf/libstdc++.so.6
 cp ./config/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
 
+cp ./config/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.conf
 if [ "$1" == "C10"]; then
 	cp ./config/C10/config.txt /boot/config.txt
 	cp ./config/C10/99-calibration.conf /usr/share/X11/xorg.conf.d/99-calibration.conf
@@ -41,3 +44,13 @@ elif [ "$1" == "L10"]; then
 else
 	echo "no product " $1
 fi
+
+apt-get install exfat-fuse exfat-utils -y
+
+rm /etc/xdg/autostart/piwiz.desktop
+
+echo "rasp
+rasp" | sudo passwd pi
+
+echo "rasp
+rasp" | sudo passwd root
