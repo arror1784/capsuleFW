@@ -54,9 +54,6 @@ else
 	echo "no product " $1
 fi
 
-apt-get install exfat-fuse exfat-utils -y
-apt-get install fonts-unfonts-core
-
 rm /etc/xdg/autostart/piwiz.desktop
 
 echo "rasp
@@ -64,5 +61,21 @@ rasp" | passwd pi
 
 echo "rasp
 rasp" | passwd root
+
+apt-get update 
+
+apt-get install exfat-fuse exfat-utils -y
+apt-get install fonts-unfonts-core -y
+
+apt-get build-dep qt4-x11 -y
+apt-get build-dep libqt5gui5 -y
+apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 -y
+
+mkdir /usr/local/qt5pi
+chown pi:pi /usr/local/qt5pi 
+
+# rsync -avz ./config/qt5pi pi@$1:/usr/local
+
+rpi-update
 
 reboot
