@@ -35,12 +35,16 @@ cp ./config/libstdc++.so.6.0.26 /usr/lib/arm-linux-gnueabihf/libstdc++.so.6
 cp ./config/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 cp ./config/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.conf
+
+cp ./opt/* /opt/ -r
 if [ "$1" == "C10"]; then
 	cp ./config/C10/config.txt /boot/config.txt
 	cp ./config/C10/99-calibration.conf /usr/share/X11/xorg.conf.d/99-calibration.conf
+	echo "{\"product\":\"C10\"}" > /opt/capsuleFW/product.json
 elif [ "$1" == "L10"]; then
 	cp ./config/L10/config.txt /boot/config.txt
 	cp ./config/L10/99-calibration.conf /usr/share/X11/xorg.conf.d/99-calibration.conf
+	echo "{\"product\":\"C10\"}" > /opt/capsuleFW/product.json
 else
 	echo "no product " $1
 fi
@@ -50,7 +54,9 @@ apt-get install exfat-fuse exfat-utils -y
 rm /etc/xdg/autostart/piwiz.desktop
 
 echo "rasp
-rasp" | sudo passwd pi
+rasp" | passwd pi
 
 echo "rasp
-rasp" | sudo passwd root
+rasp" | passwd root
+
+reboot
