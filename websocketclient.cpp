@@ -13,6 +13,7 @@ WebSocketClient::WebSocketClient(const QUrl url) :
     connect(_webSocket, (void(QWebSocket::*)(QAbstractSocket::SocketError)) &QWebSocket::error, this, &WebSocketClient::error);
     connect(_webSocket, &QWebSocket::connected, this, &WebSocketClient::onConnected);
     connect(_webSocket, &QWebSocket::disconnected, this, &WebSocketClient::closed);
+    connect(_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketClient::onTextMessageReceived);
 }
 
 void WebSocketClient::open()
@@ -32,8 +33,6 @@ void WebSocketClient::onConnected()
 {
     if (_debug)
         qDebug() << "WebSocket connected";
-    QObject::connect(_webSocket, &QWebSocket::textMessageReceived,
-            this, &WebSocketClient::onTextMessageReceived);
     _connected = true;
 //    m_webSocket->sendTextMessage(QStringLiteral("Hello, world!"));
 }
