@@ -19,7 +19,7 @@ Window {
 //        asynchronous: true
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
-        anchors.fill: parent
+//        anchors.fill: parent
         anchors.centerIn: parent
 //            anchors.fill: parent
 
@@ -55,10 +55,16 @@ Window {
             img.source = path
         }
         onSendToQmlImageScale:{
+            console.log("scale",scale)
             img.scale = scale
         }
         onSendToQmlImageRotate:{
+            console.log("rotate",rotate)
             img.rotation = rotate
+        }
+        onSendToQmlImageWidhtHeight:{
+            img.width = width
+            img.height = height
         }
     }
     Component.onCompleted: {

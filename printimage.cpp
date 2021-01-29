@@ -26,6 +26,11 @@ void PrintImage::imageRotate(int rotate)
 {
     emit sendToQmlImageRotate(rotate);
 }
+
+void PrintImage::imageWidhtHeight(int width, int height)
+{
+    emit sendToQmlImageWidhtHeight(width,height);
+}
 void PrintImage::waitImageWrote()
 {
     std::unique_lock<std::mutex> lk(_cv_image_m);

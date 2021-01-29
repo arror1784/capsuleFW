@@ -597,9 +597,11 @@ int PrintScheduler::setupForPrint(QString materialName)
         if(ProductSetting::getInstance().product == ProductType::C10){
             qDebug() << "C10";
             _printImage->imageRotate(90);
+            _printImage->imageWidhtHeight(2560,1440);
         }else if(ProductSetting::getInstance().product == ProductType::L10){
             qDebug() << "L10";
             _printImage->imageRotate(0);
+            _printImage->imageWidhtHeight(540,2560);
         }
     } catch (std::runtime_error &e) {
         qDebug() << e.what();

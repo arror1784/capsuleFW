@@ -15,12 +15,15 @@ signals:
     void sendToQmlChangeImage(QString path);
     void sendToQmlImageScale(double scale);
     void sendToQmlImageRotate(int rotate);
+    void sendToQmlImageWidhtHeight(int width,int height);
+
 public slots:
     void imageWrote();
 public:
     void imageChange(QString path);
     void imageScale(double scale);
     void imageRotate(int rotate);
+    void imageWidhtHeight(int width,int height);
     void waitImageWrote();
 
 private:
