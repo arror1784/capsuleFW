@@ -22,7 +22,7 @@ cp ./config/lightdm.conf /etc/lightdm/lightdm.conf
 cp ./config/black_image.jpg /usr/share/rpd-wallpaper/black_image.jpg
 cp ./config/cmdline.txt /boot/cmdline.txt
 cp ./config/react.service /etc/systemd/system/react.service
-cp ./config/daphne.service /etc/init.d/capsuleDjangoService
+cp ./config/daphne.service /etc/systemd/system/daphne.service
 cp ./config/desktop-items-0.conf /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-0.conf
 cp ./config/desktop-items-1.conf /home/pi/.config/pcmanfm/LXDE-pi/desktop-items-1.conf
 cp ./config/pcmanfm.conf /home/pi/.config/pcmanfm/LXDE-pi/pcmanfm.conf
@@ -36,12 +36,20 @@ cp ./config/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf
 cp ./config/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.conf
 
 service avahi-daemon restart
+
 systemctl enable react.service
 systemctl start react.service
 systemctl enable daphne.service
 systemctl start daphne.service
 
 cp ./config/opt/* /opt/ -r
+chmod 777 /opt/capsuleFW/capsuleSetting.json
+chmod 777 /opt/capsuleFW/download
+chmod 777 /opt/capsuleFW/print
+chmod 777 /opt/capsuleFW/resin
+chown pi:pi /opt/capsuleFW/print/printFilePath
+chmod +x /opt/capsuleFW/USBCheck.sh
+
 if [ "$1" == "C10" ]; then
 	cp ./config/C10/config.txt /boot/config.txt
 	cp ./config/C10/99-calibration.conf /usr/share/X11/xorg.conf.d/99-calibration.conf
@@ -62,7 +70,15 @@ rasp" | passwd pi
 echo "rasp
 rasp" | passwd root
 
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
 apt-get update 
+
+apt-get install yarn -y
+yarn global add serve
+
+apt-get install redis-server -y
 
 apt-get install exfat-fuse exfat-utils -y
 apt-get install fonts-unfonts-core -y
@@ -74,8 +90,17 @@ apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-x
 mkdir /usr/local/qt5pi
 chown pi:pi /usr/local/qt5pi 
 
-# rsync -avz ./config/qt5pi pi@$1:/usr/local
-
 rpi-update
 
+rm ./config -r
+rm ./@0
+
 reboot
+
+# To do
+
+# rsync -avz ./config/qt5pi pi@$1:/usr/local
+
+# wifi country set
+# fix hangul bug ( cannot find qt fonts )
+
