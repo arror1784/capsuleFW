@@ -63,10 +63,10 @@ mv /opt/capsuleFW/db.sqlite3 /opt/capsuleFW_react/backend/
 #yarn installed
 if type yarn 2> /dev/null; then
 	echo "yarn installed"
-else
+else	
 	echo "yarn install"
 	curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-	echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | tee /etc/apt/sources.list.d/yarn.list
+	echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 	apt-get update -y
 	apt-get install yarn -y
@@ -112,5 +112,5 @@ chmod +x ${TARGET_FOLDER_NAME}/HGCommandSender
 ${TARGET_FOLDER_NAME}/HGCommandSender "H201"
 
 rm -rf $2/*
-
+	
 shutdown -h now
