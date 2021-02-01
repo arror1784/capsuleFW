@@ -7,7 +7,7 @@ Group=root
 WorkingDirectory=/opt/capsuleFW_react/backend
 
 Environment="DJANGO_SETTINGS_MODULE=djangoreactapi.settings"
-ExecStart=/home/pi/.local/bin/daphne -b 0.0.0.0 -p 8000 djangoreactapi.asgi:application 
+ExecStart=/usr/local/bin/daphne -b 0.0.0.0 -p 8000 djangoreactapi.asgi:application 
 
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
