@@ -18,7 +18,10 @@ if [ "$_IP" ]; then
 fi
 
 rm /media/pi/* -d
+#rm -rf /opt/capsuleFW/download/*
 #fbcp &
+
+#/home/pi/test.sh > /home/pi/test
 
 con2fbmap 1 0
 
