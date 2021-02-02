@@ -10,12 +10,14 @@ ROOT_UPDATE_TARGET=(
 "C10.service"
 "libstdc++.so.6.0.26"
 "wpa_supplicant.conf"
+"rc.local"
 )
 ROOT_UPDATE_PATH=(
 "/opt/capsuleFW/bin/capsuleFW"
 "/etc/avahi/services/C10.service"
 "/usr/lib/arm-linux-gnueabihf/libstdc++.so.6"
 "/etc/wpa_supplicant/wpa_supplicant.conf"
+"/etc/rc.local"
 )
 
 if [ $# -eq 0 ]; then
@@ -47,6 +49,7 @@ do
 	rm -rf ${path}
 done < $RMLIBLIST
 
+cp -rf ${TARGET_FOLDER_NAME}/rc.local /etc/rc.local
 cp -rf ${TARGET_FOLDER_NAME}/react.service /etc/systemd/system/react.service
 cp -rf ${TARGET_FOLDER_NAME}/C10.service /etc/avahi/services/C10.service
 service avahi-daemon restart
@@ -63,7 +66,7 @@ mv /opt/capsuleFW/db.sqlite3 /opt/capsuleFW_react/backend/
 #yarn installed
 if type yarn 2> /dev/null; then
 	echo "yarn installed"
-else	
+else
 	echo "yarn install"
 	curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 	echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
