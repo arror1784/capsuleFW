@@ -23,7 +23,10 @@ Rectangle {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-
+    FontLoader{
+        id: nanumBarunGothic
+        source: "qrc:/fonts/NanumBarunGothic.ttf"
+    }
     Popup{
         id: popup
         width: parent.width - 60
@@ -46,7 +49,7 @@ Rectangle {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
             text: exText
-            font.family: openSansRegular.name
+            font.family: nanumBarunGothic.name
             font.pixelSize: 20
 
             verticalAlignment: Text.AlignVCenter

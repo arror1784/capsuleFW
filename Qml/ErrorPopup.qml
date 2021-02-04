@@ -23,6 +23,10 @@ Rectangle {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
+    FontLoader{
+        id: nanumBarunGothic
+        source: "qrc:/fonts/NanumBarunGothic.ttf"
+    }
 
     Popup{
         id: popup
@@ -46,7 +50,7 @@ Rectangle {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -20
             text: qsTr("print setting error")
-            font.family: openSansRegular.name
+            font.family: nanumBarunGothic.name
             font.pixelSize: 20
             color: "#474747"
         }
