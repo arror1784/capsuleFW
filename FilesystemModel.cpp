@@ -8,7 +8,7 @@ using namespace Hix::QML;
 #ifdef __arm__
 constexpr auto HOME = "/media/pi";
 #else
-constexpr auto HOME = "/media/jsh";
+constexpr auto HOME = "/home/jsh/USBtest";
 #endif
 
 

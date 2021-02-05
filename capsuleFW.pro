@@ -37,16 +37,20 @@ SOURCES += \
     filevalidator.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
+    l10imageprovider.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
     networkcontrol.cpp \
     printersetting.cpp \
+    printimage.cpp \
     printscheduler.cpp \
+    productsetting.cpp \
     qmlconnecter.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     schedulerthread.cpp \
+    transimagergb.cpp \
     updateconnector.cpp \
     updater.cpp \
     version.cpp \
@@ -96,15 +100,19 @@ HEADERS += \
     filevalidator.h \
     infosetting.h \
     kinetimecalc.h \
+    l10imageprovider.h \
     logger.h \
     modelno.h \
     networkcontrol.h \
     printersetting.h \
+    printimage.h \
     printscheduler.h \
+    productsetting.h \
     qmlconnecter.h \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
+    transimagergb.h \
     updateconnector.h \
     updater.h \
     version.h \

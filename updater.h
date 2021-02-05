@@ -68,8 +68,10 @@ public slots:
 private:
     void updateCommandExcute();
 
-    QString _url;
-    QString _downloadUrl;
+    QString _downloadPath;
+
+    QString _getFileUrl;
+    QString _manifestUrl;
 
     const QString _binName = "KinematicFW.binary";
     const QString _shName = "update.sh";

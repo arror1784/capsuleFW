@@ -22,21 +22,26 @@
 
 #include <QDebug>
 
+#include <future>
+
 #include "iostream"
 #include "logger.h"
 #include "updater.h"
 #include "version.h"
 #include "printersetting.h"
+#include "productsetting.h"
 
 class WebSocketClient;
 class BedControl;
 class BedSerialport;
 class ResinUpdater;
+class L10ImageProvider;
+class PrintImage;
 class PrintScheduler : public QObject
 {
     Q_OBJECT
 public:
-    PrintScheduler(/*QMLUImanager* uiManager,DLPServo* dlpServo*/);
+    PrintScheduler(L10ImageProvider*, PrintImage*);
 
     friend class BedControl;
     friend class ResinUpdater;
@@ -50,7 +55,7 @@ public:
 
     void printLayer();
 
-    int imageChange();
+    void requestTransImage(int id);
     void printBed();
     void addPrintingBed(char name/*,QString searchPath*/);
     int addSerialPort();
@@ -82,9 +87,6 @@ public:
     void sendAutoReboot(bool value);
 
 signals:
-    void sendToLCDChangeImage(QString imagePath);   //only QML
-    void sendToLCDSetImageScale(double value);      //only QML
-
     void sendToUIUpdateProgress(int progress); //update Progress
 
     void sendToUIChangeToPrint();       //change ui Ready to Print
@@ -158,9 +160,10 @@ public slots:
 
     void receiveFromUIAutoReboot();
 
-
 public:
     BedSerialport* bedSerialPort = nullptr;
+    L10ImageProvider* _l10imageProvider = nullptr;
+    PrintImage* _printImage = nullptr;
 
 private:
     PrinterSetting _printerSetting;
@@ -179,11 +182,12 @@ private:
 
     QDate _printStartTime;
 
+    std::future<QString> _imageTransfuture;
+
     int _bedPrintImageNum;
     int _bedWork;
     int _bedMoveFinished;
     int _bedMaxPrintNum;
-
 
     int _progress = 0;
     long long _lastStartTime = 0;

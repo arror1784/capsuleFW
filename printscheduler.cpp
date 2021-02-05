@@ -1,4 +1,4 @@
-#include "printscheduler.h"
+﻿#include "printscheduler.h"
 #include "bedcontrol.h"
 #include "bedserialport.h"
 
@@ -22,10 +22,13 @@
 #include "modelno.h"
 #include "kinetimecalc.h"
 #include "infosetting.h"
+#include "transimagergb.h"
 
 #include "zip/zip.h"
 
 #include "ymodem.h"
+#include "l10imageprovider.h"
+#include "printimage.h"
 
 #include <filesystem>
 
@@ -33,9 +36,12 @@ const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
-PrintScheduler::PrintScheduler() :
+PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImage* pi) :
     _LCDState(true)
 {
+    _l10imageProvider = provider;
+    _printImage = pi;
+
     _printerSetting.parse();
     _version.parse();
 #ifndef TEST_WITHOUT_SERIAL
@@ -51,9 +57,9 @@ PrintScheduler::PrintScheduler() :
     bedSerialPort = new BedSerialport(this);
     _USBPortConnection = true;
 #endif
-
+    //check product
+    _printImage->imageRotate(0);
     addPrintingBed('A');
-
 }
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
@@ -135,14 +141,21 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
+
+    if(ProductSetting::getInstance().product == ProductType::C10){
+        _printImage->imageChange(QStringLiteral("file:/") + printFilePath + "/0" + _fileExtension);
+        _printImage->waitImageWrote();
+    }else if(ProductSetting::getInstance().product == ProductType::L10){
+        requestTransImage(0);
+        _printImage->imageChange(_imageTransfuture.get());
+        requestTransImage(1);
+    }
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
-    imageChange();
     return;
 }
 
 void PrintScheduler::bedFinish(){
-
 
     _bedWork = BED_FINISH_WORK;
     _bedMoveFinished = PRINT_MOVE_NULL;
@@ -152,6 +165,7 @@ void PrintScheduler::bedFinish(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
+    _printImage->imageChange("qrc:/image/defaultBlackImage.png");
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -222,26 +236,39 @@ void PrintScheduler::printLayer(){
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
 
+        _printImage->waitImageWrote();
+
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
         }else{
             _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
         }
+
     }
 }
-int PrintScheduler::imageChange(){
+void PrintScheduler::requestTransImage(int id){
 
-    QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
-    Logger::GetInstance()->write("print image path : " + fullPath);
+    _imageTransfuture = std::async([this](int id) {
+        QString imagePath = QStringLiteral("image://L10/") + QString::number(id);
+        QString path = printFilePath + "/" + QString::number(id) + ".png";
 
-    emit sendToLCDChangeImage(fullPath);
+        Logger::GetInstance()->write("print image path : " + imagePath);
 
-    return 0;
+        _l10imageProvider->transImage(path,_bedPrintImageNum);
+        return imagePath;
+    },id);
+
 }
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            imageChange();
+            if(ProductSetting::getInstance().product == ProductType::C10){
+                QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
+                _printImage->imageChange(fullPath);
+            }else if (ProductSetting::getInstance().product == ProductType::L10){
+                _printImage->imageChange(_imageTransfuture.get());
+                requestTransImage(_bedPrintImageNum + 1);
+            }
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -562,10 +589,20 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _bedControl->setUVtime(0);
 
-        emit sendToLCDSetImageScale(materialSetting.contractionRatio);
+        _printImage->imageScale(materialSetting.contractionRatio);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
+
+        if(ProductSetting::getInstance().product == ProductType::C10){
+            qDebug() << "C10";
+            _printImage->imageRotate(90);
+            _printImage->imageWidhtHeight(2560,1440);
+        }else if(ProductSetting::getInstance().product == ProductType::L10){
+            qDebug() << "L10";
+            _printImage->imageRotate(0);
+            _printImage->imageWidhtHeight(540,2560);
+        }
     } catch (std::runtime_error &e) {
         qDebug() << e.what();
         return -3;
@@ -574,8 +611,6 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     return 0;
 }
-
-
 
 void PrintScheduler::deletePrintFolder()
 {
@@ -598,7 +633,6 @@ int PrintScheduler::unZipFiles(QString path)
         miniz_cpp::zip_file file(target);
 
         file.extractall(printFilePath.toStdString());
-
     } catch (std::exception e) {
         return -1;
     }

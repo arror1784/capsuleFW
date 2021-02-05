@@ -26,7 +26,10 @@ Rectangle {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-
+    FontLoader{
+        id: nanumBarunGothic
+        source: "qrc:/fonts/NanumBarunGothic.ttf"
+    }
     Popup{
         id: popup
         width: parent.width - 60
@@ -46,7 +49,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             text: qsTr("연결중입니다....")
-            font.family: openSansSemibold.name
+            font.family: nanumBarunGothic.name
             font.pixelSize: 20
             color: "#474747"
         }

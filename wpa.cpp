@@ -149,7 +149,7 @@ void WPA::wpa_ctrl_event()
         wpa_ctrl_recv(_ctrl_event,resBuff,&size);
 
         std::string stdResBuff(resBuff);
-        qDebug() << QString::fromStdString(stdResBuff) << "event";
+//        qDebug() << QString::fromStdString(stdResBuff) << "event";
         if(stdResBuff.find(WPA_EVENT_SCAN_RESULTS) != std::string::npos){
             clearList();
 

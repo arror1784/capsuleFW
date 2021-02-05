@@ -6,8 +6,7 @@ Window {
     id: lcdWindow
     visible: true
     visibility: Window.FullScreen
-//    width: 1440
-//    height: 2560
+
     title: qsTr("Hello World")
     color: "#000000"
     screen: Qt.application.screens[0]
@@ -16,12 +15,11 @@ Window {
 //    flags: Qt.WindowStaysOnTopHint
 
     Image{
-        id: printImage
-        width: 2560
-        height: 1440
+        id: img
 //        asynchronous: true
 //            sourceSize.height: parent.height
 //            sourceSize.width: parent.width
+//        anchors.fill: parent
         anchors.centerIn: parent
 //            anchors.fill: parent
 
@@ -29,9 +27,11 @@ Window {
 
         fillMode: Image.PreserveAspectCrop
         source: "qrc:/image/defaultBlackImage.png"
-        rotation: 90
+//        rotation: 90
         onStatusChanged: {
-//            if (printImage.status === Image.Ready) console.log('Loaded')
+            if (img.status === Image.Ready) {
+                printImage.imageWrote()
+            }
         }
     }
     MouseArea{
@@ -40,20 +40,31 @@ Window {
     }
     Connections{
         target: connection
-        onSendToQmlChangeImage:{
-            console.log(imagePath)
-            printImage.source = imagePath
-        }
-        onSendToQmlSetImageScale:{
-            printImage.scale = value
-        }
-
         onSendToQmlChangeState:{
             if(state === "printFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
             }else if(state === "printErrorFinish"){
                 printImage.source = "qrc:/image/defaultBlackImage.png"
             }
+        }
+    }
+    Connections{
+        target: printImage
+        onSendToQmlChangeImage:{
+            console.log(path)
+            img.source = path
+        }
+        onSendToQmlImageScale:{
+            console.log("scale",scale)
+            img.scale = scale
+        }
+        onSendToQmlImageRotate:{
+            console.log("rotate",rotate)
+            img.rotation = rotate
+        }
+        onSendToQmlImageWidhtHeight:{
+            img.width = width
+            img.height = height
         }
     }
     Component.onCompleted: {

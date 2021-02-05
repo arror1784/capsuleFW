@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+﻿#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QString>
 
@@ -24,6 +24,7 @@
 
 #include "wpa_ctrl/wpa_ctrl.h"
 #include "VKeyboard/keyboardwidget.h"
+#include "printimage.h"
 
 int main(int argc, char *argv[])
 {
@@ -42,7 +43,8 @@ int main(int argc, char *argv[])
     NetworkControl nc;
     QmlConnecter connecter;
     UpdateConnector up;
-    SchedulerThread backThread(engine,connecter,up);
+    PrintImage printImage;
+    SchedulerThread backThread(engine,connecter,up,&printImage);
 
     backThread.start();
 
@@ -55,7 +57,7 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("connection",&connecter);
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
-
+    ctx->setContextProperty("printImage",&printImage);
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 //    if (engine.rootObjects().isEmpty())
