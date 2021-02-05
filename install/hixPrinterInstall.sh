@@ -100,7 +100,8 @@ reboot
 # To do
 
 # rsync -avz ./config/qt5pi pi@$1:/usr/local
+# sudo raspi-config (set to wifi country)
+# sudo incrontab -e (set incrontab setting config/incrontab-e)
 
-# wifi country set
 # fix hangul bug ( cannot find qt fonts )
 
