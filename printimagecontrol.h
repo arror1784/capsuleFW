@@ -29,6 +29,7 @@ public:
     void waitImageWrote();
 
     void setRootPath(QString path);
+    void imageSetBlack();
 
 private:
     std::condition_variable _cv_image;

@@ -159,7 +159,7 @@ void PrintScheduler::bedFinish(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
-    _printImage->imageChange("qrc:/image/defaultBlackImage.png");
+    _printImage->imageSetBlack();
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;

@@ -34,3 +34,9 @@ void PrintImageControl::setRootPath(QString path)
 {
     _rootPath = path;
 }
+
+void PrintImageControl::imageSetBlack()
+{
+    _imageWrote = false;
+    emit sendToQmlChangeImage("qrc:/image/defaultBlackImage.png");
+}
