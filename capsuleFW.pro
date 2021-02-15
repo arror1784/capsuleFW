@@ -44,6 +44,7 @@ SOURCES += \
     networkcontrol.cpp \
     printersetting.cpp \
     printimage.cpp \
+    printimagecontrol.cpp \
     printscheduler.cpp \
     productsetting.cpp \
     qmlconnecter.cpp \
@@ -106,6 +107,7 @@ HEADERS += \
     networkcontrol.h \
     printersetting.h \
     printimage.h \
+    printimagecontrol.h \
     printscheduler.h \
     productsetting.h \
     qmlconnecter.h \
