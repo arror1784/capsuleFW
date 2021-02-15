@@ -25,6 +25,9 @@
 #include "wpa_ctrl/wpa_ctrl.h"
 #include "VKeyboard/keyboardwidget.h"
 #include "printimage.h"
+#include "printimagecontrol.h"
+#include "c10printimage.h"
+#include "l10printimage.h"
 
 int main(int argc, char *argv[])
 {
@@ -44,8 +47,15 @@ int main(int argc, char *argv[])
     QmlConnecter connecter;
     UpdateConnector up;
     PrintImage printImage;
-    SchedulerThread backThread(engine,connecter,up,&printImage);
+    PrintImageControl* pic;
 
+    if(ProductSetting::getInstance().product == ProductType::C10){
+        pic = new C10PrintImage;
+    }else if(ProductSetting::getInstance().product == ProductType::L10){
+        pic = new L10PrintImage;
+
+    }
+    SchedulerThread backThread(engine,connecter,up,pic);
     backThread.start();
 
     qmlRegisterType<WifiInfo>("App", 1, 0, "WifiInfo");
@@ -57,7 +67,7 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("connection",&connecter);
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
-    ctx->setContextProperty("printImage",&printImage);
+    ctx->setContextProperty("printImage",pic);
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 //    if (engine.rootObjects().isEmpty())

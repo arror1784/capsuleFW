@@ -10,9 +10,8 @@
 #include "websocketclient.h"
 
 #include "l10imageprovider.h"
-#include "printimage.h"
 
-SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImage* printImage)
+SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImageControl* printImage)
     : _engine(engine), _conn(conn), _updater(update), _printImage(printImage)
 {
 

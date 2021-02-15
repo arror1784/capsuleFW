@@ -29,6 +29,7 @@
 #include "ymodem.h"
 #include "l10imageprovider.h"
 #include "printimage.h"
+#include "printimagecontrol.h"
 
 #include <filesystem>
 
@@ -36,7 +37,7 @@ const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
-PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImage* pi) :
+PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImageControl* pi) :
     _LCDState(true)
 {
     _l10imageProvider = provider;
@@ -142,14 +143,7 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    if(ProductSetting::getInstance().product == ProductType::C10){
-        _printImage->imageChange(QStringLiteral("file:/") + printFilePath + "/0" + _fileExtension);
-        _printImage->waitImageWrote();
-    }else if(ProductSetting::getInstance().product == ProductType::L10){
-        requestTransImage(0);
-        _printImage->imageChange(_imageTransfuture.get());
-        requestTransImage(1);
-    }
+    _printImage->imageChange(0);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
     return;
@@ -225,7 +219,7 @@ void PrintScheduler::printLayer(){
         if(_bedPrintImageNum == _bedMaxPrintNum){
             receiveFromUIPrintStateChange("finish");
             return;
-        }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension) == false){
+        }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + ".png") == false){
 //            receiveFromUIPrintFinishError();
             _bedError = true;
             _printState = "error";
@@ -262,13 +256,7 @@ void PrintScheduler::requestTransImage(int id){
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            if(ProductSetting::getInstance().product == ProductType::C10){
-                QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
-                _printImage->imageChange(fullPath);
-            }else if (ProductSetting::getInstance().product == ProductType::L10){
-                _printImage->imageChange(_imageTransfuture.get());
-                requestTransImage(_bedPrintImageNum + 1);
-            }
+            _printImage->imageChange(_bedPrintImageNum);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;

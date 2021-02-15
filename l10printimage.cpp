@@ -9,10 +9,10 @@ void L10PrintImage::imageChange(int number)
     _imageWrote = false;
     if(number == 0){
         requestTransImage(0);
-        sendToQmlChangeImage(_imageTransfuture.get());
+        emit sendToQmlChangeImage(_imageTransfuture.get());
         requestTransImage(1);
     }else{
-        sendToQmlChangeImage(_imageTransfuture.get());
+        emit sendToQmlChangeImage(_imageTransfuture.get());
         requestTransImage(number + 1);
     }
     emit sendToQmlChangeImage(_rootPath + QString::number(number));

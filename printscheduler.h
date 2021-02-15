@@ -36,12 +36,12 @@ class BedControl;
 class BedSerialport;
 class ResinUpdater;
 class L10ImageProvider;
-class PrintImage;
+class PrintImageControl;
 class PrintScheduler : public QObject
 {
     Q_OBJECT
 public:
-    PrintScheduler(L10ImageProvider*, PrintImage*);
+    PrintScheduler(L10ImageProvider*, PrintImageControl*);
 
     friend class BedControl;
     friend class ResinUpdater;
@@ -163,7 +163,7 @@ public slots:
 public:
     BedSerialport* bedSerialPort = nullptr;
     L10ImageProvider* _l10imageProvider = nullptr;
-    PrintImage* _printImage = nullptr;
+    PrintImageControl* _printImage = nullptr;
 
 private:
     PrinterSetting _printerSetting;
