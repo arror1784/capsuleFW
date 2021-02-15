@@ -438,7 +438,7 @@ void PrintScheduler::receiveFromUIShutdown()
 
 int PrintScheduler::copyFilesPath(QString src, QString dst)
 {
-    QRegularExpression svgRe("\\d{1,4}"+_fileExtension);
+    QRegularExpression svgRe("\\d{1,4}.png");
     QDir dir(src);
     int count = 0;
     if (! dir.exists())

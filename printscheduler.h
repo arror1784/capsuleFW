@@ -171,8 +171,6 @@ private:
 
     BedControl* _bedControl;
 
-    const QString _fileExtension = ".png";
-
     QString _bedPath;
 
     QString _printName;
