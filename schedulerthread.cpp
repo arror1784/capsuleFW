@@ -9,15 +9,15 @@
 #include "wpa.h"
 #include "websocketclient.h"
 
-SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImageControl* printImage)
-    : _engine(engine), _conn(conn), _updater(update), _printImage(printImage)
+SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImageControl* printImageControl)
+    : _engine(engine), _conn(conn), _updater(update), _printImageControl(printImageControl)
 {
 
 }
 
 void SchedulerThread::run()
 {
-    _sched = new PrintScheduler(_printImage);
+    _sched = new PrintScheduler(_printImageControl);
     ResinUpdater ru(_sched);
     Updater up;
 

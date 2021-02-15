@@ -161,7 +161,7 @@ public slots:
 
 public:
     BedSerialport* bedSerialPort = nullptr;
-    PrintImageControl* _printImage = nullptr;
+    PrintImageControl* _printImageControl = nullptr;
 
 private:
     PrinterSetting _printerSetting;

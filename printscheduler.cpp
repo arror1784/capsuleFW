@@ -39,7 +39,7 @@ static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 PrintScheduler::PrintScheduler(PrintImageControl* pi) :
     _LCDState(true)
 {
-    _printImage = pi;
+    _printImageControl = pi;
 
     _printerSetting.parse();
     _version.parse();
@@ -57,7 +57,7 @@ PrintScheduler::PrintScheduler(PrintImageControl* pi) :
     _USBPortConnection = true;
 #endif
     //check product
-    _printImage->imageRotate(0);
+    _printImageControl->imageRotate(0);
     addPrintingBed('A');
 }
 void PrintScheduler::addPrintingBed(char name){
@@ -141,7 +141,7 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    _printImage->imageChange(0);
+    _printImageControl->imageChange(0);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
     return;
@@ -157,7 +157,7 @@ void PrintScheduler::bedFinish(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
-    _printImage->imageSetBlack();
+    _printImageControl->imageSetBlack();
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -228,7 +228,7 @@ void PrintScheduler::printLayer(){
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
 
-        _printImage->waitImageWrote();
+        _printImageControl->waitImageWrote();
 
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
@@ -241,7 +241,7 @@ void PrintScheduler::printLayer(){
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            _printImage->imageChange(_bedPrintImageNum);
+            _printImageControl->imageChange(_bedPrintImageNum);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -562,19 +562,19 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _bedControl->setUVtime(0);
 
-        _printImage->imageScale(materialSetting.contractionRatio);
+        _printImageControl->imageScale(materialSetting.contractionRatio);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
 
         if(ProductSetting::getInstance().product == ProductType::C10){
             qDebug() << "C10";
-            _printImage->imageRotate(90);
-            _printImage->imageWidhtHeight(2560,1440);
+            _printImageControl->imageRotate(90);
+            _printImageControl->imageWidhtHeight(2560,1440);
         }else if(ProductSetting::getInstance().product == ProductType::L10){
             qDebug() << "L10";
-            _printImage->imageRotate(0);
-            _printImage->imageWidhtHeight(540,2560);
+            _printImageControl->imageRotate(0);
+            _printImageControl->imageWidhtHeight(540,2560);
         }
     } catch (std::runtime_error &e) {
         qDebug() << e.what();

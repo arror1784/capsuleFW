@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
 
     PrintImageControl *pic;
     L10ImageProvider l10ip;
+
     if(ProductSetting::getInstance().product == ProductType::C10){
         pic = new C10PrintImage;
         pic->setRootPath(QStringLiteral("file://opt/capsuleFW/print/printFilePath/"));
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
         pic = new L10PrintImage(&l10ip);
         pic->setRootPath(QStringLiteral("image://L10/"));
     }
+
     SchedulerThread backThread(engine,connecter,up,pic);
     backThread.start();
 

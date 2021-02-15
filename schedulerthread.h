@@ -15,7 +15,7 @@ class SchedulerThread : public QThread
     Q_OBJECT
 public:
     SchedulerThread();
-    SchedulerThread(QQmlApplicationEngine& engine, QmlConnecter& conn,UpdateConnector& update,PrintImageControl* printImage);
+    SchedulerThread(QQmlApplicationEngine& engine, QmlConnecter& conn,UpdateConnector& update,PrintImageControl* printImageControl);
 
     PrintScheduler *sched() const;
 
@@ -25,7 +25,7 @@ private:
     QQmlApplicationEngine& _engine;
 
     PrintScheduler* _sched;
-    PrintImageControl* _printImage;
+    PrintImageControl* _printImageControl;
     QmlConnecter& _conn;
     UpdateConnector& _updater;
 };
