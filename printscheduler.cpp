@@ -27,7 +27,6 @@
 #include "zip/zip.h"
 
 #include "ymodem.h"
-#include "l10imageprovider.h"
 #include "printimage.h"
 #include "printimagecontrol.h"
 
@@ -37,10 +36,9 @@ const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
-PrintScheduler::PrintScheduler(L10ImageProvider* provider, PrintImageControl* pi) :
+PrintScheduler::PrintScheduler(PrintImageControl* pi) :
     _LCDState(true)
 {
-    _l10imageProvider = provider;
     _printImage = pi;
 
     _printerSetting.parse();
@@ -239,19 +237,6 @@ void PrintScheduler::printLayer(){
         }
 
     }
-}
-void PrintScheduler::requestTransImage(int id){
-
-    _imageTransfuture = std::async([this](int id) {
-        QString imagePath = QStringLiteral("image://L10/") + QString::number(id);
-        QString path = printFilePath + "/" + QString::number(id) + ".png";
-
-        Logger::GetInstance()->write("print image path : " + imagePath);
-
-        _l10imageProvider->transImage(path,_bedPrintImageNum);
-        return imagePath;
-    },id);
-
 }
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {

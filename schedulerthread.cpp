@@ -9,8 +9,6 @@
 #include "wpa.h"
 #include "websocketclient.h"
 
-#include "l10imageprovider.h"
-
 SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImageControl* printImage)
     : _engine(engine), _conn(conn), _updater(update), _printImage(printImage)
 {
@@ -19,8 +17,7 @@ SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &co
 
 void SchedulerThread::run()
 {
-    L10ImageProvider l10ImageProvider;
-    _sched = new PrintScheduler(&l10ImageProvider,_printImage);
+    _sched = new PrintScheduler(_printImage);
     ResinUpdater ru(_sched);
     Updater up;
 
@@ -52,9 +49,8 @@ void SchedulerThread::run()
 #endif
 //    wsClient.open();
 
-    std::function<void()> func = [this,&l10ImageProvider]() {
+    std::function<void()> func = [this]() {
 
-        _engine.addImageProvider(QLatin1String("L10"), &l10ImageProvider);
 
 
 #ifdef __arm__
