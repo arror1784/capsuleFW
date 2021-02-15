@@ -22,7 +22,7 @@ public slots:
     void imageWrote();
 
 public:
-    virtual void imageChange(int number);
+    virtual void imageChange(int number) = 0;
     void imageScale(double scale);
     void imageRotate(int rotate);
     void imageWidhtHeight(int width,int height);
