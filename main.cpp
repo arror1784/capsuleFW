@@ -47,13 +47,13 @@ int main(int argc, char *argv[])
     QmlConnecter connecter;
     UpdateConnector up;
     PrintImage printImage;
-    PrintImageControl* pic;
 
+    PrintImageControl *pic;
+    L10ImageProvider l10ip;
     if(ProductSetting::getInstance().product == ProductType::C10){
         pic = new C10PrintImage;
     }else if(ProductSetting::getInstance().product == ProductType::L10){
-        pic = new L10PrintImage;
-
+        pic = new L10PrintImage(&l10ip);
     }
     SchedulerThread backThread(engine,connecter,up,pic);
     backThread.start();
@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Hix::QML::FilesystemModel>("App", 1, 0, "HixFilesystemModel");
     qmlRegisterType<ZipControl>("App", 1, 0, "ZipControl");
 
+    engine.addImageProvider(QLatin1String("L10"), &l10ip);
     ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);

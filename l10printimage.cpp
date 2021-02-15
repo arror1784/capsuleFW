@@ -1,6 +1,7 @@
 #include "l10printimage.h"
 
-L10PrintImage::L10PrintImage()
+L10PrintImage::L10PrintImage(L10ImageProvider* l10imageProvider):
+    _l10imageProvider(l10imageProvider)
 {
 
 }

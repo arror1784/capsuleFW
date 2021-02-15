@@ -10,7 +10,7 @@
 class L10PrintImage : public PrintImageControl
 {
 public:
-    L10PrintImage();
+    L10PrintImage(L10ImageProvider* l10imageProvider);
 
     void imageChange(int number) override;
 
