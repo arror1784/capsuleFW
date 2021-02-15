@@ -28,10 +28,15 @@ public:
     void imageWidhtHeight(int width,int height);
     void waitImageWrote();
 
+    void setRootPath(QString path);
+
 private:
     std::condition_variable _cv_image;
     std::mutex _cv_image_m;
+protected:
     bool _imageWrote = true;
+
+    QString _rootPath;
 };
 
 #endif // PRINTIMAGECONTROL_H

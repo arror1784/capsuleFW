@@ -30,6 +30,7 @@ SOURCES += \
     VKeyboard/specialchkeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
+    c10printimage.cpp \
     common/jsonreadsetting.cpp \
     common/jsonsetting.cpp \
     common/jsonutil.cpp \
@@ -38,6 +39,7 @@ SOURCES += \
     infosetting.cpp \
     kinetimecalc.cpp \
     l10imageprovider.cpp \
+    l10printimage.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
@@ -93,6 +95,7 @@ HEADERS += \
     VKeyboard/specialchkeyboard.h \
     bedcontrol.h \
     bedserialport.h \
+    c10printimage.h \
     common.h \
     common/jsonreadsetting.h \
     common/jsonsetting.h \
@@ -102,6 +105,7 @@ HEADERS += \
     infosetting.h \
     kinetimecalc.h \
     l10imageprovider.h \
+    l10printimage.h \
     logger.h \
     modelno.h \
     networkcontrol.h \

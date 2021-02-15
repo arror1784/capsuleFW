@@ -29,3 +29,8 @@ void PrintImageControl::waitImageWrote()
     std::unique_lock<std::mutex> lk(_cv_image_m);
     _cv_image.wait(lk,[this]{return this->_imageWrote;});
 }
+
+void PrintImageControl::setRootPath(QString path)
+{
+    _rootPath = path;
+}
