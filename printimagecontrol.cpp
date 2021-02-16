@@ -1,28 +1,35 @@
 #include "printimagecontrol.h"
 
-PrintImageControl::PrintImageControl()
+#include <QDebug>
+PrintImageControl::PrintImageControl(int width, int height, int rotate) :
+     _width(width), _height(height), _rotate(rotate)
 {
 
 }
 void PrintImageControl::imageWrote()
 {
+    qDebug() << "image worte";
     _imageWrote = true;
     _cv_image.notify_all();
 }
 
 void PrintImageControl::imageScale(double scale)
 {
-    emit sendToQmlImageScale(scale);
+    _scale = scale;
+    emit sendToQmlImageScale(_scale);
 }
 
 void PrintImageControl::imageRotate(int rotate)
 {
-    emit sendToQmlImageRotate(rotate);
+    _rotate = rotate;
+    emit sendToQmlImageRotate(_rotate);
 }
 
 void PrintImageControl::imageWidhtHeight(int width, int height)
 {
-    emit sendToQmlImageWidhtHeight(width,height);
+    _width = width;
+    _height = height;
+    emit sendToQmlImageWidhtHeight(_width,_height);
 }
 void PrintImageControl::waitImageWrote()
 {
@@ -39,4 +46,12 @@ void PrintImageControl::imageSetBlack()
 {
     _imageWrote = false;
     emit sendToQmlChangeImage("qrc:/image/defaultBlackImage.png");
+}
+
+void PrintImageControl::reset()
+{
+    emit sendToQmlImageScale(_scale);
+    emit sendToQmlImageRotate(_rotate);
+    emit sendToQmlImageWidhtHeight(_width,_height);
+
 }

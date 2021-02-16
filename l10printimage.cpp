@@ -1,12 +1,14 @@
 #include "l10printimage.h"
 
-L10PrintImage::L10PrintImage(L10ImageProvider* l10imageProvider):
-    _l10imageProvider(l10imageProvider)
+#include <QDebug>
+L10PrintImage::L10PrintImage(int width, int height, int rotate,L10ImageProvider* l10imageProvider) :
+    PrintImageControl (width,height,rotate), _l10imageProvider(l10imageProvider)
 {
 
 }
 void L10PrintImage::imageChange(int number)
 {
+    qDebug() << "L10";
     _imageWrote = false;
     if(number == 0){
         requestTransImage(0);
@@ -16,7 +18,7 @@ void L10PrintImage::imageChange(int number)
         emit sendToQmlChangeImage(_imageTransfuture.get());
         requestTransImage(number + 1);
     }
-    emit sendToQmlChangeImage(_rootPath + QString::number(number));
+//    emit sendToQmlChangeImage(_rootPath + QString::number(number));
 }
 void L10PrintImage::requestTransImage(int number){
 

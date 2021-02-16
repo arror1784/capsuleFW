@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+﻿#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QString>
 
@@ -24,7 +24,8 @@
 
 #include "wpa_ctrl/wpa_ctrl.h"
 #include "VKeyboard/keyboardwidget.h"
-#include "printimage.h"
+#include "productsetting.h"
+
 #include "printimagecontrol.h"
 #include "c10printimage.h"
 #include "l10printimage.h"
@@ -51,10 +52,10 @@ int main(int argc, char *argv[])
     L10ImageProvider l10ip;
 
     if(ProductSetting::getInstance().product == ProductType::C10){
-        pic = new C10PrintImage;
+        pic = new C10PrintImage(2560,1440,90);
         pic->setRootPath(QStringLiteral("file://opt/capsuleFW/print/printFilePath/"));
     }else if(ProductSetting::getInstance().product == ProductType::L10){
-        pic = new L10PrintImage(&l10ip);
+        pic = new L10PrintImage(540,2560,0,&l10ip);
         pic->setRootPath(QStringLiteral("image://L10/"));
     }
 

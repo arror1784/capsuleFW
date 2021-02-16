@@ -562,20 +562,14 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _bedControl->setUVtime(0);
 
+        _printImageControl->reset();
+
         _printImageControl->imageScale(materialSetting.contractionRatio);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
 
-        if(ProductSetting::getInstance().product == ProductType::C10){
-            qDebug() << "C10";
-            _printImageControl->imageRotate(90);
-            _printImageControl->imageWidhtHeight(2560,1440);
-        }else if(ProductSetting::getInstance().product == ProductType::L10){
-            qDebug() << "L10";
-            _printImageControl->imageRotate(0);
-            _printImageControl->imageWidhtHeight(540,2560);
-        }
+
     } catch (std::runtime_error &e) {
         qDebug() << e.what();
         return -3;

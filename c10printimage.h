@@ -6,7 +6,7 @@
 class C10PrintImage : public PrintImageControl
 {
 public:
-    C10PrintImage();
+    C10PrintImage(int width, int height, int rotate);
 
     void imageChange(int number) override;
 };

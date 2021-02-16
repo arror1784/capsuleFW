@@ -10,7 +10,7 @@ class PrintImageControl : public QObject
     Q_OBJECT
 
 public:
-    PrintImageControl();
+    PrintImageControl(int width, int height, int rotate);
 
 signals:
     void sendToQmlChangeImage(QString path);
@@ -31,10 +31,18 @@ public:
     void setRootPath(QString path);
     void imageSetBlack();
 
+    void reset();
+
 private:
     std::condition_variable _cv_image;
     std::mutex _cv_image_m;
+
 protected:
+    double _scale = 0.0;
+    int _width = 0;
+    int _height = 0;
+    int _rotate = 0;
+
     bool _imageWrote = true;
 
     QString _rootPath;
