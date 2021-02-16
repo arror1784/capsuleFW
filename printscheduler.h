@@ -29,7 +29,6 @@
 #include "updater.h"
 #include "version.h"
 #include "printersetting.h"
-#include "productsetting.h"
 
 class WebSocketClient;
 class BedControl;

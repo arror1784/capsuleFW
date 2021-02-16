@@ -16,6 +16,8 @@
 #include "common/jsonutil.h"
 #include "zip/zip.h"
 
+#include "productsetting.h"
+
 ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched),
     _updateUrl(QUrl("https://services.hix.co.kr/resin/update/" + ProductSetting::getInstance().productStr)),
     _downloadUrl(QUrl("https://services.hix.co.kr/resin/download/" + ProductSetting::getInstance().productStr))
