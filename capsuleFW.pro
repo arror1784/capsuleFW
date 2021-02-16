@@ -45,7 +45,6 @@ SOURCES += \
     modelno.cpp \
     networkcontrol.cpp \
     printersetting.cpp \
-    printimage.cpp \
     printimagecontrol.cpp \
     printscheduler.cpp \
     productsetting.cpp \
@@ -110,7 +109,6 @@ HEADERS += \
     modelno.h \
     networkcontrol.h \
     printersetting.h \
-    printimage.h \
     printimagecontrol.h \
     printscheduler.h \
     productsetting.h \

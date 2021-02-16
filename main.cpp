@@ -1,4 +1,4 @@
-﻿#include <QGuiApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QString>
 
@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
     NetworkControl nc;
     QmlConnecter connecter;
     UpdateConnector up;
-    PrintImage printImage;
 
     PrintImageControl *pic;
     L10ImageProvider l10ip;

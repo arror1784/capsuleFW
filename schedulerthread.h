@@ -5,7 +5,7 @@
 #include <QThread>
 #include "qmlconnecter.h"
 #include "updateconnector.h"
-#include "printimage.h"
+
 #include "printimagecontrol.h"
 
 class PrintScheduler;
