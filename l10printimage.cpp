@@ -1,8 +1,8 @@
 #include "l10printimage.h"
 
 #include <QDebug>
-L10PrintImage::L10PrintImage(int width, int height, int rotate,L10ImageProvider* l10imageProvider) :
-    PrintImageControl (width,height,rotate), _l10imageProvider(l10imageProvider)
+L10PrintImage::L10PrintImage(int width, int height, int rotate, QString filePath, L10ImageProvider* l10imageProvider) :
+    PrintImageControl (width,height,rotate), _l10imageProvider(l10imageProvider), _filePath(filePath)
 {
 
 }
@@ -24,11 +24,11 @@ void L10PrintImage::requestTransImage(int number){
 
     _imageTransfuture = std::async([this](int number) {
         QString imagePath = _rootPath + QString::number(number);
-        QString path = _rootPath + QString::number(number);
+        QString filePath = _filePath + QString::number(number) + ".png";
 
         Logger::GetInstance()->write("print image path : " + imagePath);
 
-        _l10imageProvider->transImage(path,number);
+        _l10imageProvider->transImage(filePath,number);
         return imagePath;
     },number);
 

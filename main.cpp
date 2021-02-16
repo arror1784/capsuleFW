@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         pic = new C10PrintImage(2560,1440,90);
         pic->setRootPath(QStringLiteral("file://opt/capsuleFW/print/printFilePath/"));
     }else if(ProductSetting::getInstance().product == ProductType::L10){
-        pic = new L10PrintImage(540,2560,0,&l10ip);
+        pic = new L10PrintImage(540,2560,0,"/opt/capsuleFW/print/printFilePath/",&l10ip);
         pic->setRootPath(QStringLiteral("image://L10/"));
     }
 

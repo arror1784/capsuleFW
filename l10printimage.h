@@ -10,7 +10,7 @@
 class L10PrintImage : public PrintImageControl
 {
 public:
-    L10PrintImage(int width, int height, int rotate,L10ImageProvider* l10imageProvider);
+    L10PrintImage(int width, int height, int rotate, QString filePath, L10ImageProvider* l10imageProvider);
 
     void imageChange(int number) override;
 
@@ -19,6 +19,7 @@ public:
     L10ImageProvider* _l10imageProvider = nullptr;
 private:
     std::future<QString> _imageTransfuture;
+    QString _filePath;
 
 };
 
