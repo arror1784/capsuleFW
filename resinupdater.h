@@ -51,6 +51,9 @@ private:
     QDateTime _updateTime;
     PrintScheduler* _printScheduler;
 
+    QUrl _updateUrl;
+    QUrl _downloadUrl;
+
 };
 
 #endif // RESINUPDATER_H

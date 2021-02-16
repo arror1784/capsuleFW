@@ -1,4 +1,4 @@
-#include "printscheduler.h"
+﻿#include "printscheduler.h"
 #include "bedcontrol.h"
 #include "bedserialport.h"
 
@@ -22,10 +22,12 @@
 #include "modelno.h"
 #include "kinetimecalc.h"
 #include "infosetting.h"
+#include "transimagergb.h"
 
 #include "zip/zip.h"
 
 #include "ymodem.h"
+#include "printimagecontrol.h"
 
 #include <filesystem>
 
@@ -33,9 +35,11 @@ const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
 static constexpr auto floatError = std::numeric_limits<float>::epsilon() * 10;
 
-PrintScheduler::PrintScheduler() :
+PrintScheduler::PrintScheduler(PrintImageControl* pi) :
     _LCDState(true)
 {
+    _printImageControl = pi;
+
     _printerSetting.parse();
     _version.parse();
 #ifndef TEST_WITHOUT_SERIAL
@@ -51,9 +55,8 @@ PrintScheduler::PrintScheduler() :
     bedSerialPort = new BedSerialport(this);
     _USBPortConnection = true;
 #endif
-
+    //check product
     addPrintingBed('A');
-
 }
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
@@ -135,14 +138,14 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
+
+    _printImageControl->imageChange(0);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
-    imageChange();
     return;
 }
 
 void PrintScheduler::bedFinish(){
-
 
     _bedWork = BED_FINISH_WORK;
     _bedMoveFinished = PRINT_MOVE_NULL;
@@ -152,6 +155,7 @@ void PrintScheduler::bedFinish(){
 //        _bedError = false;
     _enableTimer = false;
     emit sendToUIEnableTimer(false);
+    _printImageControl->imageSetBlack();
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_FINISH);
 
     return;
@@ -211,7 +215,7 @@ void PrintScheduler::printLayer(){
         if(_bedPrintImageNum == _bedMaxPrintNum){
             receiveFromUIPrintStateChange("finish");
             return;
-        }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension) == false){
+        }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + ".png") == false){
 //            receiveFromUIPrintFinishError();
             _bedError = true;
             _printState = "error";
@@ -222,26 +226,20 @@ void PrintScheduler::printLayer(){
         _progress = ((double)_bedPrintImageNum/(double)_bedMaxPrintNum) * 100;
         emit sendToUIUpdateProgress(_progress);
 
+        _printImageControl->waitImageWrote();
+
         if(_bedPrintImageNum <= _bedCuringLayer){
             _bedControl->receiveFromPrintScheduler(PRINT_MOVE_BEDCURRENT);
         }else{
             _bedControl->receiveFromPrintScheduler(PRINT_DLP_WORKING);
         }
+
     }
-}
-int PrintScheduler::imageChange(){
-
-    QString fullPath = QStringLiteral("file:/") + printFilePath + "/" + QString::number(_bedPrintImageNum) + _fileExtension;
-    Logger::GetInstance()->write("print image path : " + fullPath);
-
-    emit sendToLCDChangeImage(fullPath);
-
-    return 0;
 }
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            imageChange();
+            _printImageControl->imageChange(_bedPrintImageNum);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -411,7 +409,7 @@ void PrintScheduler::receiveFromUIShutdown()
 
 int PrintScheduler::copyFilesPath(QString src, QString dst)
 {
-    QRegularExpression svgRe("\\d{1,4}"+_fileExtension);
+    QRegularExpression svgRe("\\d{1,4}.png");
     QDir dir(src);
     int count = 0;
     if (! dir.exists())
@@ -562,10 +560,14 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _bedControl->setUVtime(0);
 
-        emit sendToLCDSetImageScale(materialSetting.contractionRatio);
+        _printImageControl->reset();
+
+        _printImageControl->imageScale(materialSetting.contractionRatio);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
+
+
     } catch (std::runtime_error &e) {
         qDebug() << e.what();
         return -3;
@@ -574,8 +576,6 @@ int PrintScheduler::setupForPrint(QString materialName)
 
     return 0;
 }
-
-
 
 void PrintScheduler::deletePrintFolder()
 {
@@ -598,7 +598,6 @@ int PrintScheduler::unZipFiles(QString path)
         miniz_cpp::zip_file file(target);
 
         file.extractall(printFilePath.toStdString());
-
     } catch (std::exception e) {
         return -1;
     }

@@ -9,16 +9,15 @@
 #include "wpa.h"
 #include "websocketclient.h"
 
-SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update) : _engine(engine), _conn(conn), _updater(update)
+SchedulerThread::SchedulerThread(QQmlApplicationEngine &engine, QmlConnecter &conn,UpdateConnector& update,PrintImageControl* printImageControl)
+    : _engine(engine), _conn(conn), _updater(update), _printImageControl(printImageControl)
 {
 
 }
 
 void SchedulerThread::run()
 {
-    qDebug() << "sched" << QThread::currentThread();
-
-    _sched = new PrintScheduler();
+    _sched = new PrintScheduler(_printImageControl);
     ResinUpdater ru(_sched);
     Updater up;
 
@@ -29,9 +28,8 @@ void SchedulerThread::run()
     _updater.swUpdaterConnect(&up);
     _updater.resinUpdaterConnect(&ru);
 
-
-
     WebSocketClient wsClient(QUrl(QStringLiteral("ws://localhost:8000/ws/printer")));
+
     QObject::connect(&wsClient,&WebSocketClient::startByWeb,_sched,&PrintScheduler::receiveFromUIPrintStart);
     QObject::connect(&wsClient,&WebSocketClient::changeStateByWeb,_sched,&PrintScheduler::receiveFromUIPrintStateChange);
     QObject::connect(&wsClient,&WebSocketClient::getMaterialListbyWeb,_sched,&PrintScheduler::receiveFromUIGetMaterialList);
@@ -49,16 +47,18 @@ void SchedulerThread::run()
 #ifdef __arm__
     wsClient.open();
 #endif
-    wsClient.open();
+//    wsClient.open();
 
     std::function<void()> func = [this]() {
-        qDebug() << "func" << QThread::currentThread();
+
+
 
 #ifdef __arm__
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 #else
         _engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
+        _engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 
 #ifdef MCU_UPDATE_TEST
         _updater.sendToSWMCUUpdate("/home/jsh/KinematicFW_F446.binary");

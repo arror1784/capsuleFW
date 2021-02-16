@@ -6,6 +6,8 @@
 #include "qmlconnecter.h"
 #include "updateconnector.h"
 
+#include "printimagecontrol.h"
+
 class PrintScheduler;
 class QQmlApplicationEngine;
 class SchedulerThread : public QThread
@@ -13,7 +15,7 @@ class SchedulerThread : public QThread
     Q_OBJECT
 public:
     SchedulerThread();
-    SchedulerThread(QQmlApplicationEngine& engine, QmlConnecter& conn,UpdateConnector& update);
+    SchedulerThread(QQmlApplicationEngine& engine, QmlConnecter& conn,UpdateConnector& update,PrintImageControl* printImageControl);
 
     PrintScheduler *sched() const;
 
@@ -23,6 +25,7 @@ private:
     QQmlApplicationEngine& _engine;
 
     PrintScheduler* _sched;
+    PrintImageControl* _printImageControl;
     QmlConnecter& _conn;
     UpdateConnector& _updater;
 };

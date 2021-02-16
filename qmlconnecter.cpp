@@ -30,8 +30,6 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(this,&QmlConnecter::sendToSchedAutoReboot,_sched,&PrintScheduler::receiveFromUIAutoReboot);
         QObject::connect(this,&QmlConnecter::sendToSchedUnlock,_sched,&PrintScheduler::receiveFromUIPrintUnlock);
 
-        QObject::connect(_sched,&PrintScheduler::sendToLCDChangeImage,this,&QmlConnecter::receiveFromSchedChangeImage);
-        QObject::connect(_sched,&PrintScheduler::sendToLCDSetImageScale,this,&QmlConnecter::receiveFromSchedSetImageScale);
         QObject::connect(_sched,&PrintScheduler::sendToUIUpdateProgress,this,&QmlConnecter::receiveFromSchedUpdateProgress);
         QObject::connect(_sched,&PrintScheduler::sendToUIChangeToPrint,this,&QmlConnecter::receiveFromSchedChangeToPrint) ;
         QObject::connect(_sched,&PrintScheduler::sendToUIChangeState,this,&QmlConnecter::receiveFromSchedChangeState);

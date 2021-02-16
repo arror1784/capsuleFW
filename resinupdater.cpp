@@ -1,4 +1,4 @@
-﻿#include "resinupdater.h"
+#include "resinupdater.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -16,7 +16,11 @@
 #include "common/jsonutil.h"
 #include "zip/zip.h"
 
-ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
+#include "productsetting.h"
+
+ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched),
+    _updateUrl(QUrl("https://services.hix.co.kr/resin/update/" + ProductSetting::getInstance().productStr)),
+    _downloadUrl(QUrl("https://services.hix.co.kr/resin/download/" + ProductSetting::getInstance().productStr))
 //    : _url("http://10.42.0.1:8000/resin/download/")
 {
     manager = new QNetworkAccessManager();
@@ -28,7 +32,7 @@ ResinUpdater::ResinUpdater(PrintScheduler *sched) : _printScheduler(sched)
 void ResinUpdater::checkUpdate()
 {
     _requestType = ResinRequestType::UPDATE;
-    request.setUrl(QUrl("https://services.hix.co.kr/resin/update/C10"));
+    request.setUrl(_updateUrl);
     manager->get(request);
 }
 
@@ -96,7 +100,7 @@ void ResinUpdater::checkUpdateUSB(QString path)
 void ResinUpdater::update()
 {
     _requestType = ResinRequestType::DOWNLOAD_ALL;
-    request.setUrl(QUrl("https://services.hix.co.kr/resin/download/C10"));
+    request.setUrl(_downloadUrl);
     manager->get(request);
 }
 

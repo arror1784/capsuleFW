@@ -10,5 +10,9 @@
         <file>fonts/OpenSans-Regular.ttf</file>
         <file>fonts/OpenSans-SemiBold.ttf</file>
         <file>fonts/OpenSans-SemiBoldItalic.ttf</file>
+        <file>fonts/NanumBarunGothic.ttf</file>
+        <file>fonts/NanumBarunGothicBold.ttf</file>
+        <file>fonts/NanumBarunGothicLight.ttf</file>
+        <file>fonts/NanumBarunGothicUltraLight.ttf</file>
     </qresource>
 </RCC>

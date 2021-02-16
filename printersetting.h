@@ -5,8 +5,6 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-#include "Singleton.h"
-
 #include "common/jsonreadsetting.h"
 #include "common/jsonsetting.h"
 #include "common/jsonwritesetting.h"

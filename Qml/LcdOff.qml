@@ -26,7 +26,10 @@ Rectangle {
         id: openSansRegular
         source: "qrc:/fonts/OpenSans-Regular.ttf"
     }
-
+    FontLoader{
+        id: nanumBarunGothic
+        source: "qrc:/fonts/NanumBarunGothic.ttf"
+    }
     Popup{
         id: popup
         width: parent.width - 60
@@ -46,7 +49,7 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             text: qsTr("Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요")
-            font.family: openSansSemibold.name
+            font.family: nanumBarunGothic.name
             font.pixelSize: 20
             color: "#474747"
         }

@@ -20,6 +20,16 @@ namespace Hix {
                     throw std::runtime_error("value doesnt exist for given key");
             }
             template<typename ValueType>
+            bool tryGetValue(const QJsonObject& json,const QString& key,ValueType& value)
+            {
+                if(json.contains(key)){
+                    value = json[key].toVariant().value<ValueType>();
+                    return true;
+                }
+                else
+                    return false;
+            }
+            template<typename ValueType>
             QVector<ValueType> getValueArray(const QJsonObject& json,const QString& key)
             {
                 QVector<ValueType> vc;

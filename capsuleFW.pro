@@ -30,6 +30,7 @@ SOURCES += \
     VKeyboard/specialchkeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
+    c10printimage.cpp \
     common/jsonreadsetting.cpp \
     common/jsonsetting.cpp \
     common/jsonutil.cpp \
@@ -37,16 +38,21 @@ SOURCES += \
     filevalidator.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
+    l10imageprovider.cpp \
+    l10printimage.cpp \
     logger.cpp \
     main.cpp \
     modelno.cpp \
     networkcontrol.cpp \
     printersetting.cpp \
+    printimagecontrol.cpp \
     printscheduler.cpp \
+    productsetting.cpp \
     qmlconnecter.cpp \
     resinsetting.cpp \
     resinupdater.cpp \
     schedulerthread.cpp \
+    transimagergb.cpp \
     updateconnector.cpp \
     updater.cpp \
     version.cpp \
@@ -88,6 +94,7 @@ HEADERS += \
     VKeyboard/specialchkeyboard.h \
     bedcontrol.h \
     bedserialport.h \
+    c10printimage.h \
     common.h \
     common/jsonreadsetting.h \
     common/jsonsetting.h \
@@ -96,15 +103,20 @@ HEADERS += \
     filevalidator.h \
     infosetting.h \
     kinetimecalc.h \
+    l10imageprovider.h \
+    l10printimage.h \
     logger.h \
     modelno.h \
     networkcontrol.h \
     printersetting.h \
+    printimagecontrol.h \
     printscheduler.h \
+    productsetting.h \
     qmlconnecter.h \
     resinsetting.h \
     resinupdater.h \
     schedulerthread.h \
+    transimagergb.h \
     updateconnector.h \
     updater.h \
     version.h \

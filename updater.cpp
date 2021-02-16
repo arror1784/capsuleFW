@@ -16,10 +16,12 @@
 #include "version.h"
 #include "zip/zip.h"
 
+#include "productsetting.h"
+
 Updater::Updater():
-    _url("https://services.hix.co.kr/setup")
-//  ,_downloadUrl("/home/pi/Downloads")
-  ,_downloadUrl("/opt/capsuleFW/download")
+  _downloadPath("/opt/capsuleFW/download")
+  ,_getFileUrl("https://services.hix.co.kr/setup/get_file/" + ProductSetting::getInstance().productStr + "/")
+  ,_manifestUrl("https://services.hix.co.kr/setup/get_update_manifest/" + ProductSetting::getInstance().productStr)
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
@@ -29,7 +31,7 @@ Updater::Updater():
 void Updater::saveAsFile(QString name,QByteArray ba)
 {
     QFile f;
-    QString path = _downloadUrl+"/"+name;
+    QString path = _downloadPath+"/"+name;
     f.setFileName(path);
     if(!f.open(QIODevice::ReadWrite)){
         qDebug() << "Could not open json file to ReadWrite " << path;
@@ -47,7 +49,7 @@ void Updater::downloadBin()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_BIN;
-        request.setUrl(_url + "/get_file/C10/" + _binName);
+        request.setUrl(_getFileUrl + _binName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -59,7 +61,7 @@ void Updater::downloadSH()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_SH;
-        request.setUrl(_url + "/get_file/C10/" + _shName);
+        request.setUrl(_getFileUrl + _shName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -71,7 +73,7 @@ void Updater::downloadZIP()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_ZIP;
-        request.setUrl(_url + "/get_file/C10/" + _zipName);
+        request.setUrl(_getFileUrl + _zipName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -83,7 +85,7 @@ void Updater::downloadVER()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_VER;
-        request.setUrl(_url + "/get_file/C10/" + _verName);
+        request.setUrl(_getFileUrl + _verName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -95,7 +97,7 @@ void Updater::downloadLIST()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::DOWNLOAD_LIST;
-        request.setUrl(_url + "/get_update_manifest/C10");
+        request.setUrl(_manifestUrl);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -107,7 +109,7 @@ void Updater::checkUpdate()
     _networkError = false;
     std::function<void()> func = [this]() {
         _requestType = SWRequestType::UPDATE_CHECK;
-        request.setUrl(_url + "/get_file/C10/" + _verName);
+        request.setUrl(_getFileUrl + _verName);
         manager->get(request);
     };
     QMetaObject::invokeMethod(this,func,Qt::AutoConnection);
@@ -170,7 +172,7 @@ void Updater::update()
                 return;
             }
             _MCUFirmwareUpdateFinished = false;
-            emit updateMCUFirmware(_downloadUrl + "/" + _binName);
+            emit updateMCUFirmware(_downloadPath + "/" + _binName);
             waitForMCUFirmwareUpdate();
         }
         //download new update.sh
@@ -209,7 +211,7 @@ void Updater::updateUSB(QString path)
             return;
         }
 
-        file.extractall(_downloadUrl.toStdString());
+        file.extractall(_downloadPath.toStdString());
 
 #ifdef __arm__
         updateCommandExcute();
@@ -226,8 +228,8 @@ void Updater::updateUSB(QString path)
 
 void Updater::updateCommandExcute()
 {
-    QString command = _downloadUrl + "/" + _shName + " " + _downloadUrl + "/" + _zipName + " " + _downloadUrl + " " + _downloadUrl + "/" + _verName;
-    QProcess::execute("chmod +x " + _downloadUrl + "/" + _shName);
+    QString command = _downloadPath + "/" + _shName + " " + _downloadPath + "/" + _zipName + " " + _downloadPath + " " + _downloadPath + "/" + _verName;
+    QProcess::execute("chmod +x " + _downloadPath + "/" + _shName);
     QProcess::startDetached("bash -c \"echo rasp | sudo -S " + command + " \"");
 }
 
