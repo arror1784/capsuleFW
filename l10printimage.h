@@ -11,6 +11,7 @@ class L10PrintImage : public PrintImageControl
 {
 public:
     L10PrintImage(int width, int height, int rotate, QString filePath, L10ImageProvider* l10imageProvider);
+    ~L10PrintImage() override;
 
     void imageChange(int number) override;
 

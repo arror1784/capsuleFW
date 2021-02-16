@@ -7,6 +7,11 @@ C10PrintImage::C10PrintImage(int width, int height, int rotate) :
 
 }
 
+C10PrintImage::~C10PrintImage()
+{
+
+}
+
 void C10PrintImage::imageChange(int number)
 {
     qDebug() << "C10";

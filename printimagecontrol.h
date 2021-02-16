@@ -11,6 +11,7 @@ class PrintImageControl : public QObject
 
 public:
     PrintImageControl(int width, int height, int rotate);
+    virtual ~PrintImageControl();
 
 signals:
     void sendToQmlChangeImage(QString path);

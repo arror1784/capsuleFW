@@ -6,6 +6,11 @@ PrintImageControl::PrintImageControl(int width, int height, int rotate) :
 {
     reset();
 }
+
+PrintImageControl::~PrintImageControl()
+{
+
+}
 void PrintImageControl::imageWrote()
 {
     qDebug() << "image worte";

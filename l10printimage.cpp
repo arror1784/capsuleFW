@@ -6,6 +6,11 @@ L10PrintImage::L10PrintImage(int width, int height, int rotate, QString filePath
 {
 
 }
+
+L10PrintImage::~L10PrintImage()
+{
+
+}
 void L10PrintImage::imageChange(int number)
 {
     qDebug() << "L10";
