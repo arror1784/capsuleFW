@@ -24,8 +24,6 @@ public slots:
 public:
     virtual void imageChange(int number) = 0;
     void imageScale(double scale);
-    void imageRotate(int rotate);
-    void imageWidhtHeight(int width,int height);
     void waitImageWrote();
 
     void setRootPath(QString path);

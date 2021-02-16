@@ -4,7 +4,7 @@
 PrintImageControl::PrintImageControl(int width, int height, int rotate) :
      _width(width), _height(height), _rotate(rotate)
 {
-
+    reset();
 }
 void PrintImageControl::imageWrote()
 {
@@ -19,18 +19,6 @@ void PrintImageControl::imageScale(double scale)
     emit sendToQmlImageScale(_scale);
 }
 
-void PrintImageControl::imageRotate(int rotate)
-{
-    _rotate = rotate;
-    emit sendToQmlImageRotate(_rotate);
-}
-
-void PrintImageControl::imageWidhtHeight(int width, int height)
-{
-    _width = width;
-    _height = height;
-    emit sendToQmlImageWidhtHeight(_width,_height);
-}
 void PrintImageControl::waitImageWrote()
 {
     std::unique_lock<std::mutex> lk(_cv_image_m);

@@ -27,7 +27,6 @@
 #include "zip/zip.h"
 
 #include "ymodem.h"
-#include "printimage.h"
 #include "printimagecontrol.h"
 
 #include <filesystem>
@@ -57,7 +56,6 @@ PrintScheduler::PrintScheduler(PrintImageControl* pi) :
     _USBPortConnection = true;
 #endif
     //check product
-    _printImageControl->imageRotate(0);
     addPrintingBed('A');
 }
 void PrintScheduler::addPrintingBed(char name){
