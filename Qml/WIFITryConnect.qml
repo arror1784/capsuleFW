@@ -48,6 +48,7 @@ Rectangle {
 
         Text {
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: qsTr("연결중입니다....")
             font.family: nanumBarunGothic.name
             font.pixelSize: 20

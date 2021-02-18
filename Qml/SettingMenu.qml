@@ -142,7 +142,7 @@ Item {
             }
             Text {
                 id: firmwareUpdateText
-                text: qsTr("WIFI")
+                text: qsTr("WiFi")
                 color: "#666666"
 
                 anchors.top: firmwareUpdateImage.bottom

@@ -42,6 +42,7 @@ Rectangle {
             text: qsTr("Resin Update Finished")
             font.family: openSansSemibold.name
             font.pixelSize: 20
+            anchors.verticalCenterOffset: -20
             color: "#474747"
         }
 

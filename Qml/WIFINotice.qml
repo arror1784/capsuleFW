@@ -42,6 +42,7 @@ Rectangle {
         Text {
             id: wifiText
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: qsTr("")
             font.family: nanumBarunGothic.name
             font.pixelSize: 20

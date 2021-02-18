@@ -48,6 +48,7 @@ Rectangle {
 
         Text {
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: qsTr("Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요")
             font.family: nanumBarunGothic.name
             font.pixelSize: 20

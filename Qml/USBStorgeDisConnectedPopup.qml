@@ -42,6 +42,7 @@ Rectangle {
         Text {
             id: usbText
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: "USB가 없습니다"
 
             font.family: openSansSemibold.name

@@ -45,6 +45,7 @@ Rectangle {
 
         Text {
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: qsTr("waiting for movement")
             font.family: openSansSemibold.name
             font.pixelSize: 20

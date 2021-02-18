@@ -41,6 +41,7 @@ Rectangle {
         Text {
             id: errorText
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -20
             text: error ? qsTr("other user control this printer") : ("time out")
             font.family: openSansSemibold.name
             font.pixelSize: 20

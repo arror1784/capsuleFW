@@ -36,7 +36,7 @@ Rectangle {
             width: optionText.width + valueText.width + 15
             height: optionText.height
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -22
+            anchors.verticalCenterOffset: -20
             Column{
                 id: optionText
                 Text {
