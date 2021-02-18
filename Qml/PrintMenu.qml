@@ -85,33 +85,13 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 25
     }
-    Rectangle{
+    BackBTN{
         id: printInfoButton
-        width: 215
-        height: 40
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 15
+        text: qsTr("Print info")
 
-        color: "#DCEAF3"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Print info")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                fileInfoPopup.open()
-            }
+        onBackClicked: {
+            fileInfoPopup.open()
         }
     }
     AcceptBTN{

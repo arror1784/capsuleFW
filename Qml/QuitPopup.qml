@@ -43,35 +43,17 @@ Rectangle {
             font.pixelSize: 20
             color: "#474747"
         }
-
-        Rectangle{
+        BackBTN{
             id: resumeButton
-            width: 185
-            height: 40
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-
-            color: "#DCEAF3"
-
-            radius:  8
+            isPopup: true
             opacity: buttonEnbled ? 1 : 0.7
-            Text {
-                text: qsTr("Resume")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
+            enabled: buttonEnbled
 
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                enabled: buttonEnbled
-                onClicked: {
-                   popupBack.printResume()
-                }
+            text: qsTr("Resume")
+
+            onBackClicked: {
+                popupBack.printResume()
             }
         }
         AcceptBTN{

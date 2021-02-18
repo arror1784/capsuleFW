@@ -202,7 +202,6 @@ Item {
 
         onBackClicked: {
             stackView.pop(StackView.Immediate)
-
         }
     }
     IpPopup{

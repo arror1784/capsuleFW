@@ -109,34 +109,15 @@ Rectangle {
                 }
             }
         }
-
-        Rectangle{
+        BackBTN{
             id: cancleButton
-            width: 185
-            height: 40
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
+            isPopup: true
 
-            color: "#DCEAF3"
+            text: qsTr("Cancel")
 
-            radius: 8
-
-            Text {
-                text: qsTr("Cancel")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    popup.close()
-                }
+            onBackClicked: {
+                popup.close()
             }
         }
         AcceptBTN{

@@ -81,35 +81,15 @@ Item {
             }
         }
     }
-    Rectangle{
+    BackBTN{
         id: printAgainButton
-        width: 215
-        height: 40
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 15
+        text: qsTr("Print again")
 
-        color: "#DCEAF3"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Print again")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                var arg = []
-                connection.receiveFromQmlUnlock();
-                connection.receiveFromQmlPrintStart(arg)
-            }
+        onBackClicked: {
+            var arg = []
+            connection.receiveFromQmlUnlock();
+            connection.receiveFromQmlPrintStart(arg)
         }
     }
     AcceptBTN{
