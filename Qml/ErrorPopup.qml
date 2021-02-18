@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         id: errorText
 
         text: qsTr("print setting error")
@@ -17,7 +17,7 @@ DefaultPopup{
         color: "#474747"
     }
 
-    backBTN: BackBTN{
+    BackBTN{
         id: backButton
 
         isPopup: true

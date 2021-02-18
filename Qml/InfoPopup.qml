@@ -7,7 +7,7 @@ DefaultPopup{
     hasBTN: true
     addtionalOffset: -20
 
-    body: Rectangle{
+    Rectangle{
 
         width: optionText.width + valueText.width + 15
         height: optionText.height
@@ -90,7 +90,7 @@ DefaultPopup{
             }
         }
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         isPopup: true
@@ -101,7 +101,7 @@ DefaultPopup{
             close()
         }
     }
-    backBTN: BackBTN{
+    BackBTN{
         id: backButton
 
         isPopup: true
@@ -111,6 +111,20 @@ DefaultPopup{
             close()
         }
     }
+    onOpened: {
+        nc.updateIpAddressList()
+        var ipList = nc.getIpAddressList()
+        var ip = ""
+        if(ipList.length === 0){
+            setIPAddress("NONE")
+        }else{
+            for (var i = 0; i < ipList.length; i++){
+                ip += ipList[i] + ":5000\n"
+            }
+            setIPAddress(ip)
+        }
+    }
+
     Connections{
         id: networkConnection
         target: nc
@@ -128,23 +142,5 @@ DefaultPopup{
     }
     function setIPAddress(address){
         ipText.text = address
-    }
-
-    function open(){
-        nc.updateIpAddressList()
-        var ipList = nc.getIpAddressList()
-        var ip = ""
-        if(ipList.length === 0){
-            setIPAddress("NONE")
-        }else{
-            for (var i = 0; i < ipList.length; i++){
-                ip += ipList[i] + ":5000\n"
-            }
-            setIPAddress(ip)
-        }
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

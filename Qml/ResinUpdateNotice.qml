@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         id: resinText
         text: qsTr("Resin Update Finished")
         font.family: openSansSemibold.name
@@ -14,7 +14,7 @@ DefaultPopup{
         anchors.verticalCenterOffset: -20
         color: "#474747"
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         isPopup: true

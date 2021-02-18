@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Rectangle{
+    Rectangle{
             width: optionText.width + valueText.width + 15
             height: optionText.height
             Column{
@@ -34,7 +34,7 @@ DefaultPopup{
                 }
             }
         }
-    backBTN: BackBTN{
+    BackBTN{
         id: cancleButton
 
         isPopup: true
@@ -45,7 +45,7 @@ DefaultPopup{
             popup.close()
         }
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: disconnectButton
 
         isPopup: true

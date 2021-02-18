@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         id: usbText
         text: "USB가 없습니다"
 
@@ -14,7 +14,7 @@ DefaultPopup{
         font.pixelSize: 20
         color: "#474747"
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         isPopup: true

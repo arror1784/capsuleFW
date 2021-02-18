@@ -7,14 +7,14 @@ DefaultPopup{
     hasBTN: true
 
 
-    body: Text {
+    Text {
         id: errorText
         text: error ? qsTr("other user control this printer") : ("time out")
         font.family: openSansSemibold.name
         font.pixelSize: 20
         color: "#474747"
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         text: qsTr("close")

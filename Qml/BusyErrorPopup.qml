@@ -13,7 +13,7 @@ DefaultPopup{
         color: "#474747"
     }
 
-    backBTN: BackBTN{
+    BackBTN{
         id: backButton
 
         isPopup: true

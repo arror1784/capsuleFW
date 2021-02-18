@@ -6,13 +6,13 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         text: qsTr("Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요")
         font.family: nanumBarunGothic.name
         font.pixelSize: 20
         color: "#474747"
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         isPopup: true

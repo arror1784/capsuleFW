@@ -6,7 +6,7 @@ DefaultPopup{
 
         hasBTN: true
 
-    body: Rectangle{
+    Rectangle{
         Pane{
             anchors.fill: parent
             focusPolicy: Qt.ClickFocus
@@ -80,7 +80,7 @@ DefaultPopup{
             }
         }
     }
-    backBTN: BackBTN{
+    BackBTN{
         id: cancleButton
 
         isPopup: true
@@ -91,7 +91,7 @@ DefaultPopup{
             popup.close()
         }
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: connectButton
 
         isPopup: true

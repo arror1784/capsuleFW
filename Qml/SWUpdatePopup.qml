@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
-    body: Rectangle{
+    Rectangle{
         width: updateText.width + progressBar.width
         height: updateText.height + progressBar.height
         Text {

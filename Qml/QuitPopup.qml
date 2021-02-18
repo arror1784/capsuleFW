@@ -5,13 +5,13 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         text: qsTr("Are you sure you want to quit printing")
         font.family: openSansRegular.name
         font.pixelSize: 20
         color: "#474747"
     }
-    backBTN: BackBTN{
+    BackBTN{
         id: resumeButton
 
         isPopup: true
@@ -24,7 +24,7 @@ DefaultPopup{
             popupBack.printResume()
         }
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: quitButton
 
         isPopup: true

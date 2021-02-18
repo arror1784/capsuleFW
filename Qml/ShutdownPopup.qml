@@ -6,13 +6,14 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    signal sendToShutdown()
+    Text {
         text: qsTr("Are you sure you want to exit?")
         font.family: openSansRegular.name
         font.pixelSize: 20
         color: "#474747"
     }
-    backBTN: BackBTN{
+    BackBTN{
         id: backButton
 
         isPopup: true
@@ -22,7 +23,7 @@ DefaultPopup{
             close()
         }
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: exitButton
 
         isPopup: true

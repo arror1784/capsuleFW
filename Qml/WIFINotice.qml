@@ -6,14 +6,14 @@ DefaultPopup{
 
     hasBTN: true
 
-    body: Text {
+    Text {
         id: wifiText
         text: qsTr("")
         font.family: nanumBarunGothic.name
         font.pixelSize: 20
         color: "#474747"
     }
-    acceptBTN: AcceptBTN{
+    AcceptBTN{
         id: closeButton
 
         isPopup: true
