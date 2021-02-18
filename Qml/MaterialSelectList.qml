@@ -124,11 +124,6 @@ Item {
     BackBTN{
         id: backButton
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 15
-
         onBackClicked: {
             var it = stackView.find(function(item,index){return item.isFileSelectList})
             if(it){

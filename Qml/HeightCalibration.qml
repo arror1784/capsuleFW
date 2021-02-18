@@ -212,11 +212,6 @@ Item {
     BackBTN{
         id: backButton
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 15
-
         onBackClicked: {
             goHome = true
             waitPopup.open()

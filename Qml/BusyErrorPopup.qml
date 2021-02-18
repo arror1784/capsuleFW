@@ -42,10 +42,7 @@ Rectangle {
         BackBTN{
             id: backButton
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
+            isPopup: true
 
             onBackClicked: {
                 back()

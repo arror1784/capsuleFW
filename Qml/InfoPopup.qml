@@ -111,32 +111,18 @@ Rectangle {
                 }
             }
         }
-        Rectangle{
+        AcceptBTN{
             id: closeButton
-
-            width: 185
-            height: 40
 
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 5
 
-            color: "#00C6EA"
+            text: qsTr("close")
 
-            radius: 8
-
-            Text {
-                text: qsTr("close")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: popup.close()
+            onAcceptClicked: {
+                popup.close()
             }
         }
         onOpened: {
