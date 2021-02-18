@@ -9,15 +9,6 @@ Item {
     property string updateMode
     property bool isUpdateModeSelect: true
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Rectangle {
         id: network
 

@@ -13,15 +13,6 @@ Item {
 
     property var networkList
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     ListModel{
         id: wifiModel
     }

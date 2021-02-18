@@ -13,11 +13,6 @@ Rectangle {
 
     visible: false
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-
     Popup{
         id: popup
         width: parent.width - 60

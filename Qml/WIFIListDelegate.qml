@@ -16,11 +16,6 @@ Rectangle{
 
     //name, current, saved, networkID
 
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Text {
         id: wifiNameText
         text: current ?  "Current: " + ssid : ssid

@@ -9,14 +9,6 @@ Item {
     property int timesec: 0
     property int timemin: 0
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
     Item {
         id: rec
         width: checkImage.width + printingCompleted.contentWidth

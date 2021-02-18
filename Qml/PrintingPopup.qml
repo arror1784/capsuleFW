@@ -14,10 +14,6 @@ Rectangle {
     visible: false
     signal startPrintingButtonClicked()
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
     Popup{
         id: popup
         width: parent.width - 60

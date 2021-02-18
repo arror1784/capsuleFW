@@ -18,18 +18,6 @@ Rectangle {
 
     property bool buttonEnbled: false
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-    FontLoader{
-        id: nanumBarunGothic
-        source: "qrc:/fonts/NanumBarunGothic.ttf"
-    }
     Popup{
         id: popup
         width: parent.width - 60

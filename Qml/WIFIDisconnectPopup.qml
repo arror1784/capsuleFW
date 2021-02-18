@@ -17,10 +17,6 @@ Rectangle {
     property string ssid: ""
     property string bssid: ""
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
     Popup{
         id: popup
         width: parent.width - 60

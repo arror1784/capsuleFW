@@ -10,11 +10,6 @@ Item {
 
     property var name: "USBPortOpenError"
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-
     Text {
         id: text
         text: qsTr("USB PORT CONNECTION ERROR")

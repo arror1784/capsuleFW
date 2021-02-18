@@ -13,15 +13,6 @@ Item {
 
     property string usbUpdatePath
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Text {
         id: selectText
         text: updateTitle

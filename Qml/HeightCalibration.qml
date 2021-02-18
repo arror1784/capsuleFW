@@ -13,15 +13,6 @@ Item {
     property bool goMicro: false
     property bool goAutoHome: false
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Text {
         id: calibrationText
         text: qsTr("Calibration")

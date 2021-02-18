@@ -17,14 +17,6 @@ Item {
 
     property bool isFileSelectList: true
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
     HixFilesystemModel {
         id: folderModel
         showDirs: true

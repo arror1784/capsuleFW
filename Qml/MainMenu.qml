@@ -10,11 +10,6 @@ Item {
     property string version: ""
     property string modelNo: ""
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-
     Rectangle{
         id: selectFile
         radius: 10

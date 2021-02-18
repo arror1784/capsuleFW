@@ -24,15 +24,6 @@ Item {
     property string printName
     property string materialName
 
-
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
     Rectangle{
 
         width: fileName.width > remainingTime.width ? fileName.width : remainingTime.width

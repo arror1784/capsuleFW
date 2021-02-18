@@ -12,10 +12,6 @@ Rectangle{
 
     property string metarialname: ""
 
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
     Text {
         id: fileNameText
         text: name

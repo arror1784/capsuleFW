@@ -14,15 +14,6 @@ Rectangle {
 
     signal back()
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Popup{
         id: popup
         width: parent.width - 60

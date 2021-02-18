@@ -15,18 +15,6 @@ Rectangle {
 
     property var exText: "전원을 제거하지 말고 프린터 종료된 후\r\n1분 뒤 다시 켜주세요."
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-    FontLoader{
-        id: nanumBarunGothic
-        source: "qrc:/fonts/NanumBarunGothic.ttf"
-    }
     Popup{
         id: popup
         width: parent.width - 60

@@ -9,15 +9,6 @@ Item {
     property var minLEDBrightness: 50.0
     property var currentLEDBrightness: 0.0
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Text {
         id: calibrationText
         text: qsTr("Calibration")

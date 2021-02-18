@@ -14,6 +14,19 @@ Window {
     color: "#EEF5F9"
     screen: Qt.application.screens[1]
 
+    FontLoader{
+        id: openSansSemibold
+        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+    }
+    FontLoader{
+        id: openSansRegular
+        source: "qrc:/fonts/OpenSans-Regular.ttf"
+    }
+    FontLoader{
+        id: nanumBarunGothic
+        source: "qrc:/fonts/NanumBarunGothic.ttf"
+    }
+
     StackView{
         id: stackView
         anchors.fill: parent
