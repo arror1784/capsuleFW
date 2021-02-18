@@ -120,37 +120,21 @@ Item {
             }
         }
     }
-    Rectangle{
+
+    BackBTN{
         id: backButton
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 15
 
-        color: "#DCEAF3"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Back")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                var it = stackView.find(function(item,index){return item.isFileSelectList})
-                if(it){
-                    it.reset()
-                }
-                stackView.pop(StackView.Immediate)
+        onBackClicked: {
+            var it = stackView.find(function(item,index){return item.isFileSelectList})
+            if(it){
+                it.reset()
             }
+            stackView.pop(StackView.Immediate)
         }
     }
     Rectangle{

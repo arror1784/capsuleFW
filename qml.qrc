@@ -43,5 +43,6 @@
         <file>Qml/ResinUpdateSelectFile.qml</file>
         <file>Qml/SWUpdateSelectFile.qml</file>
         <file>Qml/WIFITryConnect.qml</file>
+        <file>Qml/BackBTN.qml</file>
     </qresource>
 </RCC>

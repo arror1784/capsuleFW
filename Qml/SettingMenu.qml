@@ -196,35 +196,18 @@ Item {
             }
         }
     }
-    Rectangle{
+
+    BackBTN{
         id: backButton
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 15
 
-        color: "#DCEAF3"
+        onBackClicked: {
+            stackView.pop(StackView.Immediate)
 
-        radius: 8
-
-        Text {
-            text: qsTr("Back")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            antialiasing: false
-            anchors.leftMargin: 0
-            anchors.fill: parent
-            onClicked: {
-                stackView.pop(StackView.Immediate)
-            }
         }
     }
     IpPopup{

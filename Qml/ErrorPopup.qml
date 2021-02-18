@@ -42,34 +42,17 @@ Rectangle {
             color: "#474747"
         }
 
-        Rectangle{
+        BackBTN{
             id: backButton
-            width: 185
-            height: 40
 
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 5
 
-            color: "#DCEAF3"
-
-            radius:  8
-
-            Text {
-                text: qsTr("Back")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    back()
-                    close()
-                }
+            onBackClicked: {
+                back()
+                close()
             }
         }
         onOpened: {
