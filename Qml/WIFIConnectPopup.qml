@@ -139,43 +139,24 @@ Rectangle {
                 }
             }
         }
-        Rectangle{
+        AcceptBTN{
             id: connectButton
 
-            width: 185
-            height: 40
+            isPopup: true
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            text: qsTr("connect")
 
-            color: "#00C6EA"
-
-            radius: 8
-
-            Text {
-                text: qsTr("connect")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    if(passwordField.text.length === 0){
-                        return;
-                    }
-                    if(wpaEnable){
-                        connectButtonClicked(ssid,bssid,passwordField.text,networkID)
-                    }else{
-                        connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
-                    }
-
-                    popup.close()
+            onAcceptClicked: {
+                if(passwordField.text.length === 0){
+                    return;
                 }
+                if(wpaEnable){
+                    connectButtonClicked(ssid,bssid,passwordField.text,networkID)
+                }else{
+                    connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
+                }
+
+                popup.close()
             }
         }
         onOpened: {

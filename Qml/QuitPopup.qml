@@ -74,36 +74,18 @@ Rectangle {
                 }
             }
         }
-        Rectangle{
+        AcceptBTN{
             id: quitButton
 
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-
-            color: "#00C6EA"
-
-            radius: 8
+            isPopup: true
             opacity: buttonEnbled ? 1 : 0.5
-            Text {
-                text: qsTr("Quit")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
+            enabled: buttonEnbled
 
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                enabled: buttonEnbled
-                onClicked: {
-                    buttonEnbled = false
-                    printStop()
-                }
+            text: qsTr("Quit")
+
+            onAcceptClicked: {
+                buttonEnbled = false
+                printStop()
             }
         }
         onOpened: {

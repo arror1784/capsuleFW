@@ -44,5 +44,6 @@
         <file>Qml/SWUpdateSelectFile.qml</file>
         <file>Qml/WIFITryConnect.qml</file>
         <file>Qml/BackBTN.qml</file>
+        <file>Qml/AcceptBTN.qml</file>
     </qresource>
 </RCC>

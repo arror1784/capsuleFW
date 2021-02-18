@@ -49,34 +49,15 @@ Rectangle {
                 close()
             }
         }
-        Rectangle{
+        AcceptBTN{
             id: exitButton
 
-            width: 185
-            height: 40
+            isPopup: true
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            text: qsTr("exit")
 
-            color: "#00C6EA"
-
-            radius: 8
-
-            Text {
-                text: qsTr("exit")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    sendToShutdown()
-                }
+            onAcceptClicked: {
+                sendToShutdown()
             }
         }
         onOpened: {

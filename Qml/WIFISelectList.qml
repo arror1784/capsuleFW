@@ -132,41 +132,20 @@ Item {
             stackView.pop(StackView.Immediate)
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: selectButton
 
-        width: 215
-        height: 40
+        text: qsTr("Select")
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 15
-
-        color: "#00C6EA"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Select")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                if(wifiSelectList.currentIndex === -1){
-                    return
-                }
-                var data = wifiModel.get(wifiSelectList.currentIndex)
-                if(data.current){
-                    wifiDisconnectPopup.open(data.ssid,data.bssid)
-                }else{
-                    wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
-                }
+        onAcceptClicked: {
+            if(wifiSelectList.currentIndex === -1){
+                return
+            }
+            var data = wifiModel.get(wifiSelectList.currentIndex)
+            if(data.current){
+                wifiDisconnectPopup.open(data.ssid,data.bssid)
+            }else{
+                wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
             }
         }
     }

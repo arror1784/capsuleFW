@@ -110,42 +110,20 @@ Item {
             stackView.pop(StackView.Immediate)
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: updateButton
-
-        width: 215
-        height: 40
-
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 15
-
-        color: "#00C6EA"
-
-        radius: 8
 
         opacity: updateEnable ? 1 : 0.7
 
-        Text {
-            text: qsTr("Update")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
+        text: qsTr("Update")
 
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            enabled: updateEnable
-            onClicked: {
-                if(updateMode === "network"){
-                    updater.receiveFromQmlResinUpdate()
-                    resinUpdatePopup.open()
-                }else{
-                    updater.receiveFromQmlResinUpdateUSB(usbUpdatePath)
-                    resinUpdatePopup.open()
-                }
+        onAcceptClicked: {
+            if(updateMode === "network"){
+                updater.receiveFromQmlResinUpdate()
+                resinUpdatePopup.open()
+            }else{
+                updater.receiveFromQmlResinUpdateUSB(usbUpdatePath)
+                resinUpdatePopup.open()
             }
         }
     }

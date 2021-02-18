@@ -123,38 +123,18 @@ Rectangle {
                 }
             }
         }
-        Rectangle{
+        AcceptBTN{
             id: startButton
 
-            width: 185
-            height: 40
+            isPopup: true
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            text: qsTr("Start printing")
 
-            color: "#00C6EA"
-
-            radius: 8
-
-            Text {
-                text: qsTr("Start printing")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    startPrintingButtonClicked()
-                    popup.close()
-                }
+            onAcceptClicked: {
+                startPrintingButtonClicked()
+                popup.close()
             }
         }
-
         onOpened: {
             popupBack.visible = true
         }

@@ -232,35 +232,14 @@ Item {
            stackView.pop(StackView.Immediate)
        }
    }
-   Rectangle{
+   AcceptBTN{
        id: selectButton
 
-       width: 215
-       height: 40
+       text: qsTr("Select")
 
-       anchors.bottom: parent.bottom
-       anchors.bottomMargin: 10
-       anchors.right: parent.right
-       anchors.rightMargin: 15
-
-       color: "#00C6EA"
-
-       radius: 8
-
-       Text {
-           text: qsTr("Select")
-           color: "#FFFFFF"
-           font.family: openSansSemibold.name
-           font.pixelSize: 20
-
-           anchors.centerIn: parent
-       }
-       MouseArea{
-           anchors.fill: parent
-           onClicked: {
-               if(fileSelectList.currentIndex !== -1){
-                    stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
-               }
+       onAcceptClicked: {
+           if(fileSelectList.currentIndex !== -1){
+                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
            }
        }
    }

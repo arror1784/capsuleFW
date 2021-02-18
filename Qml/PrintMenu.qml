@@ -114,34 +114,13 @@ Item {
             }
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: quitButton
 
-        width: 215
-        height: 40
+        text: qsTr("Quit")
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 15
-
-        color: "#00C6EA"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Quit")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
+        onAcceptClicked: {
                 connection.receiveFromQmlPrintStateChange("pause")
-            }
         }
     }
     FileInfoPopup{

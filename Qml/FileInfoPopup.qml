@@ -113,10 +113,7 @@ Rectangle {
         AcceptBTN{
             id: closeButton
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            isPopup: true
 
             text: qsTr("close")
 

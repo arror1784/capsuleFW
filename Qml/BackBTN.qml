@@ -8,6 +8,8 @@ Rectangle{
 
     property bool isPopup: false
     property alias text: backText.text
+    property alias opacity: backButton.opacity
+    property alias enabled: mouseArea.enabled
 
     width: 215
     height: 40
@@ -26,6 +28,7 @@ Rectangle{
         anchors.centerIn: parent
     }
     MouseArea{
+        id: mouseArea
         anchors.fill: parent
         onClicked: {
             backClicked()

@@ -218,39 +218,18 @@ Item {
             connection.receiveFromQmlMoveMotor("goHome",0)
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: saveButton
 
-        width: 215
-        height: 40
+        enabled: buttonEnabled
 
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 15
+        text: qsTr("Save Height Offset")
 
-        color: "#00C6EA"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Save Height Offset")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            enabled: buttonEnabled
-
-            onClicked: {
-                goHome = true
-                waitPopup.open()
-                connection.receiveFromQmlMoveMotor("goHome",0)
-                connection.receiveFromQmlSetHeightOffset(maxHightOffset)
-            }
+        onAcceptClicked: {
+            goHome = true
+            waitPopup.open()
+            connection.receiveFromQmlMoveMotor("goHome",0)
+            connection.receiveFromQmlSetHeightOffset(maxHightOffset)
         }
     }
     WaitPopup{
