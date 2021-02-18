@@ -45,5 +45,6 @@
         <file>Qml/WIFITryConnect.qml</file>
         <file>Qml/BackBTN.qml</file>
         <file>Qml/AcceptBTN.qml</file>
+        <file>Qml/DefaultPopup.qml</file>
     </qresource>
 </RCC>
