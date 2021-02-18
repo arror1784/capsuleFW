@@ -7,7 +7,6 @@ Rectangle{
 
     property bool isPopup: false
     property alias text: acceptBTN.text
-    property alias opacity: selectButton.opacity
     property alias enabled: mouseArea.enabled
 
 

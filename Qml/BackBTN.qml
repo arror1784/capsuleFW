@@ -8,7 +8,6 @@ Rectangle{
 
     property bool isPopup: false
     property alias text: backText.text
-    property alias opacity: backButton.opacity
     property alias enabled: mouseArea.enabled
 
     width: 215
