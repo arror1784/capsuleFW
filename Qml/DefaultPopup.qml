@@ -19,13 +19,15 @@ Rectangle {
     property bool hasBTN: false
     property int addtionalOffset: 0
     property alias body: popupItem.children
-
+    property alias acceptBTN: btnParent.children
+    property alias backBTN: btnParent.children
 
     Popup{
         id: popup
         width: parent.width - 60
         height: parent.height - 60
         anchors.centerIn: Overlay.overlay
+        closePolicy: Popup.NoAutoClose
 
         background: Rectangle{
             id: backgroundPopUp
@@ -43,9 +45,12 @@ Rectangle {
             height: childrenRect.height
 
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: 0
+            anchors.verticalCenterOffset: 0 + addtionalOffset
         }
-
+        Item{
+            id: btnParent
+            anchors.fill: parent
+        }
         onOpened: {
             popupBack.visible = true
         }
@@ -55,9 +60,9 @@ Rectangle {
     }
     states: [
         State {
-            name: "default"
+            name: "hasBTN"
             when: hasBTN
-            PropertyChanges { target: popupItem; anchors.verticalCenterOffset: -40 + addtionalOffset }
+            PropertyChanges { target: popupItem; anchors.verticalCenterOffset: -20 + addtionalOffset}
         }
     ]
     function popupOpen(){

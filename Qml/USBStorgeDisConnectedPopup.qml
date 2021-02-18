@@ -1,62 +1,29 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
-    id: popupBack
+DefaultPopup{
+    id: popup
 
-    width: 480
-    height: 320
+    hasBTN: true
 
-    color: "#BDBDBD"
-    opacity: 0.7
+    body: Text {
+        id: usbText
+        text: "USB가 없습니다"
 
-    visible: false
+        font.family: openSansSemibold.name
+        font.pixelSize: 20
+        color: "#474747"
+    }
+    acceptBTN: AcceptBTN{
+        id: closeButton
 
-    signal back()
+        isPopup: true
 
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-        closePolicy: Popup.NoAutoClose
+        text: qsTr("close")
 
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-
-        Text {
-            id: usbText
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: "USB가 없습니다"
-
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-        AcceptBTN{
-            id: closeButton
-
-            isPopup: true
-
-            text: qsTr("close")
-
-            onAcceptClicked: {
-                popup.close()
-                back()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onAcceptClicked: {
+            popup.close()
+            back()
         }
     }
     function setText(text){
@@ -64,10 +31,10 @@ Rectangle {
     }
 
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
 }
 

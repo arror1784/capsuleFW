@@ -1,57 +1,27 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
+    body: Text {
+        id: ipText
+        text: qsTr("")
+        font.family: openSansSemibold.name
+        font.pixelSize: 20
+        color: "#474747"
+    }
+    acceptBTN: AcceptBTN{
+        id: closeButton
 
-    color: "#BDBDBD"
-    opacity: 0.7
+        isPopup: true
 
-    visible: false
-    property var ipList: []
+        text: qsTr("close")
 
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        focus: true
-
-        Text {
-            id: ipText
-            anchors.centerIn: parent
-            text: qsTr("")
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-        AcceptBTN{
-            id: closeButton
-
-            isPopup: true
-
-            text: qsTr("close")
-
-            onAcceptClicked: {
-                popup.close()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onAcceptClicked: {
+            popup.close()
         }
     }
     Connections{
@@ -67,9 +37,9 @@ Rectangle {
         }
         ipText.text = iptext
 
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
 }

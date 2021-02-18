@@ -1,64 +1,33 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
+    body: Text {
+        id: errorText
 
-    color: "#BDBDBD"
-    opacity: 0.7
+        text: qsTr("print setting error")
 
-    visible: false
+        font.family: nanumBarunGothic.name
+        font.pixelSize: 20
 
-    signal back()
+        color: "#474747"
+    }
 
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
+    backBTN: BackBTN{
+        id: backButton
 
-        closePolicy: Popup.NoAutoClose
+        isPopup: true
 
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-
-        Text {
-            id: errorText
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: qsTr("print setting error")
-            font.family: nanumBarunGothic.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-
-        BackBTN{
-            id: backButton
-
-            isPopup: true
-
-            onBackClicked: {
-                back()
-                close()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onBackClicked: {
+            back()
+            close()
         }
     }
+
     function open(code){
         if(code === 1){
             errorText.text = "Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요."
@@ -80,9 +49,9 @@ Rectangle {
             errorText.text = "Error: 오류가 발생했습니다."
         }
 
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
 }

@@ -1,41 +1,14 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
-    signal disconnectButtonClicked()
-
-    property string ssid: ""
-    property string bssid: ""
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: false
-        focus: true
-        Rectangle{
+    body: Rectangle{
             width: optionText.width + valueText.width + 15
             height: optionText.height
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -22
             Column{
                 id: optionText
                 Text {
@@ -61,41 +34,33 @@ Rectangle {
                 }
             }
         }
-        BackBTN{
-            id: cancleButton
+    backBTN: BackBTN{
+        id: cancleButton
 
-            isPopup: true
+        isPopup: true
 
-            text: qsTr("Cancel")
+        text: qsTr("Cancel")
 
-            onBackClicked: {
-                popup.close()
-            }
-        }
-        AcceptBTN{
-            id: disconnectButton
-
-            isPopup: true
-
-            text: qsTr("disconnect")
-
-            onAcceptClicked: {
-                disconnectButtonClicked()
-                popup.close()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onBackClicked: {
+            popup.close()
         }
     }
+    acceptBTN: AcceptBTN{
+        id: disconnectButton
 
+        isPopup: true
+
+        text: qsTr("disconnect")
+
+        onAcceptClicked: {
+            disconnectButtonClicked()
+            popup.close()
+        }
+    }
     function open(ssid,bssid){
         setSSID(ssid)
         setBSSID(bssid)
-        popup.open()
+        popup.popupOpen()
     }
     function setSSID(text){
         ssidText.text = text

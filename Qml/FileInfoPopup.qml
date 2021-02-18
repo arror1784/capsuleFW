@@ -1,37 +1,14 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-        Rectangle{
+    body: Rectangle{
             width: optionText.width + valueText.width + 15
             height: optionText.height
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -22
             Column{
                 id: optionText
                 Text {
@@ -110,27 +87,19 @@ Rectangle {
                 }
             }
         }
-        AcceptBTN{
-            id: closeButton
+    acceptBTN: AcceptBTN{
+        id: closeButton
 
-            isPopup: true
+        isPopup: true
 
-            text: qsTr("close")
+        text: qsTr("close")
 
-            onAcceptClicked: {
-                popup.close()
-            }
-        }
-
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onAcceptClicked: {
+            popup.close()
         }
     }
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function setFilename(fileName){
         fileNameText.text = fileName

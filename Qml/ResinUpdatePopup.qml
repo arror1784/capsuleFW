@@ -1,37 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
-
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
-
-    property var exText: "updating"
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-
-        closePolicy: Popup.NoAutoClose
-
+    body: Rectangle{
+        width: updateText.width + progressBar.width
+        height: updateText.height + progressBar.height
         Text {
             id: updateText
             anchors.centerIn: parent
@@ -52,18 +27,12 @@ Rectangle {
             anchors.horizontalCenter: updateText.horizontalCenter
             indeterminate: true
         }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
-        }
     }
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
 }
 

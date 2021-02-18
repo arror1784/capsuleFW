@@ -1,87 +1,48 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
+DefaultPopup{
+    id: popup
 
-Rectangle {
+    hasBTN: true
 
-    id: popupBack
+    body: Text {
+        text: qsTr("Are you sure you want to quit printing")
+        font.family: openSansRegular.name
+        font.pixelSize: 20
+        color: "#474747"
+    }
+    backBTN: BackBTN{
+        id: resumeButton
 
-    width: 480
-    height: 320
+        isPopup: true
+        opacity: buttonEnbled ? 1 : 0.7
+        enabled: buttonEnbled
 
-    color: "#BDBDBD"
-    opacity: 0.7
+        text: qsTr("Resume")
 
-    visible: false
-
-    signal printStop()
-    signal printResume()
-
-    property bool buttonEnbled: false
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
+        onBackClicked: {
+            popupBack.printResume()
         }
-        modal: true
-        focus: true
+    }
+    acceptBTN: AcceptBTN{
+        id: quitButton
 
-        closePolicy: Popup.NoAutoClose
+        isPopup: true
+        opacity: buttonEnbled ? 1 : 0.5
+        enabled: buttonEnbled
 
-        Text {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: qsTr("Are you sure you want to quit printing")
-            font.family: openSansRegular.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-        BackBTN{
-            id: resumeButton
+        text: qsTr("Quit")
 
-            isPopup: true
-            opacity: buttonEnbled ? 1 : 0.7
-            enabled: buttonEnbled
-
-            text: qsTr("Resume")
-
-            onBackClicked: {
-                popupBack.printResume()
-            }
-        }
-        AcceptBTN{
-            id: quitButton
-
-            isPopup: true
-            opacity: buttonEnbled ? 1 : 0.5
-            enabled: buttonEnbled
-
-            text: qsTr("Quit")
-
-            onAcceptClicked: {
-                buttonEnbled = false
-                printStop()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onAcceptClicked: {
+            buttonEnbled = false
+            printStop()
         }
     }
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
     function setButtonEnabled(aa){
         buttonEnbled = aa

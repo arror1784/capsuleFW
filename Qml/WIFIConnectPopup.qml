@@ -1,42 +1,12 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+        hasBTN: true
 
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
-
-    signal connectButtonClicked(string ssid,string bssid,string pwd,int id)
-    signal connectButtonClickedWithoutPSWD(string ssid,string bssid,int id)
-
-    property int networkID: -1
-    property bool wpaEnable: false
-    property string ssid: ""
-    property string bssid: ""
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: false
-        focus: true
-
-        closePolicy: Popup.NoAutoClose
+    body: Rectangle{
         Pane{
             anchors.fill: parent
             focusPolicy: Qt.ClickFocus
@@ -109,42 +79,36 @@ Rectangle {
                 }
             }
         }
-        BackBTN{
-            id: cancleButton
+    }
+    backBTN: BackBTN{
+        id: cancleButton
 
-            isPopup: true
+        isPopup: true
 
-            text: qsTr("Cancel")
+        text: qsTr("Cancel")
 
-            onBackClicked: {
-                popup.close()
+        onBackClicked: {
+            popup.close()
+        }
+    }
+    acceptBTN: AcceptBTN{
+        id: connectButton
+
+        isPopup: true
+
+        text: qsTr("connect")
+
+        onAcceptClicked: {
+            if(passwordField.text.length === 0){
+                return;
             }
-        }
-        AcceptBTN{
-            id: connectButton
-
-            isPopup: true
-
-            text: qsTr("connect")
-
-            onAcceptClicked: {
-                if(passwordField.text.length === 0){
-                    return;
-                }
-                if(wpaEnable){
-                    connectButtonClicked(ssid,bssid,passwordField.text,networkID)
-                }else{
-                    connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
-                }
-
-                popup.close()
+            if(wpaEnable){
+                connectButtonClicked(ssid,bssid,passwordField.text,networkID)
+            }else{
+                connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
             }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+
+            popup.close()
         }
     }
     Connections{
@@ -160,7 +124,7 @@ Rectangle {
 
         wpaEnable = wpa
 
-        popup.open()
+        popup.popupOpen()
     }
     function setSSID(text){
         ssid = text

@@ -1,130 +1,99 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
-    signal startPrintingButtonClicked()
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-        Rectangle{
-            width: optionText.width + valueText.width + 15
-            height: optionText.height
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            Column{
-                id: optionText
-                Text {
-                    text: qsTr("File name")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    color: "#474747"
-                }
-                Text {
-                    text: qsTr("Material")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    color: "#474747"
-                }
-                Text {
-                    text: qsTr("Layer height")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    color: "#474747"
-                }
+    body: Rectangle{
+        width: optionText.width + valueText.width + 15
+        height: optionText.height
+        Column{
+            id: optionText
+            Text {
+                text: qsTr("File name")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                color: "#474747"
             }
-            Column{
-                id: valueText
-                anchors.left: optionText.right
-                anchors.leftMargin: 15
-                Text {
-                    id: fileNameText
-                    text: qsTr("lower.stl")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    font.bold: true
-                    color: "#474747"
-
-                    width: 200
-                    elide: Text.ElideRight
-                }
-                Text {
-                    id: materialText
-                    text: qsTr("Temporary")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    font.bold: true
-                    color: "#474747"
-
-                    width: 200
-                    elide: Text.ElideRight
-                }
-                Text {
-                    id: layerHeightText
-                    text: qsTr("layer height")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    font.bold: true
-                    color: "#474747"
-
-                    width: 200
-                    elide: Text.ElideRight
-                }
+            Text {
+                text: qsTr("Material")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                color: "#474747"
+            }
+            Text {
+                text: qsTr("Layer height")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                color: "#474747"
             }
         }
-        BackBTN{
-            id: cancleButton
+        Column{
+            id: valueText
+            anchors.left: optionText.right
+            anchors.leftMargin: 15
+            Text {
+                id: fileNameText
+                text: qsTr("lower.stl")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                font.bold: true
+                color: "#474747"
 
-            isPopup: true
+                width: 200
+                elide: Text.ElideRight
+            }
+            Text {
+                id: materialText
+                text: qsTr("Temporary")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                font.bold: true
+                color: "#474747"
 
-            text: qsTr("Cancel")
+                width: 200
+                elide: Text.ElideRight
+            }
+            Text {
+                id: layerHeightText
+                text: qsTr("layer height")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                font.bold: true
+                color: "#474747"
 
-            onBackClicked: {
-                popup.close()
+                width: 200
+                elide: Text.ElideRight
             }
         }
-        AcceptBTN{
-            id: startButton
+    }
+    backBTN: BackBTN{
+        id: cancleButton
 
-            isPopup: true
+        isPopup: true
 
-            text: qsTr("Start printing")
+        text: qsTr("Cancel")
 
-            onAcceptClicked: {
-                startPrintingButtonClicked()
-                popup.close()
-            }
+        onBackClicked: {
+            popup.close()
         }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+    }
+    acceptBTN: AcceptBTN{
+        id: startButton
+
+        isPopup: true
+
+        text: qsTr("Start printing")
+
+        onAcceptClicked: {
+            startPrintingButtonClicked()
+            popup.close()
         }
     }
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function setText(fileName, material, layerHeight){
         fileNameText.text = fileName

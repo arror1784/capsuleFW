@@ -1,76 +1,42 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
+    body: Text {
+        text: qsTr("Are you sure you want to exit?")
+        font.family: openSansRegular.name
+        font.pixelSize: 20
+        color: "#474747"
+    }
+    backBTN: BackBTN{
+        id: backButton
 
-    color: "#BDBDBD"
-    opacity: 0.7
+        isPopup: true
 
-    visible: false
-
-    signal back()
-    signal sendToShutdown()
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
+        onBackClicked: {
+            back()
+            close()
         }
-        modal: true
-        focus: true
+    }
+    acceptBTN: AcceptBTN{
+        id: exitButton
 
-        Text {
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: qsTr("Are you sure you want to exit?")
-            font.family: openSansRegular.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-        BackBTN{
-            id: backButton
+        isPopup: true
 
-            isPopup: true
+        text: qsTr("exit")
 
-            onBackClicked: {
-                back()
-                close()
-            }
-        }
-        AcceptBTN{
-            id: exitButton
-
-            isPopup: true
-
-            text: qsTr("exit")
-
-            onAcceptClicked: {
-                sendToShutdown()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onAcceptClicked: {
+            sendToShutdown()
         }
     }
     function open(){
-        popup.open()
+        popup.popupOpen()
     }
     function close(){
-        popup.close()
+        popup.popupClose()
     }
 }
