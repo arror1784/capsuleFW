@@ -6,8 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-
-    Text {
+    body: Text {
         id: errorText
         text: error ? qsTr("other user control this printer") : ("time out")
         font.family: openSansSemibold.name
@@ -28,12 +27,5 @@ DefaultPopup{
     }
     function setError(errora){
         error = errora
-    }
-
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

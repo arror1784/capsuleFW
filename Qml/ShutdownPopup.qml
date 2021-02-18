@@ -7,7 +7,7 @@ DefaultPopup{
     hasBTN: true
 
     signal sendToShutdown()
-    Text {
+    body: Text {
         text: qsTr("Are you sure you want to exit?")
         font.family: openSansRegular.name
         font.pixelSize: 20
@@ -33,11 +33,5 @@ DefaultPopup{
         onAcceptClicked: {
             sendToShutdown()
         }
-    }
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         id: ipText
         text: qsTr("")
         font.family: openSansSemibold.name
@@ -28,7 +28,7 @@ DefaultPopup{
         id: networkConnection
         target: nc
     }
-    function open(){
+    onOpened: {
         nc.updateIpAddressList()
         ipList = nc.getIpAddressList()
         var iptext = ""
@@ -36,10 +36,5 @@ DefaultPopup{
             iptext += ipList[i] + ":5000\n"
         }
         ipText.text = iptext
-
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

@@ -7,7 +7,7 @@ DefaultPopup{
     hasBTN: true
     addtionalOffset: -20
 
-    Rectangle{
+    body: Rectangle{
 
         width: optionText.width + valueText.width + 15
         height: optionText.height

@@ -6,34 +6,34 @@ DefaultPopup{
 
     hasBTN: true
 
-    Rectangle{
-            width: optionText.width + valueText.width + 15
-            height: optionText.height
-            Column{
-                id: optionText
-                Text {
-                    text: qsTr("WIFI ssid")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    color: "#474747"
-                }
-            }
-            Column{
-                id: valueText
-                anchors.left: optionText.right
-                anchors.leftMargin: 15
-                Text {
-                    id: ssidText
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    font.bold: true
-                    color: "#474747"
-
-                    width: 200
-                    elide: Text.ElideRight
-                }
+    body: Rectangle{
+        width: optionText.width + valueText.width + 15
+        height: optionText.height
+        Column{
+            id: optionText
+            Text {
+                text: qsTr("WIFI ssid")
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                color: "#474747"
             }
         }
+        Column{
+            id: valueText
+            anchors.left: optionText.right
+            anchors.leftMargin: 15
+            Text {
+                id: ssidText
+                font.family: openSansSemibold.name
+                font.pixelSize: 23
+                font.bold: true
+                color: "#474747"
+
+                width: 200
+                elide: Text.ElideRight
+            }
+        }
+    }
     BackBTN{
         id: cancleButton
 

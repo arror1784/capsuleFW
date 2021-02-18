@@ -23,10 +23,4 @@ DefaultPopup{
             close()
         }
     }
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
-    }
 }

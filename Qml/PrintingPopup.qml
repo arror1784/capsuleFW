@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Rectangle{
+    body: Rectangle{
         width: optionText.width + valueText.width + 15
         height: optionText.height
         Column{
@@ -91,9 +91,6 @@ DefaultPopup{
             startPrintingButtonClicked()
             popup.close()
         }
-    }
-    function open(){
-        popup.popupOpen()
     }
     function setText(fileName, material, layerHeight){
         fileNameText.text = fileName

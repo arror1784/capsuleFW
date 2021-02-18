@@ -4,9 +4,9 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
-        hasBTN: true
+    hasBTN: true
 
-    Rectangle{
+    body: Rectangle{
         Pane{
             anchors.fill: parent
             focusPolicy: Qt.ClickFocus

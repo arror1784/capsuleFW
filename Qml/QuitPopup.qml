@@ -5,7 +5,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         text: qsTr("Are you sure you want to quit printing")
         font.family: openSansRegular.name
         font.pixelSize: 20
@@ -37,12 +37,6 @@ DefaultPopup{
             buttonEnbled = false
             printStop()
         }
-    }
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
     function setButtonEnabled(aa){
         buttonEnbled = aa

@@ -16,8 +16,6 @@ Popup{
     property bool hasBTN: false
     property int addtionalOffset: 0
     property alias body: popupItem.children
-    property alias acceptBTN: btnParent.children
-    property alias backBTN: btnParent.children
 
     anchors.centerIn: Overlay.overlay
     closePolicy: Popup.NoAutoClose
@@ -43,9 +41,5 @@ Popup{
 
         anchors.centerIn: parent
         anchors.verticalCenterOffset: hasBTN ? -20 + addtionalOffset : 0 + addtionalOffset
-    }
-    Item{
-        id: btnParent
-        anchors.fill: parent
     }
 }

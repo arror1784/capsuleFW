@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Rectangle{
+    body: Rectangle{
         width: optionText.width + valueText.width + 15
         height: optionText.height
         Column{
@@ -97,9 +97,6 @@ DefaultPopup{
         onAcceptClicked: {
             popup.close()
         }
-    }
-    function open(){
-        popup.popupOpen()
     }
     function setFilename(fileName){
         fileNameText.text = fileName

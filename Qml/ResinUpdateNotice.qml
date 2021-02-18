@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         id: resinText
         text: qsTr("Resin Update Finished")
         font.family: openSansSemibold.name
@@ -27,12 +27,5 @@ DefaultPopup{
     }
     function setText(text){
         resinText.text = text
-    }
-
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

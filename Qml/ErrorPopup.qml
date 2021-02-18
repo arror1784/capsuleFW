@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         id: errorText
 
         text: qsTr("print setting error")
@@ -50,8 +50,5 @@ DefaultPopup{
         }
 
         popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

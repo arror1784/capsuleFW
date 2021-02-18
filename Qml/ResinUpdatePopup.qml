@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
-    Rectangle{
+    body: Rectangle{
         width: updateText.width + progressBar.width
         height: updateText.height + progressBar.height
         Text {
@@ -27,12 +27,6 @@ DefaultPopup{
             anchors.horizontalCenter: updateText.horizontalCenter
             indeterminate: true
         }
-    }
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }
 

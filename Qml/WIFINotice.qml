@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         id: wifiText
         text: qsTr("")
         font.family: nanumBarunGothic.name
@@ -26,12 +26,5 @@ DefaultPopup{
     }
     function setText(text){
         wifiText.text = text
-    }
-
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }

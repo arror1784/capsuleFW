@@ -6,7 +6,7 @@ DefaultPopup{
 
     hasBTN: true
 
-    Text {
+    body: Text {
         id: usbText
         text: "USB가 없습니다"
 
@@ -28,13 +28,6 @@ DefaultPopup{
     }
     function setText(text){
         resinText.text = text
-    }
-
-    function open(){
-        popup.popupOpen()
-    }
-    function close(){
-        popup.popupClose()
     }
 }
 
