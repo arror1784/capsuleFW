@@ -4,6 +4,8 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
+    property var exText: "전원을 제거하지 말고 프린터 종료된 후\r\n1분 뒤 다시 켜주세요."
+
     body: Rectangle{
         width: updateText.width + progressBar.width
         height: updateText.height + progressBar.height

@@ -4,6 +4,11 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
+    signal disconnectButtonClicked()
+
+    property string ssid: ""
+    property string bssid: ""
+
     hasBTN: true
 
     body: Rectangle{

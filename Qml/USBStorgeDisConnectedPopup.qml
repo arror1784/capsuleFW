@@ -6,6 +6,8 @@ DefaultPopup{
 
     hasBTN: true
 
+    signal back()
+
     body: Text {
         id: usbText
         text: "USB가 없습니다"

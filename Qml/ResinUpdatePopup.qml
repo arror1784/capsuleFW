@@ -4,6 +4,8 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
+    property var exText: "updating"
+
     body: Rectangle{
         width: updateText.width + progressBar.width
         height: updateText.height + progressBar.height

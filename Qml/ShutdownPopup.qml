@@ -4,9 +4,11 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
+    signal back()
+    signal sendToShutdown()
+
     hasBTN: true
 
-    signal sendToShutdown()
     body: Text {
         text: qsTr("Are you sure you want to exit?")
         font.family: openSansRegular.name

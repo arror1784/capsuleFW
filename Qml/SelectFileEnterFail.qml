@@ -4,6 +4,8 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
+    property var error: false
+
     hasBTN: true
 
     body: Text {

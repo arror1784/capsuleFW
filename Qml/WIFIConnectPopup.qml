@@ -6,6 +6,14 @@ DefaultPopup{
 
     hasBTN: true
 
+    signal connectButtonClicked(string ssid,string bssid,string pwd,int id)
+    signal connectButtonClickedWithoutPSWD(string ssid,string bssid,int id)
+
+    property int networkID: -1
+    property bool wpaEnable: false
+    property string ssid: ""
+    property string bssid: ""
+
     body: Rectangle{
         Pane{
             anchors.fill: parent

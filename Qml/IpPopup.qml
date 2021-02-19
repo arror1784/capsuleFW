@@ -6,6 +6,8 @@ DefaultPopup{
 
     hasBTN: true
 
+    property var ipList: []
+
     body: Text {
         id: ipText
         text: qsTr("")
