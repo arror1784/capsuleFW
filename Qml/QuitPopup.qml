@@ -6,6 +6,8 @@ DefaultPopup{
     signal printStop()
     signal printResume()
 
+    property bool buttonEnbled: false
+
     hasBTN: true
 
     body: Text {
