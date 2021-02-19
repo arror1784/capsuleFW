@@ -15,6 +15,8 @@ DefaultPopup{
     property string bssid: ""
 
     body: Rectangle{
+        width: popup.bodyWidth
+        height: popup.bodyHeight
         Pane{
             anchors.fill: parent
             focusPolicy: Qt.ClickFocus
@@ -23,7 +25,6 @@ DefaultPopup{
             width: optionText.width + valueText.width + 15
             height: optionText.height
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -32
             Column{
                 id: optionText
                 Text {

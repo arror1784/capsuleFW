@@ -14,6 +14,10 @@ Popup{
     property int addtionalOffset: 0
     property alias body: popupItem.children
 
+    readonly property int bodyWidth: 420
+    readonly property int bodyHeight:  hasBTN ? 200 : 260
+
+
     anchors.centerIn: Overlay.overlay
     closePolicy: Popup.NoAutoClose
 
