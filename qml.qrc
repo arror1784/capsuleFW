@@ -46,5 +46,6 @@
         <file>Qml/BackBTN.qml</file>
         <file>Qml/AcceptBTN.qml</file>
         <file>Qml/DefaultPopup.qml</file>
+        <file>Qml/MenuBTN.qml</file>
     </qresource>
 </RCC>
