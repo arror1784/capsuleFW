@@ -69,7 +69,7 @@ Window {
     Connections{
         target: connection
         onSendToQmlPrintSettingError:{
-            errorPopup.open(code)
+            errorPopup.openPopup(code)
         }
         onSendToQmlExit:{
             if(error){

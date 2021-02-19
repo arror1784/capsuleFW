@@ -10,9 +10,6 @@ Popup{
 //    color: "#BDBDBD"
 //    opacity: 0.7
 
-    signal back()
-    signal accept()
-
     property bool hasBTN: false
     property int addtionalOffset: 0
     property alias body: popupItem.children

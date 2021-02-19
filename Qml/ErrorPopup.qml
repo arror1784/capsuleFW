@@ -30,7 +30,7 @@ DefaultPopup{
         }
     }
 
-    function open(code){
+    function openPopup(code){
         if(code === 1){
             errorText.text = "Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요."
         }else if(code === 2){
@@ -51,6 +51,6 @@ DefaultPopup{
             errorText.text = "Error: 오류가 발생했습니다."
         }
 
-        popup.popupOpen()
+        popup.open()
     }
 }

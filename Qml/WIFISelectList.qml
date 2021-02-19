@@ -143,9 +143,9 @@ Item {
             }
             var data = wifiModel.get(wifiSelectList.currentIndex)
             if(data.current){
-                wifiDisconnectPopup.open(data.ssid,data.bssid)
+                wifiDisconnectPopup.openPopup(data.ssid,data.bssid)
             }else{
-                wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
+                wifiConnectPopup.openPopup(data.ssid,data.bssid,data.networkID,data.flags)
             }
         }
     }

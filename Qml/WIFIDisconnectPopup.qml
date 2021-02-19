@@ -62,10 +62,10 @@ DefaultPopup{
             popup.close()
         }
     }
-    function open(ssid,bssid){
+    function openPopup(ssid,bssid){
         setSSID(ssid)
         setBSSID(bssid)
-        popup.popupOpen()
+        popup.open()
     }
     function setSSID(text){
         ssidText.text = text

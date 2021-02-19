@@ -123,7 +123,7 @@ DefaultPopup{
         id:kWidgetConntion
         target: keyboardWidget
     }
-    function open(ssid,bssid,id,wpa){
+    function openPopup(ssid,bssid,id,wpa){
         setSSID(ssid)
         setBSSID(bssid)
         networkID = id
@@ -132,7 +132,7 @@ DefaultPopup{
 
         wpaEnable = wpa
 
-        popup.popupOpen()
+        popup.open()
     }
     function setSSID(text){
         ssid = text

@@ -101,16 +101,6 @@ DefaultPopup{
             close()
         }
     }
-    BackBTN{
-        id: backButton
-
-        isPopup: true
-
-        onBackClicked: {
-            back()
-            close()
-        }
-    }
     onOpened: {
         nc.updateIpAddressList()
         var ipList = nc.getIpAddressList()
