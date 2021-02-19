@@ -47,5 +47,6 @@
         <file>Qml/AcceptBTN.qml</file>
         <file>Qml/DefaultPopup.qml</file>
         <file>Qml/MenuBTN.qml</file>
+        <file>Qml/DefaultListView.qml</file>
     </qresource>
 </RCC>

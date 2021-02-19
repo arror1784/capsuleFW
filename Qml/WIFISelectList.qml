@@ -2,9 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import App 1.0
 
-Item {
-    width: 480
-    height: 320
+DefaultListView{
+    id: wifiSelectList
 
     property string ssidName
     property string currentssidName
@@ -16,115 +15,16 @@ Item {
     ListModel{
         id: wifiModel
     }
-
-    Text {
-        id: selectText
-        text: qsTr("Select a WIFI ssid")
-
-        font.pixelSize: 23
-        font.family: openSansSemibold.name
-        font.bold: true
-        font.letterSpacing: 2
-
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-    Rectangle{
-        id: wifiSelect
-        width: 450
-        height: 218
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: selectText.bottom
-        anchors.topMargin: 5
-
-        radius: 8
-        color: "#ffffff"
-        ListView{
-            id: wifiSelectList
-            width: 432
-            height: 200
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-
-            spacing: 2
-            focus: true
-            clip: true
-
-            highlightFollowsCurrentItem: true
-            highlightMoveDuration: 0
-            highlight: Rectangle { color: "#B6CDDC"; height: 22; radius: 5;}
-
-            model: wifiModel
-            delegate: WIFIListDelegate{
-                onWifiClicked: {
-                    wifiSelectList.currentIndex = index
-                    currentIndex = index
-                    wifiSelectList.update()
-                }
-            }
-        }
-        Rectangle{
-            id: up
-
-            width: 50
-            height: 70
-
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-
-            color: "#B6CDDC"
-
-            radius: 8
-
-            Image {
-                id: upImage
-                anchors.centerIn: parent
-
-                scale: 0.7
-                source: "qrc:/image/arrow-up.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    wifiSelectList.flick(0,500)
-                }
-            }
-        }
-        Rectangle{
-            id: down
-
-            width: 50
-            height: 70
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-
-            color: "#B6CDDC"
-
-            radius: 8
-            Image {
-                id: downImage
-
-                scale: 0.7
-                anchors.centerIn: parent
-                source: "qrc:/image/arrow-down.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    wifiSelectList.flick(0,-500)
-                }
-            }
+    title: qsTr("Select a WIFI ssid")
+    model: wifiModel
+    delegate: WIFIListDelegate{
+        onWifiClicked: {
+            wifiSelectList.selectList.currentIndex = index
+            currentIndex = index
+            wifiSelectList.selectList.update()
         }
     }
+
     BackBTN{
         id: backButton
 
@@ -138,10 +38,10 @@ Item {
         text: qsTr("Select")
 
         onAcceptClicked: {
-            if(wifiSelectList.currentIndex === -1){
+            if(wifiSelectList.selectList.currentIndex === -1){
                 return
             }
-            var data = wifiModel.get(wifiSelectList.currentIndex)
+            var data = wifiModel.get(wifiSelectList.selectList.currentIndex)
             if(data.current){
                 wifiDisconnectPopup.openPopup(data.ssid,data.bssid)
             }else{
@@ -229,7 +129,7 @@ Item {
     }
 
     function updateWIFIList(){
-        wifiSelectList.currentIndex = -1
+        wifiSelectList.selectList.currentIndex = -1
         wifiModel.clear()
         var wifiList = wifi.getWifiList()
 
