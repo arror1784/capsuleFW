@@ -4,6 +4,7 @@ Rectangle{
     id: enumBTN
 
     enum BTNPosition {
+        NONE,
         TopLeft,
         TopRight,
         BottomLeft,
@@ -12,8 +13,13 @@ Rectangle{
 
     signal btnClicked()
 
-    property int selectedPosition: MenuBTN.BTNPosition.TopLeft
+    property int selectedPosition: MenuBTN.BTNPosition.NONE
+
     property alias text: menuText.text
+    property alias font: menuText.font
+    property alias fontColor: menuText.color
+
+
     property alias imgSource: iconImage.source
     property alias imgScale: iconImage.scale
     property alias imgRotation: iconImage.rotation
@@ -58,7 +64,11 @@ Rectangle{
             btnClicked()
         }
     }
-    states: [
+    states: [/*
+        State {
+            name: "none"
+            when: selectedPosition === MenuBTN.BTNPosition.NONE
+        },*/
         State {
             name: "topLeft"
             when: selectedPosition === MenuBTN.BTNPosition.TopLeft
