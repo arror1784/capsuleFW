@@ -49,5 +49,6 @@
         <file>Qml/MenuBTN.qml</file>
         <file>Qml/DefaultListView.qml</file>
         <file>Qml/DefaultCalibration.qml</file>
+        <file>Qml/DefaultFinishMenu.qml</file>
     </qresource>
 </RCC>
