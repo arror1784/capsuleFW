@@ -1,211 +1,37 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-Item {
-    width: 480
-    height: 320
-
-    property var maxHightOffset: 0
-    property bool buttonEnabled: false
+DefaultCalibration{
+    id: heightCalibration
 
     property bool goHome: false
     property bool goMaxheight: false
     property bool goMicro: false
     property bool goAutoHome: false
 
-    Text {
-        id: calibrationText
-        text: qsTr("Calibration")
+    title: qsTr("Calibration")
+    text: qsTr("Bed height offset (㎛)")
+    firstCalibrationValue: -100
+    secondCalibrationValue: -10
+    calibrationValue: 0
 
-        font.pixelSize: 23
-        font.family: openSansSemibold.name
-        font.bold: true
-        font.letterSpacing: 2
-
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-
-    Rectangle{
-        width: bedHeightText.contentWidth
-        height: bedHeightText.contentHeight + hightNumber.contentHeight + 30
-
-        anchors.left: parent.left
-        anchors.leftMargin: (240 - width) / 2
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -20
-
-
-        color: "#00000000"
-
-        Text {
-            id: bedHeightText
-            text: qsTr("Bed height offset (㎛)")
-            color: "#666666"
-            font.pixelSize: 20
-            font.family: openSansRegular.name
-        }
-        Text {
-            id: hightNumber
-
-            anchors.top: bedHeightText.bottom
-            anchors.topMargin: 30
-            anchors.horizontalCenter: bedHeightText.horizontalCenter
-            text: maxHightOffset
-            color: "#474747"
-            font.pixelSize: 30
-            font.family: openSansSemibold.name
-        }
-    }
-    Rectangle{
-        id: oneCalibrationButtons
-
-        width: onePlusbutton.width + twoPlusbutton.width + oneText.contentHeight + 10
-        height: oneMinbutton.height + onePlusbutton.height + oneText.contentHeight + 10
-
-        anchors.right: parent.right
-        anchors.rightMargin: (240 - width) / 2
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -20
-
-        color: "#00000000"
-        Button{
-            id: onePlusbutton
-
-            width: 45
-            height: 45
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
-            enabled: buttonEnabled
-
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-up.png"
-            }
-            onClicked: {
-                buttonEnabled = false
-                goMicro = true
-                connection.receiveFromQmlMoveMotor("moveMicro",-100)
-                maxHightOffset += -100
-            }
-        }
-        Text {
-            id: oneText
-
-            anchors.top: onePlusbutton.bottom
-            anchors.topMargin: 5
-            anchors.horizontalCenter: onePlusbutton.horizontalCenter
-            text: qsTr("100")
-            color: "#9CB5C4"
-
-            font.pixelSize: 20
-            font.family: openSansSemibold.name
-        }
-        Button{
-            id: oneMinbutton
-            width: 45
-            height: 45
-
-            anchors.top: oneText.bottom
-            anchors.topMargin: 5
-
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
-            enabled: buttonEnabled
-
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-down.png"
-            }
-            onClicked: {
-                buttonEnabled = false
-                goMicro = true
-                connection.receiveFromQmlMoveMotor("moveMicro",100)
-                maxHightOffset += 100
-            }
-        }
-        Button{
-            id: twoPlusbutton
-
-            width: 45
-            height: 45
-
-            anchors.left: onePlusbutton.right
-            anchors.leftMargin: oneText.contentHeight + 10
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
-            enabled: buttonEnabled
-
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-up.png"
-            }
-            onClicked: {
-                buttonEnabled = false
-                goMicro = true
-                connection.receiveFromQmlMoveMotor("moveMicro",-10)
-                maxHightOffset += -10
-            }
-        }
-        Text {
-            id: twoText
-
-            anchors.top: twoPlusbutton.bottom
-            anchors.topMargin: 5
-            anchors.horizontalCenter: twoPlusbutton.horizontalCenter
-            text: qsTr("10")
-            color: "#9CB5C4"
-
-            font.pixelSize: 20
-            font.family: openSansSemibold.name
-        }
-        Button{
-            id: twoMinbutton
-            width: 45
-            height: 45
-
-            anchors.top: twoText.bottom
-            anchors.topMargin: 5
-            anchors.horizontalCenter: twoText.horizontalCenter
-
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
-            enabled: buttonEnabled
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-down.png"
-            }
-            onClicked: {
-                buttonEnabled = false
-                goMicro = true
-                connection.receiveFromQmlMoveMotor("moveMicro",10)
-                maxHightOffset += 10
-            }
+    onCalibrationBTNClicked: {
+        if(value === DefaultCalibration.BTNCalibration.FirstPlus){
+            buttonEnabled = false
+            goMicro = true
+            connection.receiveFromQmlMoveMotor("moveMicro",firstCalibrationValue)
+        }else if(value === DefaultCalibration.BTNCalibration.FirstMinus){
+            buttonEnabled = false
+            goMicro = true
+            connection.receiveFromQmlMoveMotor("moveMicro",-firstCalibrationValue)
+        }else if(value === DefaultCalibration.BTNCalibration.SecondPlus){
+            buttonEnabled = false
+            goMicro = true
+            connection.receiveFromQmlMoveMotor("moveMicro",secondCalibrationValue)
+        }else if(value === DefaultCalibration.BTNCalibration.SecondMinus){
+            buttonEnabled = false
+            goMicro = true
+            connection.receiveFromQmlMoveMotor("moveMicro",-secondCalibrationValue)
         }
     }
 
@@ -229,7 +55,7 @@ Item {
             goHome = true
             waitPopup.open()
             connection.receiveFromQmlMoveMotor("goHome",0)
-            connection.receiveFromQmlSetHeightOffset(maxHightOffset)
+            connection.receiveFromQmlSetHeightOffset(calibrationValue)
         }
     }
     WaitPopup{
@@ -256,7 +82,7 @@ Item {
             }
         }
         onSendToQmlHeightOffset:{
-            maxHightOffset = offset
+            calibrationValue = offset
         }
     }
 

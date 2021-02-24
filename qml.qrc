@@ -48,5 +48,6 @@
         <file>Qml/DefaultPopup.qml</file>
         <file>Qml/MenuBTN.qml</file>
         <file>Qml/DefaultListView.qml</file>
+        <file>Qml/DefaultCalibration.qml</file>
     </qresource>
 </RCC>
