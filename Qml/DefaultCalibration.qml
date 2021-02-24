@@ -77,25 +77,12 @@ Item {
         anchors.verticalCenterOffset: -20
 
         color: "#00000000"
-        Button{
+        CalibrationBTN{
             id: onePlusbutton
 
-            width: 45
-            height: 45
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
             enabled: buttonEnabled
+            state: "up"
 
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-up.png"
-            }
             onClicked: {
                 calibrationValue += firstCalibrationValue
                 calibrationBTNClicked(DefaultCalibration.BTNCalibration.FirstPlus)
@@ -113,55 +100,29 @@ Item {
             font.pixelSize: 20
             font.family: openSansSemibold.name
         }
-        Button{
+        CalibrationBTN{
             id: oneMinbutton
-            width: 45
-            height: 45
 
             anchors.top: oneText.bottom
             anchors.topMargin: 5
 
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
             enabled: buttonEnabled
+            state: "down"
 
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-down.png"
-            }
             onClicked: {
                 calibrationValue -= firstCalibrationValue
                 calibrationBTNClicked(DefaultCalibration.BTNCalibration.FirstMinus)
             }
         }
-        Button{
+        CalibrationBTN{
             id: twoPlusbutton
-
-            width: 45
-            height: 45
 
             anchors.left: onePlusbutton.right
             anchors.leftMargin: oneText.contentHeight + 10
-            background: Rectangle{
-                anchors.fill: parent
 
-                color: "#C9DBE6"
-                radius: 8
-            }
             enabled: buttonEnabled
+            state: "up"
 
-            Image {
-                anchors.centerIn: parent
-
-                scale: 0.5
-                source: "qrc:/image/arrow-up.png"
-            }
             onClicked: {
                 calibrationValue += secondCalibrationValue
                 calibrationBTNClicked(DefaultCalibration.BTNCalibration.SecondPlus)
@@ -179,28 +140,16 @@ Item {
             font.pixelSize: 20
             font.family: openSansSemibold.name
         }
-        Button{
+        CalibrationBTN{
             id: twoMinbutton
-            width: 45
-            height: 45
 
             anchors.top: twoText.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: twoText.horizontalCenter
 
-            background: Rectangle{
-                anchors.fill: parent
-
-                color: "#C9DBE6"
-                radius: 8
-            }
             enabled: buttonEnabled
-            Image {
-                anchors.centerIn: parent
+            state: "down"
 
-                scale: 0.5
-                source: "qrc:/image/arrow-down.png"
-            }
             onClicked: {
                 calibrationValue -= secondCalibrationValue
                 calibrationBTNClicked(DefaultCalibration.BTNCalibration.SecondMinus)

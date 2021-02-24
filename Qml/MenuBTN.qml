@@ -64,11 +64,7 @@ Rectangle{
             btnClicked()
         }
     }
-    states: [/*
-        State {
-            name: "none"
-            when: selectedPosition === MenuBTN.BTNPosition.NONE
-        },*/
+    states: [
         State {
             name: "topLeft"
             when: selectedPosition === MenuBTN.BTNPosition.TopLeft

@@ -50,5 +50,6 @@
         <file>Qml/DefaultListView.qml</file>
         <file>Qml/DefaultCalibration.qml</file>
         <file>Qml/DefaultFinishMenu.qml</file>
+        <file>Qml/CalibrationBTN.qml</file>
     </qresource>
 </RCC>
