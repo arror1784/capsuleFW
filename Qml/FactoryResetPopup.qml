@@ -64,11 +64,11 @@ DefaultPopup{
         anchors.right: parent.right
         anchors.rightMargin: 5
 
-        text: qsTr("Reset")
+        text: tryCount >= maxTryCount ? qsTr("Reset") : qsTr("Yes")
 
         onClicked: {
             tryCount++
-            if(tryCount == maxTryCount){
+            if(tryCount > maxTryCount){
                 factory.reset()
             }
         }
