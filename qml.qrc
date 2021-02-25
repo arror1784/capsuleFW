@@ -52,5 +52,6 @@
         <file>Qml/DefaultFinishMenu.qml</file>
         <file>Qml/CalibrationBTN.qml</file>
         <file>Qml/TextBTN.qml</file>
+        <file>Qml/DefaultUpdateView.qml</file>
     </qresource>
 </RCC>
