@@ -88,18 +88,28 @@ Item {
     BackBTN{
         id: printInfoButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
         text: qsTr("Print info")
 
-        onBackClicked: {
+        onClicked: {
             fileInfoPopup.open()
         }
     }
     AcceptBTN{
         id: quitButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         text: qsTr("Quit")
 
-        onAcceptClicked: {
+        onClicked: {
                 connection.receiveFromQmlPrintStateChange("pause")
         }
     }

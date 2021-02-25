@@ -74,22 +74,34 @@ DefaultPopup{
     BackBTN{
         id: cancleButton
 
-        isPopup: true
+        width: 185
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 5
 
         text: qsTr("Cancel")
 
-        onBackClicked: {
+        onClicked: {
             popup.close()
         }
     }
     AcceptBTN{
         id: startButton
 
-        isPopup: true
+        width: 185
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 5
 
         text: qsTr("Start printing")
 
-        onAcceptClicked: {
+        onClicked: {
             startPrintingButtonClicked()
             popup.close()
         }

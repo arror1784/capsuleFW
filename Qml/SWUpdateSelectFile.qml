@@ -119,16 +119,26 @@ DefaultListView{
     BackBTN{
         id: backButton
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        onClicked: {
             stackView.pop(StackView.Immediate)
         }
     }
     AcceptBTN{
         id: selectButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         text: qsTr("Select")
 
-        onAcceptClicked: {
+        onClicked: {
             if(swUpdateSelectList.selectList.currentIndex !== -1){
                  stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
             }

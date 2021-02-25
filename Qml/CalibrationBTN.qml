@@ -4,6 +4,14 @@ import QtQuick.Controls 2.5
 Button{
     id: calibrationBTN
 
+    property alias imgSource: img.source
+    property alias imgScale: img.scale
+    property alias imgRotation: img.rotation
+    property alias imgWidth: img.width
+    property alias imgHeight: img.height
+    property alias imgSourceWidth: img.sourceSize.width
+    property alias imgSourceHeight: img.sourceSize.height
+
     width: 45
     height: 45
 
@@ -24,14 +32,4 @@ Button{
 
         scale: 0.5
     }
-    states: [
-        State {
-            name: "up"
-            PropertyChanges { target: img; source: "qrc:/image/arrow-up.png" }
-        },
-        State {
-            name: "down"
-            PropertyChanges { target: img; source: "qrc:/image/arrow-down.png" }
-        }
-    ]
 }

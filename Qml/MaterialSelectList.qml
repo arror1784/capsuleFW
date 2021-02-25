@@ -24,7 +24,12 @@ DefaultListView{
     BackBTN{
         id: backButton
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        onClicked: {
             var it = stackView.find(function(item,index){return item.isFileSelectList})
             if(it){
                 it.reset()
@@ -35,9 +40,14 @@ DefaultListView{
     AcceptBTN{
         id: selectButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         text: qsTr("Select")
 
-        onAcceptClicked: {
+        onClicked: {
             if(materialSelectList.selectList.currentIndex !== -1){
                 connection.receiveFromQmlGetInfoSetting(stackView.get(1).selectedFilePath)
                 printingPopup.open()

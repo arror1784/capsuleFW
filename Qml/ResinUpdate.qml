@@ -106,18 +106,28 @@ Item {
     BackBTN{
         id: backButton
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        onClicked: {
             stackView.pop(StackView.Immediate)
         }
     }
     AcceptBTN{
         id: updateButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         opacity: updateEnable ? 1 : 0.7
 
         text: qsTr("Update")
 
-        onAcceptClicked: {
+        onClicked: {
             if(updateMode === "network"){
                 updater.receiveFromQmlResinUpdate()
                 resinUpdatePopup.open()

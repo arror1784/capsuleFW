@@ -81,7 +81,7 @@ Item {
             id: onePlusbutton
 
             enabled: buttonEnabled
-            state: "up"
+            imgSource: "qrc:/image/arrow-up.png"
 
             onClicked: {
                 calibrationValue += firstCalibrationValue
@@ -107,7 +107,7 @@ Item {
             anchors.topMargin: 5
 
             enabled: buttonEnabled
-            state: "down"
+            imgSource: "qrc:/image/arrow-down.png"
 
             onClicked: {
                 calibrationValue -= firstCalibrationValue
@@ -121,7 +121,7 @@ Item {
             anchors.leftMargin: oneText.contentHeight + 10
 
             enabled: buttonEnabled
-            state: "up"
+            imgSource: "qrc:/image/arrow-up.png"
 
             onClicked: {
                 calibrationValue += secondCalibrationValue
@@ -148,7 +148,7 @@ Item {
             anchors.horizontalCenter: twoText.horizontalCenter
 
             enabled: buttonEnabled
-            state: "down"
+            imgSource: "qrc:/image/arrow-down.png"
 
             onClicked: {
                 calibrationValue -= secondCalibrationValue

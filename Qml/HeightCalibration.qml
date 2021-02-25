@@ -38,7 +38,12 @@ DefaultCalibration{
     BackBTN{
         id: backButton
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        onClicked: {
             goHome = true
             waitPopup.open()
             connection.receiveFromQmlMoveMotor("goHome",0)
@@ -47,11 +52,16 @@ DefaultCalibration{
     AcceptBTN{
         id: saveButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         enabled: buttonEnabled
 
         text: qsTr("Save Height Offset")
 
-        onAcceptClicked: {
+        onClicked: {
             goHome = true
             waitPopup.open()
             connection.receiveFromQmlMoveMotor("goHome",0)

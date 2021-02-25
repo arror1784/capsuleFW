@@ -22,9 +22,15 @@ DefaultPopup{
     BackBTN{
         id: backButton
 
-        isPopup: true
+        width: 185
+        height: 40
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 5
+        
+        onClicked: {
             back()
             close()
         }

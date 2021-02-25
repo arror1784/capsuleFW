@@ -48,7 +48,12 @@ Item {
     BackBTN{
         id: backButton
 
-        onBackClicked: {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
+        onClicked: {
             stackView.pop(StackView.Immediate)
 
         }

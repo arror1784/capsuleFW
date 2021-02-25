@@ -93,11 +93,17 @@ DefaultPopup{
     AcceptBTN{
         id: closeButton
 
-        isPopup: true
+        width: 185
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 5
 
         text: qsTr("close")
 
-        onAcceptClicked: {
+        onClicked: {
             close()
         }
     }

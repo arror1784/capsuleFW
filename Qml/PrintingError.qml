@@ -13,9 +13,14 @@ DefaultFinishMenu{
     BackBTN{
         id: printAgainButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 15
+
         text: qsTr("Print again")
 
-        onBackClicked: {
+        onClicked: {
             var arg = []
             connection.receiveFromQmlUnlock();
             connection.receiveFromQmlPrintStart(arg)
@@ -24,9 +29,14 @@ DefaultFinishMenu{
     AcceptBTN{
         id: closeButton
 
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+
         text: qsTr("close")
 
-        onAcceptClicked: {
+        onClicked: {
             connection.receiveFromQmlUnlock();
             stackView.pop(mainMenu,StackView.Immediate)
         }
