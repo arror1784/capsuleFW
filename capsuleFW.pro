@@ -35,6 +35,7 @@ SOURCES += \
     common/jsonsetting.cpp \
     common/jsonutil.cpp \
     common/jsonwritesetting.cpp \
+    factoryreset.cpp \
     filevalidator.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
@@ -100,6 +101,7 @@ HEADERS += \
     common/jsonsetting.h \
     common/jsonutil.h \
     common/jsonwritesetting.h \
+    factoryreset.h \
     filevalidator.h \
     infosetting.h \
     kinetimecalc.h \

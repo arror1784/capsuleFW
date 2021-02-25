@@ -45,6 +45,25 @@ Item {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
         }
     }
+    MenuBTN{
+        id: factoryReset
+
+        text: qsTr("Factory Reset")
+
+        imgSource: "qrc:/image/settings.png"
+        imgWidth: 67
+        imgHeight: 67
+
+        selectedPosition: MenuBTN.BTNPosition.BottomLeft
+
+        onBtnClicked: {
+            factoryResetPopup.open()
+        }
+    }
+    FactoryResetPopup{
+        id:factoryResetPopup
+    }
+
     BackBTN{
         id: backButton
 

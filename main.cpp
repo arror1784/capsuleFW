@@ -30,6 +30,8 @@
 #include "c10printimage.h"
 #include "l10printimage.h"
 
+#include "factoryreset.h"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -67,6 +69,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ZipControl>("App", 1, 0, "ZipControl");
 
     engine.addImageProvider(QLatin1String("L10"), &l10ip);
+    ctx->setContextProperty("factory",&FactoryReset::getInstance());
     ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("nc",&nc);
     ctx->setContextProperty("connection",&connecter);
