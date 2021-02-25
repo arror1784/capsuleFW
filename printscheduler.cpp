@@ -29,6 +29,8 @@
 #include "ymodem.h"
 #include "printimagecontrol.h"
 
+#include "hdmicontrol.h"
+
 #include <filesystem>
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
@@ -151,6 +153,7 @@ void PrintScheduler::bedFinish(){
     _bedMoveFinished = PRINT_MOVE_NULL;
     _bedPrintImageNum = 0;
 
+    QProcess::execute("vcgencmd display_power 0");
     _printState = "quit";
 //        _bedError = false;
     _enableTimer = false;
@@ -567,7 +570,6 @@ int PrintScheduler::setupForPrint(QString materialName)
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
 
-
     } catch (std::runtime_error &e) {
         qDebug() << e.what();
         return -3;
@@ -681,6 +683,7 @@ void PrintScheduler::receiveFromUIPrintStart(QVariantList args)
     _printName =  sl.join('.');
     _materialName = materialName;
 
+    HDMIControl::hdmiRefresh();
     printStart();
     return;
 }

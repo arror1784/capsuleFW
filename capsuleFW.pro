@@ -37,6 +37,7 @@ SOURCES += \
     common/jsonwritesetting.cpp \
     factoryreset.cpp \
     filevalidator.cpp \
+    hdmicontrol.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
     l10imageprovider.cpp \
@@ -103,6 +104,7 @@ HEADERS += \
     common/jsonwritesetting.h \
     factoryreset.h \
     filevalidator.h \
+    hdmicontrol.h \
     infosetting.h \
     kinetimecalc.h \
     l10imageprovider.h \
