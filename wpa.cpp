@@ -17,6 +17,7 @@
 #include <cstdlib>
 
 #include <QVector>
+#include <regex>
 
 WPA::WPA() : _ctrlPath(WPA_CTRL_INTERFACE)
 {
@@ -97,7 +98,6 @@ bool WPA::networkConnect(QString ssid,QString bssid, QString passwd,int networkI
 
 bool WPA::networkConnect(int id)
 {
-
     networkSelect(_ctrl,id);
     networkEnable(_ctrl,id);
 
@@ -192,12 +192,39 @@ void WPA::wpa_ctrl_event()
             }else{
                 emit wifiScanFail(0);
             }
-
         }else if(stdResBuff.find(WPA_EVENT_ASSOC_REJECT) != std::string::npos){
+            std::regex re("bssid=(\\w|:)*");
+            std::smatch result;
+            auto flag = std::regex_search(stdResBuff,result,re);
+            if(flag){
+                auto bssid = QString::fromStdString(result.str().substr(6));
+                qDebug() << bssid;
+                if(bssid == "00:00:00:00:00:00"){
+                    for (int i = 0; i < _wifiList.size();i++) {
+                        if(_wifiList[i]->getSsid() == _lastTrySsid){
+                            networkDelete(_ctrl,_wifiList[i]->getNetworkID());
+                            _wifiList[i]->setSaved(false);
+                            _wifiList[i]->setNetworkID(-1);
+                        }
+                    }
+                }else{
+                    for (int i = 0; i < _wifiList.size();i++) {
+                        if(_wifiList[i]->getBssid() == bssid){
+                            networkDelete(_ctrl,_wifiList[i]->getNetworkID());
+                            _wifiList[i]->setSaved(false);
+                            _wifiList[i]->setNetworkID(-1);
+                        }
+                    }
+                }
+            }
             networkDisable(_ctrl,-1);
             networkSaveConfig(_ctrl);
             emit wifiAssocFailed(0);
+            emit networkListUpdate();
+
         }else if(stdResBuff.find(TRY_ASSOCIATE) != std::string::npos){
+            stdResBuff.erase(stdResBuff.end() - 1);
+            _lastTrySsid = QString::fromStdString(stdResBuff.substr(34));
             emit wifiTryAssociate();
         }
     }

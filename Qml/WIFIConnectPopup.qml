@@ -8,9 +8,12 @@ DefaultPopup{
 
     signal connectButtonClicked(string ssid,string bssid,string pwd,int id)
     signal connectButtonClickedWithoutPSWD(string ssid,string bssid,int id)
+    signal connectButtonClickedWithID(int id)
 
     property int networkID: -1
     property bool wpaEnable: false
+    property bool saved: false
+    property bool passwdEnable: false
     property string ssid: ""
     property string bssid: ""
 
@@ -39,7 +42,7 @@ DefaultPopup{
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     color: "#474747"
-                    visible: wpaEnable
+                    visible: passwdEnable
                 }
             }
             Column{
@@ -62,7 +65,7 @@ DefaultPopup{
                     echoMode: TextInput.Password
                     placeholderText: "Password"
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
-                    visible: wpaEnable
+                    visible: passwdEnable
                     onFocusChanged: {
                         if(!focus){
                             passwordField.activeFocusOnPress = true
@@ -79,7 +82,7 @@ DefaultPopup{
             id: visible
 //            anchors.left: passwordField.right
             text: qsTr("passwd visible")
-            visible: wpaEnable
+            visible: passwdEnable
             onCheckedChanged: {
                 if(checked){
                     passwordField.echoMode = TextInput.Normal
@@ -120,10 +123,13 @@ DefaultPopup{
         text: qsTr("connect")
 
         onClicked: {
-            if(passwordField.text.length === 0){
-                return;
-            }
-            if(wpaEnable){
+
+            if(saved){
+                connectButtonClickedWithID(networkID)
+            }else if(wpaEnable){
+                if(passwordField.text.length === 0){
+                    return;
+                }
                 connectButtonClicked(ssid,bssid,passwordField.text,networkID)
             }else{
                 connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
@@ -136,14 +142,19 @@ DefaultPopup{
         id:kWidgetConntion
         target: keyboardWidget
     }
-    function openPopup(ssid,bssid,id,wpa){
+    function openPopup(ssid,bssid,id,wpa,svd){
         setSSID(ssid)
         setBSSID(bssid)
         networkID = id
         passwordField.text = ""
         visible.checked = false
-
+        saved = svd
         wpaEnable = wpa
+        if(!saved && wpa){
+            passwdEnable = true
+        }else{
+            passwdEnable = false
+        }
 
         popup.open()
     }

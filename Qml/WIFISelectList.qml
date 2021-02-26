@@ -55,7 +55,7 @@ DefaultListView{
             if(data.current){
                 wifiDisconnectPopup.openPopup(data.ssid,data.bssid)
             }else{
-                wifiConnectPopup.openPopup(data.ssid,data.bssid,data.networkID,data.flags)
+                wifiConnectPopup.openPopup(data.ssid,data.bssid,data.networkID,data.flags,data.saved)
             }
         }
     }
@@ -72,6 +72,9 @@ DefaultListView{
         onConnectButtonClickedWithoutPSWD: {
             wifi.networkConnect(ssid,bssid,"",id)
             wifi.networkScan()
+        }
+        onConnectButtonClickedWithID: {
+            wifi.networkConnect(id)
         }
     }
     WIFIDisconnectPopup{
@@ -145,14 +148,14 @@ DefaultListView{
 
         for(var i = 0; i < wifiList.length; i++){
             var data = wifiList[i]
-            inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
+            inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID,data.saved)
         }
     }
-    function inserWIFIList(ssid,bssid,flags,b,networkID){
+    function inserWIFIList(ssid,bssid,flags,b,networkID,saved){
         if(b){
-            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID,"saved":saved})
         }else{
-            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID,"saved":saved})
         }
     }
 
