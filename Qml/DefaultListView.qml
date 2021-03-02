@@ -66,7 +66,7 @@ Item {
             highlightMoveDuration: 0
             highlight: Rectangle { color: "#B6CDDC"; height: 22; radius: 5;}
         }
-        Rectangle{
+        ImageBTN{
             id: up
 
             width: 50
@@ -79,23 +79,14 @@ Item {
 
             color: "#B6CDDC"
 
-            radius: 8
+            imgSource: "qrc:/image/arrow-up.png"
+            imgScale: 0.7
 
-            Image {
-                id: upImage
-                anchors.centerIn: parent
-
-                scale: 0.7
-                source: "qrc:/image/arrow-up.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    selectList.flick(0,500)
-                }
+            onClicked: {
+                selectList.flick(0,500)
             }
         }
-        Rectangle{
+        ImageBTN{
             id: down
 
             width: 50
@@ -108,19 +99,11 @@ Item {
 
             color: "#B6CDDC"
 
-            radius: 8
-            Image {
-                id: downImage
+            imgSource: "qrc:/image/arrow-down.png"
+            imgScale: 0.7
 
-                scale: 0.7
-                anchors.centerIn: parent
-                source: "qrc:/image/arrow-down.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    selectList.flick(0,-500)
-                }
+            onClicked: {
+                selectList.flick(0,-500)
             }
         }
     }

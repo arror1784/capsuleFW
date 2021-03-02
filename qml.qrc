@@ -54,5 +54,6 @@
         <file>Qml/TextBTN.qml</file>
         <file>Qml/DefaultUpdateView.qml</file>
         <file>Qml/FactoryResetPopup.qml</file>
+        <file>Qml/ImageBTN.qml</file>
     </qresource>
 </RCC>
