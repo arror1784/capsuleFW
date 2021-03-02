@@ -153,7 +153,6 @@ void PrintScheduler::bedFinish(){
     _bedMoveFinished = PRINT_MOVE_NULL;
     _bedPrintImageNum = 0;
 
-    QProcess::execute("vcgencmd display_power 0");
     _printState = "quit";
 //        _bedError = false;
     _enableTimer = false;
