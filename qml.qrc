@@ -55,5 +55,6 @@
         <file>Qml/DefaultUpdateView.qml</file>
         <file>Qml/FactoryResetPopup.qml</file>
         <file>Qml/ImageBTN.qml</file>
+        <file>Qml/ParentDir.qml</file>
     </qresource>
 </RCC>

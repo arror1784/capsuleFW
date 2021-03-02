@@ -25,72 +25,25 @@ DefaultListView{
 
     title: qsTr("Select a file to print (*.zip)")
 
-    extraBoard: Rectangle{
+    extraBoard: ParentDir{
         id: parentDir
-
-        width: 450
-        height: 40
-
-        radius: 8
-        color: "#ffffff"
-
-        Rectangle{
-            id: parentDirButton
-
-            width: 38
-            height: 34
-
-            anchors.verticalCenter: parentDir.verticalCenter
-            anchors.left: parentDir.left
-            anchors.leftMargin: 4
-
-            radius: 4
-            color: "#B6CDDC"
-            Image {
-                id: parentDirButtonImage
-
-                anchors.centerIn: parentDirButton
-
-                source: "qrc:/image/arrow-dir.png"
-                scale: 0.6
-            }
-            MouseArea{
-                anchors.fill: parentDirButton
-                onClicked: {
-                    if(folderModel.folder.toString() !== mediaURL){
+        onClicked: {
+            if(folderModel.folder.toString() !== mediaURL){
 //                        selectedFileName = ""
-                        folderModel.folder=folderModel.parentFolder
-                        fileSelectList.selectList.currentIndex=-1
+                folderModel.folder=folderModel.parentFolder
+                fileSelectList.selectList.currentIndex=-1
 //                        fileSelectList.selectList.update()
-                        if(folderModel.folder.toString() === mediaURL){
-                            parentDirText.text = ""
-                        }else{
-                            parentDirText.text = basename(folderModel.folder.toString())
-                        }
-                    }
+                if(folderModel.folder.toString() === mediaURL){
+                    text = ""
+                }else{
+                    text = basename(folderModel.folder.toString())
                 }
             }
-        }
-        Text {
-            id: parentDirText
-            width: 396
-            height: 23
-
-            anchors.left: parentDirButton.right
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-
-            elide: Text.ElideLeft
-
-            color: "#474747"
-
-            font.pixelSize: 22
-            font.family: openSansRegular.name
         }
     }
     model: folderModel
     delegate: FileListDelegate{
-        property var dirText: parentDirText
+        property var dirText: parentDir
         property var selectList: fileSelectList.selectList
         onDirClicked: {
             if(!folderModel.fileExists(path))
@@ -101,8 +54,8 @@ DefaultListView{
             folderModel.folder = path
 //                    selectedFileName = ""
             dirText.text = name
-            fileSelectList.selectList.currentIndex=-1
-            fileSelectList.selectList.update()
+            selectList.currentIndex=-1
+            selectList.update()
 
         }
         onFileClicked: {
@@ -183,13 +136,13 @@ DefaultListView{
     }
     function setPath(path){
         folderModel.folder = path
-        parentDirText.text = ""
+        parentDir.text = ""
         fileSelectList.selectList.update()
     }
 
     function resetPath(){
         folderModel.folder = mediaURL
-        parentDirText.text = ""
+        parentDir.text = ""
         fileSelectList.selectList.update()
     }
     function resetCurrentIndex(){

@@ -25,7 +25,7 @@ DefaultListView{
     title: qsTr("Select a file (*.updateFile)")
     model: folderModel
     delegate: FileListDelegate{
-        property var dirText: parentDirText
+        property var dirText: parentDir
         property var selectList: swUpdateSelectList.selectList
         onDirClicked: {
             if(!folderModel.fileExists(path))
@@ -46,76 +46,28 @@ DefaultListView{
                 stackView.pop(StackView.Immediate)
                 return
             }
-            swUpdateSelectList.selectList.currentIndex = index
+            selectList.currentIndex = index
             selectedFileName = name
             selectedFilePath = path
-            swUpdateSelectList.selectList.update()
+            selectList.update()
         }
     }
-    extraBoard: Rectangle{
+    extraBoard: ParentDir{
         id: parentDir
-
-        width: 450
-        height: 40
-
-        radius: 8
-        color: "#ffffff"
-
-        Rectangle{
-            id: parentDirButton
-
-            width: 38
-            height: 34
-
-            anchors.verticalCenter: parentDir.verticalCenter
-            anchors.left: parentDir.left
-            anchors.leftMargin: 4
-
-            radius: 4
-            color: "#B6CDDC"
-            Image {
-                id: parentDirButtonImage
-
-                anchors.centerIn: parentDirButton
-
-                source: "qrc:/image/arrow-dir.png"
-                scale: 0.6
-            }
-            MouseArea{
-                anchors.fill: parentDirButton
-                onClicked: {
-                    if(folderModel.folder.toString() !== mediaURL){
+        onClicked: {
+            if(folderModel.folder.toString() !== mediaURL){
 //                        selectedFileName = ""
-                        folderModel.folder=folderModel.parentFolder
-                        swUpdateSelectList.selectList.currentIndex=-1
+                folderModel.folder=folderModel.parentFolder
+                swUpdateSelectList.selectList.currentIndex=-1
 //                        swUpdateSelectList.selectList.update()
-                        if(folderModel.folder.toString() === mediaURL){
-                            parentDirText.text = ""
-                        }else{
-                            parentDirText.text = basename(folderModel.folder.toString())
-                        }
-                    }
+                if(folderModel.folder.toString() === mediaURL){
+                    text = ""
+                }else{
+                    text = basename(folderModel.folder.toString())
                 }
             }
         }
-        Text {
-            id: parentDirText
-            width: 396
-            height: 23
-
-            anchors.left: parentDirButton.right
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-
-            elide: Text.ElideLeft
-
-            color: "#474747"
-
-            font.pixelSize: 22
-            font.family: openSansRegular.name
-        }
     }
-
     BackBTN{
         id: backButton
 
@@ -180,12 +132,12 @@ DefaultListView{
     }
     function setPath(path){
         folderModel.folder = path
-        parentDirText.text = ""
+        parentDir.text = ""
         swUpdateSelectList.selectList.update()
     }
     function resetPath(){
         folderModel.folder = mediaURL
-        parentDirText.text = ""
+        parentDir.text = ""
         swUpdateSelectList.selectList.update()
     }
     function resetCurrentIndex(){
