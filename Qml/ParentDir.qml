@@ -13,31 +13,23 @@ Rectangle{
     radius: 8
     color: "#ffffff"
 
-    Rectangle{
-        id: parentDirButton
-
-        width: 38
-        height: 34
+    ImageBTN{
+        id: parentDirButtonImage
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 4
 
+        width: 38
+        height: 34
+
         radius: 4
         color: "#B6CDDC"
-        ImageBTN{
-            id: parentDirButtonImage
 
-            anchors.centerIn: parentDirButton
-
-            imgSource: "qrc:/image/arrow-dir.png"
-            imgScale: 0.6
-        }
-        MouseArea{
-            anchors.fill: parentDirButton
-            onClicked: {
-                btnClicked()
-            }
+        imgSource: "qrc:/image/arrow-dir.png"
+        imgScale: 0.6
+        onClicked: {
+            btnClicked()
         }
     }
     Text {

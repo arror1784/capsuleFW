@@ -82,6 +82,8 @@ Item {
             imgSource: "qrc:/image/arrow-up.png"
             imgScale: 0.7
 
+            radius: 8
+
             onClicked: {
                 selectList.flick(0,500)
             }
@@ -101,6 +103,8 @@ Item {
 
             imgSource: "qrc:/image/arrow-down.png"
             imgScale: 0.7
+
+            radius: 8
 
             onClicked: {
                 selectList.flick(0,-500)

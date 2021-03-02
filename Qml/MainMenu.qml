@@ -35,7 +35,7 @@ Item {
         font.pixelSize: 32
         fontColor: "#ffffff"
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/FileSelectList.qml"),StackView.Immediate)
         }
     }
@@ -58,7 +58,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 25
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/SettingMenu.qml"),StackView.Immediate)
         }
     }
@@ -81,7 +81,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 25
 
-        onBtnClicked: {
+        onClicked: {
             connection.receiveFromQmlGetProductInfo()
             infoPopup.open()
 //          infoPopup.setText(version,modelNo)

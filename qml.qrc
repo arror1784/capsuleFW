@@ -56,5 +56,6 @@
         <file>Qml/FactoryResetPopup.qml</file>
         <file>Qml/ImageBTN.qml</file>
         <file>Qml/ParentDir.qml</file>
+        <file>Qml/MultiBTN.qml</file>
     </qresource>
 </RCC>

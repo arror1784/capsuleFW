@@ -15,7 +15,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopLeft
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/HeightCalibration.qml"),StackView.Immediate)
         }
     }
@@ -34,7 +34,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopRight
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/LEDCalibration.qml"),StackView.Immediate)
         }
     }
@@ -52,7 +52,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.BottomRight
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/WIFISelectList.qml"),StackView.Immediate)
         }
     }
@@ -67,7 +67,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.BottomLeft
 
-        onBtnClicked: {
+        onClicked: {
             stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateMenu.qml"),StackView.Immediate)
         }
     }

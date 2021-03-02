@@ -21,7 +21,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopLeft
 
-        onBtnClicked: {
+        onClicked: {
             updateTarget = "resin"
 //                stackView.push(Qt.resolvedUrl("qrc:/Qml/ResinUpdate.qml"),StackView.Immediate)
             stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
@@ -39,7 +39,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopRight
 
-        onBtnClicked: {
+        onClicked: {
             updateTarget = "software"
 //                stackView.push(Qt.resolvedUrl("qrc:/Qml/SWUpdate.qml"),StackView.Immediate)
             stackView.push(Qt.resolvedUrl("qrc:/Qml/UpdateModeSelect.qml"),StackView.Immediate)
@@ -56,7 +56,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.BottomLeft
 
-        onBtnClicked: {
+        onClicked: {
             factoryResetPopup.open()
         }
     }

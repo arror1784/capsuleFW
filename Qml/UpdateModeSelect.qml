@@ -21,7 +21,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopLeft
 
-        onBtnClicked: {
+        onClicked: {
             updateMode = "network"
             var it = stackView.find(function(item,index){return item.isUpdateMenu})
 
@@ -46,7 +46,7 @@ Item {
 
         selectedPosition: MenuBTN.BTNPosition.TopRight
 
-        onBtnClicked: {
+        onClicked: {
             updateMode = "usb"
 
             var it = stackView.find(function(item,index){return item.isUpdateMenu})

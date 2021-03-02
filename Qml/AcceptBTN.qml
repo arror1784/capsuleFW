@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 TextBTN{
-    id: selectButton
+    id: acceptButton
 
     width: 215
     height: 40
