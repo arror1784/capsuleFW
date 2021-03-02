@@ -11,11 +11,6 @@ Rectangle{
     signal dirClicked(string path, string name,int index)
     signal fileClicked(string path, string name,int index)
 
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     Text {
         id: fileNameText
         text: fileName

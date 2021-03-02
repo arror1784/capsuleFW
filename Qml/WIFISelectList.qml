@@ -2,9 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.5
 import App 1.0
 
-Item {
-    width: 480
-    height: 320
+DefaultListView{
+    id: wifiSelectList
 
     property string ssidName
     property string currentssidName
@@ -13,134 +12,50 @@ Item {
 
     property var networkList
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-
     ListModel{
         id: wifiModel
     }
-
-    Text {
-        id: selectText
-        text: qsTr("Select a WIFI ssid")
-
-        font.pixelSize: 23
-        font.family: openSansSemibold.name
-        font.bold: true
-        font.letterSpacing: 2
-
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-    Rectangle{
-        id: wifiSelect
-        width: 450
-        height: 218
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: selectText.bottom
-        anchors.topMargin: 5
-
-        radius: 8
-        color: "#ffffff"
-        ListView{
-            id: wifiSelectList
-            width: 432
-            height: 200
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-
-            spacing: 2
-            focus: true
-            clip: true
-
-            highlightFollowsCurrentItem: true
-            highlightMoveDuration: 0
-            highlight: Rectangle { color: "#B6CDDC"; height: 22; radius: 5;}
-
-            model: wifiModel
-            delegate: WIFIListDelegate{
-                onWifiClicked: {
-                    wifiSelectList.currentIndex = index
-                    currentIndex = index
-                    wifiSelectList.update()
-                }
-            }
+    title: qsTr("Select a WIFI ssid")
+    model: wifiModel
+    delegate: WIFIListDelegate{
+        onWifiClicked: {
+            wifiSelectList.selectList.currentIndex = index
+            currentIndex = index
+            wifiSelectList.selectList.update()
         }
     }
-    Rectangle{
+
+    BackBTN{
         id: backButton
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 15
 
-        color: "#DCEAF3"
-
-        radius: 8
-
-        Text {
-            text: qsTr("Back")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                stackView.pop(StackView.Immediate)
-            }
+        onClicked: {
+            stackView.pop(StackView.Immediate)
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: selectButton
-
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 15
 
-        color: "#00C6EA"
+        text: qsTr("Select")
 
-        radius: 8
-
-        Text {
-            text: qsTr("Select")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                if(wifiSelectList.currentIndex === -1){
-                    return
-                }
-                var data = wifiModel.get(wifiSelectList.currentIndex)
-                if(data.current){
-                    wifiDisconnectPopup.open(data.ssid,data.bssid)
-                }else{
-                    wifiConnectPopup.open(data.ssid,data.bssid,data.networkID,data.flags)
-                }
+        onClicked: {
+            if(wifiSelectList.selectList.currentIndex === -1){
+                return
+            }
+            var data = wifiModel.get(wifiSelectList.selectList.currentIndex)
+            if(data.current){
+                wifiDisconnectPopup.openPopup(data.ssid,data.bssid)
+            }else{
+                wifiConnectPopup.openPopup(data.ssid,data.bssid,data.networkID,data.flags,data.saved)
             }
         }
     }
@@ -157,6 +72,9 @@ Item {
         onConnectButtonClickedWithoutPSWD: {
             wifi.networkConnect(ssid,bssid,"",id)
             wifi.networkScan()
+        }
+        onConnectButtonClickedWithID: {
+            wifi.networkConnect(id)
         }
     }
     WIFIDisconnectPopup{
@@ -224,20 +142,20 @@ Item {
     }
 
     function updateWIFIList(){
-        wifiSelectList.currentIndex = -1
+        wifiSelectList.selectList.currentIndex = -1
         wifiModel.clear()
         var wifiList = wifi.getWifiList()
 
         for(var i = 0; i < wifiList.length; i++){
             var data = wifiList[i]
-            inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID)
+            inserWIFIList(data.ssid,data.bssid,data.flags,data.connected,data.networkID,data.saved)
         }
     }
-    function inserWIFIList(ssid,bssid,flags,b,networkID){
+    function inserWIFIList(ssid,bssid,flags,b,networkID,saved){
         if(b){
-            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+            wifiModel.insert(0,{"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID,"saved":saved})
         }else{
-            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID})
+            wifiModel.append({"ssid":ssid,"bssid":bssid,"flags":flags,"current":b,"networkID":networkID,"saved":saved})
         }
     }
 

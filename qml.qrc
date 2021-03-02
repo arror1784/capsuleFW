@@ -43,5 +43,19 @@
         <file>Qml/ResinUpdateSelectFile.qml</file>
         <file>Qml/SWUpdateSelectFile.qml</file>
         <file>Qml/WIFITryConnect.qml</file>
+        <file>Qml/BackBTN.qml</file>
+        <file>Qml/AcceptBTN.qml</file>
+        <file>Qml/DefaultPopup.qml</file>
+        <file>Qml/MenuBTN.qml</file>
+        <file>Qml/DefaultListView.qml</file>
+        <file>Qml/DefaultCalibration.qml</file>
+        <file>Qml/DefaultFinishMenu.qml</file>
+        <file>Qml/CalibrationBTN.qml</file>
+        <file>Qml/TextBTN.qml</file>
+        <file>Qml/DefaultUpdateView.qml</file>
+        <file>Qml/FactoryResetPopup.qml</file>
+        <file>Qml/ImageBTN.qml</file>
+        <file>Qml/ParentDir.qml</file>
+        <file>Qml/MultiBTN.qml</file>
     </qresource>
 </RCC>

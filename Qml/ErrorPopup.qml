@@ -1,98 +1,42 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
 
-Rectangle {
-
-    id: popupBack
-
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
+DefaultPopup{
+    id: popup
 
     signal back()
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+    hasBTN: true
+
+    body: Text {
+        id: errorText
+
+        text: qsTr("print setting error")
+
+        font.family: nanumBarunGothic.name
+        font.pixelSize: 20
+
+        color: "#474747"
     }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
-    FontLoader{
-        id: nanumBarunGothic
-        source: "qrc:/fonts/NanumBarunGothic.ttf"
-    }
 
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
+    BackBTN{
+        id: backButton
 
-        closePolicy: Popup.NoAutoClose
+        width: 185
+        height: 40
 
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: true
-        focus: true
-
-        Text {
-            id: errorText
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -20
-            text: qsTr("print setting error")
-            font.family: nanumBarunGothic.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-
-        Rectangle{
-            id: backButton
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-
-            color: "#DCEAF3"
-
-            radius:  8
-
-            Text {
-                text: qsTr("Back")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    back()
-                    close()
-                }
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 5
+        
+        onClicked: {
+            back()
+            close()
         }
     }
-    function open(code){
+
+    function openPopup(code){
         if(code === 1){
             errorText.text = "Error: LCD가 빠졌습니다\nLCD를 다시 넣고 재부팅해주세요."
         }else if(code === 2){
@@ -114,8 +58,5 @@ Rectangle {
         }
 
         popup.open()
-    }
-    function close(){
-        popup.close()
     }
 }

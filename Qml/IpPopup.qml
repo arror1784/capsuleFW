@@ -1,89 +1,42 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
+    hasBTN: true
 
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
     property var ipList: []
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
+
+    body: Text {
+        id: ipText
+        text: qsTr("")
+        font.family: openSansSemibold.name
+        font.pixelSize: 20
+        color: "#474747"
     }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
+    AcceptBTN{
+        id: closeButton
 
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
+        width: 185
+        height: 40
 
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        focus: true
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 5
 
-        Text {
-            id: ipText
-            anchors.centerIn: parent
-            text: qsTr("")
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-            color: "#474747"
-        }
-        Rectangle{
-            id: closeButton
+        text: qsTr("close")
 
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-
-            color: "#00C6EA"
-
-            radius: 8
-
-            Text {
-                text: qsTr("close")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: popup.close()
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+        onClicked: {
+            popup.close()
         }
     }
     Connections{
         id: networkConnection
         target: nc
     }
-    function open(){
+    onOpened: {
         nc.updateIpAddressList()
         ipList = nc.getIpAddressList()
         var iptext = ""
@@ -91,10 +44,5 @@ Rectangle {
             iptext += ipList[i] + ":5000\n"
         }
         ipText.text = iptext
-
-        popup.open()
-    }
-    function close(){
-        popup.close()
     }
 }

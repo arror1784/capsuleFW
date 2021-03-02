@@ -107,5 +107,6 @@ private:
     wpa_ctrl* _ctrl_event;
     
     QString _ctrlPath;
+    QString _lastTrySsid;
 
 };

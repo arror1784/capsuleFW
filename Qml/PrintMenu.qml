@@ -24,15 +24,6 @@ Item {
     property string printName
     property string materialName
 
-
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    FontLoader{
-        id: openSansRegular
-        source: "qrc:/fonts/OpenSans-Regular.ttf"
-    }
     Rectangle{
 
         width: fileName.width > remainingTime.width ? fileName.width : remainingTime.width
@@ -94,63 +85,32 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 25
     }
-    Rectangle{
+    BackBTN{
         id: printInfoButton
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 15
 
-        color: "#DCEAF3"
+        text: qsTr("Print info")
 
-        radius: 8
-
-        Text {
-            text: qsTr("Print info")
-            color: "#666666"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                fileInfoPopup.open()
-            }
+        onClicked: {
+            fileInfoPopup.open()
         }
     }
-    Rectangle{
+    AcceptBTN{
         id: quitButton
-
-        width: 215
-        height: 40
 
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 15
 
-        color: "#00C6EA"
+        text: qsTr("Quit")
 
-        radius: 8
-
-        Text {
-            text: qsTr("Quit")
-            color: "#FFFFFF"
-            font.family: openSansSemibold.name
-            font.pixelSize: 20
-
-            anchors.centerIn: parent
-        }
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
+        onClicked: {
                 connection.receiveFromQmlPrintStateChange("pause")
-            }
         }
     }
     FileInfoPopup{

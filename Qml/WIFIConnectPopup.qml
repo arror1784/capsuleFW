@@ -1,48 +1,25 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
-
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
+    hasBTN: true
 
     signal connectButtonClicked(string ssid,string bssid,string pwd,int id)
     signal connectButtonClickedWithoutPSWD(string ssid,string bssid,int id)
+    signal connectButtonClickedWithID(int id)
 
     property int networkID: -1
     property bool wpaEnable: false
+    property bool saved: false
+    property bool passwdEnable: false
     property string ssid: ""
     property string bssid: ""
 
-
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
-
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: false
-        focus: true
-
-        closePolicy: Popup.NoAutoClose
+    body: Rectangle{
+        width: popup.bodyWidth
+        height: popup.bodyHeight
         Pane{
             anchors.fill: parent
             focusPolicy: Qt.ClickFocus
@@ -51,7 +28,6 @@ Rectangle {
             width: optionText.width + valueText.width + 15
             height: optionText.height
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -32
             Column{
                 id: optionText
                 Text {
@@ -66,7 +42,7 @@ Rectangle {
                     font.family: openSansSemibold.name
                     font.pixelSize: 23
                     color: "#474747"
-                    visible: wpaEnable
+                    visible: passwdEnable
                 }
             }
             Column{
@@ -89,7 +65,7 @@ Rectangle {
                     echoMode: TextInput.Password
                     placeholderText: "Password"
                     inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText
-                    visible: wpaEnable
+                    visible: passwdEnable
                     onFocusChanged: {
                         if(!focus){
                             passwordField.activeFocusOnPress = true
@@ -106,7 +82,7 @@ Rectangle {
             id: visible
 //            anchors.left: passwordField.right
             text: qsTr("passwd visible")
-            visible: wpaEnable
+            visible: passwdEnable
             onCheckedChanged: {
                 if(checked){
                     passwordField.echoMode = TextInput.Normal
@@ -115,94 +91,70 @@ Rectangle {
                 }
             }
         }
+    }
+    BackBTN{
+        id: cancleButton
 
-        Rectangle{
-            id: cancleButton
-            width: 185
-            height: 40
+        width: 185
+        height: 40
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 5
 
-            color: "#DCEAF3"
+        text: qsTr("Cancel")
 
-            radius: 8
+        onClicked: {
+            popup.close()
+        }
+    }
+    AcceptBTN{
+        id: connectButton
 
-            Text {
-                text: qsTr("Cancel")
-                color: "#666666"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
+        width: 185
+        height: 40
 
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    popup.close()
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+
+        text: qsTr("connect")
+
+        onClicked: {
+
+            if(saved){
+                connectButtonClickedWithID(networkID)
+            }else if(wpaEnable){
+                if(passwordField.text.length === 0){
+                    return;
                 }
+                connectButtonClicked(ssid,bssid,passwordField.text,networkID)
+            }else{
+                connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
             }
-        }
-        Rectangle{
-            id: connectButton
 
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-
-            color: "#00C6EA"
-
-            radius: 8
-
-            Text {
-                text: qsTr("connect")
-                color: "#FFFFFF"
-                font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    if(passwordField.text.length === 0){
-                        return;
-                    }
-                    if(wpaEnable){
-                        connectButtonClicked(ssid,bssid,passwordField.text,networkID)
-                    }else{
-                        connectButtonClickedWithoutPSWD(ssid,bssid,networkID)
-                    }
-
-                    popup.close()
-                }
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
+            popup.close()
         }
     }
     Connections{
         id:kWidgetConntion
         target: keyboardWidget
     }
-    function open(ssid,bssid,id,wpa){
+    function openPopup(ssid,bssid,id,wpa,svd){
         setSSID(ssid)
         setBSSID(bssid)
         networkID = id
         passwordField.text = ""
         visible.checked = false
-
+        saved = svd
         wpaEnable = wpa
+        if(!saved && wpa){
+            passwdEnable = true
+        }else{
+            passwdEnable = false
+        }
 
         popup.open()
     }

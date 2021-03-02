@@ -1,139 +1,80 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.5
 
-Rectangle {
+DefaultPopup{
+    id: popup
 
-    id: popupBack
-
-    width: 480
-    height: 320
-
-    color: "#BDBDBD"
-    opacity: 0.7
-
-    visible: false
     signal disconnectButtonClicked()
 
     property string ssid: ""
     property string bssid: ""
 
-    FontLoader{
-        id: openSansSemibold
-        source: "qrc:/fonts/OpenSans-SemiBold.ttf"
-    }
-    Popup{
-        id: popup
-        width: parent.width - 60
-        height: parent.height - 60
-        anchors.centerIn: Overlay.overlay
+    hasBTN: true
 
-        background: Rectangle{
-            id: backgroundPopUp
-            anchors.fill: parent
-            color: "#FAFDFF"
-            radius: 8
-        }
-        modal: false
-        focus: true
-        Rectangle{
-            width: optionText.width + valueText.width + 15
-            height: optionText.height
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -22
-            Column{
-                id: optionText
-                Text {
-                    text: qsTr("WIFI ssid")
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    color: "#474747"
-                }
-            }
-            Column{
-                id: valueText
-                anchors.left: optionText.right
-                anchors.leftMargin: 15
-                Text {
-                    id: ssidText
-                    font.family: openSansSemibold.name
-                    font.pixelSize: 23
-                    font.bold: true
-                    color: "#474747"
-
-                    width: 200
-                    elide: Text.ElideRight
-                }
-            }
-        }
-        Rectangle{
-            id: cancleButton
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-
-            color: "#DCEAF3"
-
-            radius: 8
-
+    body: Rectangle{
+        width: optionText.width + valueText.width + 15
+        height: optionText.height
+        Column{
+            id: optionText
             Text {
-                text: qsTr("Cancel")
-                color: "#666666"
+                text: qsTr("WIFI ssid")
                 font.family: openSansSemibold.name
-                font.pixelSize: 20
-
-                anchors.centerIn: parent
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    popup.close()
-                }
+                font.pixelSize: 23
+                color: "#474747"
             }
         }
-        Rectangle{
-            id: disconnectButton
-
-            width: 185
-            height: 40
-
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 5
-
-            color: "#00C6EA"
-
-            radius: 8
-
+        Column{
+            id: valueText
+            anchors.left: optionText.right
+            anchors.leftMargin: 15
             Text {
-                text: qsTr("disconnect")
-                color: "#FFFFFF"
+                id: ssidText
                 font.family: openSansSemibold.name
-                font.pixelSize: 20
+                font.pixelSize: 23
+                font.bold: true
+                color: "#474747"
 
-                anchors.centerIn: parent
+                width: 200
+                elide: Text.ElideRight
             }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    disconnectButtonClicked()
-                    popup.close()
-                }
-            }
-        }
-        onOpened: {
-            popupBack.visible = true
-        }
-        onClosed: {
-            popupBack.visible = false
         }
     }
+    BackBTN{
+        id: cancleButton
 
-    function open(ssid,bssid){
+        width: 185
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 5
+
+        text: qsTr("Cancel")
+
+        onClicked: {
+            popup.close()
+        }
+    }
+    AcceptBTN{
+        id: disconnectButton
+
+        width: 185
+        height: 40
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+
+        text: qsTr("disconnect")
+
+        onClicked: {
+            disconnectButtonClicked()
+            popup.close()
+        }
+    }
+    function openPopup(ssid,bssid){
         setSSID(ssid)
         setBSSID(bssid)
         popup.open()
