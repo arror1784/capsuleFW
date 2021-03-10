@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 
+# set(CMAKE_INSTALL_RPATH "/usr/bin/arm-linux-gnueabihf-ld")
+# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+set(CMAKE_PREFIX_PATH "/home/jsh/Qt5.12.3/5.12.3/gcc_64/lib/cmake")
 set(PROJECT_NAME capsuleFW)
 project(${PROJECT_NAME}) # Your project name
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC ON)   
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -29,9 +33,8 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5SerialPort REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Quick REQUIRED)
-find_package(Qt5Gui  REQUIRED)
+find_package(Qt5Gui REQUIRED)
 find_package(Qt5Qml REQUIRED)
-find_package(Qt5Svg REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 
 
@@ -102,6 +105,8 @@ wpa_ctrl/wpa_debug.h
 wpa_ctrl/wpabuf.h
 ymodem.h
 zip/zip.h
+zipcontrol.cpp
+zipcontrol.h
 schedulerthread.h
 schedulerthread.cpp
 FilesystemModel.h
@@ -111,18 +116,55 @@ updateconnector.cpp
 qml.qrc
 font.qrc
 image.qrc
+factoryreset.cpp
+factoryreset.h
+hdmicontrol.cpp
+hdmicontrol.h
+l10imageprovider.cpp
+l10imageprovider.h
+l10printimage.cpp
+l10printimage.h
+printimagecontrol.cpp
+printimagecontrol.h
+transimagergb.cpp
+transimagergb.h
+c10printimage.cpp
+c10printimage.h
+productsetting.cpp
+productsetting.h
+VKeyboard/basekeyboard.cpp
+VKeyboard/basekeyboard.h
+VKeyboard/engkeyboard.cpp
+VKeyboard/engkeyboard.h
+VKeyboard/extrakeyboard.cpp
+VKeyboard/extrakeyboard.h
+VKeyboard/keyboardsymbols.cpp
+VKeyboard/keyboardsymbols.h
+VKeyboard/keyboardtextcorrector.cpp
+VKeyboard/keyboardtextcorrector.h
+VKeyboard/keyboardwidget.cpp
+VKeyboard/keyboardwidget.h
+VKeyboard/specialchkeyboard.cpp
+VKeyboard/specialchkeyboard.h
 #    zip/zip_file.hpp
 )
+set(UIS
+VKeyboard/specialchkeyboard.ui
+VKeyboard/keyboardwidget.ui
+VKeyboard/extrakeyboard.ui
+VKeyboard/engkeyboard.ui
+)
 
-add_executable( ${PROJECT_NAME} WIN32  ${SOURCES})
+QT5_WRAP_UI( UI_HEADERS ${UIS} )
 
-target_link_libraries(${PROJECT_NAME}  
+add_executable( ${PROJECT_NAME} WIN32  ${SOURCES} ${UI_HEADERS})
+
+target_link_libraries(${PROJECT_NAME}
 Qt5::Widgets
 Qt5::Network
 Qt5::Gui
 Qt5::Qml
-Qt5::Svg
-Qt5::WebSockets
+Qt5::WebSockets 
 Qt5::Quick
 Qt5::SerialPort
 )
