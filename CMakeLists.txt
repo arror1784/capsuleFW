@@ -2,15 +2,23 @@ cmake_minimum_required(VERSION 3.5)
 
 # set(CMAKE_INSTALL_RPATH "/usr/bin/arm-linux-gnueabihf-ld")
 # set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(TESTING_CONFIG_OPT FILEPATH "./cmake/config.cmake")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include("cmake/HunterGate.cmake")
+include("./cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
     SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358"
+    LOCAL
 )
 
 set(PROJECT_NAME capsuleFW)
 project(${PROJECT_NAME}) # Your project name
+
+hunter_add_package(Qt)
+
+SET ( CMAKE_VERBOSE_MAKEFILE true )
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -25,26 +33,19 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-LINK_LIBRARIES( -lpthread)
+LINK_LIBRARIES( -lpthread )
 
-# if (${Qt5_FOUND})
-#     message("Found Qt " ${Qt5_VERSION})
-# else()
-#     message("Couldn't find Qt")
-# endif()
+message(STATUS "qt base build done")
 
-hunter_add_package(Qt)
-message(STATUS"qt base build done")
-
-# find_package(Qt5Core REQUIRED)
-# find_package(Qt5 COMPONENTS Widgets REQUIRED)
-# find_package(Qt5SerialPort REQUIRED)
-# find_package(Qt5Network REQUIRED)
-# find_package(Qt5Quick REQUIRED)
-# find_package(Qt5Gui REQUIRED)
-# find_package(Qt5Qml REQUIRED)
-# find_package(Qt5WebSockets REQUIRED)
-
+find_package(Qt5Core 5.12.3 REQUIRED)
+# find_package(Qt5 5.12.3 COMPONENTS Widgets REQUIRED)
+find_package(Qt5Widget 5.12.3 REQUIRED)
+find_package(Qt5SerialPort 5.12.3 REQUIRED)
+find_package(Qt5Network 5.12.3 REQUIRED)
+find_package(Qt5Quick 5.12.3 REQUIRED)
+find_package(Qt5Gui 5.12.3 REQUIRED)
+find_package(Qt5Qml 5.12.3 REQUIRED)
+find_package(Qt5WebSockets 5.12.3 REQUIRED)
 
 set(SOURCES
 bedcontrol.cpp
@@ -70,9 +71,7 @@ websocketclient.cpp
 wifiinfo.cpp
 wpa.cpp
 wpa_ctrl/common.c
-wpa_ctrl/os_unix.c# cmake/Hunter/config.cmake
-hunter_config(GTest VERSION 1.7.0-hunter-9 CMAKE_ARGS GTEST_SUPER_MODE=ON)
-hunter_config(ZLIB VERSION 1.2.8-hunter-1 CMAKE_ARGS ZLIB_FEATURES=FEATURE1;FEATURE2)
+wpa_ctrl/os_unix.c
 wpa_ctrl/wpa_ctrl.c
 wpa_ctrl/wpa_debug.c
 ymodem.cpp
@@ -148,7 +147,7 @@ VKeyboard/engkeyboard.cpp
 VKeyboard/engkeyboard.h
 VKeyboard/extrakeyboard.cpp
 VKeyboard/extrakeyboard.h
-VKeyboard/keyboardsymbols.cpp
+VKeyboard/keyboardsymbLOCALols.cpp
 VKeyboard/keyboardsymbols.h
 VKeyboard/keyboardtextcorrector.cpp
 VKeyboard/keyboardtextcorrector.h
