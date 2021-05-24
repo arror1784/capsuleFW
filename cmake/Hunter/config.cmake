@@ -1,7 +1,0 @@
-hunter_config(
-    Qt
-    VERSION "5.12.3"
-    CMAKE_ARGS
-    BUILD_SHARED_LIBS=ON
-    CMAKE_POSITION_INDEPENDENT_CODE=ON
-)

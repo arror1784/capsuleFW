@@ -1,21 +1,29 @@
 cmake_minimum_required(VERSION 3.5)
 
 # set(CMAKE_INSTALL_RPATH "/usr/bin/arm-linux-gnueabihf-ld")
-# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(TESTING_CONFIG_OPT FILEPATH "./cmake/config.cmake")
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include("./cmake/HunterGate.cmake")
-HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
-    SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358"
-    LOCAL
-)
+# set(CMAKE_PREFIX_PATH "/home/jsh/Qt5.12.3/5.12.3/gcc_64/lib/cmake")
+set(CMAKE_PREFIX_PATH "/home/jsh/raspi17/qt5pi/lib/cmake")
+
+# For Cross Compile
+
+set(MYSYSROOT "/home/jsh/raspi17/sysroot")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --sysroot=${MYSYSROOT}" CACHE INTERNAL "" FORCE)
+set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} --sysroot=${MYSYSROOT}" CACHE INTERNAL "" FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --sysroot=${MYSYSROOT}" CACHE INTERNAL "" FORCE)
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} --sysroot=${MYSYSROOT}" CACHE INTERNAL "" FORCE)
+
+set(CMAKE_FIND_ROOT_PATH "${MYSYSROOT}")
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+# set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(ENABLE_PRECOMPILED_HEADERS OFF)
+# INCLUDE_DIRECTORIES (/home/jsh/raspi17/sysroot/usr/include)
 
 set(PROJECT_NAME capsuleFW)
 project(${PROJECT_NAME}) # Your project name
-
-hunter_add_package(Qt)
 
 SET ( CMAKE_VERBOSE_MAKEFILE true )
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -38,8 +46,7 @@ LINK_LIBRARIES( -lpthread )
 message(STATUS "qt base build done")
 
 find_package(Qt5Core 5.12.3 REQUIRED)
-# find_package(Qt5 5.12.3 COMPONENTS Widgets REQUIRED)
-find_package(Qt5Widget 5.12.3 REQUIRED)
+find_package(Qt5 5.12.3 COMPONENTS Widgets REQUIRED)
 find_package(Qt5SerialPort 5.12.3 REQUIRED)
 find_package(Qt5Network 5.12.3 REQUIRED)
 find_package(Qt5Quick 5.12.3 REQUIRED)
@@ -147,7 +154,7 @@ VKeyboard/engkeyboard.cpp
 VKeyboard/engkeyboard.h
 VKeyboard/extrakeyboard.cpp
 VKeyboard/extrakeyboard.h
-VKeyboard/keyboardsymbLOCALols.cpp
+VKeyboard/keyboardsymbols.cpp
 VKeyboard/keyboardsymbols.h
 VKeyboard/keyboardtextcorrector.cpp
 VKeyboard/keyboardtextcorrector.h
@@ -164,9 +171,9 @@ VKeyboard/extrakeyboard.ui
 VKeyboard/engkeyboard.ui
 )
 
-# QT5_WRAP_UI( UI_HEADERS ${UIS} )
+QT5_WRAP_UI( UI_HEADERS ${UIS} )
 
-add_executable( ${PROJECT_NAME} WIN32  ${SOURCES} ${UIS})
+add_executable( ${PROJECT_NAME} WIN32  ${SOURCES} ${UI_HEADERS})
 
 target_link_libraries(${PROJECT_NAME}
 Qt5::Widgets
