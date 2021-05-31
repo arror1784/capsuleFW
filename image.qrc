@@ -19,5 +19,6 @@
         <file>image/settings.png</file>
         <file>image/USB.png</file>
         <file>image/wifi.png</file>
+        <file>image/factory.png</file>
     </qresource>
 </RCC>

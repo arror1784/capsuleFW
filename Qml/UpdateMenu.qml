@@ -50,7 +50,7 @@ Item {
 
         text: qsTr("Factory Reset")
 
-        imgSource: "qrc:/image/settings.png"
+        imgSource: "qrc:/image/factory.png"
         imgWidth: 67
         imgHeight: 67
 
