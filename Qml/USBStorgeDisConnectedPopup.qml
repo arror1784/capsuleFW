@@ -10,7 +10,7 @@ DefaultPopup{
 
     body: Text {
         id: usbText
-        text: "USB가 없습니다"
+        text: qsTr("USB가 없습니다")
 
         font.family: openSansSemibold.name
         font.pixelSize: 20

@@ -92,7 +92,7 @@ DefaultListView{
         materialSelectList.selectList.currentIndex = -1
 
         if(zipControl.hasFile(stackView.get(1).selectedFilePath,"resin.json")){
-            inserMaterialList("Custom")
+            inserMaterialList(qsTr("Custom"))
         }
 
         connection.receiveFromQmlGetMaterialList()

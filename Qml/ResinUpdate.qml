@@ -63,38 +63,38 @@ DefaultUpdateView{
         onSendToQmlResinUpdateNotice:(state,mode) => {
             if(mode === "network"){
                 if(state === "error"){
-                    updateText = "Network not connected"
+                    updateText = qsTr("Network not connected")
                     resinUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlResinGetVersion()
                     resinUpdateNotice.open()
-                    updateText = "Update finished"
+                    updateText = qsTr("Update finished")
                     updateEnable = false
                     resinUpdatePopup.close()
                 }else if(state === "available"){
                     updateEnable = true
-                    updateText = "Update available"
+                    updateText = qsTr("Update available")
                 }else if(state === "notAvailable"){
                     updateEnable = false
-                    updateText = "Current version is the latest"
+                    updateText = qsTr("Current version is the latest")
                 }
             }else{
                 if(state === "error"){
-                    updateText = "Wrong file"
+                    updateText = qsTr("Wrong file")
                     resinUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlResinGetVersion()
                     resinUpdateNotice.open()
-                    updateText = "Update finished"
+                    updateText = qsTr("Update finished")
                     updateEnable = false
                     resinUpdatePopup.close()
                     updater.receiveFromQmlSWGetVersion()
                 }else if(state === "available"){
                     updateEnable = true
-                    updateText = "Update available"
+                    updateText = qsTr("Update available")
                 }else if(state === "notAvailable"){
                     updateEnable = false
-                    updateText = "Current version is the latest"
+                    updateText = qsTr("Current version is the latest")
                 }
             }
         }
@@ -111,13 +111,13 @@ DefaultUpdateView{
 
         if(it !== null){
             if(it.updateMode === "network"){
-                title = "Resin update - Network"
+                title = qsTr("Resin update - Network")
                 updateMode = "network"
                 updater.receiveFromQmlResinGetVersion()
                 updater.receiveFromQmlResinCheckUpdate()
 
             }else{
-                title = "Resin update - USB"
+                title = qsTr("Resin update - USB")
                 updateMode = "usb"
 
                 updater.receiveFromQmlResinGetVersion()

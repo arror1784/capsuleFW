@@ -112,7 +112,7 @@ DefaultPopup{
         var ipList = nc.getIpAddressList()
         var ip = ""
         if(ipList.length === 0){
-            setIPAddress("NONE")
+            setIPAddress(qsTr("NONE"))
         }else{
             for (var i = 0; i < ipList.length; i++){
                 ip += ipList[i] + ":5000\n"
@@ -131,9 +131,9 @@ DefaultPopup{
     }
     function setWifiConnectd(b){
         if(b){
-            wifiText.text = "Connected"
+            wifiText.text = qsTr("Connected")
         }else{
-            wifiText.text = "Disconnected"
+            wifiText.text = qsTr("Disconnected")
         }
     }
     function setIPAddress(address){

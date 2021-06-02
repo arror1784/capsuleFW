@@ -70,31 +70,31 @@ DefaultUpdateView{
         onSendToQmlSWUpdateNotice:{
             if(mode === "network"){
                 if(state === "error"){
-                    updateText = "Network not connected"
+                    updateText = qsTr("Network not connected")
                     swUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlSWGetVersion()
-                    updateText = "Update finished"
+                    updateText = qsTr("Update finished")
                 }else if(state === "available"){
                     updateEnable = true
-                    updateText = "Update available"
+                    updateText = qsTr("Update available")
                 }else if(state === "notAvailable"){
                     updateEnable = false
-                    updateText = "Current version is the latest"
+                    updateText = qsTr("Current version is the latest")
                 }
             }else{
                 if(state === "error"){
-                    updateInfoText.text = "Wrong file"
+                    updateInfoText.text = qsTr("Wrong file")
                     swUpdatePopup.close()
                 }else if(state === "finish"){
                     updater.receiveFromQmlSWGetVersion()
-                    updateText = "Update finished"
+                    updateText = qsTr("Update finished")
                 }else if(state === "available"){
                     updateEnable = true
-                    updateText = "Update available"
+                    updateText = qsTr("Update available")
                 }else if(state === "notAvailable"){
                     updateEnable = false
-                    updateText = "Current version is the latest"
+                    updateText = qsTr("Current version is the latest")
                 }
             }
         }
@@ -112,13 +112,13 @@ DefaultUpdateView{
             updateMode = it.updateMode
 
             if(updateMode === "network"){
-                title = "Software update - Network"
+                title = qsTr("Software update - Network")
 
                 updater.receiveFromQmlSWGetVersion()
                 updater.receiveFromQmlSWCheckUpdate()
 
             }else{
-                title = "Software update - USB"
+                title = qsTr("Software update - USB")
 
                 updater.receiveFromQmlSWGetVersion()
 

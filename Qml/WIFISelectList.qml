@@ -101,9 +101,9 @@ DefaultListView{
         onConnectedChange:{
             if(connected){
                 wifiTryConnect.close()
-                wifiNotice.setText("WiFi가 연결되었습니다.")
+                wifiNotice.setText(qsTr("WiFi가 연결되었습니다."))
             }else{
-                wifiNotice.setText("WiFi 연결이 해제되었습니다.")
+                wifiNotice.setText(qsTr("WiFi 연결이 해제되었습니다."))
             }
             wifiNotice.open()
         }
@@ -112,11 +112,11 @@ DefaultListView{
                 scanFail = true;
                 if(value === -52){
                     wifiTryConnect.close()
-                    wifiNotice.setText("지원하지 않는 공유기입니다.\n재부팅이 필요합니다.")
+                    wifiNotice.setText(qsTr("지원하지 않는 공유기입니다.\n재부팅이 필요합니다."))
                     wifiNotice.open()
                 }else{
                     wifiTryConnect.close()
-                    wifiNotice.setText("문제가 발생하였습니다." + value)
+                    wifiNotice.setText(qsTr("문제가 발생하였습니다.") + value)
                     wifiNotice.open()
                 }
             }
@@ -124,15 +124,15 @@ DefaultListView{
         onWifiAssocFailed:{
             if(value === 0){
                 wifiTryConnect.close()
-                wifiNotice.setText("인증에 실패하였습니다.")
+                wifiNotice.setText(qsTr("인증에 실패하였습니다."))
                 wifiNotice.open()
             }else if(value === 1){
                 wifiTryConnect.close()
-                wifiNotice.setText("비밀번호 길이가 너무 짧습니다.")
+                wifiNotice.setText(qsTr("비밀번호 길이가 너무 짧습니다."))
                 wifiNotice.open()
             }else if(value === 2){
                 wifiTryConnect.close()
-                wifiNotice.setText("비밀번호 길이가 너무 깁니다.")
+                wifiNotice.setText(qsTr("비밀번호 길이가 너무 깁니다."))
                 wifiNotice.open()
             }
         }

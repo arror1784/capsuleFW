@@ -10,7 +10,7 @@ DefaultPopup{
 
     body: Text {
         id: errorText
-        text: error ? qsTr("other user control this printer") : ("time out")
+        text: error ? qsTr("other user control this printer") : qsTr("time out")
         font.family: openSansSemibold.name
         font.pixelSize: 20
         color: "#474747"

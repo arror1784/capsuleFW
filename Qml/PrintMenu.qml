@@ -147,7 +147,7 @@ Item {
             var diffDuration = totaltime - currentDuration
             var currentDate
             if(totaltime === 0){
-                timeText.text = "Calculating"
+                timeText.text = qsTr("Calculating")
                 return
             }
 
@@ -236,7 +236,7 @@ Item {
             var sec = currentDate.getSeconds()
             var min = currentDate.getMinutes()
 
-            fileInfoPopup.setPrintingTime(min + "min " + sec + "sec")
+            fileInfoPopup.setPrintingTime(min + qsTr("min ") + sec + qsTr("sec"))
 //            timeText.text = timemin + "min " + timesec + "sec"
 
             timerRunning = true
@@ -257,8 +257,8 @@ Item {
         waitPopupOpened = false
 
         timerRunning = false
-        timeText.text = "Calculating"
-        fileInfoPopup.setPrintingTime("Calculating")
+        timeText.text = qsTr("Calculating")
+        fileInfoPopup.setPrintingTime(qsTr("Calculating"))
         //Todo To do
     }
     function setProgressValue(value){

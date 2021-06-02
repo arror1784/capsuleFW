@@ -4,7 +4,7 @@ import QtQuick.Controls 2.5
 DefaultPopup{
     id: popup
 
-    property var exText: "전원을 제거하지 말고 프린터 종료된 후\r\n1분 뒤 다시 켜주세요."
+    property var exText: qsTr("전원을 제거하지 말고 프린터 종료된 후\r\n1분 뒤 다시 켜주세요.")
 
     body: Rectangle{
         width: Math.max(updateText.width, progressBar.width)
@@ -31,6 +31,6 @@ DefaultPopup{
         }
     }
     function autoReboot(){
-        exText="업데이트가 종료된 후 자동으로 부팅됩니다.\r\n전원을 제거하지 말아주세요."
+        exText= qsTr("업데이트가 종료된 후 자동으로 부팅됩니다.\r\n전원을 제거하지 말아주세요.")
     }
 }
