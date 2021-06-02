@@ -8,6 +8,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTranslator>
 
 #include "wpa.h"
 
@@ -43,6 +44,10 @@ int main(int argc, char *argv[])
 
     QQmlContext* ctx = engine.rootContext();
     qDebug() << "main" << QThread::currentThread();
+
+    QTranslator translator;
+    translator.load("qrc:/lang_ko.qm");
+    application.installTranslator(&translator);
 
     WPA wpa;
     KeyboardWidget keyboardWidget;
