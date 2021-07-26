@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#work on rapsberry pi local system
+
+#copy "install" folder to raspberry pi
+
+#run ./hixPrinterInstaller [product_name]
 if [ "$#" -ne 1 ]
 	then
 	echo "usage: " $0 "[product_name]"
@@ -103,5 +108,4 @@ reboot
 # sudo raspi-config (set to wifi country)
 # sudo incrontab -e (set incrontab setting config/incrontab-e)
 
-# fix hangul bug ( cannot find qt fonts )
 
