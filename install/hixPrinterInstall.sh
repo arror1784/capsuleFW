@@ -1,13 +1,20 @@
 #!/bin/bash
 
-#work on rapsberry pi local system
+# work on rapsberry pi local system
 
-#copy "install" folder to raspberry pi
+# copy "install" folder to raspberry pi
 
-#run ./hixPrinterInstaller [product_name]
+# run ./hixPrinterInstaller [product_name]
+
+# To do after run this script
+
+# rsync -avz ./config/qt5pi pi@$1:/usr/local
+# sudo raspi-config (set to wifi country)
+# sudo incrontab -e (set incrontab setting config/incrontab-e)
+
 if [ "$#" -ne 1 ]
 	then
-	echo "usage: " $0 "[product_name]"
+	echo "usage: sudo " $0 "[product_name]"
 	exit 1
 fi
 
@@ -101,11 +108,4 @@ rm ./config -r
 rm ./@0
 
 reboot
-
-# To do
-
-# rsync -avz ./config/qt5pi pi@$1:/usr/local
-# sudo raspi-config (set to wifi country)
-# sudo incrontab -e (set incrontab setting config/incrontab-e)
-
 
