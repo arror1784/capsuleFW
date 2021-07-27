@@ -69,7 +69,7 @@ if [ "$1" == "C10" ]; then
 elif [ "$1" == "L10" ]; then
 	cp ./config/L10/config.txt /boot/config.txt
 	cp ./config/L10/99-calibration.conf /usr/share/X11/xorg.conf.d/99-calibration.conf
-	echo "{\"product\":\"C10\"}" > /opt/capsuleFW/product.json
+	echo "{\"product\":\"L10\"}" > /opt/capsuleFW/product.json
 else
 	echo "no product " $1
 fi
@@ -98,6 +98,7 @@ apt-get install fonts-unfonts-core -y
 apt-get build-dep qt4-x11 -y
 apt-get build-dep libqt5gui5 -y
 apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev libxcb-xinerama0 -y
+apt-get install incron -y
 
 mkdir /usr/local/qt5pi
 chown pi:pi /usr/local/qt5pi 
