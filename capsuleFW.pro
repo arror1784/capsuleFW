@@ -1,9 +1,9 @@
 QT += quick
 QT += qml
 QT += serialport
-QT += svg
 QT += network
 QT += websockets
+QT += widgets
 
 #CONFIG += c++11
 CONFIG += c++17
