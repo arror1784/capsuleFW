@@ -27,7 +27,7 @@ DefaultListView{
 
     extraBoard: ParentDir{
         id: parentDir
-        onClicked: {
+        onBtnClicked: {
             if(folderModel.folder.toString() !== mediaURL){
 //                        selectedFileName = ""
                 folderModel.folder=folderModel.parentFolder

@@ -3,7 +3,7 @@ import QtQuick 2.0
 Rectangle{
     id: parentDir
 
-    signal clicked()
+    signal btnClicked()
 
     property alias text: parentDirText.text
 
@@ -29,7 +29,7 @@ Rectangle{
         imgSource: "qrc:/image/arrow-dir.png"
         imgScale: 0.6
         onClicked: {
-            btnClicked()
+            tempClicked()
         }
     }
     Text {
@@ -37,7 +37,7 @@ Rectangle{
         width: 396
         height: 23
 
-        anchors.left: parentDirButton.right
+        anchors.left: parentDirButtonImage.right
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
 
@@ -48,7 +48,7 @@ Rectangle{
         font.pixelSize: 22
         font.family: openSansRegular.name
     }
-    function btnClicked(){
-        clicked()
+    function tempClicked(){
+        btnClicked()
     }
 }

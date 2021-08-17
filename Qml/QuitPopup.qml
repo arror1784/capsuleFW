@@ -33,7 +33,7 @@ DefaultPopup{
         text: qsTr("Resume")
 
         onClicked: {
-            popupBack.printResume()
+            printResume()
         }
     }
     AcceptBTN{
