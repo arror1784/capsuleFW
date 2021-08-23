@@ -30,6 +30,10 @@ SOURCES += \
     VKeyboard/specialchkeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
+    build/CMakeFiles/3.10.2/CompilerIdC/CMakeCCompilerId.c \
+    build/CMakeFiles/3.10.2/CompilerIdCXX/CMakeCXXCompilerId.cpp \
+    build/CMakeFiles/feature_tests.c \
+    build/CMakeFiles/feature_tests.cxx \
     c10printimage.cpp \
     common/jsonreadsetting.cpp \
     common/jsonsetting.cpp \
@@ -102,6 +106,12 @@ HEADERS += \
     common/jsonsetting.h \
     common/jsonutil.h \
     common/jsonwritesetting.h \
+    dt/dt.h \
+    dt/image.h \
+    dt/imconv.h \
+    dt/imutil.h \
+    dt/misc.h \
+    dt/pnmfile.h \
     factoryreset.h \
     filevalidator.h \
     hdmicontrol.h \
@@ -138,6 +148,7 @@ HEADERS += \
     wpa_ctrl/wpabuf.h \
     ymodem.h \
     zip/zip.h \
+    zip/zip_file.hpp \
     zipcontrol.h
 #    zip/zip_file.hpp
 
@@ -146,3 +157,8 @@ FORMS += \
     VKeyboard/extrakeyboard.ui \
     VKeyboard/keyboardwidget.ui \
     VKeyboard/specialchkeyboard.ui
+
+DISTFILES += \
+    dt/COPYING \
+    dt/README \
+    dt/input.pbm
