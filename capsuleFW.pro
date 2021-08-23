@@ -30,10 +30,7 @@ SOURCES += \
     VKeyboard/specialchkeyboard.cpp \
     bedcontrol.cpp \
     bedserialport.cpp \
-    build/CMakeFiles/3.10.2/CompilerIdC/CMakeCCompilerId.c \
-    build/CMakeFiles/3.10.2/CompilerIdCXX/CMakeCXXCompilerId.cpp \
-    build/CMakeFiles/feature_tests.c \
-    build/CMakeFiles/feature_tests.cxx \
+    c10imageprovider.cpp \
     c10printimage.cpp \
     common/jsonreadsetting.cpp \
     common/jsonsetting.cpp \
@@ -100,6 +97,7 @@ HEADERS += \
     VKeyboard/specialchkeyboard.h \
     bedcontrol.h \
     bedserialport.h \
+    c10imageprovider.h \
     c10printimage.h \
     common.h \
     common/jsonreadsetting.h \
