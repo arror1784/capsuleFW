@@ -2,7 +2,6 @@
 #define L10PRINTIMAGE_H
 
 #include <future>
-#include <logger.h>
 
 #include "printimagecontrol.h"
 #include "l10imageprovider.h"

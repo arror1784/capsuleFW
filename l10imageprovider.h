@@ -11,7 +11,7 @@ public:
 
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override;
 
-    void transImage(QString path,int id);
+    void transImage(QString path, int id,int delta, float yMult);
 
 private:
     QImage _img;

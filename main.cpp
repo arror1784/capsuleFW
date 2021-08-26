@@ -52,10 +52,11 @@ int main(int argc, char *argv[])
 
     PrintImageControl *pic;
     L10ImageProvider l10ip;
+    C10ImageProvider c10ip;
 
     if(ProductSetting::getInstance().product == ProductType::C10){
-        pic = new C10PrintImage(2560,1440,90);
-        pic->setRootPath(QStringLiteral("file://opt/capsuleFW/print/printFilePath/"));
+        pic = new C10PrintImage(2560,1440,90,"/opt/capsuleFW/print/printFilePath/",&c10ip);
+        pic->setRootPath(QStringLiteral("image://C10/"));
     }else if(ProductSetting::getInstance().product == ProductType::L10){
         pic = new L10PrintImage(540,2560,0,"/opt/capsuleFW/print/printFilePath/",&l10ip);
         pic->setRootPath(QStringLiteral("image://L10/"));
@@ -69,6 +70,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<ZipControl>("App", 1, 0, "ZipControl");
 
     engine.addImageProvider(QLatin1String("L10"), &l10ip);
+    engine.addImageProvider(QLatin1String("C10"), &c10ip);
+    
     ctx->setContextProperty("factory",&FactoryReset::getInstance());
     ctx->setContextProperty("wifi",&wpa);
     ctx->setContextProperty("nc",&nc);

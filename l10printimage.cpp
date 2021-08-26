@@ -11,6 +11,7 @@ L10PrintImage::~L10PrintImage()
 {
 
 }
+
 void L10PrintImage::imageChange(int number)
 {
     qDebug() << "L10";
@@ -23,7 +24,6 @@ void L10PrintImage::imageChange(int number)
         emit sendToQmlChangeImage(_imageTransfuture.get());
         requestTransImage(number + 1);
     }
-//    emit sendToQmlChangeImage(_rootPath + QString::number(number));
 }
 void L10PrintImage::requestTransImage(int number){
 
@@ -31,10 +31,7 @@ void L10PrintImage::requestTransImage(int number){
         QString imagePath = _rootPath + QString::number(number);
         QString filePath = _filePath + QString::number(number) + ".png";
 
-        Logger::GetInstance()->write("print image path : " + imagePath);
-
-        _l10imageProvider->transImage(filePath,number);
+        _l10imageProvider->transImage(filePath,number,1000000,1);
         return imagePath;
     },number);
-
 }
