@@ -39,6 +39,7 @@ SOURCES += \
     factoryreset.cpp \
     filevalidator.cpp \
     hdmicontrol.cpp \
+    imagescaler.cpp \
     infosetting.cpp \
     kinetimecalc.cpp \
     l10imageprovider.cpp \
@@ -113,6 +114,7 @@ HEADERS += \
     factoryreset.h \
     filevalidator.h \
     hdmicontrol.h \
+    imagescaler.h \
     infosetting.h \
     kinetimecalc.h \
     l10imageprovider.h \

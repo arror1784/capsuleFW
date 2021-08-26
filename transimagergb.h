@@ -8,8 +8,7 @@
 
 namespace  TransImageRGB
 {
-    bool transImage(std::string target, std::string path, int width, int height, int rotate = 30);
-    std::optional<QImage> L10transImage(std::string target);
+    QImage L10transImage(QImage &img);
 };
 
 #endif // TRANSIMAGERGB_H
