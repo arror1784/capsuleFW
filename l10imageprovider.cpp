@@ -27,8 +27,8 @@ void L10ImageProvider::transImage(QString path, int id,int delta, float yMult)
     QImageReader ir(path);
 
     auto oriImg = ir.read();
+    _img = ImageScaler::transImage(oriImg,delta,yMult);
     _img = TransImageRGB::L10transImage(oriImg);
-//    _img = ImageScaler::transImage(oriImg,delta,yMult);
     qDebug() << "transimage finish L10";
 }
 

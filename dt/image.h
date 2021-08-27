@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #define IMAGE_H
 
 #include <cstring>
+#include <algorithm>
 
 template <class T>
 class image {
@@ -82,7 +83,8 @@ template <class T>
 image<T>::image(const int width, const int height, T* initData) {
     w = width;
     h = height;
-    data = initData;
+    data = new T[w * h];
+    std::copy(data,data +(w * h),initData);
     access = new T * [h];   // allocate space for row pointers
 
     // initialize row pointers
@@ -92,7 +94,7 @@ image<T>::image(const int width, const int height, T* initData) {
 
 template <class T>
 image<T>::~image() {
-  delete [] data; 
+  delete [] data;
   delete [] access;
 }
 

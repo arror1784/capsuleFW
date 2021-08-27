@@ -3,7 +3,7 @@
 #include "dt/dt.h"
 #include <cmath>
 
-QImage ImageScaler::transImage(QImage &img, int delta, float yMult)
+QImage ImageScaler::transImage(QImage& img, int delta, float yMult)
 {
 
     bool isShrink = delta < 0;
@@ -17,8 +17,7 @@ QImage ImageScaler::transImage(QImage &img, int delta, float yMult)
     if(img.format() != QImage::Format_Grayscale8){
         bits = img.convertToFormat(QImage::Format_Grayscale8).bits();
     }
-
-    image<uint8_t> origImg(w, h,bits);
+    image<uint8_t> origImg(w, h, bits);
     std::vector<uint8_t>finalImg(imgSize);
     if (isShrink)
     {
@@ -41,6 +40,5 @@ QImage ImageScaler::transImage(QImage &img, int delta, float yMult)
             return 0;
             });
     }
-
-    return QImage(finalImg.data(),img.width(),img.height(),QImage::Format_Grayscale8);
+    return QImage(finalImg.data(),w,h,QImage::Format_Grayscale8);
 }
