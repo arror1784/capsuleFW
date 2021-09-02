@@ -15,6 +15,8 @@ public:
 
 private:
     QImage _img;
+    std::vector<uint8_t> _imageBuf;
+
     int _id;
 };
 

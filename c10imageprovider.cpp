@@ -27,6 +27,6 @@ void C10ImageProvider::transImage(QString path, int id,int delta, float yMult)
 
     auto oriImg = ir.read();
     
-    _img = ImageScaler::transImage(oriImg,delta,yMult);
+    _img = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
     qDebug() << "transimage finish C10";
 }
