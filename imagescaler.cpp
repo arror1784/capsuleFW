@@ -2,6 +2,7 @@
 
 #include "dt/dt.h"
 #include <cmath>
+#include <execution>
 
 QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<uint8_t>& out)
 {
@@ -25,7 +26,7 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
         auto* sdfImage = dt(&origImg, 0, yMult);
         int threshold = 1 - delta;
 
-        std::transform(sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
+        std::transform(std::execution::par_unseq,sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
             if (std::round(flt) >= threshold)
                 return 255;
             return 0;
@@ -35,7 +36,7 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
     {
         auto* sdfImage = dt(&origImg, 255, yMult);
         int threshold = delta;
-        std::transform(sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
+        std::transform(std::execution::par_unseq,sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
             if (std::round(flt) <= threshold)
                 return 255;
             return 0;

@@ -32,7 +32,7 @@ void C10PrintImage::requestTransImage(int number)
         QString imagePath = _rootPath + QString::number(number);
         QString filePath = _filePath + QString::number(number) + ".png";
 
-        _c10imageProvider->transImage(filePath,number,1000000,1);
+        _c10imageProvider->transImage(filePath,number,10000,1);
         return imagePath;
     },number);
 }

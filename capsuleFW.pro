@@ -7,6 +7,7 @@ QT += widgets
 
 #CONFIG += c++11
 CONFIG += c++17
+LIBS += -ltbb
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings

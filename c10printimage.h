@@ -21,7 +21,7 @@ public:
 private:
     std::future<QString> _imageTransfuture;
     QString _filePath;
-    
+
 };
 
 #endif // C10PRINTIMAGE_H
