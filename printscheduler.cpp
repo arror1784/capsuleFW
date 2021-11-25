@@ -32,6 +32,8 @@
 #include "hdmicontrol.h"
 
 #include <filesystem>
+#include <QThread>
+#include <QTimer>
 
 const QString printFilePath = "/opt/capsuleFW/print/printFilePath";
 
@@ -44,21 +46,12 @@ PrintScheduler::PrintScheduler(PrintImageControl* pi) :
 
     _printerSetting.parse();
     _version.parse();
-#ifndef TEST_WITHOUT_SERIAL
-    if(addSerialPort()){
-        _USBPortConnection = false;
-        _printState = "USBCONNECTIONERROR";
-        emit sendToUIPortOpenError(true);
-        return;
-    }else{
-        _USBPortConnection = true;
-    }
-#else
-    bedSerialPort = new BedSerialport(this);
-    _USBPortConnection = true;
-#endif
-    //check product
-    addPrintingBed('A');
+
+    _portCheck = new QTimer();
+    connect(_portCheck, &QTimer::timeout, this, &PrintScheduler::usbConnect);
+
+    if(!usbConnect())
+        _portCheck->start(5000);
 }
 void PrintScheduler::addPrintingBed(char name){
     _bedControl = new BedControl(name,bedSerialPort,this);
@@ -397,6 +390,32 @@ void PrintScheduler::receiveFromUpdaterFirmUpdate(QString path)
 void PrintScheduler::receiveFromUIAutoReboot()
 {
     bedSerialPort->sendCommand("H111");
+}
+
+bool PrintScheduler::usbConnect()
+{
+#ifndef TEST_WITHOUT_SERIAL
+    qDebug() <<"fff";
+
+    if(addSerialPort()) {
+        _USBPortConnection = false;
+        _printState = "USBCONNECTIONERROR";
+        emit sendToUIPortOpenError(true);
+        return false;
+    }else{
+        _portCheck->stop();
+        _USBPortConnection = true;
+        emit sendToUIPortOpenError(false);
+        _printState = "ready";
+
+        addPrintingBed('A');
+        return true;
+    }
+#else
+    bedSerialPort = new BedSerialport(this);
+    _USBPortConnection = true;
+#endif
+    //check product
 }
 
 void PrintScheduler::receiveFromUIShutdown()
