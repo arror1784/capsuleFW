@@ -30,7 +30,7 @@ class image {
   /* create an image */
   image(const int width, const int height, const bool init = true);
 
-  image(const int width, const int height, T* data);
+  image(const int width, const int height, const T* data);
 
   /* delete an image */
   ~image();
@@ -80,11 +80,11 @@ image<T>::image(const int width, const int height, const bool init) {
 
 
 template <class T>
-image<T>::image(const int width, const int height, T* initData) {
+image<T>::image(const int width, const int height, const T* initData) {
     w = width;
     h = height;
     data = new T[w * h];
-    std::copy(data,data +(w * h),initData);
+    std::copy(initData,initData + (w * h), data);
     access = new T * [h];   // allocate space for row pointers
 
     // initialize row pointers
