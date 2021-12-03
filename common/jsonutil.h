@@ -17,7 +17,7 @@ namespace Hix {
                 if(json.contains(key))
                     return json[key].toVariant().value<ValueType>();
                 else
-                    throw std::runtime_error("value doesnt exist for given key");
+                    throw std::runtime_error("value doesnt exist for given key " + key.toStdString());
             }
             template<typename ValueType>
             bool tryGetValue(const QJsonObject& json,const QString& key,ValueType& value)
