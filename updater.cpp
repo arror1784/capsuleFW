@@ -20,8 +20,8 @@
 
 Updater::Updater():
   _downloadPath("/opt/capsuleFW/download")
-  ,_getFileUrl("https://services.hix.co.kr/setup/get_file/" + ProductSetting::getInstance().productStr + "/")
-  ,_manifestUrl("https://services.hix.co.kr/setup/get_update_manifest/" + ProductSetting::getInstance().productStr)
+  ,_getFileUrl("https://services.hix.co.kr/setup/get_file/C10/")
+  ,_manifestUrl("https://services.hix.co.kr/setup/get_update_manifest/C10")
 {
     manager = new QNetworkAccessManager();
     connect(manager, &QNetworkAccessManager::finished,this, &Updater::requestFinished);
