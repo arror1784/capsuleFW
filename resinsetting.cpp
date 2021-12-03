@@ -29,12 +29,14 @@ void ResinSetting::parse()
         for(auto &i : _object.keys()){
             if(i == "last_update"){
                 lastUpdate = Hix::Common::Json::getValue<QString>(_object,"last_update");
+            }else if(i == "visible"){
+                if(!Hix::Common::Json::tryGetValue<bool>(_object,"visible",visible))
+                    visible = true;
             }else{
                 resinInfo ri;
                 QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(_object,i);
 
                 ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-                ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
                 ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
                 ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
@@ -49,6 +51,12 @@ void ResinSetting::parse()
                 ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
                 ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
                 ri.material = Hix::Common::Json::getValue<int>(jo,"material");
+
+                if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",ri.thickness))
+                    ri.thickness = 0;
+
+                if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
+                    ri.ymult = 0.0f;
 
                 resinList.insert(i,ri);
             }
@@ -74,12 +82,12 @@ void ResinSetting::save()
     QFile saveFile(_path);
 
     Json::setValue<QString>(jo,"last_update",lastUpdate);
+    Json::setValue<bool>(jo,"visible",visible);
 
     for(auto &i : resinList.keys()){
         QJsonObject resinObject;
 
         Hix::Common::Json::setValue<double>(resinObject,"led_offset",resinList[i].resinLedOffset);
-        Hix::Common::Json::setValue<double>(resinObject,"contraction_ratio",resinList[i].contractionRatio);
         Hix::Common::Json::setValue<double>(resinObject,"layer_height",resinList[i].layerHeight);
 
         Hix::Common::Json::setValue<int>(resinObject,"bed_curing_layer",resinList[i].bedCuringLayer);
@@ -94,6 +102,9 @@ void ResinSetting::save()
         Hix::Common::Json::setValue<int>(resinObject,"bed_curing_time",resinList[i].bedCuringTime);
         Hix::Common::Json::setValue<int>(resinObject,"layer_delay",resinList[i].layerDelay);
         Hix::Common::Json::setValue<int>(resinObject,"material",resinList[i].material);
+
+        Hix::Common::Json::setValue<int>(resinObject,"thickness",resinList[i].thickness);
+        Hix::Common::Json::setValue<float>(resinObject,"ymult",resinList[i].ymult);
 
         Hix::Common::Json::setValue<QJsonObject>(jo,i,resinObject);
     }

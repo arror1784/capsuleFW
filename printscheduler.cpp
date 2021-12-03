@@ -141,7 +141,7 @@ void PrintScheduler::receiveFromUIPrintUnlock()
 void PrintScheduler::initBed(){
     _bedWork = BED_WORK;
 
-    _printImageControl->imageChange(0);
+    _printImageControl->imageChange(0,_delta,_ymult);
     _bedControl->receiveFromPrintScheduler(PRINT_MOVE_AUTOHOME);
 
     return;
@@ -241,7 +241,7 @@ void PrintScheduler::printLayer(){
 void PrintScheduler::receiveFromBedControl(int receive){
     switch (receive) {
         case PRINT_DLP_WORK_FINISH:
-            _printImageControl->imageChange(_bedPrintImageNum);
+            _printImageControl->imageChange(_bedPrintImageNum,_delta,_ymult);
             break;
         case PRINT_MOVE_INIT_OK:
             _enableTimer = true;
@@ -505,7 +505,6 @@ int PrintScheduler::setupForPrint(QString materialName)
             QJsonObject jo = fd.object();
 
             materialSetting.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-            materialSetting.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
 
             materialSetting.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
             materialSetting.curingTime = Hix::Common::Json::getValue<int>(jo,"curing_time");
@@ -519,6 +518,11 @@ int PrintScheduler::setupForPrint(QString materialName)
             materialSetting.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
             materialSetting.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
 
+            if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",materialSetting.thickness))
+                materialSetting.thickness = 0;
+
+            if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",materialSetting.ymult))
+                materialSetting.ymult = 0.0f;
         }else{
             if(rs.resinList.contains(QString::number(layer_height))){
                 materialSetting = rs.resinList[QString::number(layer_height)];
@@ -542,7 +546,9 @@ int PrintScheduler::setupForPrint(QString materialName)
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
         _layerHeight = layer_height;
 
-
+        _delta = materialSetting.thickness * materialSetting.thickness;
+        if (materialSetting.thickness < 0.0f) _delta *= -1.0f;
+        _ymult =  1.0f / materialSetting.ymult;
 
         _bedCuringLayer = materialSetting.bedCuringLayer;
         _bedControl->setCuringTime(materialSetting.curingTime);
@@ -564,7 +570,7 @@ int PrintScheduler::setupForPrint(QString materialName)
 
         _printImageControl->reset();
 
-        _printImageControl->imageScale(materialSetting.contractionRatio);
+        _printImageControl->imageScale(1);
 
         double led = (_printerSetting.ledOffset / 100) *  materialSetting.resinLedOffset;
         _bedControl->setLedOffset(led * 10);
@@ -732,7 +738,10 @@ void PrintScheduler::receiveFromUIGetMaterialList(){
     auto &a = _printerSetting.materialList;
     QVariantList list;
     for(auto& i : a){
-        list.push_back(i);
+        ResinSetting rs(i);
+        rs.parse();
+        if(rs.visible)
+            list.push_back(i);
     }
     emit sendToUIMaterialList(list);
     return;

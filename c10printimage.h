@@ -13,9 +13,9 @@ public:
     C10PrintImage(int width, int height, int rotate, QString filePath, C10ImageProvider* c10imageProvider);
     ~C10PrintImage() override;
 
-    void imageChange(int number) override;
+    void imageChange(int number,int delta,int ymult) override;
     
-    void requestTransImage(int number);
+    void requestTransImage(int number,int delta,int ymult);
     
     C10ImageProvider* _c10imageProvider = nullptr;
 private:

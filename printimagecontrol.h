@@ -23,7 +23,7 @@ public slots:
     void imageWrote();
 
 public:
-    virtual void imageChange(int number) = 0;
+    virtual void imageChange(int number,int delta,int ymult) = 0;
     void imageScale(double scale);
     void waitImageWrote();
 

@@ -12,26 +12,26 @@ L10PrintImage::~L10PrintImage()
 
 }
 
-void L10PrintImage::imageChange(int number)
+void L10PrintImage::imageChange(int number,int delta,int ymult)
 {
     qDebug() << "L10";
     _imageWrote = false;
     if(number == 0){
-        requestTransImage(0);
+        requestTransImage(0,delta,ymult);
         emit sendToQmlChangeImage(_imageTransfuture.get());
-        requestTransImage(1);
+        requestTransImage(1,delta,ymult);
     }else{
         emit sendToQmlChangeImage(_imageTransfuture.get());
-        requestTransImage(number + 1);
+        requestTransImage(number + 1,delta,ymult);
     }
 }
-void L10PrintImage::requestTransImage(int number){
+void L10PrintImage::requestTransImage(int number,int delta,int ymult){
 
-    _imageTransfuture = std::async([this](int number) {
+    _imageTransfuture = std::async([this](int number,int delta,int ymult) {
         QString imagePath = _rootPath + QString::number(number);
         QString filePath = _filePath + QString::number(number) + ".png";
 
-        _l10imageProvider->transImage(filePath,number,1000000,1);
+        _l10imageProvider->transImage(filePath,number,delta,1);
         return imagePath;
-    },number);
+    },number, delta,ymult);
 }

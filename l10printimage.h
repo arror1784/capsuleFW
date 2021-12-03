@@ -12,9 +12,9 @@ public:
     L10PrintImage(int width, int height, int rotate, QString filePath, L10ImageProvider* l10imageProvider);
     ~L10PrintImage() override;
 
-    void imageChange(int number) override;
+    void imageChange(int number,int delta,int ymult) override;
 
-    void requestTransImage(int number);
+    void requestTransImage(int number,int delta,int ymult);
 
     L10ImageProvider* _l10imageProvider = nullptr;
 private:

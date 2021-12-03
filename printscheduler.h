@@ -185,6 +185,11 @@ private:
     int _bedMaxPrintNum;
 
     int _progress = 0;
+
+    int _thickness = 0;
+    int _delta = 0;
+    float _ymult = 1;
+
     long long _lastStartTime = 0;
     long long _elapsedTime = 0;
     double _layerHeight = 0.0;

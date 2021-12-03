@@ -24,7 +24,7 @@ public:
 
     struct resinInfo{
         double resinLedOffset;
-        double contractionRatio;
+
         double layerHeight;
         int bedCuringLayer;
         int curingTime;
@@ -38,9 +38,14 @@ public:
         int bedCuringTime;
         int layerDelay;
         int material;
+
+        int thickness;
+        float ymult;
     };
 
     QString lastUpdate;
+    bool visible;
+
     QMap<QString,resinInfo> resinList;
 
     void parse() override;

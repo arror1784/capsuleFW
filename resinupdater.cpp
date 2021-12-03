@@ -146,7 +146,6 @@ void ResinUpdater::updateUSB(QString path)
                     QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(object,i);
 
                     ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-                    ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
                     ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
                     ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
@@ -161,6 +160,12 @@ void ResinUpdater::updateUSB(QString path)
                     ri.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
                     ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
                     ri.material = Hix::Common::Json::getValue<int>(jo,"material");
+
+                    if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",ri.thickness))
+                        ri.thickness = 0;
+
+                    if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
+                        ri.ymult = 0.0f;
 
                     rs.resinList.insert(i,ri);
                 }
@@ -293,7 +298,6 @@ void ResinUpdater::requestFinished(QNetworkReply* reply)
                             QJsonObject jo = Hix::Common::Json::getValue<QJsonObject>(object,i);
 
                             ri.resinLedOffset = Hix::Common::Json::getValue<double>(jo,"led_offset");
-                            ri.contractionRatio = Hix::Common::Json::getValue<double>(jo,"contraction_ratio");
                             ri.layerHeight = Hix::Common::Json::getValue<double>(jo,"layer_height");
 
                             ri.bedCuringLayer = Hix::Common::Json::getValue<int>(jo,"bed_curing_layer");
