@@ -14,7 +14,7 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
     int imgSize = w * h;
 
     unsigned char* bits = img.bits();
-
+    image<float>* sdfImage;
     if(img.format() != QImage::Format_Grayscale8){
         bits = img.convertToFormat(QImage::Format_Grayscale8).bits();
     }
@@ -23,7 +23,7 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
 
     if (isShrink)
     {
-        auto* sdfImage = dt(&origImg, 0, yMult);
+        sdfImage = dt(&origImg, 0, yMult);
         int threshold = 1 - delta;
 
         std::transform(std::execution::par_unseq,sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
@@ -34,7 +34,7 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
     }
     else
     {
-        auto* sdfImage = dt(&origImg, 255, yMult);
+        sdfImage = dt(&origImg, 255, yMult);
         int threshold = delta;
         std::transform(std::execution::par_unseq,sdfImage->data, sdfImage->data + imgSize, out.begin(), [threshold](float flt)->uint8_t {
             if (std::round(flt) <= threshold)
@@ -42,5 +42,6 @@ QImage ImageScaler::transImage(QImage& img, int delta, float yMult, std::vector<
             return 0;
             });
     }
+    delete sdfImage;
     return QImage(out.data(),w,h,QImage::Format_Grayscale8);
 }
