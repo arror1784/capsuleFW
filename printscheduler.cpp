@@ -1,4 +1,4 @@
-﻿#include "printscheduler.h"
+#include "printscheduler.h"
 #include "bedcontrol.h"
 #include "bedserialport.h"
 
@@ -522,7 +522,7 @@ int PrintScheduler::setupForPrint(QString materialName)
                 materialSetting.thickness = 0;
 
             if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",materialSetting.ymult))
-                materialSetting.ymult = 0.0f;
+                materialSetting.ymult = 1.0f;
         }else{
             if(rs.resinList.contains(QString::number(layer_height))){
                 materialSetting = rs.resinList[QString::number(layer_height)];

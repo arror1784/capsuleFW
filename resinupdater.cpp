@@ -165,7 +165,7 @@ void ResinUpdater::updateUSB(QString path)
                         ri.thickness = 0;
 
                     if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
-                        ri.ymult = 0.0f;
+                        ri.ymult = 1.0f;
 
                     rs.resinList.insert(i,ri);
                 }

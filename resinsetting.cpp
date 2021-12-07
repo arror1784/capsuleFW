@@ -56,7 +56,7 @@ void ResinSetting::parse()
                     ri.thickness = 0;
 
                 if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
-                    ri.ymult = 0.0f;
+                    ri.ymult = 1.0;
 
                 resinList.insert(i,ri);
             }
