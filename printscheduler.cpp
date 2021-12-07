@@ -1,4 +1,4 @@
-#include "printscheduler.h"
+﻿#include "printscheduler.h"
 #include "bedcontrol.h"
 #include "bedserialport.h"
 
@@ -549,6 +549,7 @@ int PrintScheduler::setupForPrint(QString materialName)
         _delta = materialSetting.thickness * materialSetting.thickness;
         if (materialSetting.thickness < 0.0f) _delta *= -1.0f;
         _ymult =  1.0f / materialSetting.ymult;
+        qDebug() << materialSetting.thickness << materialSetting.ymult << _delta << _ymult;
 
         _bedCuringLayer = materialSetting.bedCuringLayer;
         _bedControl->setCuringTime(materialSetting.curingTime);
