@@ -8,7 +8,7 @@
 
 L10ImageProvider::L10ImageProvider() : QQuickImageProvider(QQuickImageProvider::Image)
 {
-    setSize(2560,1620);
+
 }
 
 QImage L10ImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
@@ -43,13 +43,5 @@ void L10ImageProvider::transImage(QString path, int id,int delta, float yMult)
               << "( " << int_ms.count() << " milliseconds )" << std::endl;
 
     qDebug() << "transimage finish L10";
-}
-
-void L10ImageProvider::setSize(int width, int height)
-{
-    _width = width;
-    _height = height;
-    _size = width * height;
-    _imageBuf.assign(_size,0);
 }
 
