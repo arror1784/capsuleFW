@@ -15,7 +15,6 @@ QImage L10ImageProvider::requestImage(const QString &id, QSize *size, const QSiz
 {
     int width = 540;
     int height = 2560;
-    qDebug() << "asdasd";
     if (size)
        *size = QSize(width, height);
     return _img;
@@ -27,7 +26,10 @@ void L10ImageProvider::transImage(QString path, int id,int delta, float yMult)
     _id = id;
 
     QImageReader ir(path);
-
+    if(!ir.canRead()){
+        qDebug() << path << " is not available";
+        return;
+    }
     auto start = std::chrono::high_resolution_clock::now();
 
     auto oriImg = ir.read();

@@ -26,7 +26,10 @@ void C10ImageProvider::transImage(QString path, int id,int delta, float yMult)
     QImageReader ir(path);
 
     auto oriImg = ir.read();
-    
+    if(!ir.canRead()){
+        qDebug() << path << " is not available";
+        return;
+    }
     _img = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
     qDebug() << "transimage finish C10";
 }
