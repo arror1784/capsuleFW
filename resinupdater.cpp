@@ -161,8 +161,8 @@ void ResinUpdater::updateUSB(QString path)
                     ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
                     ri.material = Hix::Common::Json::getValue<int>(jo,"material");
 
-                    if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",ri.thickness))
-                        ri.thickness = 0;
+                    if(!Hix::Common::Json::tryGetValue<int>(jo,"pixel_contraction",ri.pixelContraction))
+                        ri.pixelContraction = 0;
 
                     if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
                         ri.ymult = 1.0f;

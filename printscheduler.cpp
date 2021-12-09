@@ -518,8 +518,8 @@ int PrintScheduler::setupForPrint(QString materialName)
             materialSetting.bedCuringTime = Hix::Common::Json::getValue<int>(jo,"bed_curing_time");
             materialSetting.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
 
-            if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",materialSetting.thickness))
-                materialSetting.thickness = 0;
+            if(!Hix::Common::Json::tryGetValue<int>(jo,"pixel_contraction",materialSetting.pixelContraction))
+                materialSetting.pixelContraction = 0;
 
             if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",materialSetting.ymult))
                 materialSetting.ymult = 1.0f;
@@ -546,10 +546,11 @@ int PrintScheduler::setupForPrint(QString materialName)
         _bedControl->setLayerHeightTime((int)(layer_height * 1000));
         _layerHeight = layer_height;
 
-        _delta = materialSetting.thickness * materialSetting.thickness;
-        if (materialSetting.thickness < 0.0f) _delta *= -1.0f;
+        _pixelContraction = materialSetting.pixelContraction;
+        _delta = materialSetting.pixelContraction * materialSetting.pixelContraction;
+        if (materialSetting.pixelContraction < 0.0f) _delta *= -1.0f;
         _ymult =  1.0f / materialSetting.ymult;
-        qDebug() << materialSetting.thickness << materialSetting.ymult << _delta << _ymult;
+        qDebug() << materialSetting.pixelContraction << materialSetting.ymult << _delta << _ymult;
 
         _bedCuringLayer = materialSetting.bedCuringLayer;
         _bedControl->setCuringTime(materialSetting.curingTime);

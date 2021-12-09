@@ -186,7 +186,7 @@ private:
 
     int _progress = 0;
 
-    int _thickness = 0;
+    int _pixelContraction = 0;
     int _delta = 0;
     float _ymult = 1;
 

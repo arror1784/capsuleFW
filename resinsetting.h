@@ -39,7 +39,7 @@ public:
         int layerDelay;
         int material;
 
-        int thickness;
+        int pixelContraction;
         float ymult;
     };
 

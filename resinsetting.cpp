@@ -52,8 +52,8 @@ void ResinSetting::parse()
                 ri.layerDelay = Hix::Common::Json::getValue<int>(jo,"layer_delay");
                 ri.material = Hix::Common::Json::getValue<int>(jo,"material");
 
-                if(!Hix::Common::Json::tryGetValue<int>(jo,"thickness",ri.thickness))
-                    ri.thickness = 0;
+                if(!Hix::Common::Json::tryGetValue<int>(jo,"pixel_contraction",ri.pixelContraction))
+                    ri.pixelContraction = 0;
 
                 if(!Hix::Common::Json::tryGetValue<float>(jo,"ymult",ri.ymult))
                     ri.ymult = 1.0;
@@ -103,7 +103,7 @@ void ResinSetting::save()
         Hix::Common::Json::setValue<int>(resinObject,"layer_delay",resinList[i].layerDelay);
         Hix::Common::Json::setValue<int>(resinObject,"material",resinList[i].material);
 
-        Hix::Common::Json::setValue<int>(resinObject,"thickness",resinList[i].thickness);
+        Hix::Common::Json::setValue<int>(resinObject,"pixel_contraction",resinList[i].pixelContraction);
         Hix::Common::Json::setValue<float>(resinObject,"ymult",resinList[i].ymult);
 
         Hix::Common::Json::setValue<QJsonObject>(jo,i,resinObject);
