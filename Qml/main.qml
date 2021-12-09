@@ -93,14 +93,6 @@ Window {
             }
         }
         onSendToQmlChangeToPrint:{
-            var fileIt = stackView.find(function(item,index){return item.isFileSelectList})
-            if(fileIt){
-                fileIt.fileCheckDisconnected = false
-                console.log("there is fileSelectList")
-            }else{
-                console.log("there is not fileSelectList")
-            }
-
             var it = stackView.find(function(item,index){return item.isPrinMenu})
             if(stackView.currentItem.isPrinMenu){
                 console.debug("isPrintMenu")

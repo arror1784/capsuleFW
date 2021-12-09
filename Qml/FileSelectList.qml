@@ -134,6 +134,14 @@ DefaultListView{
             }
         }
     }
+    Connections{
+        target: connection
+        onSendToQmlChangeToPrint:{
+            fileCheckDisconnected = false
+            usbStrogeDisConnectedPopup.close()
+        }
+    }
+
     function setPath(path){
         folderModel.folder = path
         parentDir.text = ""
