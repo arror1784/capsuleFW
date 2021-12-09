@@ -54,7 +54,7 @@ DefaultListView{
     }
     extraBoard: ParentDir{
         id: parentDir
-        onClicked: {
+        onBtnClicked: {
             if(folderModel.folder.toString() !== mediaURL){
 //                        selectedFileName = ""
                 folderModel.folder=folderModel.parentFolder
@@ -99,7 +99,7 @@ DefaultListView{
     USBStorgeDisConnectedPopup{
         id: usbStrogeDisConnectedPopup
         onBack: {
-            stackView.pop(mainMenu,StackView.Immediate)
+            stackView.pop(StackView.Immediate)
         }
     }
 
