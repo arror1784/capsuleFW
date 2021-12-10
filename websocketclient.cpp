@@ -82,7 +82,14 @@ void WebSocketClient::onTextMessageReceived(QString message)
         }
 
     }else if(obj["method"].toString() == "getProductName"){
-        setProductName(ProductSetting::getInstance().productStr);
+        switch (ProductSetting::getInstance().product){
+            case ProductType::C10:
+                setProductName("C-10");
+                break;
+            case ProductType::L10:
+                setProductName("L-10");
+                break;
+        }
     }
 }
 
