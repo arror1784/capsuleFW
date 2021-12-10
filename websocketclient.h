@@ -66,7 +66,8 @@ public slots:
 
     void getPrintInfoToWeb(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer);
 
-
+    void setProductName(QString name);
+    
     void open();
     void closed();
 

@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QJsonObject>
 #include <QMetaObject>
+#include "productsetting.h"
 
 WebSocketClient::WebSocketClient(const QUrl url) :
     _url(url)
@@ -80,6 +81,8 @@ void WebSocketClient::onTextMessageReceived(QString message)
             emit changeStateByWeb("finish");
         }
 
+    }else if(obj["method"].toString() == "getProductName"){
+        setProductName(ProductSetting::getInstance().productStr);
     }
 }
 
@@ -277,6 +280,22 @@ void WebSocketClient::getPrintInfoToWeb(QString printerState, QString material, 
 
     aaa.insert("method","printInfo");
     aaa.insert("arg",bbb);
+
+    QJsonDocument doc(aaa);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    _webSocket->sendTextMessage(strJson);
+}
+
+void WebSocketClient::setProductName(QString name)
+{
+    QJsonObject aaa;
+
+    if(!_connected)
+        return;
+
+    aaa.insert("method","setProductName");
+    aaa.insert("arg",name);
 
     QJsonDocument doc(aaa);
     QString strJson(doc.toJson(QJsonDocument::Compact));
