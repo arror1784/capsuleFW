@@ -314,6 +314,8 @@ void PrintScheduler::receiveFromSerialPort(int state){
             emit sendToUIExit(true);
     }else if(state == LCD_ON){
         emit sendToUILCDState(true);
+        _LCDState = true;
+
     }else if(state == LCD_OFF){
 
         _LCDState = false;
