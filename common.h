@@ -2,7 +2,14 @@
 #define COMMON_H
 
 //#define MCU_UPDATE_TEST
-//#define TEST_WITHOUT_SERIAL
+#ifdef __arm__
+
+#else
+
+    #define TEST_WITHOUT_SERIAL
+
+#endif
+
 
 #define PRINT_MOVE_NULL             -1
 #define PRINT_MOVE_WAIT             0

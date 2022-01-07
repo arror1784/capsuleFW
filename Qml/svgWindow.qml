@@ -12,7 +12,7 @@ Window {
     screen: Qt.application.screens[0]
     x: screen.virtualX
     y: screen.virtualY
-    flags: /*Qt.X11BypassWindowManagerHint |*/ Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
+//    flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 
     Image{
         id: img
@@ -53,6 +53,7 @@ Window {
         onSendToQmlChangeImage:{
             console.log(path)
             img.source = path
+            lcdWindow.requestActivate()
         }
         onSendToQmlImageScale:{
             console.log("scale",scale)
