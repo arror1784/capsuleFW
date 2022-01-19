@@ -241,8 +241,8 @@ Item {
 
             timerRunning = true
         }
-
     }
+
     function clear(){
         progressBar.setCurrentValue(0)
         timesec = 0

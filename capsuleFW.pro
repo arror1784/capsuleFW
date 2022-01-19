@@ -63,6 +63,7 @@ SOURCES += \
     version.cpp \
     websocketclient.cpp \
     wifiinfo.cpp \
+    windowactivatecheck.cpp \
     wpa.cpp \
     wpa_ctrl/common.c \
     wpa_ctrl/os_unix.c \
@@ -137,6 +138,7 @@ HEADERS += \
     version.h \
     websocketclient.h \
     wifiinfo.h \
+    windowactivatecheck.h \
     wpa.h \
     wpa_ctrl/build_config.h \
     wpa_ctrl/common.h \

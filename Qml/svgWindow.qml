@@ -53,7 +53,6 @@ Window {
         onSendToQmlChangeImage:{
             console.log(path)
             img.source = path
-            lcdWindow.requestActivate()
         }
         onSendToQmlImageScale:{
             console.log("scale",scale)
@@ -68,6 +67,13 @@ Window {
             img.height = height
         }
     }
-    Component.onCompleted: {
+    Connections{
+        target: wac
+        onActiveWindow: {
+            lcdWindow.requestActivate()
+        }
+    }
+    onActiveChanged: {
+        console.log("LCD " + lcdWindow.active)
     }
 }

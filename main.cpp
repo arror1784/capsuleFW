@@ -31,6 +31,7 @@
 #include "l10printimage.h"
 
 #include "factoryreset.h"
+#include "windowactivatecheck.h"
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
     PrintImageControl *pic;
     L10ImageProvider l10ip;
     C10ImageProvider c10ip;
+    WindowActivateCheck wac;
 
     if(ProductSetting::getInstance().product == ProductType::C10){
         pic = new C10PrintImage(2560,1440,90,"/opt/capsuleFW/print/printFilePath/",&c10ip);
@@ -79,6 +81,8 @@ int main(int argc, char *argv[])
     ctx->setContextProperty("updater",&up);
     ctx->setContextProperty("keyboardWidget",&keyboardWidget);
     ctx->setContextProperty("printImage",pic);
+    ctx->setContextProperty("wac",&wac);
+
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
 //    engine.load(QUrl(QStringLiteral("qrc:/Qml/svgWindow.qml")));
 //    if (engine.rootObjects().isEmpty())

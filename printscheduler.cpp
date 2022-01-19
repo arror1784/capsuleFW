@@ -717,6 +717,9 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
     }else if(CMD == "finish"){
         bedFinish();
         emit sendToUIChangeState("quit");
+    }else if(CMD == "error"){
+        _bedError = true;
+        emit sendToUIChangeState("printError");
     }
     return;
 }

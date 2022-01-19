@@ -106,8 +106,28 @@ Window {
             }
         }
     }
+    Connections{
+        target: wac
+    }
+
+    onActiveChanged: {
+        var it = stackView.find(function(item,index){return item.isPrinMenu})
+
+        if(it === null){
+
+        }else{
+            connection.receiveFromQmlPrintStateChange("error")
+        }
+
+        if(!mainWindow.active){
+            wac.activeWindow()
+            mainWindow.requestActivate()
+        }
+
+        console.log("main" + mainWindow.active)
+    }
     Component.onCompleted: {
-//        sdf.open("asd","asd",0,true)
+        mainWindow.requestActivate()
         connection.receiveFromQmlGetUsbPortError()
     }
 }
