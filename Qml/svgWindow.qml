@@ -31,6 +31,8 @@ Window {
         onStatusChanged: {
             if (img.status === Image.Ready) {
                 printImage.imageWrote()
+            }else if(img.status === Image.Error){
+                connection.receiveFromQmlPrintStateChange("error")
             }
         }
     }
@@ -42,9 +44,9 @@ Window {
         target: connection
         onSendToQmlChangeState:{
             if(state === "printFinish"){
-                printImage.source = "qrc:/image/defaultBlackImage.png"
+                img.source = "qrc:/image/defaultBlackImage.png"
             }else if(state === "printErrorFinish"){
-                printImage.source = "qrc:/image/defaultBlackImage.png"
+                img.source = "qrc:/image/defaultBlackImage.png"
             }
         }
     }
