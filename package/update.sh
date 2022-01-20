@@ -84,6 +84,7 @@ else
 	apt-get install redis-server -y
 fi
 
+apt-get install libtbb2 -y
 
 dpkg -l | grep exfat-fuse || apt-get install exfat-fuse -y
 dpkg -l | grep exfat-utils || apt-get install exfat-utils -y

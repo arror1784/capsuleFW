@@ -12,7 +12,7 @@ Window {
     screen: Qt.application.screens[0]
     x: screen.virtualX
     y: screen.virtualY
-//    flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
+    flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 
     Image{
         id: img
