@@ -23,6 +23,7 @@
 #include <QDebug>
 
 #include <future>
+#include <QTimer>
 
 #include "iostream"
 #include "logger.h"
@@ -158,6 +159,9 @@ public slots:
 
     void receiveFromUIAutoReboot();
 
+private:
+    bool usbConnect();
+
 public:
     BedSerialport* bedSerialPort = nullptr;
     PrintImageControl* _printImageControl = nullptr;
@@ -178,6 +182,8 @@ private:
     QDate _printStartTime;
 
     std::future<QString> _imageTransfuture;
+
+    QTimer* _portCheck;
 
     int _bedPrintImageNum;
     int _bedWork;

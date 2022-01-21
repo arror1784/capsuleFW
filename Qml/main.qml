@@ -90,6 +90,8 @@ Window {
             if(value){
                 if(stackView.currentItem.name !== "USBPortOpenError")
                     stackView.push(Qt.resolvedUrl("qrc:/Qml/USBPortOpenError.qml"),StackView.Immediate)
+            }else{
+                stackView.pop(mainMenu,StackView.Immediate)
             }
         }
         onSendToQmlChangeToPrint:{
