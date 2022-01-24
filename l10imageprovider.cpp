@@ -26,24 +26,27 @@ void L10ImageProvider::transImage(QString path, int id,int delta, float yMult)
     _id = id;
 
     QImageReader ir(path);
-    if(!ir.canRead()){
-        qDebug() << path << " is not available";
-        return;
+    if(ir.canRead()){
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        auto oriImg = ir.read();
+        auto tmp = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
+        _img = TransImageRGB::L10transImage(tmp);
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double, std::milli> float_ms = end - start;
+        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        std::cout << "generateNumbers() elapsed time is " << float_ms.count() << " ms "
+                  << "( " << int_ms.count() << " milliseconds )" << std::endl;
+
+        qDebug() << "transimage finish L10";
+
+    }else{
+        qDebug() << path << " is not available " << ir.errorString();
     }
-    auto start = std::chrono::high_resolution_clock::now();
 
-    auto oriImg = ir.read();
-    auto tmp = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
-    _img = TransImageRGB::L10transImage(tmp);
-
-    auto end = std::chrono::high_resolution_clock::now();
-
-    std::chrono::duration<double, std::milli> float_ms = end - start;
-    auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-    std::cout << "generateNumbers() elapsed time is " << float_ms.count() << " ms "
-              << "( " << int_ms.count() << " milliseconds )" << std::endl;
-
-    qDebug() << "transimage finish L10";
 }
 

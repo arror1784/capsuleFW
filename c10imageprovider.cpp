@@ -25,11 +25,14 @@ void C10ImageProvider::transImage(QString path, int id,int delta, float yMult)
     _id = id;
     QImageReader ir(path);
 
-    auto oriImg = ir.read();
-    if(!ir.canRead()){
-        qDebug() << path << " is not available";
+    if(ir.canRead()){
+        auto oriImg = ir.read();
+
+        _img = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
+        qDebug() << "transimage finish C10";
+
         return;
+    }else{
+        qDebug() << path << " is not available " << ir.errorString();
     }
-    _img = ImageScaler::transImage(oriImg,delta,yMult,_imageBuf);
-    qDebug() << "transimage finish C10";
 }
