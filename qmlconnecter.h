@@ -41,6 +41,7 @@ signals:
     void sendToQmlEnableTimer(bool enable);
     void sendToQmlMaterialList(QVariantList name);
     void sendToQmlPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer);
+    void sendToQmlPrintErrorCode(int code);
     void sendToQmlSetTotalTime(int time);
     void sendToQmlPortOpenError(bool value);
     void sendToQmlLCDState(bool state);
@@ -83,6 +84,7 @@ public slots:
     void receiveFromSchedMaterialList(QVariantList name){emit sendToQmlMaterialList(name);}
     void receiveFromSchedPrintInfo(QString printerState,QString material, QString fileName,double layerHeight,int elapsedTime,int totalTime,int progress,bool enableTimer)
     {emit sendToQmlPrintInfo(printerState,material,fileName,layerHeight,elapsedTime,totalTime,progress,enableTimer);}
+    void receiveFromSchedPrintErrorCode(int code){emit sendToQmlPrintErrorCode(code);}
     void receiveFromSchedSetTotalTime(int time){emit sendToQmlSetTotalTime(time);}
     void receiveFromSchedPortOpenError(bool value){emit sendToQmlPortOpenError(value);}
     void receiveFromSchedLCDState(bool state){emit sendToQmlLCDState(state);}

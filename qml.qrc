@@ -57,5 +57,6 @@
         <file>Qml/ImageBTN.qml</file>
         <file>Qml/ParentDir.qml</file>
         <file>Qml/MultiBTN.qml</file>
+        <file>Qml/PrintErrorPopup.qml</file>
     </qresource>
 </RCC>

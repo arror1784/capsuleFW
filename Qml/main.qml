@@ -54,6 +54,9 @@ Window {
 //            stackView.pop(mainMenu,StackView.Immediate)
         }
     }
+    PrintErrorPopup{
+        id: printErrorPopup
+    }
     BusyErrorPopup{
         id: busyErrorPopup
     }
@@ -68,6 +71,10 @@ Window {
     }
     Connections{
         target: connection
+        onSendToQmlPrintErrorCode: {
+            printErrorPopup.openPopup(code)
+        }
+
         onSendToQmlPrintSettingError:{
             errorPopup.openPopup(code)
         }
@@ -118,7 +125,7 @@ Window {
         if(it === null){
 
         }else{
-            connection.receiveFromQmlPrintStateChange("error")
+            connection.receiveFromQmlPrintStateChange("errorActive")
         }
 
         if(!mainWindow.active){

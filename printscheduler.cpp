@@ -212,7 +212,8 @@ void PrintScheduler::printLayer(){
             return;
         }else if(QFile::exists(printFilePath + "/" + QString::number(_bedPrintImageNum) + ".png") == false){
 //            receiveFromUIPrintFinishError();
-            _bedError = true;
+            _printError = true;
+            _printErrorCode = 1;
             _printState = "error";
             emit sendToUIChangeState("printError");
         }
@@ -240,7 +241,7 @@ void PrintScheduler::receiveFromBedControl(int receive){
             _enableTimer = true;
             emit sendToUIEnableTimer(true);
         case PRINT_MOVE_LAYER_OK:
-            if(_bedError){
+            if(_printError){
                 receiveFromUIPrintFinishError();
                 break;
             }
@@ -263,10 +264,12 @@ void PrintScheduler::receiveFromBedControl(int receive){
 
             _bedWork = BED_NOT_WORK;
             _bedMoveFinished = PRINT_MOVE_NULL;
-            if(_bedError){
+            if(_printError){
                 emit sendToUIChangeState("printErrorFinish");
+                emit sendToUIPrintErrorCodoe(_printErrorCode);
+
                 _printState = "lock";
-                _bedError = false;
+                _printError = false;
             }else{
                 emit sendToUIChangeState("printFinish");
                 _printState = "lock";
@@ -316,7 +319,8 @@ void PrintScheduler::receiveFromSerialPort(int state){
         if(_bedWork == BED_FINISH_WORK || _bedWork == BED_NOT_WORK || _bedWork == BED_ERROR_WORK){
 
         }else{
-            _bedError = true;
+            _printError = true;
+            _printErrorCode = 2;
             _printState = "error";
             emit sendToUIChangeState("printError");
         }
@@ -736,8 +740,13 @@ void PrintScheduler::receiveFromUIPrintStateChange(QString CMD)
     }else if(CMD == "finish"){
         bedFinish();
         emit sendToUIChangeState("quit");
-    }else if(CMD == "error"){
-        _bedError = true;
+    }else if(CMD == "errorImage"){
+        _printError = true;
+        _printErrorCode = 3;
+        emit sendToUIChangeState("printError");
+    }else if(CMD == "errorActive"){
+        _printError = true;
+        _printErrorCode = 4;
         emit sendToUIChangeState("printError");
     }
     return;

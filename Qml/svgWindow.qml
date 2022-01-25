@@ -32,7 +32,7 @@ Window {
             if (img.status === Image.Ready) {
                 printImage.imageWrote()
             }else if(img.status === Image.Error){
-                connection.receiveFromQmlPrintStateChange("error")
+                connection.receiveFromQmlPrintStateChange("errorImage")
             }
         }
     }

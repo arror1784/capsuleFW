@@ -37,6 +37,7 @@ void QmlConnecter::schedConnect(PrintScheduler *sched)
         QObject::connect(_sched,&PrintScheduler::sendToUIEnableTimer,this,&QmlConnecter::receiveFromSchedEnableTimer);
         QObject::connect(_sched,&PrintScheduler::sendToUIMaterialList,this,&QmlConnecter::receiveFromSchedMaterialList);
         QObject::connect(_sched,&PrintScheduler::sendToUIPrintInfo,this,&QmlConnecter::receiveFromSchedPrintInfo);
+        QObject::connect(_sched,&PrintScheduler::sendToUIPrintErrorCodoe,this,&QmlConnecter::receiveFromSchedPrintErrorCode);
         QObject::connect(_sched,&PrintScheduler::sendToUISetTotalTime,this,&QmlConnecter::receiveFromSchedSetTotalTime);
         QObject::connect(_sched,&PrintScheduler::sendToUIPortOpenError,this,&QmlConnecter::receiveFromSchedPortOpenError);
         QObject::connect(_sched,&PrintScheduler::sendToUILCDState,this,&QmlConnecter::receiveFromSchedLCDState);

@@ -93,7 +93,7 @@ signals:
     void sendToUIChangeState(QString state);
 
     void sendToUIPrintSettingError(int code);       //print setting Error when received print start from UI
-
+    void sendToUIPrintErrorCodoe(int code);
     void sendToUIEnableTimer(bool enable);      //for enabel Timer
 
     void sendToUIMaterialList(QVariantList name);   //Material List UI must insert Custm resin when resin.json exist
@@ -214,7 +214,8 @@ private:
 
     bool _enableTimer = false;
 
-    bool _bedError = false;
+    bool _printError = false;
+    int _printErrorCode = 0;
 
     bool _isBusy;
 
